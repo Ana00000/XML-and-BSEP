@@ -14,11 +14,11 @@
 
 
 ## Activity
-🌸🌸🌸🌸<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Ana00000/ISA?color=9cf&style=flat">
-🌸🌸🌸🌸<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Ana00000/ISA?color=9cf&style=flat">
-🌸🌸🌸🌸<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/y/Ana00000/ISA?color=9cf&style=flat">
-🌸🌸🌸🌸<a href="https://github.com/Ana00000/ISA/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/Ana00000/ISA?color=9cf"></a>
-🌸🌸🌸🌸
+🌸🌸<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Ana00000/ISA?color=9cf&style=flat">
+🌸🌸<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Ana00000/ISA?color=9cf&style=flat">
+🌸🌸<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/y/Ana00000/ISA?color=9cf&style=flat">
+🌸🌸<a href="https://github.com/Ana00000/ISA/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/Ana00000/ISA?color=9cf"></a>
+🌸🌸
 
 ## Git rules
 - Commit message:
