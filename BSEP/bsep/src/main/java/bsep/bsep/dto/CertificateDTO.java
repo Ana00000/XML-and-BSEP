@@ -1,55 +1,27 @@
-package bsep.bsep.model;
+package bsep.bsep.dto;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import bsep.bsep.model.Certificate;
 
-@Entity
-@Table(name="certificate")
-public class Certificate {
+public class CertificateDTO {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "certificateIdSeqGen")
-	@SequenceGenerator(name = "certificateIdSeqGen", sequenceName = "certificateIdSeq", initialValue = 1, allocationSize = 1)
-	@Column(name = "id", unique = true, nullable = false)
 	private Long id;
-	
-	@Column(name = "serialNumber", unique = true, nullable = false)
 	private String serialNumber;
-	
-	@Column(name = "signatureAlgorithmId", unique = false, nullable = false)
 	private String signatureAlgorithmId;
-	
-	@Column(name = "version", unique = false, nullable = false)
 	private String version;
-
-	@Column(name = "start", unique = false, nullable = false)
 	private LocalDateTime start;
-
-	@Column(name = "end", unique = false, nullable = false)
 	private LocalDateTime end;
-
-	@Column(name = "subjectId", unique = false, nullable = false)
 	private Long subjectId;
-
-	@Column(name = "issuerId", unique = false, nullable = false)
 	private Long issuerId;
+	private boolean isExpired;
 	
-	@Column(name="isExpired", unique=false, nullable=false)
-    private boolean isExpired;
-
-	public Certificate() {
-		super();
+	public CertificateDTO() {
+		
 	}
 
-	public Certificate(Long id, String serialNumber, String signatureAlgorithmId, String version, LocalDateTime start,
-			LocalDateTime end, Long subjectId, Long issuerId, boolean isExpired) {
+	public CertificateDTO(Long id, String serialNumber, String signatureAlgorithmId, String version,
+			LocalDateTime start, LocalDateTime end, Long subjectId, Long issuerId, boolean isExpired) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
@@ -61,8 +33,20 @@ public class Certificate {
 		this.issuerId = issuerId;
 		this.isExpired = isExpired;
 	}
-
-
+	
+	public CertificateDTO(Certificate certificate)
+	{
+		this.id = certificate.getId();
+		this.serialNumber = certificate.getSerialNumber();
+		this.signatureAlgorithmId = certificate.getSerialNumber();
+		this.version = certificate.getVersion();
+		this.start = certificate.getStart();
+		this.end = certificate.getEnd();
+		this.subjectId = certificate.getSubjectId();
+		this.issuerId = certificate.getIssuerId();
+		this.isExpired = certificate.isExpired();
+		
+	}
 
 	public Long getId() {
 		return id;
@@ -135,6 +119,8 @@ public class Certificate {
 	public void setExpired(boolean isExpired) {
 		this.isExpired = isExpired;
 	}
+	
+	
 	
 	
 }
