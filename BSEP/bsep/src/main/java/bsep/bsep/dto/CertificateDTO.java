@@ -15,13 +15,14 @@ public class CertificateDTO {
 	private Long subjectId;
 	private Long issuerId;
 	private boolean isExpired;
-	
+	private String alias;
+
 	public CertificateDTO() {
-		
+
 	}
 
 	public CertificateDTO(Long id, String serialNumber, String signatureAlgorithmId, String version,
-			LocalDateTime start, LocalDateTime end, Long subjectId, Long issuerId, boolean isExpired) {
+			LocalDateTime start, LocalDateTime end, Long subjectId, Long issuerId, boolean isExpired, String alias) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
@@ -32,10 +33,10 @@ public class CertificateDTO {
 		this.subjectId = subjectId;
 		this.issuerId = issuerId;
 		this.isExpired = isExpired;
+		this.alias = alias;
 	}
-	
-	public CertificateDTO(Certificate certificate)
-	{
+
+	public CertificateDTO(Certificate certificate) {
 		this.id = certificate.getId();
 		this.serialNumber = certificate.getSerialNumber();
 		this.signatureAlgorithmId = certificate.getSerialNumber();
@@ -45,7 +46,7 @@ public class CertificateDTO {
 		this.subjectId = certificate.getSubjectId();
 		this.issuerId = certificate.getIssuerId();
 		this.isExpired = certificate.isExpired();
-		
+
 	}
 
 	public Long getId() {
@@ -119,8 +120,13 @@ public class CertificateDTO {
 	public void setExpired(boolean isExpired) {
 		this.isExpired = isExpired;
 	}
-	
-	
-	
-	
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
 }

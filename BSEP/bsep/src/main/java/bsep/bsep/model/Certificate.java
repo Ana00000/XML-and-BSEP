@@ -11,7 +11,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="certificate")
+@Table(name = "certificate")
 public class Certificate {
 
 	@Id
@@ -19,13 +19,13 @@ public class Certificate {
 	@SequenceGenerator(name = "certificateIdSeqGen", sequenceName = "certificateIdSeq", initialValue = 1, allocationSize = 1)
 	@Column(name = "id", unique = true, nullable = false)
 	private Long id;
-	
+
 	@Column(name = "serialNumber", unique = true, nullable = false)
 	private String serialNumber;
-	
+
 	@Column(name = "signatureAlgorithmId", unique = false, nullable = false)
 	private String signatureAlgorithmId;
-	
+
 	@Column(name = "version", unique = false, nullable = false)
 	private String version;
 
@@ -40,16 +40,19 @@ public class Certificate {
 
 	@Column(name = "issuerId", unique = false, nullable = false)
 	private Long issuerId;
-	
-	@Column(name="isExpired", unique=false, nullable=false)
-    private boolean isExpired;
+
+	@Column(name = "isExpired", unique = false, nullable = false)
+	private boolean isExpired;
+
+	@Column(name = "alias", unique = true, nullable = false)
+	private String alias;
 
 	public Certificate() {
 		super();
 	}
 
 	public Certificate(Long id, String serialNumber, String signatureAlgorithmId, String version, LocalDateTime start,
-			LocalDateTime end, Long subjectId, Long issuerId, boolean isExpired) {
+			LocalDateTime end, Long subjectId, Long issuerId, boolean isExpired, String alias) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
@@ -60,9 +63,8 @@ public class Certificate {
 		this.subjectId = subjectId;
 		this.issuerId = issuerId;
 		this.isExpired = isExpired;
+		this.alias = alias;
 	}
-
-
 
 	public Long getId() {
 		return id;
@@ -135,6 +137,13 @@ public class Certificate {
 	public void setExpired(boolean isExpired) {
 		this.isExpired = isExpired;
 	}
-	
-	
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
 }

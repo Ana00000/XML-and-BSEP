@@ -14,12 +14,13 @@ public class Issuer {
 
 	public Issuer() {
 	}
+	
 
-	public Issuer(PrivateKey privateKey, X500Name x500name, String serialNumber) {
+	public Issuer(PrivateKey privateKey, X500Name x500name) {
 		super();
 		this.privateKey = privateKey;
 		this.x500name = x500name;
-		this.serialNumber = serialNumber;
+		
 	}
 
 	public PrivateKey getPrivateKey() {
