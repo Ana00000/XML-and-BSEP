@@ -19,7 +19,12 @@ public class Certificate {
 	@SequenceGenerator(name = "certificateIdSeqGen", sequenceName = "certificateIdSeq", initialValue = 1, allocationSize = 1)
 	@Column(name = "id", unique = true, nullable = false)
 	private Long id;
-
+	
+	@Column(name = "serialNumber", unique = true, nullable = false)
+	private String serialNumber;
+	
+	@Column(name = "signatureAlgorithmId", unique = false, nullable = false)
+	private String signatureAlgorithmId;
 	@Column(name = "version", unique = false, nullable = false)
 	private String version;
 
@@ -28,26 +33,28 @@ public class Certificate {
 
 	@Column(name = "end", unique = false, nullable = false)
 	private LocalDateTime end;
-/*
-	@Column(name = "subject", unique = false, nullable = false)
-	private Subject subject;
 
-	@Column(name = "issuer", unique = false, nullable = false)
-	private Issuer issuer;
-*/
+	@Column(name = "subjectId", unique = false, nullable = false)
+	private Long subjectId;
+
+	@Column(name = "issuerId", unique = false, nullable = false)
+	private Long issuerId;
+
 	public Certificate() {
 		super();
 	}
 
-	public Certificate(Long id, String version, LocalDateTime start, LocalDateTime end, Subject subject,
-			Issuer issuer) {
+	public Certificate(Long id, String serialNumber, String signatureAlgorithmId, String version, LocalDateTime start,
+			LocalDateTime end, Long subjectId, Long issuerId) {
 		super();
 		this.id = id;
+		this.serialNumber = serialNumber;
+		this.signatureAlgorithmId = signatureAlgorithmId;
 		this.version = version;
 		this.start = start;
 		this.end = end;
-		//this.subject = subject;
-		//this.issuer = issuer;
+		this.subjectId = subjectId;
+		this.issuerId = issuerId;
 	}
 
 	public Long getId() {
@@ -56,6 +63,22 @@ public class Certificate {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+
+	public String getSignatureAlgorithmId() {
+		return signatureAlgorithmId;
+	}
+
+	public void setSignatureAlgorithmId(String signatureAlgorithmId) {
+		this.signatureAlgorithmId = signatureAlgorithmId;
 	}
 
 	public String getVersion() {
@@ -81,33 +104,20 @@ public class Certificate {
 	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
-/*
-	public Subject getSubject() {
-		return subject;
+
+	public Long getSubjectId() {
+		return subjectId;
 	}
 
-	public void setSubject(Subject subject) {
-		this.subject = subject;
+	public void setSubjectId(Long subjectId) {
+		this.subjectId = subjectId;
 	}
 
-	public Issuer getIssuer() {
-		return issuer;
+	public Long getIssuerId() {
+		return issuerId;
 	}
 
-	public void setIssuer(Issuer issuer) {
-		this.issuer = issuer;
+	public void setIssuerId(Long issuerId) {
+		this.issuerId = issuerId;
 	}
-*/
-	@Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return super.hashCode();
-	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
-	}
-
 }
