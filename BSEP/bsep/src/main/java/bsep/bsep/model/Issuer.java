@@ -1,10 +1,11 @@
 package bsep.bsep.model;
 
+
 import java.security.PrivateKey;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
-public class Issuer {
+public class Issuer extends Users{
 	
 	private PrivateKey privateKey;
 

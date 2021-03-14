@@ -1,11 +1,12 @@
 package bsep.bsep.model;
 
+
 public class Address extends Location{
 	private String streetName;
 	private String streetNumber;
 
 	public Address() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public Address(String streetName, String streetNumber) {

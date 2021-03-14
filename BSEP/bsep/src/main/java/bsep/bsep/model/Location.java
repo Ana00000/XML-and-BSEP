@@ -1,6 +1,9 @@
 package bsep.bsep.model;
 
-public class Location  {
+import javax.persistence.Embeddable;
+
+@Embeddable
+public class Location{
 	private int postalCode;
 	private String city;
 	private String state;

@@ -1,21 +1,25 @@
 package bsep.bsep.model;
 
 public class IntermediateCA {
-	
-	private Long id;	
+
+	private Long id;
 	private String organization;
 	private String serialNumber;
 	private String commonName;
-	private String category;
+	private CategoryType category;
 	private Address companyAddress;
 	private Location incLocation;
+	private String organizationEmail;
+	private String organizationalUnitName;
+	private boolean isValid;
 
 	public IntermediateCA() {
 
 	}
 
-	public IntermediateCA(Long id, String organization, String serialNumber, String commonName, String category,
-			Address companyAddress, Location incLocation) {
+	public IntermediateCA(Long id, String organization, String serialNumber, String commonName, CategoryType category,
+			Address companyAddress, Location incLocation, String organizationEmail, String organizationalUnitName,
+			boolean isValid) {
 		super();
 		this.id = id;
 		this.organization = organization;
@@ -24,6 +28,9 @@ public class IntermediateCA {
 		this.category = category;
 		this.companyAddress = companyAddress;
 		this.incLocation = incLocation;
+		this.organizationEmail = organizationEmail;
+		this.organizationalUnitName = organizationalUnitName;
+		this.isValid = isValid;
 	}
 
 	public Long getId() {
@@ -58,14 +65,6 @@ public class IntermediateCA {
 		this.commonName = commonName;
 	}
 
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
 	public Address getCompanyAddress() {
 		return companyAddress;
 	}
@@ -81,4 +80,37 @@ public class IntermediateCA {
 	public void setIncLocation(Location incLocation) {
 		this.incLocation = incLocation;
 	}
+
+	public String getOrganizationEmail() {
+		return organizationEmail;
+	}
+
+	public void setOrganizationEmail(String organizationEmail) {
+		this.organizationEmail = organizationEmail;
+	}
+
+	public String getOrganizationalUnitName() {
+		return organizationalUnitName;
+	}
+
+	public void setOrganizationalUnitName(String organizationalUnitName) {
+		this.organizationalUnitName = organizationalUnitName;
+	}
+
+	public void setCategory(CategoryType category) {
+		this.category = category;
+	}
+
+	public CategoryType getCategory() {
+		return category;
+	}
+
+	public boolean isValid() {
+		return isValid;
+	}
+
+	public void setValid(boolean isValid) {
+		this.isValid = isValid;
+	}
+
 }

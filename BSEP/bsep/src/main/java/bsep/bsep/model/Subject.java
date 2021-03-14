@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
-public class Subject {
+public class Subject extends Users{
 
 	private PublicKey publicKey;
 
@@ -13,21 +13,21 @@ public class Subject {
 
 	private String serialNumber;
 
-	private LocalDateTime start;
+	private LocalDateTime startDate;
 
-	private LocalDateTime end;
+	private LocalDateTime endDate;
 
 	public Subject() {
 	}
 
-	public Subject(PublicKey publicKey, X500Name x500name, String serialNumber, LocalDateTime start,
-			LocalDateTime end) {
+	public Subject(PublicKey publicKey, X500Name x500name, String serialNumber, LocalDateTime startDate,
+			LocalDateTime endDate) {
 		super();
 		this.publicKey = publicKey;
 		this.x500name = x500name;
 		this.serialNumber = serialNumber;
-		this.start = start;
-		this.end = end;
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 
 	public PublicKey getPublicKey() {
@@ -54,19 +54,19 @@ public class Subject {
 		this.serialNumber = serialNumber;
 	}
 
-	public LocalDateTime getStart() {
-		return start;
+	public LocalDateTime getStartDate() {
+		return startDate;
 	}
 
-	public void setStart(LocalDateTime start) {
-		this.start = start;
+	public void setStartDate(LocalDateTime startDate) {
+		this.startDate = startDate;
 	}
 
-	public LocalDateTime getEnd() {
-		return end;
+	public LocalDateTime getEndDate() {
+		return endDate;
 	}
 
-	public void setEnd(LocalDateTime end) {
-		this.end = end;
+	public void setEndDate(LocalDateTime endDate) {
+		this.endDate = endDate;
 	}
 }
