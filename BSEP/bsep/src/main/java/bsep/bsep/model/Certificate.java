@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import bsep.bsep.dto.CertificateDTO;
+
 @Entity
 @Table(name = "certificate")
 public class Certificate {
@@ -66,7 +68,20 @@ public class Certificate {
 		this.isExpired = isExpired;
 		this.alias = alias;
 	}
-
+	
+	public Certificate(CertificateDTO certificateDTO) {
+		this.id = certificateDTO.getId();
+		this.serialNumber = certificateDTO.getSerialNumber();
+		this.signatureAlgorithmId = certificateDTO.getSignatureAlgorithmId();
+		this.version = certificateDTO.getVersion();
+		this.startDate = certificateDTO.getStartDate();
+		this.endDate = certificateDTO.getEndDate();
+		this.subjectId = certificateDTO.getSubjectId();
+		this.issuerId = certificateDTO.getIssuerId();
+		this.isExpired = certificateDTO.isExpired();
+		this.alias = certificateDTO.getAlias();
+    }
+	
 	public Long getId() {
 		return id;
 	}

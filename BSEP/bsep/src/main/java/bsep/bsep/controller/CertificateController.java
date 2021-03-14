@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import bsep.bsep.dto.CertificateDTO;
@@ -31,6 +33,16 @@ public class CertificateController {
 	public ResponseEntity<List<CertificateDTO>> getAllCertificates() {
 
 		return new ResponseEntity<>(getAllCertificatesDTO(), HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/create", consumes = "application/json")
+	public ResponseEntity<CertificateDTO> createCertificate(@RequestBody CertificateDTO certificateDTO) {
+		try {
+			certificateService.save(new Certificate(certificateDTO));
+			return new ResponseEntity<>(certificateDTO, HttpStatus.CREATED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	private List<CertificateDTO> getAllCertificatesDTO() {
