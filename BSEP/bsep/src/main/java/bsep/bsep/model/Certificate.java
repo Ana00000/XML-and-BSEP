@@ -1,7 +1,6 @@
 package bsep.bsep.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,9 +36,9 @@ public class Certificate {
 
 	@Column(name = "endDate", unique = false, nullable = false)
 	private LocalDate endDate;
-	
-	@Column(name = "type", unique = false, nullable = false)
-	private String type;	
+
+	@Column(name = "certificateType", unique = false, nullable = false)
+	private String certificateType;
 
 	@Column(name = "subject", unique = false, nullable = false)
 	private String subject;
@@ -52,16 +51,16 @@ public class Certificate {
 
 	@Column(name = "alias", unique = true, nullable = false)
 	private String alias;
-	
+
 	@Column(name = "keyStoreFileName", unique = true, nullable = false)
 	private String keyStoreFileName;
 
 	public Certificate() {
 		super();
 	}
-	
+
 	public Certificate(Long id, String serialNumber, String signatureAlgorithmName, String version, LocalDate startDate,
-			LocalDate endDate, String type, String subject, String issuer, boolean isExpired, String alias,
+			LocalDate endDate, String certificateType, String subject, String issuer, boolean isExpired, String alias,
 			String keyStoreFileName) {
 		super();
 		this.id = id;
@@ -70,7 +69,7 @@ public class Certificate {
 		this.version = version;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.type = type;
+		this.certificateType = certificateType;
 		this.subject = subject;
 		this.issuer = issuer;
 		this.isExpired = isExpired;
@@ -89,10 +88,10 @@ public class Certificate {
 		this.issuer = certificateDTO.getIssuer();
 		this.isExpired = certificateDTO.isExpired();
 		this.alias = certificateDTO.getAlias();
-		this.type = certificateDTO.getType();
+		this.certificateType = certificateDTO.getType();
 		this.keyStoreFileName = certificateDTO.getKeyStoreFileName();
-    }
-	
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -173,12 +172,12 @@ public class Certificate {
 		this.alias = alias;
 	}
 
-	public String getType() {
-		return type;
+	public String getCertificateType() {
+		return certificateType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setCertificateType(String certificateType) {
+		this.certificateType = certificateType;
 	}
 
 	public String getKeyStoreFileName() {
@@ -188,5 +187,5 @@ public class Certificate {
 	public void setKeyStoreFileName(String keyStoreFileName) {
 		this.keyStoreFileName = keyStoreFileName;
 	}
-	
+
 }

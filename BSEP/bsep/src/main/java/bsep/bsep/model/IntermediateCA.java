@@ -1,5 +1,6 @@
 package bsep.bsep.model;
 
+
 public class IntermediateCA {
 
 	private Long id;

@@ -1,6 +1,7 @@
 package bsep.bsep.certificates;
 
 import java.math.BigInteger;
+import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -11,6 +12,7 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -23,6 +25,8 @@ public class CertificateGenerator {
 	
 	public X509Certificate generateCertificate(Subject subject, Issuer issuer) {
 		try {
+			
+            Security.addProvider(new BouncyCastleProvider());
 			//Posto klasa za generisanje sertifikata ne moze da primi direktno privatni kljuc pravi se builder za objekat
 			//Ovaj objekat sadrzi privatni kljuc izdavaoca sertifikata i koristiti se za potpisivanje sertifikata
 			//Parametar koji se prosledjuje je algoritam koji se koristi za potpisivanje sertifiakta
@@ -35,7 +39,7 @@ public class CertificateGenerator {
 
 			//Postavljaju se podaci za generisanje sertifiakta
 			X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(issuer.getX500name(),
-					new BigInteger(subject.getSerialNumber() + " " + issuer.getSerialNumber()),
+					new BigInteger(subject.getSerialNumber().trim()),
 					Date.from(subject.getStartDate().atZone(ZoneId.systemDefault()).toInstant()),
 					Date.from(subject.getEndDate().atZone(ZoneId.systemDefault()).toInstant()),
 					subject.getX500name(),

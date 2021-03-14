@@ -1,7 +1,6 @@
 package bsep.bsep.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import bsep.bsep.model.Certificate;
 
@@ -52,7 +51,7 @@ public class CertificateDTO {
 		this.subject = certificate.getSubject();
 		this.issuer = certificate.getIssuer();
 		this.isExpired = certificate.isExpired();
-		this.type = certificate.getType();
+		this.type = certificate.getCertificateType();
 		this.keyStoreFileName = certificate.getKeyStoreFileName();
 	}
 

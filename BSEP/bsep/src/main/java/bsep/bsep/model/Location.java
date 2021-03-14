@@ -10,7 +10,6 @@ public class Location{
 	private String country;
 	    
 	public Location() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public Location(int postalCode, String city, String state, String country) {
