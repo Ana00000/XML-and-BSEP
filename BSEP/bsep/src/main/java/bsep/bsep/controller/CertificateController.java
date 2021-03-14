@@ -1,14 +1,20 @@
 package bsep.bsep.controller;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.security.cert.X509Certificate;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import bsep.bsep.certificates.CertificateGenerator;
 import bsep.bsep.dto.CertificateDTO;
 import bsep.bsep.model.Certificate;
 import bsep.bsep.model.IntermediateCA;
@@ -59,14 +66,55 @@ public class CertificateController {
 		return certificatesDTO;
 	}
 
-	@PostMapping(value = "/create", consumes = "application/json")
+	@PostMapping(value = "/createCertificate", consumes = "application/json")
 	public ResponseEntity<CertificateDTO> createCertificate(@RequestBody CertificateDTO certificateDTO) {
+		IntermediateCA intermediateCA = new IntermediateCA();
 		try {
-			certificateService.save(new Certificate(certificateDTO));
+			Subject subject = generateSubject(intermediateCA);
+			KeyPair keyPairIssuer = generateKeyPair();
+            Issuer issuer = generateIssuer(keyPairIssuer.getPrivate(),intermediateCA);
+
+            //Generise se sertifikat za subjekta, potpisan od strane issuer-a
+            CertificateGenerator cg = new CertificateGenerator();
+            X509Certificate cert = cg.generateCertificate(subject, issuer);
+			
+            KeyStore keyStore = KeyStore.getInstance("JKS", "SUN");
+            
+            String password = intermediateCA.getKeyStorePassword();
+            String fileName = intermediateCA.getKeyStoreName().trim();
+            String alias = intermediateCA.getAlias();
+            
+            writingCertificateInFile(keyPairIssuer,intermediateCA,keyStore ,cert);
+            
+        	Certificate certificate = new Certificate();
+        	certificate.setVersion(String.valueOf(cert.getVersion()));
+        	certificate.setAlias(intermediateCA.getAlias());
+        	certificate.setSerialNumber(cert.getSerialNumber().toString());
+        	certificate.setIssuer(cert.getIssuerDN().toString());
+        	certificate.setSubject(cert.getSubjectDN().toString());
+        	certificate.setType(cert.getType());
+        	certificate.setSignatureAlgorithmName(cert.getSigAlgName());
+        	certificate.setEndDate(LocalDate.ofInstant(cert.getNotAfter().toInstant(), ZoneId.systemDefault()));
+        	certificate.setKeyStoreFileName(fileName);
+        	certificate.setExpired(false);
+		
+			certificateService.save(certificate);
 			return new ResponseEntity<>(certificateDTO, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
+	}
+
+	private void writingCertificateInFile(KeyPair keyPair,IntermediateCA intermediateCA, KeyStore keyStore, java.security.cert.Certificate cert) throws FileNotFoundException {
+		String password = intermediateCA.getKeyStorePassword();
+		String fileName = intermediateCA.getKeyStoreName().trim();
+		String alias = intermediateCA.getAlias();
+		BufferedInputStream in = new BufferedInputStream(new FileInputStream(fileName+".jks"));
+		/*keyStore.load(in, password.toCharArray());
+		keyStore.setCertificateEntry(alias, cert);
+		keyStore.setKeyEntry(alias, keyPair.getPrivate(), password.toCharArray(), new Certificate[] {cert});
+		keyStore.store(new FileOutputStream(fileName+".jks"), password.toCharArray());
+		*/
 	}
 
 	private Issuer generateIssuer(PrivateKey issuerKey, IntermediateCA intermediateCA) {

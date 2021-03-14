@@ -7,30 +7,36 @@ public class IntermediateCA {
 	private String serialNumber;
 	private String commonName;
 	private CategoryType category;
+	private String alias;
 	private Address companyAddress;
 	private Location incLocation;
 	private String organizationEmail;
 	private String organizationalUnitName;
 	private boolean isValid;
+	private String keyStoreName;
+	private String keyStorePassword;
 
 	public IntermediateCA() {
 
 	}
 
 	public IntermediateCA(Long id, String organization, String serialNumber, String commonName, CategoryType category,
-			Address companyAddress, Location incLocation, String organizationEmail, String organizationalUnitName,
-			boolean isValid) {
+			String alias, Address companyAddress, Location incLocation, String organizationEmail,
+			String organizationalUnitName, boolean isValid, String keyStoreName, String keyStorePassword) {
 		super();
 		this.id = id;
 		this.organization = organization;
 		this.serialNumber = serialNumber;
 		this.commonName = commonName;
 		this.category = category;
+		this.alias = alias;
 		this.companyAddress = companyAddress;
 		this.incLocation = incLocation;
 		this.organizationEmail = organizationEmail;
 		this.organizationalUnitName = organizationalUnitName;
 		this.isValid = isValid;
+		this.keyStoreName = keyStoreName;
+		this.keyStorePassword = keyStorePassword;
 	}
 
 	public Long getId() {
@@ -113,4 +119,28 @@ public class IntermediateCA {
 		this.isValid = isValid;
 	}
 
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
+	public String getKeyStoreName() {
+		return keyStoreName;
+	}
+
+	public void setKeyStoreName(String keyStoreName) {
+		this.keyStoreName = keyStoreName;
+	}
+
+	public String getKeyStorePassword() {
+		return keyStorePassword;
+	}
+
+	public void setKeyStorePassword(String keyStorePassword) {
+		this.keyStorePassword = keyStorePassword;
+	}
+	
 }

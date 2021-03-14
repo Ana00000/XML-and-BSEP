@@ -1,5 +1,6 @@
 package bsep.bsep.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -25,61 +26,71 @@ public class Certificate {
 	@Column(name = "serialNumber", unique = true, nullable = false)
 	private String serialNumber;
 
-	@Column(name = "signatureAlgorithmId", unique = false, nullable = false)
-	private String signatureAlgorithmId;
+	@Column(name = "signatureAlgorithmName", unique = false, nullable = false)
+	private String signatureAlgorithmName;
 
 	@Column(name = "version", unique = false, nullable = false)
 	private String version;
 
 	@Column(name = "startDate", unique = false, nullable = false)
-	private LocalDateTime startDate;
+	private LocalDate startDate;
 
 	@Column(name = "endDate", unique = false, nullable = false)
-	private LocalDateTime endDate;
+	private LocalDate endDate;
+	
+	@Column(name = "type", unique = false, nullable = false)
+	private String type;	
 
-	@Column(name = "subjectId", unique = false, nullable = false)
-	private Long subjectId;
+	@Column(name = "subject", unique = false, nullable = false)
+	private String subject;
 
-	@Column(name = "issuerId", unique = false, nullable = false)
-	private Long issuerId;
+	@Column(name = "issuer", unique = false, nullable = false)
+	private String issuer;
 
 	@Column(name = "isExpired", unique = false, nullable = false)
 	private boolean isExpired;
 
 	@Column(name = "alias", unique = true, nullable = false)
 	private String alias;
+	
+	@Column(name = "keyStoreFileName", unique = true, nullable = false)
+	private String keyStoreFileName;
 
 	public Certificate() {
 		super();
 	}
-
-	public Certificate(Long id, String serialNumber, String signatureAlgorithmId, String version,
-			LocalDateTime startDate, LocalDateTime endDate, Long subjectId, Long issuerId, boolean isExpired,
-			String alias) {
+	
+	public Certificate(Long id, String serialNumber, String signatureAlgorithmName, String version, LocalDate startDate,
+			LocalDate endDate, String type, String subject, String issuer, boolean isExpired, String alias,
+			String keyStoreFileName) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
-		this.signatureAlgorithmId = signatureAlgorithmId;
+		this.signatureAlgorithmName = signatureAlgorithmName;
 		this.version = version;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.subjectId = subjectId;
-		this.issuerId = issuerId;
+		this.type = type;
+		this.subject = subject;
+		this.issuer = issuer;
 		this.isExpired = isExpired;
 		this.alias = alias;
+		this.keyStoreFileName = keyStoreFileName;
 	}
-	
+
 	public Certificate(CertificateDTO certificateDTO) {
 		this.id = certificateDTO.getId();
 		this.serialNumber = certificateDTO.getSerialNumber();
-		this.signatureAlgorithmId = certificateDTO.getSignatureAlgorithmId();
+		this.signatureAlgorithmName = certificateDTO.getSignatureAlgorithmName();
 		this.version = certificateDTO.getVersion();
 		this.startDate = certificateDTO.getStartDate();
 		this.endDate = certificateDTO.getEndDate();
-		this.subjectId = certificateDTO.getSubjectId();
-		this.issuerId = certificateDTO.getIssuerId();
+		this.subject = certificateDTO.getSubject();
+		this.issuer = certificateDTO.getIssuer();
 		this.isExpired = certificateDTO.isExpired();
 		this.alias = certificateDTO.getAlias();
+		this.type = certificateDTO.getType();
+		this.keyStoreFileName = certificateDTO.getKeyStoreFileName();
     }
 	
 	public Long getId() {
@@ -98,12 +109,12 @@ public class Certificate {
 		this.serialNumber = serialNumber;
 	}
 
-	public String getSignatureAlgorithmId() {
-		return signatureAlgorithmId;
+	public String getSignatureAlgorithmName() {
+		return signatureAlgorithmName;
 	}
 
-	public void setSignatureAlgorithmId(String signatureAlgorithmId) {
-		this.signatureAlgorithmId = signatureAlgorithmId;
+	public void setSignatureAlgorithmName(String signatureAlgorithmName) {
+		this.signatureAlgorithmName = signatureAlgorithmName;
 	}
 
 	public String getVersion() {
@@ -114,36 +125,36 @@ public class Certificate {
 		this.version = version;
 	}
 
-	public LocalDateTime getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(LocalDateTime startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 
-	public LocalDateTime getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(LocalDateTime endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 
-	public Long getSubjectId() {
-		return subjectId;
+	public String getSubject() {
+		return subject;
 	}
 
-	public void setSubjectId(Long subjectId) {
-		this.subjectId = subjectId;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
-	public Long getIssuerId() {
-		return issuerId;
+	public String getIssuer() {
+		return issuer;
 	}
 
-	public void setIssuerId(Long issuerId) {
-		this.issuerId = issuerId;
+	public void setIssuer(String issuer) {
+		this.issuer = issuer;
 	}
 
 	public boolean isExpired() {
@@ -162,4 +173,20 @@ public class Certificate {
 		this.alias = alias;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getKeyStoreFileName() {
+		return keyStoreFileName;
+	}
+
+	public void setKeyStoreFileName(String keyStoreFileName) {
+		this.keyStoreFileName = keyStoreFileName;
+	}
+	
 }

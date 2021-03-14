@@ -1,5 +1,6 @@
 package bsep.bsep.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import bsep.bsep.model.Certificate;
@@ -8,45 +9,51 @@ public class CertificateDTO {
 
 	private Long id;
 	private String serialNumber;
-	private String signatureAlgorithmId;
+	private String signatureAlgorithmName;
 	private String version;
-	private LocalDateTime startDate;
-	private LocalDateTime endDate;
-	private Long subjectId;
-	private Long issuerId;
+	private LocalDate startDate;
+	private LocalDate endDate;
+	private String subject;
+	private String issuer;
 	private boolean isExpired;
 	private String alias;
+	private String type;
+	private String keyStoreFileName;
 
 	public CertificateDTO() {
 
 	}
 
-	public CertificateDTO(Long id, String serialNumber, String signatureAlgorithmId, String version,
-			LocalDateTime startDate, LocalDateTime endDate, Long subjectId, Long issuerId, boolean isExpired, String alias) {
+	public CertificateDTO(Long id, String serialNumber, String signatureAlgorithmName, String version,
+			LocalDate startDate, LocalDate endDate, String subject, String issuer, boolean isExpired, String alias,
+			String type, String keyStoreFileName) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
-		this.signatureAlgorithmId = signatureAlgorithmId;
+		this.signatureAlgorithmName = signatureAlgorithmName;
 		this.version = version;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.subjectId = subjectId;
-		this.issuerId = issuerId;
+		this.subject = subject;
+		this.issuer = issuer;
 		this.isExpired = isExpired;
 		this.alias = alias;
+		this.type = type;
+		this.keyStoreFileName = keyStoreFileName;
 	}
 
 	public CertificateDTO(Certificate certificate) {
 		this.id = certificate.getId();
 		this.serialNumber = certificate.getSerialNumber();
-		this.signatureAlgorithmId = certificate.getSerialNumber();
+		this.signatureAlgorithmName = certificate.getSignatureAlgorithmName();
 		this.version = certificate.getVersion();
 		this.startDate = certificate.getStartDate();
 		this.endDate = certificate.getEndDate();
-		this.subjectId = certificate.getSubjectId();
-		this.issuerId = certificate.getIssuerId();
+		this.subject = certificate.getSubject();
+		this.issuer = certificate.getIssuer();
 		this.isExpired = certificate.isExpired();
-
+		this.type = certificate.getType();
+		this.keyStoreFileName = certificate.getKeyStoreFileName();
 	}
 
 	public Long getId() {
@@ -65,12 +72,12 @@ public class CertificateDTO {
 		this.serialNumber = serialNumber;
 	}
 
-	public String getSignatureAlgorithmId() {
-		return signatureAlgorithmId;
+	public String getSignatureAlgorithmName() {
+		return signatureAlgorithmName;
 	}
 
-	public void setSignatureAlgorithmId(String signatureAlgorithmId) {
-		this.signatureAlgorithmId = signatureAlgorithmId;
+	public void setSignatureAlgorithmName(String signatureAlgorithmName) {
+		this.signatureAlgorithmName = signatureAlgorithmName;
 	}
 
 	public String getVersion() {
@@ -81,36 +88,36 @@ public class CertificateDTO {
 		this.version = version;
 	}
 
-	public LocalDateTime getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(LocalDateTime startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 
-	public LocalDateTime getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(LocalDateTime endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 
-	public Long getSubjectId() {
-		return subjectId;
+	public String getSubject() {
+		return subject;
 	}
 
-	public void setSubjectId(Long subjectId) {
-		this.subjectId = subjectId;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
-	public Long getIssuerId() {
-		return issuerId;
+	public String getIssuer() {
+		return issuer;
 	}
 
-	public void setIssuerId(Long issuerId) {
-		this.issuerId = issuerId;
+	public void setIssuer(String issuer) {
+		this.issuer = issuer;
 	}
 
 	public boolean isExpired() {
@@ -129,4 +136,20 @@ public class CertificateDTO {
 		this.alias = alias;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getKeyStoreFileName() {
+		return keyStoreFileName;
+	}
+
+	public void setKeyStoreFileName(String keyStoreFileName) {
+		this.keyStoreFileName = keyStoreFileName;
+	}
+	
 }
