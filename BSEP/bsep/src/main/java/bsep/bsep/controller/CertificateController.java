@@ -2,6 +2,7 @@ package bsep.bsep.controller;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -29,8 +30,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
+
 import bsep.bsep.certificates.CertificateGenerator;
 import bsep.bsep.dto.CertificateDTO;
+import bsep.bsep.keystores.KeyStoreWriter;
 import bsep.bsep.model.Certificate;
 import bsep.bsep.model.IntermediateCA;
 import bsep.bsep.model.Issuer;
@@ -108,16 +112,33 @@ public class CertificateController {
 		String password = intermediateCA.getKeyStorePassword();
 		String fileName = intermediateCA.getKeyStoreName().trim();
 		String alias = intermediateCA.getAlias();
-
+		BufferedInputStream in = null;
 		try {
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(fileName + ".jks"));
+			in = new BufferedInputStream(new FileInputStream(fileName + ".jks"));
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		if (in ==null) {
+			KeyStoreWriter ksw = new KeyStoreWriter();
+			char[] pass = password.toCharArray();
+			ksw.saveKeyStore(fileName, pass);
+			try {
+				in = new BufferedInputStream(new FileInputStream(fileName + ".jks"));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+		}
+		try {
 			keyStore.load(in, password.toCharArray());
 			keyStore.setCertificateEntry(alias, cert);
 			keyStore.setKeyEntry(alias, keyPairIssuer.getPrivate(), password.toCharArray(),
 					new X509Certificate[] { cert });
 			keyStore.store(new FileOutputStream(fileName + ".jks"), password.toCharArray());
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+		} catch (Exception e){
+			e.printStackTrace();
+			return;
 		}
 	}
 
