@@ -72,7 +72,11 @@ public class CertificateReader {
 	}
 	
 	public static void main(String[] args) {
+		
 		CertificateReader test = new CertificateReader();
 		test.testIt();
+		
+		//CertificateGenerator certificateGenerator = new CertificateGenerator();
+		// certificateGenerator.generateCertificate(null, null);
 	}
 }

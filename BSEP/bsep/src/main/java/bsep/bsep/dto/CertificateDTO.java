@@ -10,8 +10,8 @@ public class CertificateDTO {
 	private String serialNumber;
 	private String signatureAlgorithmId;
 	private String version;
-	private LocalDateTime start;
-	private LocalDateTime end;
+	private LocalDateTime startDate;
+	private LocalDateTime endDate;
 	private Long subjectId;
 	private Long issuerId;
 	private boolean isExpired;
@@ -22,14 +22,14 @@ public class CertificateDTO {
 	}
 
 	public CertificateDTO(Long id, String serialNumber, String signatureAlgorithmId, String version,
-			LocalDateTime start, LocalDateTime end, Long subjectId, Long issuerId, boolean isExpired, String alias) {
+			LocalDateTime startDate, LocalDateTime endDate, Long subjectId, Long issuerId, boolean isExpired, String alias) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
 		this.signatureAlgorithmId = signatureAlgorithmId;
 		this.version = version;
-		this.start = start;
-		this.end = end;
+		this.startDate = startDate;
+		this.endDate = endDate;
 		this.subjectId = subjectId;
 		this.issuerId = issuerId;
 		this.isExpired = isExpired;
@@ -41,8 +41,8 @@ public class CertificateDTO {
 		this.serialNumber = certificate.getSerialNumber();
 		this.signatureAlgorithmId = certificate.getSerialNumber();
 		this.version = certificate.getVersion();
-		this.start = certificate.getStart();
-		this.end = certificate.getEnd();
+		this.startDate = certificate.getStartDate();
+		this.endDate = certificate.getEndDate();
 		this.subjectId = certificate.getSubjectId();
 		this.issuerId = certificate.getIssuerId();
 		this.isExpired = certificate.isExpired();
@@ -81,20 +81,20 @@ public class CertificateDTO {
 		this.version = version;
 	}
 
-	public LocalDateTime getStart() {
-		return start;
+	public LocalDateTime getStartDate() {
+		return startDate;
 	}
 
-	public void setStart(LocalDateTime start) {
-		this.start = start;
+	public void setStartDate(LocalDateTime startDate) {
+		this.startDate = startDate;
 	}
 
-	public LocalDateTime getEnd() {
-		return end;
+	public LocalDateTime getEndDate() {
+		return endDate;
 	}
 
-	public void setEnd(LocalDateTime end) {
-		this.end = end;
+	public void setEndDate(LocalDateTime endDate) {
+		this.endDate = endDate;
 	}
 
 	public Long getSubjectId() {

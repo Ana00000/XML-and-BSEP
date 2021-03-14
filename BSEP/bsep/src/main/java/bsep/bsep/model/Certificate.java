@@ -29,11 +29,11 @@ public class Certificate {
 	@Column(name = "version", unique = false, nullable = false)
 	private String version;
 
-	@Column(name = "start", unique = false, nullable = false)
-	private LocalDateTime start;
+	@Column(name = "startDate", unique = false, nullable = false)
+	private LocalDateTime startDate;
 
-	@Column(name = "end", unique = false, nullable = false)
-	private LocalDateTime end;
+	@Column(name = "endDate", unique = false, nullable = false)
+	private LocalDateTime endDate;
 
 	@Column(name = "subjectId", unique = false, nullable = false)
 	private Long subjectId;
@@ -51,15 +51,16 @@ public class Certificate {
 		super();
 	}
 
-	public Certificate(Long id, String serialNumber, String signatureAlgorithmId, String version, LocalDateTime start,
-			LocalDateTime end, Long subjectId, Long issuerId, boolean isExpired, String alias) {
+	public Certificate(Long id, String serialNumber, String signatureAlgorithmId, String version,
+			LocalDateTime startDate, LocalDateTime endDate, Long subjectId, Long issuerId, boolean isExpired,
+			String alias) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
 		this.signatureAlgorithmId = signatureAlgorithmId;
 		this.version = version;
-		this.start = start;
-		this.end = end;
+		this.startDate = startDate;
+		this.endDate = endDate;
 		this.subjectId = subjectId;
 		this.issuerId = issuerId;
 		this.isExpired = isExpired;
@@ -98,20 +99,20 @@ public class Certificate {
 		this.version = version;
 	}
 
-	public LocalDateTime getStart() {
-		return start;
+	public LocalDateTime getStartDate() {
+		return startDate;
 	}
 
-	public void setStart(LocalDateTime start) {
-		this.start = start;
+	public void setStartDate(LocalDateTime startDate) {
+		this.startDate = startDate;
 	}
 
-	public LocalDateTime getEnd() {
-		return end;
+	public LocalDateTime getEndDate() {
+		return endDate;
 	}
 
-	public void setEnd(LocalDateTime end) {
-		this.end = end;
+	public void setEndDate(LocalDateTime endDate) {
+		this.endDate = endDate;
 	}
 
 	public Long getSubjectId() {
