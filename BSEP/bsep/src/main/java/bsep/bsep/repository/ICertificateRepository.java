@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import bsep.bsep.model.CertificateData;
 
-@Repository
 public interface ICertificateRepository extends JpaRepository<CertificateData, Long>{
 
 }
