@@ -1,44 +1,16 @@
 package bsep.bsep.controller;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.bouncycastle.asn1.x500.X500NameBuilder;
-import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
-
-import bsep.bsep.certificates.CertificateGenerator;
 import bsep.bsep.dto.CertificateDTO;
-import bsep.bsep.keystores.KeyStoreWriter;
-import bsep.bsep.model.Certificate;
-import bsep.bsep.model.IntermediateCA;
-import bsep.bsep.model.Issuer;
-import bsep.bsep.model.Subject;
 import bsep.bsep.service.CertificateService;
 
 @Controller
@@ -46,31 +18,23 @@ import bsep.bsep.service.CertificateService;
 @RequestMapping(value = "/certificate")
 public class CertificateController {
 
-	private final CertificateService certificateService;
-
+	private CertificateService certificateService;
+	
 	@Autowired
 	public CertificateController(CertificateService certificateService) {
 		this.certificateService = certificateService;
 	}
 
 	@GetMapping(value = "/all")
-	public ResponseEntity<List<CertificateDTO>> getAllCertificates() {
+	public ResponseEntity<List<CertificateDTO>> getAllValidCertificatesDTO() {
 
-		return new ResponseEntity<>(getAllCertificatesDTO(), HttpStatus.OK);
+		return new ResponseEntity<>(certificateService.findAll(), HttpStatus.OK);
 	}
 
-	private List<CertificateDTO> getAllCertificatesDTO() {
-
-		List<CertificateDTO> certificatesDTO = new ArrayList<>();
-		for (Certificate certificate : certificateService.findAll()) {
-			certificatesDTO.add(new CertificateDTO(certificate));
-		}
-
-		return certificatesDTO;
-	}
-
+	
+	/*
 	@PostMapping(value = "/createCertificate", consumes = "application/json")
-	public ResponseEntity<CertificateDTO> createCertificate(@RequestBody IntermediateCA intermediateCA) {
+	public ResponseEntity<CertificateDTO> createCertificate(@RequestBody CertificateDTO certificateDTO) {
 		try {
 			
 			Subject subject = generateSubject(intermediateCA);
@@ -82,14 +46,15 @@ public class CertificateController {
 
 			writingCertificateInFile(keyPairIssuer, intermediateCA, KeyStore.getInstance("JKS", "SUN"), cert);
 			//Certificate certificate = certificateService.save(setCertificate(intermediateCA, cert, intermediateCA.getKeyStoreName().trim()));
-			/*return new ResponseEntity<>(new CertificateDTO(certificate), HttpStatus.CREATED);
-			*/
+			//return new ResponseEntity<>(new CertificateDTO(certificate), HttpStatus.CREATED);
+			
 			return new ResponseEntity<>(new CertificateDTO(), HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 	}
-
+	
+	
 	private Certificate setCertificate(IntermediateCA intermediateCA, X509Certificate cert, String fileName) {
 		Certificate certificate = new Certificate();
 
@@ -141,7 +106,8 @@ public class CertificateController {
 			return;
 		}
 	}
-
+	*/
+	/*
 	private Issuer generateIssuer(PrivateKey issuerKey, IntermediateCA intermediateCA) {
 		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
 		builder.addRDN(BCStyle.CN, intermediateCA.getCommonName());
@@ -149,17 +115,18 @@ public class CertificateController {
 		builder.addRDN(BCStyle.OU, intermediateCA.getOrganizationalUnitName());
 		builder.addRDN(BCStyle.C, intermediateCA.getIncLocation().getCountry());
 		builder.addRDN(BCStyle.E, intermediateCA.getOrganizationEmail());
-		/*
-		 * //UID (USER ID) je ID korisnika builder.addRDN(BCStyle.SURNAME, "Luburic");
-		 * builder.addRDN(BCStyle.GIVENNAME, "Nikola"); builder.addRDN(BCStyle.UID,
-		 * "654321");
-		 */
+		
+		 //UID (USER ID) je ID korisnika builder.addRDN(BCStyle.SURNAME, "Luburic");
+		 //builder.addRDN(BCStyle.GIVENNAME, "Nikola"); builder.addRDN(BCStyle.UID,
+		 //"654321");
+		 
 		// Kreiraju se podaci za issuer-a, sto u ovom slucaju ukljucuje:
 		// - privatni kljuc koji ce se koristiti da potpise sertifikat koji se izdaje
 		// - podatke o vlasniku sertifikata koji izdaje nov sertifikat
 		return new Issuer(issuerKey, builder.build());
 	}
-
+	*/
+	/*
 	private Subject generateSubject(IntermediateCA intermediateCA) {
 
 		KeyPair keyPairSubject = generateKeyPair();
@@ -179,11 +146,11 @@ public class CertificateController {
 		builder.addRDN(BCStyle.OU, intermediateCA.getOrganizationalUnitName());
 		builder.addRDN(BCStyle.C, intermediateCA.getIncLocation().getCountry());
 		builder.addRDN(BCStyle.E, intermediateCA.getOrganizationEmail());
-		/*
-		 * //UID (USER ID) je ID korisnika builder.addRDN(BCStyle.SURNAME, "Luburic");
-		 * builder.addRDN(BCStyle.GIVENNAME, "Nikola"); builder.addRDN(BCStyle.UID,
-		 * "654321");
-		 */
+		
+		 //UID (USER ID) je ID korisnika builder.addRDN(BCStyle.SURNAME, "Luburic");
+		 //builder.addRDN(BCStyle.GIVENNAME, "Nikola"); builder.addRDN(BCStyle.UID,
+		 //"654321");
+		 
 
 		// Kreiraju se podaci za sertifikat, sto ukljucuje:
 		// - javni kljuc koji se vezuje za sertifikat
@@ -194,6 +161,8 @@ public class CertificateController {
 				endDate);
 
 	}
+	*/
+	/*
 
 	private KeyPair generateKeyPair() {
 		try {
@@ -208,5 +177,5 @@ public class CertificateController {
 		}
 		return null;
 	}
-
+	*/
 }

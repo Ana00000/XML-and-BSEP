@@ -1,58 +1,53 @@
 package bsep.bsep.dto;
 
-import java.time.LocalDate;
-
-import bsep.bsep.model.Certificate;
+import bsep.bsep.model.Address;
+import bsep.bsep.model.CertificateStatus;
+import bsep.bsep.model.CertificateType;
 
 public class CertificateDTO {
 
 	private Long id;
 	private String serialNumber;
-	private String signatureAlgorithmName;
+	private String commonName;
+	private String givenName;
+	private String surname;
+	private String organization;
+	private String organizationalUnitName;
+	private String organizationEmail;
+	private String countryCode;
+	private String alias;
 	private String version;
-	private LocalDate startDate;
-	private LocalDate endDate;
+	private String signatureAlgorithmName;
+	private CertificateStatus certificateStatus; // valid, expired, revoked
+	private CertificateType certificateType; // root, intermediate, endentity
 	private String subject;
 	private String issuer;
-	private boolean isExpired;
-	private String alias;
-	private String type;
-	private String keyStoreFileName;
 
 	public CertificateDTO() {
 
 	}
 
-	public CertificateDTO(Long id, String serialNumber, String signatureAlgorithmName, String version,
-			LocalDate startDate, LocalDate endDate, String subject, String issuer, boolean isExpired, String alias,
-			String type, String keyStoreFileName) {
+	public CertificateDTO(Long id, String serialNumber, String commonName, String givenName, String surname,
+			String organization, String organizationalUnitName, String organizationEmail, String countryCode,
+			String alias, String version, String signatureAlgorithmName, CertificateStatus certificateStatus,
+			CertificateType certificateType, String subject, String issuer) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
-		this.signatureAlgorithmName = signatureAlgorithmName;
+		this.commonName = commonName;
+		this.givenName = givenName;
+		this.surname = surname;
+		this.organization = organization;
+		this.organizationalUnitName = organizationalUnitName;
+		this.organizationEmail = organizationEmail;
+		this.countryCode = countryCode;
+		this.alias = alias;
 		this.version = version;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.signatureAlgorithmName = signatureAlgorithmName;
+		this.certificateStatus = certificateStatus;
+		this.certificateType = certificateType;
 		this.subject = subject;
 		this.issuer = issuer;
-		this.isExpired = isExpired;
-		this.alias = alias;
-		this.type = type;
-		this.keyStoreFileName = keyStoreFileName;
-	}
-
-	public CertificateDTO(Certificate certificate) {
-		this.id = certificate.getId();
-		this.serialNumber = certificate.getSerialNumber();
-		this.signatureAlgorithmName = certificate.getSignatureAlgorithmName();
-		this.version = certificate.getVersion();
-		this.startDate = certificate.getStartDate();
-		this.endDate = certificate.getEndDate();
-		this.subject = certificate.getSubject();
-		this.issuer = certificate.getIssuer();
-		this.isExpired = certificate.isExpired();
-		this.type = certificate.getCertificateType();
-		this.keyStoreFileName = certificate.getKeyStoreFileName();
 	}
 
 	public Long getId() {
@@ -71,36 +66,76 @@ public class CertificateDTO {
 		this.serialNumber = serialNumber;
 	}
 
-	public String getSignatureAlgorithmName() {
-		return signatureAlgorithmName;
+	public String getCommonName() {
+		return commonName;
 	}
 
-	public void setSignatureAlgorithmName(String signatureAlgorithmName) {
-		this.signatureAlgorithmName = signatureAlgorithmName;
+	public void setCommonName(String commonName) {
+		this.commonName = commonName;
 	}
 
-	public String getVersion() {
-		return version;
+	public String getGivenName() {
+		return givenName;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
+	public void setGivenName(String givenName) {
+		this.givenName = givenName;
 	}
 
-	public LocalDate getStartDate() {
-		return startDate;
+	public String getSurname() {
+		return surname;
 	}
 
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
+	public void setSurname(String surname) {
+		this.surname = surname;
 	}
 
-	public LocalDate getEndDate() {
-		return endDate;
+	public String getOrganization() {
+		return organization;
 	}
 
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+
+	public String getOrganizationalUnitName() {
+		return organizationalUnitName;
+	}
+
+	public void setOrganizationalUnitName(String organizationalUnitName) {
+		this.organizationalUnitName = organizationalUnitName;
+	}
+
+	public String getOrganizationEmail() {
+		return organizationEmail;
+	}
+
+	public void setOrganizationEmail(String organizationEmail) {
+		this.organizationEmail = organizationEmail;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
+	public CertificateStatus getCertificateStatus() {
+		return certificateStatus;
+	}
+
+	public void setCertificateStatus(CertificateStatus certificateStatus) {
+		this.certificateStatus = certificateStatus;
+	}
+
+	public CertificateType getCertificateType() {
+		return certificateType;
+	}
+
+	public void setCertificateType(CertificateType certificateType) {
+		this.certificateType = certificateType;
 	}
 
 	public String getSubject() {
@@ -119,36 +154,28 @@ public class CertificateDTO {
 		this.issuer = issuer;
 	}
 
-	public boolean isExpired() {
-		return isExpired;
+	public String getVersion() {
+		return version;
 	}
 
-	public void setExpired(boolean isExpired) {
-		this.isExpired = isExpired;
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
-	public String getAlias() {
-		return alias;
+	public String getSignatureAlgorithmName() {
+		return signatureAlgorithmName;
 	}
 
-	public void setAlias(String alias) {
-		this.alias = alias;
+	public void setSignatureAlgorithmName(String signatureAlgorithmName) {
+		this.signatureAlgorithmName = signatureAlgorithmName;
 	}
 
-	public String getType() {
-		return type;
+	public String getCountryCode() {
+		return countryCode;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
-	public String getKeyStoreFileName() {
-		return keyStoreFileName;
-	}
-
-	public void setKeyStoreFileName(String keyStoreFileName) {
-		this.keyStoreFileName = keyStoreFileName;
-	}
-	
 }

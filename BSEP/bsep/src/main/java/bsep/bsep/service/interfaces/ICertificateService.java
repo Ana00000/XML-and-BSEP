@@ -2,13 +2,13 @@ package bsep.bsep.service.interfaces;
 
 import java.util.List;
 
-import bsep.bsep.model.Certificate;
+import bsep.bsep.dto.CertificateDTO;
+import bsep.bsep.model.CertificateData;
 
 public interface ICertificateService {
 	
-	Certificate findOne(Long id);
-	List<Certificate> findAll();
-	Certificate save(Certificate certificate);
+	 CertificateData findOne(Long id);
+	 List<CertificateDTO> findAll();
 	 
 	
 }
