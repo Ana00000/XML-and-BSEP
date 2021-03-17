@@ -7,16 +7,17 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
-
-import bsep.bsep.keystores.KeyStoreWriter;
 
 @Repository
 public class CertificateKeyStoreRepository {
@@ -26,6 +27,11 @@ public class CertificateKeyStoreRepository {
 	private KeyStore ksRoot;
 	private KeyStore ksIntermediate;
 	private KeyStore ksEndEntity;
+	
+	private final String ksRootPath = "selfsigned.jks";
+	private final String ksIntermediatePath = "intermediate.jks";
+	private final String ksEndEntityPath = "endEntity.jks";
+	
 	private char[] password; 
 	
 	private void createNewKeyStore(KeyStore keyStore1, String filename, String password) {
@@ -61,16 +67,18 @@ public class CertificateKeyStoreRepository {
 		
 	}
 	
+	@Autowired
 	public CertificateKeyStoreRepository(Environment env) {
 		try {
+			Security.addProvider(new BouncyCastleProvider());
 			this.env = env;
-			ksRoot = KeyStore.getInstance("JKS", "SUN");
-			ksIntermediate = KeyStore.getInstance("JKS", "SUN");
-			ksEndEntity = KeyStore.getInstance("JKS", "SUN");
+			ksRoot = KeyStore.getInstance("JKS");
+			ksIntermediate = KeyStore.getInstance("JKS");
+			ksEndEntity = KeyStore.getInstance("JKS");
 			password = env.getProperty("server.ssl.key-store-password").toCharArray();
-			//createNewKeyStore(ksRoot,env.getProperty("server.ssl.key-store1"), password.toString());
-			//createNewKeyStore(ksIntermediate,env.getProperty("server.ssl.key-store2"), password.toString());
-			//screateNewKeyStore(ksEndEntity,env.getProperty("server.ssl.key-store"), password.toString());
+			/*createNewKeyStore(ksRoot,env.getProperty("server.ssl.key-store1"), "password");
+			createNewKeyStore(ksIntermediate,env.getProperty("server.ssl.key-store2"), "password");
+			createNewKeyStore(ksEndEntity,env.getProperty("server.ssl.key-store3"),"password");*/
 			loadKeyStore();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -80,9 +88,9 @@ public class CertificateKeyStoreRepository {
 	
 	private void loadKeyStore() throws Exception {
 		System.out.println(password);
-	//	ksRoot.load(new FileInputStream(env.getProperty("server.ssl.key-store1")), password);
-		//ksIntermediate.load(new FileInputStream(env.getProperty("server.ssl.key-store2")), password);
-		ksEndEntity.load(new FileInputStream(env.getProperty("server.ssl.key-store")), password);
+		ksRoot.load(new FileInputStream(ksRootPath), password);
+		ksIntermediate.load(new FileInputStream(ksIntermediatePath), password);
+		ksEndEntity.load(new FileInputStream(ksEndEntityPath), password);
 	}
 	
 	

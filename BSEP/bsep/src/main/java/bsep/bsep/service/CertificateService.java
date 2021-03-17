@@ -75,7 +75,7 @@ public class CertificateService implements ICertificateService {
 	
 	private CertificateDTO setCertificateData(CertificateData certificateData, X509Certificate certificateX509) {
 		
-		CertificateDTO certificateDTO = convertX509ToCertificateData(certificateX509);
+		CertificateDTO certificateDTO = convertX509ToCertificateDTO(certificateX509);
 		
 		certificateDTO.setCertificateType(certificateData.getCertificateType());
 		certificateDTO.setCertificateStatus(certificateData.getCertificateStatus());
@@ -83,7 +83,7 @@ public class CertificateService implements ICertificateService {
 		return certificateDTO;
 	}
 
-	private CertificateDTO convertX509ToCertificateData(X509Certificate certificateX509) {
+	private CertificateDTO convertX509ToCertificateDTO(X509Certificate certificateX509) {
 		CertificateDTO certificateDTO = new CertificateDTO();
 		certificateDTO.setSerialNumber(certificateX509.getSerialNumber().toString());
 

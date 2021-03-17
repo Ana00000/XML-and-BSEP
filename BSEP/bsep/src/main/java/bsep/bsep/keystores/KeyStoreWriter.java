@@ -51,7 +51,7 @@ public class KeyStoreWriter {
 		
 		public void saveKeyStore(String fileName, char[] password) {
 			try {
-				keyStore.store(new FileOutputStream(fileName), password);
+				this.keyStore.store(new FileOutputStream(fileName), password);
 			} catch (KeyStoreException e) {
 				e.printStackTrace();
 			} catch (NoSuchAlgorithmException e) {
@@ -67,7 +67,7 @@ public class KeyStoreWriter {
 		
 		public void write(String alias, PrivateKey privateKey, char[] password, Certificate certificate) {
 			try {
-				keyStore.setKeyEntry(alias, privateKey, password, new Certificate[] {certificate});
+				this.keyStore.setKeyEntry(alias, privateKey, password, new Certificate[] {certificate});
 			} catch (KeyStoreException e) {
 				e.printStackTrace();
 			}
