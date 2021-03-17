@@ -9,5 +9,4 @@ class BsepApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

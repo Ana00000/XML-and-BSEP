@@ -29,7 +29,8 @@ public class CertificateService implements ICertificateService {
 	private CertificateKeyStoreRepository certificateKeyStoreRepository;
 
 	@Autowired
-	public CertificateService(ICertificateRepository certificateRepository, CertificateKeyStoreRepository certificateKeyStoreRepository) {
+	public CertificateService(ICertificateRepository certificateRepository,
+			CertificateKeyStoreRepository certificateKeyStoreRepository) {
 		this.certificateRepository = certificateRepository;
 		this.certificateKeyStoreRepository = certificateKeyStoreRepository;
 	}
@@ -64,7 +65,7 @@ public class CertificateService implements ICertificateService {
 		for (CertificateData certificateData : certificateRepository.findAll()) {
 			if ((certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber()))
 					&& (certificateData.getCertificateStatus() == CertificateStatus.VALID)) {
-				
+
 				// provera da li je povucen/istekao/validan
 				certificatesDTO.add(setCertificateData(certificateData, certificateX509));
 
@@ -72,14 +73,14 @@ public class CertificateService implements ICertificateService {
 
 		}
 	}
-	
+
 	private CertificateDTO setCertificateData(CertificateData certificateData, X509Certificate certificateX509) {
-		
+
 		CertificateDTO certificateDTO = convertX509ToCertificateDTO(certificateX509);
-		
+
 		certificateDTO.setCertificateType(certificateData.getCertificateType());
 		certificateDTO.setCertificateStatus(certificateData.getCertificateStatus());
-		
+
 		return certificateDTO;
 	}
 
@@ -95,14 +96,14 @@ public class CertificateService implements ICertificateService {
 				setCertificateDTOFields(certificateDTO, rdn);
 			}
 
-			//proba ispisa
+			// proba ispisa
 			String[] split1 = certificateX509.getIssuerX500Principal().getName().split(",");
 			String issuerName = split1[0];
 			System.out.println("ISSUER1: " + certificateX509.getIssuerDN().toString());
 			System.out.println("ISSUER2: " + issuerName);
 			certificateDTO.setIssuer(certificateX509.getIssuerDN().toString());
 			certificateDTO.setSubject(certificateX509.getSubjectDN().toString());
-			
+
 			certificateDTO.setVersion(String.valueOf(certificateX509.getVersion()));
 			certificateDTO.setSignatureAlgorithmName(certificateX509.getSigAlgName());
 
@@ -117,9 +118,9 @@ public class CertificateService implements ICertificateService {
 	}
 
 	private void setCertificateDTOFields(CertificateDTO certificateDTO, RDN rdn) {
-		
+
 		for (AttributeTypeAndValue val : rdn.getTypesAndValues()) {
-			
+
 			if (val.getType().equals(BCStyle.CN)) {
 				certificateDTO.setCommonName(val.getValue().toString());
 			} else if (val.getType().equals(BCStyle.GIVENNAME)) {

@@ -1,6 +1,5 @@
 package bsep.bsep.dto;
 
-import bsep.bsep.model.Address;
 import bsep.bsep.model.CertificateStatus;
 import bsep.bsep.model.CertificateType;
 

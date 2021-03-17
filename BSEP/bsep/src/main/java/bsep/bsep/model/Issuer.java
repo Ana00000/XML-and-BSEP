@@ -1,12 +1,11 @@
 package bsep.bsep.model;
 
-
 import java.security.PrivateKey;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
-public class Issuer extends Users{
-	
+public class Issuer extends Users {
+
 	private PrivateKey privateKey;
 
 	private X500Name x500name;
@@ -15,13 +14,12 @@ public class Issuer extends Users{
 
 	public Issuer() {
 	}
-	
 
 	public Issuer(PrivateKey privateKey, X500Name x500name) {
 		super();
 		this.privateKey = privateKey;
 		this.x500name = x500name;
-		
+
 	}
 
 	public PrivateKey getPrivateKey() {
@@ -39,7 +37,7 @@ public class Issuer extends Users{
 	public void setX500name(X500Name x500name) {
 		this.x500name = x500name;
 	}
-	
+
 	public String getSerialNumber() {
 		return serialNumber;
 	}

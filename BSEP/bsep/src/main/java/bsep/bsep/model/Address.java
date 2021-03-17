@@ -1,14 +1,13 @@
 package bsep.bsep.model;
 
-
-public class Address extends Location{
+public class Address extends Location {
 	private String streetName;
 	private String streetNumber;
 
 	public Address() {
-		
+
 	}
-	
+
 	public Address(String streetName, String streetNumber) {
 		super();
 		this.streetName = streetName;
@@ -30,5 +29,5 @@ public class Address extends Location{
 	public void setStreetNumber(String streetNumber) {
 		this.streetNumber = streetNumber;
 	}
-	
+
 }
