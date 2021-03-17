@@ -6,8 +6,11 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.sql.Date;
-import java.time.ZoneId;
 
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -24,7 +27,7 @@ public class CertificateGenerator {
 	public CertificateGenerator() {
 	}
 
-	public X509Certificate generateCertificate(Subject subject, Issuer issuer) {
+	public X509Certificate generateCertificate(Subject subject, Issuer issuer, Boolean isCA, Date expirationDate) {
 		try {
 
 			Security.addProvider(new BouncyCastleProvider());
@@ -42,12 +45,16 @@ public class CertificateGenerator {
 			// potpisivanje sertifikata
 			ContentSigner contentSigner = builder.build(issuer.getPrivateKey());
 
+			Date endDate = Date.valueOf(subject.getEndDate());
+			if (expirationDate != null && endDate.after(expirationDate))
+				endDate = expirationDate;
+
 			// Postavljaju se podaci za generisanje sertifiakta
 			X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(issuer.getX500name(),
-					new BigInteger(subject.getSerialNumber().trim()),
-					Date.from(subject.getStartDate().atZone(ZoneId.systemDefault()).toInstant()),
-					Date.from(subject.getEndDate().atZone(ZoneId.systemDefault()).toInstant()), subject.getX500name(),
-					subject.getPublicKey());
+					new BigInteger(subject.getSerialNumber().trim()), Date.valueOf(subject.getStartDate()), endDate,
+					subject.getX500name(), subject.getPublicKey());
+
+			addOfExtensions(isCA, certGen);
 
 			// Generise se sertifikat
 			X509CertificateHolder certHolder = certGen.build(contentSigner);
@@ -70,7 +77,27 @@ public class CertificateGenerator {
 			e.printStackTrace();
 		} catch (CertificateException e) {
 			e.printStackTrace();
+		} catch (CertIOException e) {
+			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private void addOfExtensions(Boolean isCA, X509v3CertificateBuilder certGen) throws CertIOException {
+		if (isCA) {
+			// The digitalSignature keyUsage purpose indicating to use the subject public
+			// key for verifying digital signatures
+			// that have purposes other than non-repudiation, certificate signature, and CRL
+			// signature.
+			certGen.addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.digitalSignature));
+		} else {
+			// The keyEncipherment keyUsage purpose indicating to use the subject public key
+			// for key transport
+			certGen.addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.dataEncipherment));
+			// The keyAgreement keyUsage purpose indicating to use the subject public key
+			// for key agreement
+			certGen.addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.keyAgreement));
+		}
+		certGen.addExtension(Extension.basicConstraints, true, new BasicConstraints(isCA));
 	}
 }

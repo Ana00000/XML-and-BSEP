@@ -1,7 +1,7 @@
 package bsep.bsep.model;
 
 import java.security.PublicKey;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
@@ -13,15 +13,15 @@ public class Subject extends Users {
 
 	private String serialNumber;
 
-	private LocalDateTime startDate;
+	private LocalDate startDate;
 
-	private LocalDateTime endDate;
+	private LocalDate endDate;
 
 	public Subject() {
 	}
 
-	public Subject(PublicKey publicKey, X500Name x500name, String serialNumber, LocalDateTime startDate,
-			LocalDateTime endDate) {
+	public Subject(PublicKey publicKey, X500Name x500name, String serialNumber, LocalDate startDate,
+			LocalDate endDate) {
 		super();
 		this.publicKey = publicKey;
 		this.x500name = x500name;
@@ -54,19 +54,19 @@ public class Subject extends Users {
 		this.serialNumber = serialNumber;
 	}
 
-	public LocalDateTime getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(LocalDateTime startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 
-	public LocalDateTime getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(LocalDateTime endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 }

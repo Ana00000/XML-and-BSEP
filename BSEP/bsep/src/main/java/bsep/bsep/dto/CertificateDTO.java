@@ -17,8 +17,8 @@ public class CertificateDTO {
 	private String alias;
 	private String version;
 	private String signatureAlgorithmName;
-	private CertificateStatus certificateStatus; // valid, expired, revoked
-	private CertificateType certificateType; // root, intermediate, endentity
+	private CertificateStatus certificateStatus; 
+	private CertificateType certificateType; 
 	private String subject;
 	private String issuer;
 

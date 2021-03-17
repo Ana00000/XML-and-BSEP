@@ -2,11 +2,13 @@ package bsep.bsep.repository;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -73,6 +75,23 @@ public class CertificateKeyStoreRepository {
 		}
 	}
 
+	public void saveKSRoot(X509Certificate certificate, String alias, PrivateKey privateKey) {
+		try {
+			ksRoot.setKeyEntry(alias, privateKey, password, new X509Certificate[] { certificate });
+			ksRoot.store(new FileOutputStream(ksRootPath), password);
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (CertificateException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	// Needs to be checked, is it useful
 	private void createNewKeyStores() {
 		createNewKeyStore(ksRoot, env.getProperty("server.ssl.key-store1"), "password");

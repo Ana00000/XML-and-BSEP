@@ -10,8 +10,6 @@ public class Issuer extends Users {
 
 	private X500Name x500name;
 
-	private String serialNumber;
-
 	public Issuer() {
 	}
 
@@ -36,13 +34,5 @@ public class Issuer extends Users {
 
 	public void setX500name(X500Name x500name) {
 		this.x500name = x500name;
-	}
-
-	public String getSerialNumber() {
-		return serialNumber;
-	}
-
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
 	}
 }

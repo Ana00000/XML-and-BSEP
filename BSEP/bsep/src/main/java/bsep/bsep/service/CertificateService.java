@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import bsep.bsep.dto.CertificateDTO;
 import bsep.bsep.model.CertificateData;
 import bsep.bsep.model.CertificateStatus;
+import bsep.bsep.model.CertificateType;
 import bsep.bsep.repository.CertificateKeyStoreRepository;
 import bsep.bsep.repository.ICertificateRepository;
 import bsep.bsep.service.interfaces.ICertificateService;
@@ -42,9 +43,7 @@ public class CertificateService implements ICertificateService {
 
 	@Override
 	public List<CertificateDTO> findAll() {
-
 		List<CertificateDTO> certificatesDTO = new ArrayList<CertificateDTO>();
-
 		for (X509Certificate certificateX509 : certificateKeyStoreRepository.getCertificates()) {
 			try {
 				// provera za validnost datuma
@@ -52,26 +51,32 @@ public class CertificateService implements ICertificateService {
 			} catch (CertificateExpiredException | CertificateNotYetValidException e) {
 				continue;
 			}
-
 			getAllWithValidStatus(certificatesDTO, certificateX509);
-
 		}
-
 		return certificatesDTO;
 	}
 
-	private void getAllWithValidStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
+	public CertificateData save(String serialNumber) {
+		return certificateRepository.save(convertCertificateInfoDTOToData(serialNumber));
+	}
 
+	private void getAllWithValidStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
 		for (CertificateData certificateData : certificateRepository.findAll()) {
 			if ((certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber()))
 					&& (certificateData.getCertificateStatus() == CertificateStatus.VALID)) {
 
 				// provera da li je povucen/istekao/validan
 				certificatesDTO.add(setCertificateData(certificateData, certificateX509));
-
 			}
-
 		}
+	}
+
+	private CertificateData convertCertificateInfoDTOToData(String serialNumber) {
+		CertificateData certificateData = new CertificateData();
+		certificateData.setSerialNumber(serialNumber);
+		certificateData.setCertificateType(CertificateType.ROOT);
+		certificateData.setCertificateStatus(CertificateStatus.VALID);
+		return certificateData;
 	}
 
 	private CertificateDTO setCertificateData(CertificateData certificateData, X509Certificate certificateX509) {
@@ -84,7 +89,7 @@ public class CertificateService implements ICertificateService {
 		return certificateDTO;
 	}
 
-	private CertificateDTO convertX509ToCertificateDTO(X509Certificate certificateX509) {
+	public CertificateDTO convertX509ToCertificateDTO(X509Certificate certificateX509) {
 		CertificateDTO certificateDTO = new CertificateDTO();
 		certificateDTO.setSerialNumber(certificateX509.getSerialNumber().toString());
 
