@@ -1,24 +1,39 @@
 package bsep.bsep.service;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import bsep.bsep.certificates.CertificateGenerator;
 import bsep.bsep.dto.CertificateDTO;
+import bsep.bsep.dto.CertificateInfoDTO;
 import bsep.bsep.model.CertificateData;
 import bsep.bsep.model.CertificateStatus;
 import bsep.bsep.model.CertificateType;
+import bsep.bsep.model.Issuer;
+import bsep.bsep.model.Subject;
 import bsep.bsep.repository.CertificateKeyStoreRepository;
 import bsep.bsep.repository.ICertificateRepository;
 import bsep.bsep.service.interfaces.ICertificateService;
@@ -49,6 +64,7 @@ public class CertificateService implements ICertificateService {
 				// provera za validnost datuma
 				certificateX509.checkValidity();
 			} catch (CertificateExpiredException | CertificateNotYetValidException e) {
+				System.out.println("continue usao");
 				continue;
 			}
 			getAllWithValidStatus(certificatesDTO, certificateX509);
@@ -56,9 +72,58 @@ public class CertificateService implements ICertificateService {
 		return certificatesDTO;
 	}
 
+	public CertificateData createRootCertificate(CertificateInfoDTO certificateInfoDTO) {
+		Subject subject = generateSubject(certificateInfoDTO);
+		KeyPair keyPairIssuer = generateKeyPair();
+		Issuer issuer = generateIssuer(keyPairIssuer.getPrivate(), certificateInfoDTO);
+		X509Certificate x509certificate = new CertificateGenerator().generateCertificate(subject, issuer, true, null);
+		
+		certificateKeyStoreRepository.saveKSRoot(x509certificate,keyPairIssuer.getPrivate());
+		return save(x509certificate.getSerialNumber().toString());
+	}
+	
 	public CertificateData save(String serialNumber) {
 		return certificateRepository.save(convertCertificateInfoDTOToData(serialNumber));
 	}
+	
+	private Issuer generateIssuer(PrivateKey issuerKey, CertificateInfoDTO certificateInfoDTO) {
+		return new Issuer(issuerKey, setBuilder(certificateInfoDTO).build());
+	}
+
+	private Subject generateSubject(CertificateInfoDTO certificateInfoDTO) {
+		return new Subject(generateKeyPair().getPublic(), setBuilder(certificateInfoDTO).build(),
+				String.valueOf(LocalDateTime.now().hashCode()), LocalDate.now(),
+				LocalDate.parse(certificateInfoDTO.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+	}
+
+	private X500NameBuilder setBuilder(CertificateInfoDTO certificateInfoDTO) {
+		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
+		builder.addRDN(BCStyle.UID, UUID.randomUUID().toString());
+		builder.addRDN(BCStyle.CN, certificateInfoDTO.getCommonName());
+		builder.addRDN(BCStyle.GIVENNAME, certificateInfoDTO.getGivenName());
+		builder.addRDN(BCStyle.SURNAME, certificateInfoDTO.getSurname());
+		builder.addRDN(BCStyle.O, certificateInfoDTO.getOrganization());
+		builder.addRDN(BCStyle.OU, certificateInfoDTO.getOrganizationalUnitName());
+		builder.addRDN(BCStyle.E, certificateInfoDTO.getOrganizationEmail());
+		builder.addRDN(BCStyle.C, certificateInfoDTO.getCountryCode());
+		builder.addRDN(BCStyle.PSEUDONYM, certificateInfoDTO.getAlias());
+		return builder;
+	}
+
+	private KeyPair generateKeyPair() {
+		try {
+			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+			keyGen.initialize(2048, SecureRandom.getInstance("SHA1PRNG", "SUN"));
+			return keyGen.generateKeyPair();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 
 	private void getAllWithValidStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
 		for (CertificateData certificateData : certificateRepository.findAll()) {
@@ -82,7 +147,7 @@ public class CertificateService implements ICertificateService {
 	private CertificateDTO setCertificateData(CertificateData certificateData, X509Certificate certificateX509) {
 
 		CertificateDTO certificateDTO = convertX509ToCertificateDTO(certificateX509);
-
+		certificateDTO.setId(certificateData.getId());
 		certificateDTO.setCertificateType(certificateData.getCertificateType());
 		certificateDTO.setCertificateStatus(certificateData.getCertificateStatus());
 

@@ -35,6 +35,7 @@ public class CertificateKeyStoreRepository {
 	private final String ksEndEntityPath = "endEntity.jks";
 
 	private char[] password;
+	private String alias;
 
 	private void createNewKeyStore(KeyStore keyStore, String fileName, String password) {
 
@@ -68,6 +69,7 @@ public class CertificateKeyStoreRepository {
 			ksIntermediate = KeyStore.getInstance("JKS");
 			ksEndEntity = KeyStore.getInstance("JKS");
 			password = env.getProperty("server.ssl.key-store-password").toCharArray();
+			alias = env.getProperty("server.ssl.key-alias");
 			//createNewKeyStores();
 			loadKeyStore();
 		} catch (Exception e) {
@@ -75,7 +77,7 @@ public class CertificateKeyStoreRepository {
 		}
 	}
 
-	public void saveKSRoot(X509Certificate certificate, String alias, PrivateKey privateKey) {
+	public void saveKSRoot(X509Certificate certificate,PrivateKey privateKey) {
 		try {
 			ksRoot.setKeyEntry(alias, privateKey, password, new X509Certificate[] { certificate });
 			ksRoot.store(new FileOutputStream(ksRootPath), password);

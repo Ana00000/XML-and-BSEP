@@ -9,13 +9,14 @@ public class CertificateInfoDTO {
 	private String organizationalUnitName;
 	private String organizationEmail;
 	private String countryCode;
+	private String alias;
 	private String endDate;
 
 	public CertificateInfoDTO() {
 	}
 
 	public CertificateInfoDTO(String commonName, String givenName, String surname, String organization,
-			String organizationalUnitName, String organizationEmail, String countryCode, String endDate) {
+			String organizationalUnitName, String organizationEmail, String countryCode, String alias, String endDate) {
 		super();
 		this.commonName = commonName;
 		this.givenName = givenName;
@@ -24,6 +25,7 @@ public class CertificateInfoDTO {
 		this.organizationalUnitName = organizationalUnitName;
 		this.organizationEmail = organizationEmail;
 		this.countryCode = countryCode;
+		this.alias = alias;
 		this.endDate = endDate;
 	}
 
@@ -81,6 +83,14 @@ public class CertificateInfoDTO {
 
 	public void setCountryCode(String countryCode) {
 		this.countryCode = countryCode;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 	public String getEndDate() {
