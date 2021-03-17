@@ -59,6 +59,7 @@ public class CertificateService implements ICertificateService {
 	@Override
 	public List<CertificateDTO> findAll() {
 		List<CertificateDTO> certificatesDTO = new ArrayList<CertificateDTO>();
+		int i = 0;
 		for (X509Certificate certificateX509 : certificateKeyStoreRepository.getCertificates()) {
 			try {
 				// provera za validnost datuma
@@ -67,6 +68,7 @@ public class CertificateService implements ICertificateService {
 				System.out.println("continue usao");
 				continue;
 			}
+			System.out.println("USAOO " + ++i);
 			getAllWithValidStatus(certificatesDTO, certificateX509);
 		}
 		return certificatesDTO;
@@ -77,15 +79,15 @@ public class CertificateService implements ICertificateService {
 		KeyPair keyPairIssuer = generateKeyPair();
 		Issuer issuer = generateIssuer(keyPairIssuer.getPrivate(), certificateInfoDTO);
 		X509Certificate x509certificate = new CertificateGenerator().generateCertificate(subject, issuer, true, null);
-		
-		certificateKeyStoreRepository.saveKSRoot(x509certificate,keyPairIssuer.getPrivate());
+
+		certificateKeyStoreRepository.saveKSRoot(certificateInfoDTO.getAlias(), x509certificate, keyPairIssuer.getPrivate());
 		return save(x509certificate.getSerialNumber().toString());
 	}
-	
+
 	public CertificateData save(String serialNumber) {
 		return certificateRepository.save(convertCertificateInfoDTOToData(serialNumber));
 	}
-	
+
 	private Issuer generateIssuer(PrivateKey issuerKey, CertificateInfoDTO certificateInfoDTO) {
 		return new Issuer(issuerKey, setBuilder(certificateInfoDTO).build());
 	}
@@ -122,14 +124,11 @@ public class CertificateService implements ICertificateService {
 		}
 		return null;
 	}
-	
-	
 
 	private void getAllWithValidStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
 		for (CertificateData certificateData : certificateRepository.findAll()) {
 			if ((certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber()))
 					&& (certificateData.getCertificateStatus() == CertificateStatus.VALID)) {
-
 				// provera da li je povucen/istekao/validan
 				certificatesDTO.add(setCertificateData(certificateData, certificateX509));
 			}

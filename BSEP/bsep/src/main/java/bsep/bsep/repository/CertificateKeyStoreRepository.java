@@ -34,13 +34,52 @@ public class CertificateKeyStoreRepository {
 	private final String ksIntermediatePath = "intermediate.jks";
 	private final String ksEndEntityPath = "endEntity.jks";
 
-	private char[] password;
+	private String strPassword;
+	private char[] charPassword;
 	private String alias;
 
-	private void createNewKeyStore(KeyStore keyStore, String fileName, String password) {
+	@Autowired
+	public CertificateKeyStoreRepository(Environment env) {
+		try {
+			Security.addProvider(new BouncyCastleProvider());
+			this.env = env;
+			ksRoot = KeyStore.getInstance("JKS");
+			ksIntermediate = KeyStore.getInstance("JKS");
+			ksEndEntity = KeyStore.getInstance("JKS");
+			strPassword = env.getProperty("server.ssl.key-store-password");
+			charPassword = env.getProperty("server.ssl.key-store-password").toCharArray();
+			alias = env.getProperty("server.ssl.key-alias");
+			createNewKeyStores();
+			loadKeyStore();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-		// TODO: Upotrebom klasa iz primeri/pki paketa, implementirati funkciju gde
-		// korisnik unosi ime keystore datoteke i ona se kreira
+	public void saveKSRoot(String alias, X509Certificate certificate, PrivateKey privateKey) {
+		try {
+			ksRoot.setKeyEntry(alias, privateKey, charPassword, new X509Certificate[] { certificate });
+			ksRoot.store(new FileOutputStream(ksRootPath), charPassword);
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (CertificateException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void createNewKeyStores() {
+		//createNewKeyStore(ksRoot, ksRootPath, strPassword);
+		createNewKeyStore(ksIntermediate, ksIntermediatePath, strPassword);
+		createNewKeyStore(ksEndEntity, ksEndEntityPath, strPassword);
+	}
+	
+	private void createNewKeyStore(KeyStore keyStore, String fileName, String password) {
 		try {
 			if (new File(fileName).exists())
 				keyStore.load(new FileInputStream(fileName), password.toCharArray());
@@ -60,51 +99,10 @@ public class CertificateKeyStoreRepository {
 		;
 	}
 
-	@Autowired
-	public CertificateKeyStoreRepository(Environment env) {
-		try {
-			Security.addProvider(new BouncyCastleProvider());
-			this.env = env;
-			ksRoot = KeyStore.getInstance("JKS");
-			ksIntermediate = KeyStore.getInstance("JKS");
-			ksEndEntity = KeyStore.getInstance("JKS");
-			password = env.getProperty("server.ssl.key-store-password").toCharArray();
-			alias = env.getProperty("server.ssl.key-alias");
-			//createNewKeyStores();
-			loadKeyStore();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void saveKSRoot(X509Certificate certificate,PrivateKey privateKey) {
-		try {
-			ksRoot.setKeyEntry(alias, privateKey, password, new X509Certificate[] { certificate });
-			ksRoot.store(new FileOutputStream(ksRootPath), password);
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (CertificateException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	// Needs to be checked, is it useful
-	private void createNewKeyStores() {
-		createNewKeyStore(ksRoot, env.getProperty("server.ssl.key-store1"), "password");
-		createNewKeyStore(ksIntermediate, env.getProperty("server.ssl.key-store2"), "password");
-		createNewKeyStore(ksEndEntity, env.getProperty("server.ssl.key-store3"), "password");
-	}
-
 	private void loadKeyStore() throws Exception {
-		ksRoot.load(new FileInputStream(ksRootPath), password);
-		ksIntermediate.load(new FileInputStream(ksIntermediatePath), password);
-		ksEndEntity.load(new FileInputStream(ksEndEntityPath), password);
+		ksRoot.load(new FileInputStream(ksRootPath), charPassword);
+		ksIntermediate.load(new FileInputStream(ksIntermediatePath), charPassword);
+		ksEndEntity.load(new FileInputStream(ksEndEntityPath), charPassword);
 	}
 
 	public List<X509Certificate> getCertificates() {
@@ -112,21 +110,27 @@ public class CertificateKeyStoreRepository {
 		try {
 			// poziv metode za dodavanje sertifikata u listu u zavisnosti od keystore
 			// PROVERITI ZA NULL I LOAD KEYSTORE
+			loadKeyStore();
 			addCertificatesToList(certificatesList, ksRoot);
 			addCertificatesToList(certificatesList, ksIntermediate);
 			addCertificatesToList(certificatesList, ksEndEntity);
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
 		return certificatesList;
 	}
 
-	private void addCertificatesToList(List<X509Certificate> certificatesList, KeyStore keyStore) throws KeyStoreException {
+	private void addCertificatesToList(List<X509Certificate> certificatesList, KeyStore keyStore)
+			throws KeyStoreException {
 		Enumeration<String> aliases = keyStore.aliases();
 		while (aliases.hasMoreElements()) {
 			String alias = aliases.nextElement();
-			if (keyStore.isKeyEntry(alias)) 
+			if (keyStore.isKeyEntry(alias)) {
+				System.out.println("This is alias " + alias);
 				certificatesList.add((X509Certificate) keyStore.getCertificate(alias));
+			}
 		}
 	}
 }
