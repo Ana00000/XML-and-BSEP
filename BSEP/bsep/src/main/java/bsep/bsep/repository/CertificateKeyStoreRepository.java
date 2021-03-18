@@ -50,49 +50,44 @@ public class CertificateKeyStoreRepository {
 		try {
 			Security.addProvider(new BouncyCastleProvider());
 			this.env = env;
-			ksRoot = KeyStore.getInstance("JKS");
-			ksIntermediate = KeyStore.getInstance("JKS");
-			ksEndEntity = KeyStore.getInstance("JKS");
 			strPassword = env.getProperty("server.ssl.key-store-password");
 			charPassword = env.getProperty("server.ssl.key-store-password").toCharArray();
 			alias = env.getProperty("server.ssl.key-alias");
+			ksRoot = KeyStore.getInstance("JKS");
+			ksIntermediate = KeyStore.getInstance("JKS");
+			ksEndEntity = KeyStore.getInstance("JKS");
 			createNewKeyStores();
 			loadKeyStore();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public X509Certificate findBySerialNumber(String serialNumber)
-	{
-		for(X509Certificate x509Certificate : getCertificates())
-		{
-			System.out.println("PRE IF "+ x509Certificate.getSerialNumber().toString());
-			if(x509Certificate.getSerialNumber().toString().equals(serialNumber))
-			{
-				System.out.println("USAO U IF "+ x509Certificate.getSerialNumber().toString());
+
+	public X509Certificate findBySerialNumber(String serialNumber) {
+		for (X509Certificate x509Certificate : getCertificates()) {
+
+			if (x509Certificate.getSerialNumber().toString().equals(serialNumber)) {
 				return x509Certificate;
 			}
 		}
-		
+
 		return null;
 	}
 
-	public void saveKeyStore(CertificateType certificateType, String alias, X509Certificate certificate, PrivateKey privateKey) {
+	public void saveKeyStore(CertificateType certificateType, String alias, X509Certificate certificate,
+			PrivateKey privateKey) {
 		try {
-			if(certificateType == CertificateType.ROOT)
-			{
+			if (certificateType == CertificateType.ROOT) {
 				ksRoot.setKeyEntry(alias, privateKey, charPassword, new X509Certificate[] { certificate });
 				ksRoot.store(new FileOutputStream(ksRootPath), charPassword);
-			}else if(certificateType == CertificateType.INTERMEDIATE)
-			{
+			} else if (certificateType == CertificateType.INTERMEDIATE) {
 				ksIntermediate.setKeyEntry(alias, privateKey, charPassword, new X509Certificate[] { certificate });
 				ksIntermediate.store(new FileOutputStream(ksIntermediatePath), charPassword);
-			}else {
+			} else {
 				ksEndEntity.setKeyEntry(alias, privateKey, charPassword, new X509Certificate[] { certificate });
 				ksEndEntity.store(new FileOutputStream(ksEndEntityPath), charPassword);
 			}
-			
+
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
@@ -105,16 +100,13 @@ public class CertificateKeyStoreRepository {
 			e.printStackTrace();
 		}
 	}
-	
-	
-
 
 	private void createNewKeyStores() {
-		//createNewKeyStore(ksRoot, ksRootPath, strPassword);
+		// createNewKeyStore(ksRoot, ksRootPath, strPassword);
 		createNewKeyStore(ksIntermediate, ksIntermediatePath, strPassword);
 		createNewKeyStore(ksEndEntity, ksEndEntityPath, strPassword);
 	}
-	
+
 	private void createNewKeyStore(KeyStore keyStore, String fileName, String password) {
 		try {
 			if (new File(fileName).exists())
@@ -146,7 +138,7 @@ public class CertificateKeyStoreRepository {
 		try {
 			// poziv metode za dodavanje sertifikata u listu u zavisnosti od keystore
 			// PROVERITI ZA NULL I LOAD KEYSTORE
-			loadKeyStore();
+			// loadKeyStore();
 			addCertificatesToList(certificatesList, ksRoot);
 			addCertificatesToList(certificatesList, ksIntermediate);
 			addCertificatesToList(certificatesList, ksEndEntity);
@@ -169,28 +161,22 @@ public class CertificateKeyStoreRepository {
 			}
 		}
 	}
-	
-	public Issuer getIssuerBySerialNumber(String issuerSerialNumber, String issuerAlias)
-	{
-		//issuer je ustvari sertifikat
-		
+
+	public Issuer getIssuerBySerialNumber(String issuerSerialNumber, String issuerAlias) {
 		X509Certificate x509Certificate = findBySerialNumber(issuerSerialNumber);
-		System.out.println("Pre if 178 " + issuerSerialNumber);
-		if(x509Certificate == null)
-		{
-			System.out.println("null 181");
+		if (x509Certificate == null) {
+
 			return null;
 		}
 
 		return new Issuer(getPrivateKey(issuerAlias), getX500Name(x509Certificate));
 	}
-	
+
 	private X500Name getX500Name(X509Certificate x509Certificate) {
 
 		X500Name issuerName = null;
 		try {
 			issuerName = new JcaX509CertificateHolder(x509Certificate).getSubject();
-			System.out.println("issuerName " + issuerName.toString());
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();
 		}
@@ -198,36 +184,32 @@ public class CertificateKeyStoreRepository {
 	}
 
 	private PrivateKey getPrivateKey(String issuerAlias) {
-		
+
 		try {
-			
-			loadKeyStore();
-			System.out.println("uspeo load");
+			// loadKeyStore();
 			PrivateKey privateKey = getPrivateKeyForKeyStore(issuerAlias, ksRoot);
-			System.out.println("iznad if"); 
-			if(privateKey == null)
-			{
-				System.out.println("prvi if");
+
+			if (privateKey == null) {
+
 				privateKey = getPrivateKeyForKeyStore(issuerAlias, ksIntermediate);
-				
-				if(privateKey == null)
-				{
-					System.out.println("private key je null");
+
+				if (privateKey == null) {
+
 					return null;
 				}
 			}
-			
+
 			return privateKey;
-			
-		}  catch (Exception e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	private PrivateKey getPrivateKeyForKeyStore(String issuerAlias, KeyStore keyStore) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException
-	{
-		System.out.println("usao u getPrivateKeyForKeyStore");
+
+	private PrivateKey getPrivateKeyForKeyStore(String issuerAlias, KeyStore keyStore)
+			throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+
 		return (PrivateKey) keyStore.getKey(issuerAlias, charPassword);
 	}
 }
