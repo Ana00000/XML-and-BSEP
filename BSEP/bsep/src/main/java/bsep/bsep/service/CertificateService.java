@@ -10,6 +10,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +31,7 @@ import bsep.bsep.certificates.CertificateGenerator;
 import bsep.bsep.dto.CertificateDTO;
 import bsep.bsep.dto.CertificateInfoDTO;
 import bsep.bsep.model.CertificateData;
+import bsep.bsep.model.CertificatePurposeType;
 import bsep.bsep.model.CertificateStatus;
 import bsep.bsep.model.CertificateType;
 import bsep.bsep.model.Issuer;
@@ -74,18 +76,36 @@ public class CertificateService implements ICertificateService {
 		return certificatesDTO;
 	}
 
-	public CertificateData createRootCertificate(CertificateInfoDTO certificateInfoDTO) {
+	public CertificateData createCertificate(CertificateInfoDTO certificateInfoDTO) {
+
 		Subject subject = generateSubject(certificateInfoDTO);
 		KeyPair keyPairIssuer = generateKeyPair();
-		Issuer issuer = generateIssuer(keyPairIssuer.getPrivate(), certificateInfoDTO);
-		X509Certificate x509certificate = new CertificateGenerator().generateCertificate(subject, issuer, true, null);
+		X509Certificate x509certificate = null;
 
-		certificateKeyStoreRepository.saveKSRoot(certificateInfoDTO.getAlias(), x509certificate, keyPairIssuer.getPrivate());
-		return save(x509certificate.getSerialNumber().toString());
+		if (certificateInfoDTO.getCertificateType() == CertificateType.ROOT) {
+			Issuer issuer = generateIssuer(keyPairIssuer.getPrivate(), certificateInfoDTO);
+			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer, true, null);
+
+		} else {
+			Issuer issuer = certificateKeyStoreRepository.getIssuerBySerialNumber(certificateInfoDTO.getIssuerSerialNumber());
+			if(issuer == null)
+			{
+				System.out.println("NULL ISSUER");
+				return null;
+			}
+			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer,isIntermedateCertificate(certificateInfoDTO), convertStringToDate(certificateInfoDTO.getEndDate()));
+		}
+
+		certificateKeyStoreRepository.saveKeyStore(certificateInfoDTO.getCertificateType(),certificateInfoDTO.getAlias(), x509certificate, keyPairIssuer.getPrivate());
+		return save(x509certificate.getSerialNumber().toString(), certificateInfoDTO.getCertificateType(),certificateInfoDTO.getCertificatePurposeType());
 	}
 
-	public CertificateData save(String serialNumber) {
-		return certificateRepository.save(convertCertificateInfoDTOToData(serialNumber));
+	private Boolean isIntermedateCertificate(CertificateInfoDTO certificateInfoDTO) {
+		return certificateInfoDTO.getCertificateType() == CertificateType.INTERMEDIATE;
+	}
+
+	public CertificateData save(String serialNumber, CertificateType certificateType,CertificatePurposeType certificatePurposeType) {
+		return certificateRepository.save(convertCertificateInfoDTOToData(serialNumber, certificateType, certificatePurposeType));
 	}
 
 	private Issuer generateIssuer(PrivateKey issuerKey, CertificateInfoDTO certificateInfoDTO) {
@@ -93,9 +113,29 @@ public class CertificateService implements ICertificateService {
 	}
 
 	private Subject generateSubject(CertificateInfoDTO certificateInfoDTO) {
-		return new Subject(generateKeyPair().getPublic(), setBuilder(certificateInfoDTO).build(),
-				String.valueOf(LocalDateTime.now().hashCode()), LocalDate.now(),
-				LocalDate.parse(certificateInfoDTO.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+		return new Subject(generateKeyPair().getPublic(), setBuilder(certificateInfoDTO).build(),generateSerialNumber(), LocalDate.now(), convertStringToLocalDate(certificateInfoDTO.getEndDate()));
+	}
+
+	private LocalDate convertStringToLocalDate(String date) {
+		return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	}
+
+	private Date convertStringToDate(String date) {
+		return Date.valueOf(convertStringToLocalDate(date));
+	}
+	
+	private String generateSerialNumber()
+	{
+		String serialNumber = String.valueOf(LocalDateTime.now().hashCode());
+		
+		if(serialNumber.contains("-")) {
+			System.out.println("IF SERIALNUMBER "+ serialNumber.replace("-","9"));
+			return serialNumber.replace("-","9");	
+			
+		}
+		
+		System.out.println("return SERIALNUMBER "+ serialNumber);
+		return serialNumber;
 	}
 
 	private X500NameBuilder setBuilder(CertificateInfoDTO certificateInfoDTO) {
@@ -135,21 +175,23 @@ public class CertificateService implements ICertificateService {
 		}
 	}
 
-	private CertificateData convertCertificateInfoDTOToData(String serialNumber) {
+	private CertificateData convertCertificateInfoDTOToData(String serialNumber, CertificateType certificateType,CertificatePurposeType certificatePurposeType) {
 		CertificateData certificateData = new CertificateData();
 		certificateData.setSerialNumber(serialNumber);
-		certificateData.setCertificateType(CertificateType.ROOT);
+		certificateData.setCertificateType(certificateType);
+		certificateData.setCertificatePurposeType(certificatePurposeType);
+		System.out.println("PURPOSE: " + certificatePurposeType);
 		certificateData.setCertificateStatus(CertificateStatus.VALID);
+		
 		return certificateData;
 	}
 
 	private CertificateDTO setCertificateData(CertificateData certificateData, X509Certificate certificateX509) {
-
 		CertificateDTO certificateDTO = convertX509ToCertificateDTO(certificateX509);
 		certificateDTO.setId(certificateData.getId());
 		certificateDTO.setCertificateType(certificateData.getCertificateType());
 		certificateDTO.setCertificateStatus(certificateData.getCertificateStatus());
-
+		
 		return certificateDTO;
 	}
 

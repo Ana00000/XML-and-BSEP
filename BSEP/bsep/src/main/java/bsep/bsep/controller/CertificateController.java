@@ -31,20 +31,24 @@ public class CertificateController {
 		
 	}
 
-	@GetMapping(value = "/all")
+	@GetMapping(value = "/allValid")
 	public ResponseEntity<List<CertificateDTO>> getAllValidCertificatesDTO() {
 
 		return new ResponseEntity<>(certificateService.findAll(), HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/createRootCertificate", consumes = "application/json")
-	public ResponseEntity<CertificateData> createRootCertificate(@RequestBody CertificateInfoDTO certificateInfoDTO) {
+	@PostMapping(value = "/createCertificate", consumes = "application/json")
+	public ResponseEntity<CertificateData> createCertificate(@RequestBody CertificateInfoDTO certificateInfoDTO) {
 		try {
-			return new ResponseEntity<>(certificateService.createRootCertificate(certificateInfoDTO), HttpStatus.CREATED);
+			return new ResponseEntity<>(certificateService.createCertificate(certificateInfoDTO), HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	
+
+	
 
 	
 	

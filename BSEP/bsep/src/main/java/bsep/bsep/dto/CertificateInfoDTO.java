@@ -1,5 +1,8 @@
 package bsep.bsep.dto;
 
+import bsep.bsep.model.CertificatePurposeType;
+import bsep.bsep.model.CertificateType;
+
 public class CertificateInfoDTO {
 
 	private String commonName;
@@ -11,12 +14,16 @@ public class CertificateInfoDTO {
 	private String countryCode;
 	private String alias;
 	private String endDate;
+	private CertificateType certificateType;
+	private CertificatePurposeType certificatePurposeType;
+	private String issuerSerialNumber;
 
 	public CertificateInfoDTO() {
 	}
 
 	public CertificateInfoDTO(String commonName, String givenName, String surname, String organization,
-			String organizationalUnitName, String organizationEmail, String countryCode, String alias, String endDate) {
+			String organizationalUnitName, String organizationEmail, String countryCode, String alias, String endDate,
+			CertificateType certificateType, CertificatePurposeType certificatePurposeType, String issuerSerialNumber) {
 		super();
 		this.commonName = commonName;
 		this.givenName = givenName;
@@ -27,6 +34,9 @@ public class CertificateInfoDTO {
 		this.countryCode = countryCode;
 		this.alias = alias;
 		this.endDate = endDate;
+		this.certificateType = certificateType;
+		this.certificatePurposeType = certificatePurposeType;
+		this.issuerSerialNumber = issuerSerialNumber;
 	}
 
 	public String getCommonName() {
@@ -100,4 +110,29 @@ public class CertificateInfoDTO {
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
+
+	public CertificateType getCertificateType() {
+		return certificateType;
+	}
+
+	public void setCertificateType(CertificateType certificateType) {
+		this.certificateType = certificateType;
+	}
+
+	public CertificatePurposeType getCertificatePurposeType() {
+		return certificatePurposeType;
+	}
+
+	public void setCertificatePurposeType(CertificatePurposeType certificatePurposeType) {
+		this.certificatePurposeType = certificatePurposeType;
+	}
+
+	public String getIssuerSerialNumber() {
+		return issuerSerialNumber;
+	}
+
+	public void setIssuerSerialNumber(String issuerSerialNumber) {
+		this.issuerSerialNumber = issuerSerialNumber;
+	}
+
 }

@@ -29,17 +29,21 @@ public class CertificateData {
 	@Enumerated(EnumType.ORDINAL)
 	private CertificateType certificateType;
 
+	@Enumerated(EnumType.ORDINAL)
+	private CertificatePurposeType certificatePurposeType;
+
 	public CertificateData() {
 
 	}
 
 	public CertificateData(Long id, String serialNumber, CertificateStatus certificateStatus,
-			CertificateType certificateType) {
+			CertificateType certificateType, CertificatePurposeType certificatePurposeType) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
 		this.certificateStatus = certificateStatus;
 		this.certificateType = certificateType;
+		this.certificatePurposeType = certificatePurposeType;
 	}
 
 	public Long getId() {
@@ -72,6 +76,14 @@ public class CertificateData {
 
 	public void setCertificateType(CertificateType certificateType) {
 		this.certificateType = certificateType;
+	}
+
+	public CertificatePurposeType getCertificatePurposeType() {
+		return certificatePurposeType;
+	}
+
+	public void setCertificatePurposeType(CertificatePurposeType certificatePurposeType) {
+		this.certificatePurposeType = certificatePurposeType;
 	}
 
 }

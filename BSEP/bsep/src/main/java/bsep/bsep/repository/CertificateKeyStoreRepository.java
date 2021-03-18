@@ -10,16 +10,23 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
+
+import bsep.bsep.model.CertificateType;
+import bsep.bsep.model.Issuer;
 
 @Repository
 public class CertificateKeyStoreRepository {
@@ -55,11 +62,35 @@ public class CertificateKeyStoreRepository {
 			e.printStackTrace();
 		}
 	}
+	
+	public X509Certificate findBySerialNumber(String serialNumber)
+	{
+		for(X509Certificate x509Certificate : getCertificates())
+		{
+			if(x509Certificate.getSerialNumber().toString().equals(serialNumber))
+			{
+				return x509Certificate;
+			}
+		}
+		
+		return null;
+	}
 
-	public void saveKSRoot(String alias, X509Certificate certificate, PrivateKey privateKey) {
+	public void saveKeyStore(CertificateType certificateType, String alias, X509Certificate certificate, PrivateKey privateKey) {
 		try {
-			ksRoot.setKeyEntry(alias, privateKey, charPassword, new X509Certificate[] { certificate });
-			ksRoot.store(new FileOutputStream(ksRootPath), charPassword);
+			if(certificateType == CertificateType.ROOT)
+			{
+				ksRoot.setKeyEntry(alias, privateKey, charPassword, new X509Certificate[] { certificate });
+				ksRoot.store(new FileOutputStream(ksRootPath), charPassword);
+			}else if(certificateType == CertificateType.INTERMEDIATE)
+			{
+				ksIntermediate.setKeyEntry(alias, privateKey, charPassword, new X509Certificate[] { certificate });
+				ksIntermediate.store(new FileOutputStream(ksIntermediatePath), charPassword);
+			}else {
+				ksEndEntity.setKeyEntry(alias, privateKey, charPassword, new X509Certificate[] { certificate });
+				ksEndEntity.store(new FileOutputStream(ksEndEntityPath), charPassword);
+			}
+			
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
@@ -72,6 +103,9 @@ public class CertificateKeyStoreRepository {
 			e.printStackTrace();
 		}
 	}
+	
+	
+
 
 	private void createNewKeyStores() {
 		//createNewKeyStore(ksRoot, ksRootPath, strPassword);
@@ -132,5 +166,59 @@ public class CertificateKeyStoreRepository {
 				certificatesList.add((X509Certificate) keyStore.getCertificate(alias));
 			}
 		}
+	}
+	
+	public Issuer getIssuerBySerialNumber(String issuerSerialNumber)
+	{
+		//issuer je ustvari sertifikat
+		
+		X509Certificate x509Certificate = findBySerialNumber(issuerSerialNumber);
+		if(x509Certificate == null)
+		{
+			return null;
+		}
+
+		return new Issuer(getPrivateKey(issuerSerialNumber), getX500Name(x509Certificate));
+	}
+	
+	private X500Name getX500Name(X509Certificate x509Certificate) {
+
+		X500Name issuerName = null;
+		try {
+			issuerName = new JcaX509CertificateHolder(x509Certificate).getSubject();
+		} catch (CertificateEncodingException e) {
+			e.printStackTrace();
+		}
+		return issuerName;
+	}
+
+	private PrivateKey getPrivateKey(String issuerSerialNumber) {
+		try {
+			PrivateKey privateKey = getPrivateKeyForKeyStore(issuerSerialNumber, ksRoot);
+			if(privateKey == null)
+			{
+				privateKey = getPrivateKeyForKeyStore(issuerSerialNumber, ksIntermediate);
+				
+				if(privateKey == null)
+				{
+					return null;
+				}
+			}
+			
+			return privateKey;
+			
+		} catch (UnrecoverableKeyException e) {
+			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private PrivateKey getPrivateKeyForKeyStore(String issuerSerialNumber, KeyStore keyStore) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException
+	{
+		return (PrivateKey) keyStore.getKey(issuerSerialNumber, charPassword);
 	}
 }

@@ -46,9 +46,10 @@ public class CertificateGenerator {
 			ContentSigner contentSigner = builder.build(issuer.getPrivateKey());
 
 			Date endDate = Date.valueOf(subject.getEndDate());
+			/*
 			if (expirationDate != null && endDate.after(expirationDate))
 				endDate = expirationDate;
-
+			*/
 			// Postavljaju se podaci za generisanje sertifiakta
 			X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(issuer.getX500name(),
 					new BigInteger(subject.getSerialNumber().trim()), Date.valueOf(subject.getStartDate()), endDate,
