@@ -1,5 +1,7 @@
 <template>
-    <v-card width="400" class="mx-auto mt-5" color="white" >
+ <div class="page">
+   <div class="pageUp"/>
+    <v-card width="400" class="mx-auto mt-5" color="white">
       <v-card-title class="justify-center">
         <h1 class="display-1 mt-5">Login</h1>
       </v-card-title>
@@ -24,6 +26,8 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+    <div class="pageDown"/>
+  </div>
 </template>
 
 <script>
@@ -74,3 +78,17 @@ export default {
   }
 };
 </script>
+
+<style>
+.pageUp {
+height: 200px;
+}
+
+.pageDown {
+height: 364px;
+}
+
+.page {
+  backgRound-color: #b5dafd;
+}
+</style>
