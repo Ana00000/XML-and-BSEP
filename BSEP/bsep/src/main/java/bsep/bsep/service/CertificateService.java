@@ -63,13 +63,6 @@ public class CertificateService implements ICertificateService {
 		List<CertificateDTO> certificatesDTO = new ArrayList<CertificateDTO>();
 		int i = 0;
 		for (X509Certificate certificateX509 : certificateKeyStoreRepository.getCertificates()) {
-			try {
-				// provera za validnost datuma
-				certificateX509.checkValidity();
-			} catch (CertificateExpiredException | CertificateNotYetValidException e) {
-				System.out.println("continue usao");
-				continue;
-			}
 			System.out.println("USAOO " + ++i);
 			getAllWithValidStatus(certificatesDTO, certificateX509);
 		}
@@ -98,6 +91,39 @@ public class CertificateService implements ICertificateService {
 
 		certificateKeyStoreRepository.saveKeyStore(certificateInfoDTO.getCertificateType(),certificateInfoDTO.getAlias(), x509certificate, keyPairIssuer.getPrivate());
 		return save(x509certificate.getSerialNumber().toString(), certificateInfoDTO.getCertificateType(),certificateInfoDTO.getCertificatePurposeType());
+	}
+	
+	public void revokeCertificate(String serialNumber) {
+		CertificateDTO certificateDTO = setCertificateData(findCertificateDataBySerialNumber(serialNumber), certificateKeyStoreRepository.findBySerialNumber(serialNumber));
+		List<String> certificatesSerialNumbersForRevoke = new ArrayList<String>();	
+		getSerialNumberOfChildrenCertificate(certificatesSerialNumbersForRevoke, certificateDTO);
+		setStatusForChain(certificatesSerialNumbersForRevoke);
+	}
+
+	private void setStatusForChain(List<String> certificatesSerialNumbersForRevoke) {
+		for (String serialNumberIt : certificatesSerialNumbersForRevoke) {
+			setCertificateStatus(findCertificateDataBySerialNumber(serialNumberIt), CertificateStatus.REVOKED);
+		}
+	}
+	
+	public CertificateData findCertificateDataBySerialNumber(String serialNumber) {
+		for (CertificateData certificateDataIt : certificateRepository.findAll()) {
+			if (certificateDataIt.getSerialNumber().equals(serialNumber)) return certificateDataIt;
+		}
+		return null;
+	}
+	
+	public void getSerialNumberOfChildrenCertificate(List<String> returnValues, CertificateDTO certificateDTO){
+		returnValues.add(certificateDTO.getSerialNumber());
+		if (certificateDTO.getCertificateType() == CertificateType.ENDENTITY) return;
+		
+		for (CertificateDTO certificateDTOIt : findAll()) {
+			if (isValidChild(certificateDTO.getSubject(), certificateDTOIt)) getSerialNumberOfChildrenCertificate(returnValues, certificateDTOIt);
+		}
+	}
+
+	private boolean isValidChild(String issuerInfo, CertificateDTO certificateDTOIt) {
+		return certificateDTOIt.getIssuer().equals(issuerInfo) && certificateDTOIt.getCertificateStatus()==CertificateStatus.VALID;
 	}
 
 	private Boolean isIntermedateCertificate(CertificateInfoDTO certificateInfoDTO) {
@@ -167,12 +193,49 @@ public class CertificateService implements ICertificateService {
 
 	private void getAllWithValidStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
 		for (CertificateData certificateData : certificateRepository.findAll()) {
-			if ((certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber()))
-					&& (certificateData.getCertificateStatus() == CertificateStatus.VALID)) {
-				// provera da li je povucen/istekao/validan
-				certificatesDTO.add(setCertificateData(certificateData, certificateX509));
-			}
+			checkCertificateStatus(certificatesDTO, certificateX509, certificateData);
 		}
+	}
+
+	private boolean checkCertificateStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509,
+			CertificateData certificateData) {
+			if (certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber())) {
+				return checkCertificateExpired(certificateX509, certificateData) ? false : addValidCertificateToList(certificatesDTO, certificateX509, certificateData);
+			}
+			return false;
+	}
+
+	private boolean addValidCertificateToList(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509, CertificateData certificateData) {
+		if (certificateData.getCertificateStatus() == CertificateStatus.VALID)  {
+			certificatesDTO.add(setCertificateData(certificateData, certificateX509));
+			return true;
+		}
+		return false;
+	}
+
+	private boolean checkCertificateExpired(X509Certificate certificateX509, CertificateData certificateData) {
+		if (isCertificateExpired(certificateX509)) {
+			setCertificateStatus(certificateData, CertificateStatus.EXPIRED);
+			return true;
+		}
+		return false;
+	}
+	
+	private void setCertificateStatus(CertificateData certificateData, CertificateStatus certificateStatus) {
+		certificateData.setCertificateStatus(certificateStatus);
+		certificateRepository.save(certificateData);
+	}
+
+	private boolean isCertificateExpired(X509Certificate certificateX509) {
+		boolean invalidDate = false;
+		try {
+			// provera za validnost datuma
+			certificateX509.checkValidity();
+		} catch (CertificateExpiredException | CertificateNotYetValidException e) {
+			System.out.println("continue usao");
+			invalidDate = true;
+		}
+		return invalidDate;
 	}
 
 	private CertificateData convertCertificateInfoDTOToData(String serialNumber, CertificateType certificateType,CertificatePurposeType certificatePurposeType) {
