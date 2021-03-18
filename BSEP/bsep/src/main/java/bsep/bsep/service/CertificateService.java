@@ -80,16 +80,20 @@ public class CertificateService implements ICertificateService {
 			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer, true, null);
 
 		} else {
-			Issuer issuer = certificateKeyStoreRepository.getIssuerBySerialNumber(certificateInfoDTO.getIssuerSerialNumber());
+			System.out.println("NIJE ROOT");
+			Issuer issuer = certificateKeyStoreRepository.getIssuerBySerialNumber(certificateInfoDTO.getIssuerSerialNumber(), certificateInfoDTO.getIssuerAlias());
+			System.out.println("dobavio issuer");
 			if(issuer == null)
 			{
 				System.out.println("NULL ISSUER");
 				return null;
 			}
 			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer,isIntermedateCertificate(certificateInfoDTO), convertStringToDate(certificateInfoDTO.getEndDate()));
+			System.out.println("uspeo create x509");
 		}
 
 		certificateKeyStoreRepository.saveKeyStore(certificateInfoDTO.getCertificateType(),certificateInfoDTO.getAlias(), x509certificate, keyPairIssuer.getPrivate());
+		System.out.println("iznad save key store");
 		return save(x509certificate.getSerialNumber().toString(), certificateInfoDTO.getCertificateType(),certificateInfoDTO.getCertificatePurposeType());
 	}
 	

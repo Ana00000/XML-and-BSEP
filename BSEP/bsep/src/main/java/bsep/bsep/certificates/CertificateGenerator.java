@@ -97,7 +97,7 @@ public class CertificateGenerator {
 			certGen.addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.dataEncipherment));
 			// The keyAgreement keyUsage purpose indicating to use the subject public key
 			// for key agreement
-			certGen.addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.keyAgreement));
+			//certGen.addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.keyAgreement));
 		}
 		certGen.addExtension(Extension.basicConstraints, true, new BasicConstraints(isCA));
 	}

@@ -67,8 +67,10 @@ public class CertificateKeyStoreRepository {
 	{
 		for(X509Certificate x509Certificate : getCertificates())
 		{
+			System.out.println("PRE IF "+ x509Certificate.getSerialNumber().toString());
 			if(x509Certificate.getSerialNumber().toString().equals(serialNumber))
 			{
+				System.out.println("USAO U IF "+ x509Certificate.getSerialNumber().toString());
 				return x509Certificate;
 			}
 		}
@@ -168,17 +170,19 @@ public class CertificateKeyStoreRepository {
 		}
 	}
 	
-	public Issuer getIssuerBySerialNumber(String issuerSerialNumber)
+	public Issuer getIssuerBySerialNumber(String issuerSerialNumber, String issuerAlias)
 	{
 		//issuer je ustvari sertifikat
 		
 		X509Certificate x509Certificate = findBySerialNumber(issuerSerialNumber);
+		System.out.println("Pre if 178 " + issuerSerialNumber);
 		if(x509Certificate == null)
 		{
+			System.out.println("null 181");
 			return null;
 		}
 
-		return new Issuer(getPrivateKey(issuerSerialNumber), getX500Name(x509Certificate));
+		return new Issuer(getPrivateKey(issuerAlias), getX500Name(x509Certificate));
 	}
 	
 	private X500Name getX500Name(X509Certificate x509Certificate) {
@@ -186,39 +190,44 @@ public class CertificateKeyStoreRepository {
 		X500Name issuerName = null;
 		try {
 			issuerName = new JcaX509CertificateHolder(x509Certificate).getSubject();
+			System.out.println("issuerName " + issuerName.toString());
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();
 		}
 		return issuerName;
 	}
 
-	private PrivateKey getPrivateKey(String issuerSerialNumber) {
+	private PrivateKey getPrivateKey(String issuerAlias) {
+		
 		try {
-			PrivateKey privateKey = getPrivateKeyForKeyStore(issuerSerialNumber, ksRoot);
+			
+			loadKeyStore();
+			System.out.println("uspeo load");
+			PrivateKey privateKey = getPrivateKeyForKeyStore(issuerAlias, ksRoot);
+			System.out.println("iznad if"); 
 			if(privateKey == null)
 			{
-				privateKey = getPrivateKeyForKeyStore(issuerSerialNumber, ksIntermediate);
+				System.out.println("prvi if");
+				privateKey = getPrivateKeyForKeyStore(issuerAlias, ksIntermediate);
 				
 				if(privateKey == null)
 				{
+					System.out.println("private key je null");
 					return null;
 				}
 			}
 			
 			return privateKey;
 			
-		} catch (UnrecoverableKeyException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
+		}  catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	private PrivateKey getPrivateKeyForKeyStore(String issuerSerialNumber, KeyStore keyStore) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException
+	private PrivateKey getPrivateKeyForKeyStore(String issuerAlias, KeyStore keyStore) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException
 	{
-		return (PrivateKey) keyStore.getKey(issuerSerialNumber, charPassword);
+		System.out.println("usao u getPrivateKeyForKeyStore");
+		return (PrivateKey) keyStore.getKey(issuerAlias, charPassword);
 	}
 }
