@@ -1,10 +1,9 @@
 <template>
   <div class="page">
-      <br/><br/>
       <v-container fluid class="container">
-          <v-row>
+          <v-row aria-rowspan="2">
           <v-col cols="5"/>
-          <v-col cols="1">
+          <v-col cols="3">
               <v-text-field
                   label="Common name"
                   v-model="commonName"
@@ -13,9 +12,9 @@
           </v-col>
           </v-row>
 
-          <v-row>
+          <v-row rows="1">
           <v-col cols="5"/>
-          <v-col cols="2">
+          <v-col cols="3">
               <v-text-field
               label="Given name"
               v-model="givenName"
@@ -24,7 +23,7 @@
           </v-col>
           </v-row>
 
-          <v-row>
+          <v-row rows="1">
           <v-col cols="5"/>
           <v-col cols="3">
               <v-text-field
@@ -35,9 +34,9 @@
           </v-col>
           </v-row>
 
-          <v-row>
+          <v-row rows="1">
           <v-col cols="5"/>
-          <v-col cols="4">
+          <v-col cols="3">
               <v-text-field
               label="Organization"
               v-model="organization"
@@ -46,9 +45,9 @@
           </v-col>
           </v-row>
 
-          <v-row>
+          <v-row rows="1">
           <v-col cols="5"/>
-          <v-col cols="5">
+          <v-col cols="3">
               <v-text-field
               label="Organizational unit name"
               v-model="organizationalUnitName"
@@ -57,9 +56,9 @@
           </v-col>
           </v-row>
           
-          <v-row>
+          <v-row rows="1">
           <v-col cols="5"/>
-          <v-col cols="6">
+          <v-col cols="3">
               <v-text-field
               label="Organization email"
               v-model="organizationEmail"
@@ -68,9 +67,9 @@
           </v-col>
           </v-row>
           
-          <v-row>
+          <v-row rows="1">
           <v-col cols="5"/>
-          <v-col cols="7">
+          <v-col cols="3">
               <v-text-field
               label="Country code"
               v-model="countryCode"
@@ -79,9 +78,9 @@
           </v-col>
           </v-row>
 
-          <v-row>
+          <v-row rows="2">
           <v-col cols="5"/>
-          <v-col cols="8">
+          <v-col cols="3">
               <v-text-field
               label="Alias "
               v-model="alias"
@@ -90,9 +89,9 @@
           </v-col>
           </v-row>
 
-          <v-row>
+          <v-row rows="2">
           <v-col cols="5"/>
-          <v-col cols="9">
+          <v-col cols="3">
               <v-text-field
               label="End date"
               v-model="endDate"
@@ -100,16 +99,16 @@
               color="light-blue darken-4"/>
           </v-col>
           </v-row>
+        
+          <v-combobox class="combo" :items="certificates" :item-text="text" v-model="selectedCertificateType" 
+          :label="label1" hint="Choose certificate type."/>
+         
+          <v-combobox class="combo" :items="certificates" :item-text="text" v-model="selectedCertificatePurpose"
+          :label="label2" hint="Choose certificate purpose."/>
 
-          <v-combobox :items="certificates" :item-text="text" v-model="selectedCertificateType" 
-          :label="label" hint="Choose certificate type."/>
-
-          <v-combobox :items="certificates" :item-text="text" v-model="selectedCertificatePurpose"
-          :label="label" hint="Choose certificate purpose."/>
-
-          <v-row v-bind:hidden="selectedCertificateType=='ROOT'">
+          <v-row rows="2" v-bind:hidden="selectedCertificateType=='ROOT'">
           <v-col cols="5"/>
-          <v-col cols="10">
+          <v-col cols="3">
               <v-text-field
               label="Issuer serial number"
               v-model="issuerSerialNumber"
@@ -118,9 +117,9 @@
           </v-col>
           </v-row>
 
-          <v-row v-bind:hidden="selectedCertificateType=='ROOT'">
+          <v-row rows="2" v-bind:hidden="selectedCertificateType=='ROOT'">
           <v-col cols="5"/>
-          <v-col cols="11">
+          <v-col cols="3">
               <v-text-field
               label="Issuer alias"
               v-model="issuerAlias"
@@ -130,15 +129,8 @@
           </v-row>
       </v-container>
 
-      <div class="createButton">
-          <v-btn
-              v-on:click="createCertificate" 
-              color="light-blue darken-4"
-              elevation="24"
-              x-large
-              raised
-              rounded
-          >Create</v-btn>
+      <div class="center">
+        <v-btn v-on:click="createCertificate" color="primary" large elevation="20">Create</v-btn>
       </div>
   </div>
 </template>
@@ -160,14 +152,27 @@ export default {
         issuerAlias: null,
         certificates: [],
         selectedCertificateType: "ROOT",
-        selectedCertificatePurpose: null,
-        label: 'Certificates',
+        selectedCertificatePurpose: "NONE",
+        label1: 'Certificates type',
+        label2: 'Certificate purpose',
     }),
 }
 </script>
 
 <style scoped>
+
 .page {
   backgRound-color: #b5dafd;
 }
+
+.combo {
+    width: 25%;
+    margin-left: 42%;
+}
+
+.center {
+  margin-left: 50%;
+  padding: 10px;
+}
+
 </style>
