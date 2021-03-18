@@ -1,12 +1,15 @@
 <template>
-  <div>
-    <h2>Welcome to Your Home</h2>
-  </div>
+  <span>
+    <home-background/>
+  </span>
 </template>
 
 <script>
-// @ is an alias to /src
+import HomeBackground from '../components/HomeBackground.vue';
 export default {
-  name: "Home"
-};
+  name: 'Home',
+  components: {
+    HomeBackground
+  }
+}
 </script>

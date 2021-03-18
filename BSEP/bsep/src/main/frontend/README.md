@@ -1,11 +1,4 @@
-# frontend
-
-## For running the frontend (getting the link)
-
-npm run serve 
-
-
-
+# web
 
 ## Project setup
 ```
@@ -14,7 +7,7 @@ npm install
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm run serve 
 ```
 
 ### Compiles and minifies for production
