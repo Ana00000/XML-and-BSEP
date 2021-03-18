@@ -1,12 +1,11 @@
 <template>
   <div>
-    <h2>Welcome to Your Home</h2>
+    <h2>New certificates</h2>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 export default {
-  name: "Home"
+  name: "NewCertificate"
 };
 </script>
