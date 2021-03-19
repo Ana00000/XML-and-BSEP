@@ -74,15 +74,17 @@ public class CertificateService implements ICertificateService {
 		Subject subject = generateSubject(certificateInfoDTO);
 		KeyPair keyPairIssuer = generateKeyPair();
 		X509Certificate x509certificate = null;
+		Issuer issuer = null;
 
 		if (certificateInfoDTO.getCertificateType() == CertificateType.ROOT) {
-			Issuer issuer = generateIssuer(keyPairIssuer.getPrivate(), certificateInfoDTO);
+			issuer = generateIssuer(keyPairIssuer.getPrivate(), certificateInfoDTO);
 			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer, true, null);
 
 		} else {
-			Issuer issuer = certificateKeyStoreRepository.getIssuerBySerialNumber(
+			issuer = certificateKeyStoreRepository.getIssuerBySerialNumber(
 					certificateInfoDTO.getIssuerSerialNumber(), certificateInfoDTO.getIssuerAlias());
-			if (issuer == null) {
+			//uraditi provjeru da li je sertifikat za issuerSerialNumber validan tj. da nije istekao i da nije povucen
+			if (isIssuerInvalid(certificateInfoDTO, issuer)) {
 				return null;
 			}
 			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer,
@@ -93,6 +95,10 @@ public class CertificateService implements ICertificateService {
 				certificateInfoDTO.getAlias(), x509certificate, keyPairIssuer.getPrivate());
 		return save(x509certificate.getSerialNumber().toString(), certificateInfoDTO.getCertificateType(),
 				certificateInfoDTO.getCertificatePurposeType());
+	}
+
+	private boolean isIssuerInvalid(CertificateInfoDTO certificateInfoDTO, Issuer issuer) {
+		return issuer == null || findCertificateDataBySerialNumber(certificateInfoDTO.getIssuerSerialNumber()).getCertificateStatus() != CertificateStatus.VALID;
 	}
 
 	public void revokeCertificate(String serialNumber) {
