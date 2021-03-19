@@ -61,9 +61,9 @@ public class CertificateService implements ICertificateService {
 	@Override
 	public List<CertificateDTO> findAll() {
 		List<CertificateDTO> certificatesDTO = new ArrayList<CertificateDTO>();
-		int i = 0;
+
 		for (X509Certificate certificateX509 : certificateKeyStoreRepository.getCertificates()) {
-			System.out.println("USAOO " + ++i);
+
 			getAllWithValidStatus(certificatesDTO, certificateX509);
 		}
 		return certificatesDTO;

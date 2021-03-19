@@ -136,9 +136,6 @@ public class CertificateKeyStoreRepository {
 	public List<X509Certificate> getCertificates() {
 		List<X509Certificate> certificatesList = new ArrayList<X509Certificate>();
 		try {
-			// poziv metode za dodavanje sertifikata u listu u zavisnosti od keystore
-			// PROVERITI ZA NULL I LOAD KEYSTORE
-			// loadKeyStore();
 			addCertificatesToList(certificatesList, ksRoot);
 			addCertificatesToList(certificatesList, ksIntermediate);
 			addCertificatesToList(certificatesList, ksEndEntity);
