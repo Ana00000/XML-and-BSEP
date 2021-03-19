@@ -42,10 +42,14 @@ public class CertificateController {
 	@PostMapping(value = "/createCertificate", consumes = "application/json")
 	public ResponseEntity<CertificateData> createCertificate(@RequestBody CertificateInfoDTO certificateInfoDTO) {
 		try {
-			return new ResponseEntity<>(certificateService.createCertificate(certificateInfoDTO), HttpStatus.CREATED);
+			CertificateData certificateData = certificateService.createCertificate(certificateInfoDTO);
+			return new ResponseEntity<>(certificateData, checkStatusForCreatingCertificate(certificateData));
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
+	}
+	private HttpStatus checkStatusForCreatingCertificate (CertificateData certificateData) {
+		return certificateData!=null ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
 	}
 	
 	@PutMapping(value = "/revokeCertificate/{serialNumber}", consumes = "application/json")

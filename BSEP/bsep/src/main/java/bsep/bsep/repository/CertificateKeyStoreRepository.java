@@ -103,8 +103,8 @@ public class CertificateKeyStoreRepository {
 
 	private void createNewKeyStores() {
 		// createNewKeyStore(ksRoot, ksRootPath, strPassword);
-		createNewKeyStore(ksIntermediate, ksIntermediatePath, strPassword);
-		createNewKeyStore(ksEndEntity, ksEndEntityPath, strPassword);
+		//createNewKeyStore(ksIntermediate, ksIntermediatePath, strPassword);
+		//createNewKeyStore(ksEndEntity, ksEndEntityPath, strPassword);
 	}
 
 	private void createNewKeyStore(KeyStore keyStore, String fileName, String password) {
