@@ -9,23 +9,17 @@
         <v-form class="mx-auto ml-5 mr-5">
           <v-text-field
               label="Username/Email"
-              v-model="username"
+              v-model="userEmail"
               prepend-icon="mdi-account-circle"/>
           <v-text-field
               :type="showPassword ? 'text' : 'password'"
               label="Password"
-              v-model="secondPassword"
+              v-model="password"
               prepend-icon="mdi-lock"
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               @click:append="showPassword = !showPassword"/>
           <v-text-field
-          :type="showPassword ? 'text' : 'password'"
-          label="Confirm Password"
-          v-model="password"
-          prepend-icon="mdi-lock"
-          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-          @click:append="showPassword = !showPassword"/>
-          <v-text-field
+          
               label="First name"
               v-model="firstName"
               prepend-icon="mdi-name-circle"/>
@@ -34,14 +28,12 @@
               v-model="lastName"
               prepend-icon="mdi-address-circle"/>
           <v-text-field
-              label="Address"
-              v-model="address"
-              prepend-icon="mdi-address-circle"/>
-          <v-text-field
               label="Phone number"
               v-model="phoneNumber"
-              prepend-icon="mdi-address-circle"/>
-          
+              prepend-icon="mdi-address-circle"/> 
+
+          <v-combobox :items="typesOfUsers" :item-text="text" v-model="selectedTypeOfUser" 
+          :label="label1" hint="Choose type of user."/>
         </v-form>
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
@@ -59,35 +51,33 @@ export default {
   name: 'Register',
   data: () => ({
     showPassword: false,
-    username: '',
+    userEmail: '',
     password: '',
-    secondPassword:'',
     phoneNumber:'',
     firstName: '',
     lastName: '',
-    address: '',
-    users: []
+    users: [],
+    selectedTypeOfUser: "ADMIN",
+    label1: 'Type of user'
   }),
-  computed: {
-    user() {
-      return {'email': this.username, 'password': this.password, 'phoneNumber':this.phoneNumber,'name':this.firstName,'lastName':this.lastName,'address':this.address}
-    }
-  },
   methods: {
     register() {
       if(!this.ValidateEmail()){
         return;
       }
-      if (this.password!==this.secondPassword){
-          alert("Passwords don't match !!!");
-          this.password='';
-          this.secondPassword='';
-          return;
-      }
-      this.$http.post('http://localhost:8080/users/register', this.user)
+      this.$http.post('api/users/register',
+        {         
+          userEmail : this.userEmail,
+          lastName : this.lastName,
+          password : this.password,
+          firstName : this.firstName,
+          phoneNumber : this.phoneNumber,
+          typeOfUser : this.selectedTypeOfUser
+      })
       .then(resp => {
-        console.log(resp.data);
-        window.location.href = 'http://localhost:8080/login';
+        
+        console.log(resp.data.userEmail);
+        //window.location.href = 'http://localhost:8081/login';
       })
       .catch(er => {
         console.log('Error while registering in');
@@ -95,7 +85,7 @@ export default {
       })
     },
     ValidateEmail() {
-      if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.username))
+      if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.userEmail))
       {
         return (true)
       }

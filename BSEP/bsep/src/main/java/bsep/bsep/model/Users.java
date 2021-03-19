@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import bsep.bsep.dto.UserDTO;
+
 @Entity
 @Table(name = "users")
 public class Users {
@@ -18,9 +20,6 @@ public class Users {
 	@SequenceGenerator(name = "mySeqGenUsers", sequenceName = "mySeqUsers", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mySeqGenUsers")
 	private Long id;
-
-	@Column(name = "userId", unique = true, nullable = false)
-	private String userId;
 
 	@Column(name = "userEmail", unique = true, nullable = false)
 	private String userEmail;
@@ -41,7 +40,19 @@ public class Users {
 	private UserType typeOfUser;
 
 	public Users() {
+	}
 
+	public Users(UserDTO userDTO) {
+		this.userEmail = userDTO.getUserEmail();
+		this.password = userDTO.getPassword();
+		this.firstName = userDTO.getFirstName();
+		this.lastName = userDTO.getLastName();
+		this.phoneNumber = userDTO.getPhoneNumber();
+		
+		if(userDTO.getTypeOfUser().equals("ADMIN"))
+			this.typeOfUser = UserType.ADMIN;
+		else
+			this.typeOfUser = UserType.USER;
 	}
 
 	public Users(long id, String userEmail, String password, String firstName, String lastName, String phoneNumber,
@@ -111,5 +122,4 @@ public class Users {
 	public void setTypeOfUser(UserType typeOfUser) {
 		this.typeOfUser = typeOfUser;
 	}
-
 }
