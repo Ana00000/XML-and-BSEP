@@ -8,7 +8,7 @@
       <v-card-text>
         <v-form class="mx-auto ml-5 mr-5">
           <v-text-field
-            label="Username"
+            label="Username/email"
             v-model="username"
             prepend-icon="mdi-account-circle"/>
           <v-text-field
@@ -39,7 +39,7 @@ function redirectLogedUser(){
         headers: { Authorization: `Bearer ${tokenString}` }
     };
     axios.get( 
-        'http://localhost:8080/users/redirectMeToMyHomePage',
+        'api/users/redirectMeToMyHomePage',
         config
     ).then((response) => {
       console.log(response);
@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     logIn() {
-      this.$http.post('http://localhost:8080/users/login', this.user)
+      this.$http.post('api/users/login', this.user)
       .then(resp => {
         console.log(resp.data);
         localStorage.setItem("token", resp.data.accessToken);
