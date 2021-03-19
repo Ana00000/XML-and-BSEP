@@ -8,7 +8,9 @@ import java.security.cert.X509Certificate;
 import java.sql.Date;
 
 import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -98,6 +100,10 @@ public class CertificateGenerator {
 			// The keyAgreement keyUsage purpose indicating to use the subject public key
 			// for key agreement
 			//certGen.addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.keyAgreement));
+			
+			// TLS_WEB_CLIENT_AUTHENTICATION	
+			certGen.addExtension(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_clientAuth));
+			//certGen.addExtension(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_emailProtection));
 		}
 		certGen.addExtension(Extension.basicConstraints, true, new BasicConstraints(isCA));
 	}
