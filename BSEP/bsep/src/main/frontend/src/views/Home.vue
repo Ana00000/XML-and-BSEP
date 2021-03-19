@@ -1,15 +1,15 @@
 <template>
   <span>
-    <home-background/>
+    <home-background />
   </span>
 </template>
 
 <script>
-import HomeBackground from '../components/HomeBackground.vue';
+import HomeBackground from "../components/HomeBackground.vue";
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
-    HomeBackground
-  }
-}
+    HomeBackground,
+  },
+};
 </script>

@@ -1,19 +1,26 @@
 <template>
   <v-app>
-    <NavigationBar/>
-    <v-content>
-      <router-view/>
+    <NavigationBar />
+    <v-content class="content">
+      <router-view />
     </v-content>
   </v-app>
 </template>
 
+
 <script>
-import NavigationBar from './components/NavigationBar.vue'
+import NavigationBar from "./components/NavigationBar.vue";
 export default {
-  name: 'App',
-  el: '#app',
+  name: "App",
+  el: "#app",
   components: {
-    NavigationBar
-  }
+    NavigationBar,
+  },
 };
 </script>
+
+<style>
+.content {
+  background-color: #b5dafd;
+}
+</style>

@@ -1,6 +1,5 @@
 <template>
-  <div class="page">
-    <div class="pageUp"/>
+  <div>
     <v-card width="400" class="mx-auto mt-5" color="white">
       <v-card-title class="justify-center">
         <h1 class="display-1 ">Registration</h1>
@@ -42,7 +41,6 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-    <div class="pageDown"/>
   </div>
 </template>
 
@@ -95,18 +93,3 @@ export default {
   }
 };
 </script>
-
-
-<style>
-.pageUp {
-height: 100px;
-}
-
-.pageDown {
-height: 115px;
-}
-
-.page {
-  backgRound-color: #b5dafd;
-}
-</style>
