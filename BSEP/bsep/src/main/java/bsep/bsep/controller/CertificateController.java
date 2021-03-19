@@ -1,5 +1,7 @@
 package bsep.bsep.controller;
 
+import java.io.IOException;
+import java.security.cert.CertificateEncodingException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,23 @@ public class CertificateController {
 	public ResponseEntity<List<CertificateDTO>> getAllValidCertificatesDTO() {
 
 		return new ResponseEntity<>(certificateService.findAll(), HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/loadToFile/{serialNumber}")
+	public ResponseEntity<Boolean> getAllValidCertificatesDTO(@PathVariable String serialNumber) {
+		try {
+			certificateService.loadCertificateToFile(serialNumber);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (CertificateEncodingException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 
 	@PostMapping(value = "/createCertificate", consumes = "application/json")

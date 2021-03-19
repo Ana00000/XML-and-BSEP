@@ -1,5 +1,7 @@
 package bsep.bsep.service;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -15,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,6 +48,9 @@ public class CertificateService implements ICertificateService {
 
 	private ICertificateRepository certificateRepository;
 	private CertificateKeyStoreRepository certificateKeyStoreRepository;
+	private final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
+	private final String END_CERT = "-----END CERTIFICATE-----";
+	private final String LINE_SEPARATOR = System.getProperty("line.separator");
 
 	@Autowired
 	public CertificateService(ICertificateRepository certificateRepository,
@@ -81,9 +87,10 @@ public class CertificateService implements ICertificateService {
 			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer, true, null);
 
 		} else {
-			issuer = certificateKeyStoreRepository.getIssuerBySerialNumber(
-					certificateInfoDTO.getIssuerSerialNumber(), certificateInfoDTO.getIssuerAlias());
-			//uraditi provjeru da li je sertifikat za issuerSerialNumber validan tj. da nije istekao i da nije povucen
+			issuer = certificateKeyStoreRepository.getIssuerBySerialNumber(certificateInfoDTO.getIssuerSerialNumber(),
+					certificateInfoDTO.getIssuerAlias());
+			// uraditi provjeru da li je sertifikat za issuerSerialNumber validan tj. da
+			// nije istekao i da nije povucen
 			if (isIssuerInvalid(certificateInfoDTO, issuer)) {
 				return null;
 			}
@@ -98,7 +105,30 @@ public class CertificateService implements ICertificateService {
 	}
 
 	private boolean isIssuerInvalid(CertificateInfoDTO certificateInfoDTO, Issuer issuer) {
-		return issuer == null || findCertificateDataBySerialNumber(certificateInfoDTO.getIssuerSerialNumber()).getCertificateStatus() != CertificateStatus.VALID;
+		return issuer == null || findCertificateDataBySerialNumber(certificateInfoDTO.getIssuerSerialNumber())
+				.getCertificateStatus() != CertificateStatus.VALID;
+	}
+
+	public void loadCertificateToFile(String serialNumber) throws Exception {
+		
+		Base64.Encoder encoder = Base64.getMimeEncoder(64, LINE_SEPARATOR.getBytes());
+		if (findCertificateDataBySerialNumber(serialNumber).getCertificateStatus()!= CertificateStatus.VALID) {
+			throw new Exception();
+		}
+		byte[] bytes = certificateKeyStoreRepository.findBySerialNumber(serialNumber).getEncoded();
+		
+	    String certificate = BEGIN_CERT + LINE_SEPARATOR + new String(encoder.encode(bytes)) + LINE_SEPARATOR + END_CERT;
+		
+	    writeBytesToFile(serialNumber+".cer", certificate.getBytes());
+	    
+	}
+	
+	private void writeBytesToFile(String fileOutput, byte[] bytes) throws IOException {
+
+		try (FileOutputStream fos = new FileOutputStream(fileOutput)) {
+			fos.write(bytes);
+		}
+
 	}
 
 	public void revokeCertificate(String serialNumber) {
