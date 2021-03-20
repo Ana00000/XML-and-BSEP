@@ -18,7 +18,6 @@
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               @click:append="showPassword = !showPassword"/>
           <v-text-field
-          
               label="First name"
               v-model="firstName"
               prepend-icon="mdi-name-circle"/>
@@ -62,8 +61,19 @@ export default {
     register() {
       if(!this.ValidateEmail()){
         return;
-      }
-      this.$http.post('api/users/register',
+      }/*
+      this.$http.get('https://localhost:8080/users/findAll')
+      .then(response => {
+        console.log(response.data);
+
+        //window.location.href = 'http://localhost:8081/login';
+      })
+      .catch(er => {
+        console.log('Error while registering in');
+        console.log(er.response.data);
+      })*/
+      
+      this.$http.post('/api/users/register',
         {         
           userEmail : this.userEmail,
           lastName : this.lastName,
@@ -72,9 +82,11 @@ export default {
           phoneNumber : this.phoneNumber,
           typeOfUser : this.selectedTypeOfUser
       })
-      .then(resp => {
+      .then(response => {
         
-        console.log(resp.data.userEmail);
+        console.log(response.data.firstName);
+        
+        console.log(this.phoneNumber);
         //window.location.href = 'http://localhost:8081/login';
       })
       .catch(er => {

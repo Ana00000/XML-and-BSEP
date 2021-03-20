@@ -4,11 +4,10 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 import axios from "axios"
 import DatetimePicker from 'vuetify-datetime-picker'
-import Statistics from "vue-chartjs"
 import Moment from "moment"
 
 Vue.config.productionTip = false
-Vue.prototype.$http = axios
+Vue.prototype.$http = axios 
 
 new Vue({
   router,
@@ -17,6 +16,5 @@ new Vue({
 }).$mount('#app')
 
 Vue.use(DatetimePicker)
-Vue.use(Statistics)
 Vue.use(Moment)
 

@@ -15,8 +15,12 @@ public class UserDTO {
 	}
 
 	public UserDTO(Users user) {
-		this(user.getUserEmail(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getPhoneNumber(),
-				user.getTypeOfUser().name());
+		this.userEmail = user.getUserEmail();
+		this.password = user.getPassword();
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
+		this.phoneNumber = user.getPhoneNumber();
+		this.typeOfUser = user.getTypeOfUser().name();
 	}
 
 	public UserDTO(String userEmail, String password, String firstName, String lastName, String phoneNumber,
