@@ -65,12 +65,11 @@ public class CertificateService implements ICertificateService {
 	}
 
 	@Override
-	public List<CertificateDTO> findAll() {
+	public List<CertificateDTO> findAllRevokedOrExpired() {
 		List<CertificateDTO> certificatesDTO = new ArrayList<CertificateDTO>();
 
 		for (X509Certificate certificateX509 : certificateKeyStoreRepository.getCertificates()) {
-
-			getAll(certificatesDTO, certificateX509);
+				getAllRevokedOrExpired(certificatesDTO, certificateX509);
 		}
 		return certificatesDTO;
 	}
@@ -80,7 +79,7 @@ public class CertificateService implements ICertificateService {
 		List<CertificateDTO> certificatesDTO = new ArrayList<CertificateDTO>();
 
 		for (X509Certificate certificateX509 : certificateKeyStoreRepository.getCertificates())
-			getAllWithValidStatus(certificatesDTO, certificateX509);
+			getAllValid(certificatesDTO, certificateX509);
 
 		return certificatesDTO;
 	}
@@ -167,7 +166,7 @@ public class CertificateService implements ICertificateService {
 		if (certificateDTO.getCertificateType() == CertificateType.ENDENTITY)
 			return;
 
-		for (CertificateDTO certificateDTOIt : findAll()) {
+		for (CertificateDTO certificateDTOIt : findAllValid()) {
 			if (isValidChild(certificateDTO.getSubject(), certificateDTOIt))
 				getSerialNumberOfChildrenCertificate(returnValues, certificateDTOIt);
 		}
@@ -243,19 +242,19 @@ public class CertificateService implements ICertificateService {
 		return null;
 	}
 
-	private void getAllWithValidStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
+	private void getAllValid(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
 		for (CertificateData certificateData : certificateRepository.findAll()) {
-			checkCertificateStatus(certificatesDTO, certificateX509, certificateData);
+			checkCertificateValidStatus(certificatesDTO, certificateX509, certificateData);
+		}
+	}
+	
+	private void getAllRevokedOrExpired(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
+		for (CertificateData certificateData : certificateRepository.findAll()) {
+			checkCertificateRevokedOrExpiredStatus(certificatesDTO, certificateX509, certificateData);
 		}
 	}
 
-	private void getAll(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
-		for (CertificateData certificateData : certificateRepository.findAll())
-			if (certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber()))
-				certificatesDTO.add(setCertificateData(certificateData, certificateX509));
-	}
-
-	private boolean checkCertificateStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509,
+	private boolean checkCertificateValidStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509,
 			CertificateData certificateData) {
 		if (certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber())) {
 			return checkCertificateExpired(certificateX509, certificateData) ? false
@@ -263,10 +262,27 @@ public class CertificateService implements ICertificateService {
 		}
 		return false;
 	}
+	
+	private void checkCertificateRevokedOrExpiredStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509,
+			CertificateData certificateData) {
+		if (certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber())) {
+			addRevokedOrExpiredCertificateToList(certificatesDTO, certificateX509, certificateData);
+		}
+		
+	}
 
 	private boolean addValidCertificateToList(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509,
 			CertificateData certificateData) {
 		if (certificateData.getCertificateStatus() == CertificateStatus.VALID) {
+			certificatesDTO.add(setCertificateData(certificateData, certificateX509));
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean addRevokedOrExpiredCertificateToList(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509,
+			CertificateData certificateData) {
+		if ((certificateData.getCertificateStatus() == CertificateStatus.REVOKED) || (certificateData.getCertificateStatus() == CertificateStatus.EXPIRED) ) {
 			certificatesDTO.add(setCertificateData(certificateData, certificateX509));
 			return true;
 		}

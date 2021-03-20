@@ -80,9 +80,8 @@ export default {
     userEmail: null
    }),
   methods: {
-     getCertificates() {
-          this.userEmail = localStorage.getItem("userEmail");
-          this.$http.get('http://localhost:8081/certificate/allCertificates', this.userEmail)
+     getValidCertificates() {
+          this.$http.get('http://localhost:8080/certificate/allValid')
             .then(res => {
               this.certificates = res.data;
             })

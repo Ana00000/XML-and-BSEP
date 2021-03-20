@@ -50,10 +50,6 @@ public class UserController {
 	public ResponseEntity<List<Users>> findAll() {
 		return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
 	}
-
-	public ResponseEntity<Users> findByEmail(String userEmail) {
-		return new ResponseEntity<>(userService.findByUserEmail(userEmail), HttpStatus.OK);
-	}
 	
 	@GetMapping("/redirectMeToMyHomePage")
 	public String RedirectionToHome() {

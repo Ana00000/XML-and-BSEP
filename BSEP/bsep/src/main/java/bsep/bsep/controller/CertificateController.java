@@ -29,24 +29,22 @@ public class CertificateController {
 
 	private CertificateService certificateService;
 
-	private UserService userService;
-
+	
 	@Autowired
-	public CertificateController(CertificateService certificateService, UserService userService) {
+	public CertificateController(CertificateService certificateService) {
 		this.certificateService = certificateService;
-		this.userService = userService;
 	}
 
-	@GetMapping(value = "/allCertificates/{userEmail}")
-	public ResponseEntity<List<CertificateDTO>> allCertificates(@PathVariable String userEmail) {
-		if (findTypeByEmail(userEmail).equals("ADMIN"))
-			return new ResponseEntity<>(certificateService.findAll(), HttpStatus.OK);
-
+	@GetMapping(value = "/allValid")
+	public ResponseEntity<List<CertificateDTO>> allValidCertificates() {
+	
 		return new ResponseEntity<>(certificateService.findAllValid(), HttpStatus.OK);
 	}
-
-	private String findTypeByEmail(String userEmail) {
-		return userService.findByUserEmail(userEmail).getTypeOfUser().name();
+	
+	@GetMapping(value = "/allRevokedOrExpired")
+	public ResponseEntity<List<CertificateDTO>> allRevokedOrExpiredCertificates() {
+	
+		return new ResponseEntity<>(certificateService.findAllRevokedOrExpired(), HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/loadToFile/{serialNumber}")
