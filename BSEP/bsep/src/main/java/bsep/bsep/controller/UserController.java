@@ -74,6 +74,7 @@ public class UserController {
 
 	@PostMapping(value = "/register", consumes = "application/json")
 	public ResponseEntity<Users> addUser(@RequestBody UserDTO userRequest) {
+		System.out.print(userRequest.getUserEmail());
 		Users existUser;
 		try {
 			existUser = userService.findByUserEmail(userRequest.getUserEmail());

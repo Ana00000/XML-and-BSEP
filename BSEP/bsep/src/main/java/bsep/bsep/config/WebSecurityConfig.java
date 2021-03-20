@@ -1,3 +1,4 @@
+///
 package bsep.bsep.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,10 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/auth/**/*").permitAll()
 				.antMatchers("/h2-console/**").permitAll()
 				.antMatchers("/api/foo").permitAll()
-				.antMatchers("/users/register").permitAll()
-				.antMatchers("/users/login").permitAll()
-				
-				
+				.antMatchers("/api/**").permitAll()
 				
 				// za svaki drugi zahtev korisnik mora biti autentifikovan
 				.anyRequest().authenticated().and()
@@ -93,9 +91,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
-		web.ignoring().antMatchers(HttpMethod.POST, "/auth/login","/users/*", "/auth/logout/*");
+		web.ignoring().antMatchers(HttpMethod.POST, "/auth/login","/users/*", "/auth/logout/*",  "/users/login/*", "/users/register/*");
 		//web.ignoring().antMatchers(HttpMethod.PUT, "/api/pharmacy/**/*", "/api/medicinePrice/**/*", "/api/medicinePrice/**", "/api/medicinePrice/**/*/*","/api/priceList/**/*", "/api/priceList/**", "/api/priceList/**/*/*");
 		web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
-				"/**/*.css", "/**/*.js", "/auth/getRole");
+				"/**/*.css", "/**/*.js", "/auth/getRole", "/users/*", "/users/findAll", "/users/redirectMeToMyHomePage");
 	}
 }
