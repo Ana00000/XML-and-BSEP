@@ -78,7 +78,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// za svaki drugi zahtev korisnik mora biti autentifikovan
 				.anyRequest().authenticated().and()
 				// za development svrhe ukljuci konfiguraciju za CORS iz WebConfig klase
-				//.cors().disable().cors().and()
+				.cors().disable().cors().and()
 
 				// umetni custom filter TokenAuthenticationFilter kako bi se vrsila provera JWT tokena umesto cistih korisnickog imena i lozinke (koje radi BasicAuthenticationFilter)
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, jwtUserDetailsService),
@@ -91,8 +91,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
-		web.ignoring().antMatchers(HttpMethod.POST, "/auth/login","/users/*", "/auth/logout/*",  "/users/login/*", "/users/register/*");
-		//web.ignoring().antMatchers(HttpMethod.PUT, "/api/pharmacy/**/*", "/api/medicinePrice/**/*", "/api/medicinePrice/**", "/api/medicinePrice/**/*/*","/api/priceList/**/*", "/api/priceList/**", "/api/priceList/**/*/*");
+		web.ignoring().antMatchers(HttpMethod.POST, "/users/*", "/users/login", "/users/register");
+
 		web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
 				"/**/*.css", "/**/*.js", "/auth/getRole", "/users/*", "/users/findAll", "/users/redirectMeToMyHomePage");
 	}

@@ -70,8 +70,18 @@ public class CertificateService implements ICertificateService {
 
 		for (X509Certificate certificateX509 : certificateKeyStoreRepository.getCertificates()) {
 
-			getAllWithValidStatus(certificatesDTO, certificateX509);
+			getAll(certificatesDTO, certificateX509);
 		}
+		return certificatesDTO;
+	}
+
+	@Override
+	public List<CertificateDTO> findAllValid() {
+		List<CertificateDTO> certificatesDTO = new ArrayList<CertificateDTO>();
+
+		for (X509Certificate certificateX509 : certificateKeyStoreRepository.getCertificates())
+			getAllWithValidStatus(certificatesDTO, certificateX509);
+
 		return certificatesDTO;
 	}
 
@@ -110,25 +120,24 @@ public class CertificateService implements ICertificateService {
 	}
 
 	public void loadCertificateToFile(String serialNumber) throws Exception {
-		
+
 		Base64.Encoder encoder = Base64.getMimeEncoder(64, LINE_SEPARATOR.getBytes());
-		if (findCertificateDataBySerialNumber(serialNumber).getCertificateStatus()!= CertificateStatus.VALID) {
+		if (findCertificateDataBySerialNumber(serialNumber).getCertificateStatus() != CertificateStatus.VALID) {
 			throw new Exception();
 		}
 		byte[] bytes = certificateKeyStoreRepository.findBySerialNumber(serialNumber).getEncoded();
-		
-	    String certificate = BEGIN_CERT + LINE_SEPARATOR + new String(encoder.encode(bytes)) + LINE_SEPARATOR + END_CERT;
-		
-	    writeBytesToFile(serialNumber+".cer", certificate.getBytes());
-	    
-	}
-	
-	private void writeBytesToFile(String fileOutput, byte[] bytes) throws IOException {
 
+		String certificate = BEGIN_CERT + LINE_SEPARATOR + new String(encoder.encode(bytes)) + LINE_SEPARATOR
+				+ END_CERT;
+
+		writeBytesToFile(serialNumber + ".cer", certificate.getBytes());
+
+	}
+
+	private void writeBytesToFile(String fileOutput, byte[] bytes) throws IOException {
 		try (FileOutputStream fos = new FileOutputStream(fileOutput)) {
 			fos.write(bytes);
 		}
-
 	}
 
 	public void revokeCertificate(String serialNumber) {
@@ -238,6 +247,12 @@ public class CertificateService implements ICertificateService {
 		for (CertificateData certificateData : certificateRepository.findAll()) {
 			checkCertificateStatus(certificatesDTO, certificateX509, certificateData);
 		}
+	}
+
+	private void getAll(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
+		for (CertificateData certificateData : certificateRepository.findAll())
+			if (certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber()))
+				certificatesDTO.add(setCertificateData(certificateData, certificateX509));
 	}
 
 	private boolean checkCertificateStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509,

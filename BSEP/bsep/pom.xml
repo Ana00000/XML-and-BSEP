@@ -79,7 +79,6 @@
 			<artifactId>bcprov-jdk16</artifactId>
 			<version>1.45</version>
 		</dependency>
-		
 		<!-- ukljucena podrska za Spring Security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

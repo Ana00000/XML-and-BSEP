@@ -22,7 +22,6 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 
 import bsep.bsep.model.CertificateType;
@@ -30,8 +29,6 @@ import bsep.bsep.model.Issuer;
 
 @Repository
 public class CertificateKeyStoreRepository {
-
-	private Environment env;
 
 	private KeyStore ksRoot;
 	private KeyStore ksIntermediate;
@@ -46,13 +43,12 @@ public class CertificateKeyStoreRepository {
 	private String alias;
 
 	@Autowired
-	public CertificateKeyStoreRepository(Environment env) {
+	public CertificateKeyStoreRepository() {
 		try {
 			Security.addProvider(new BouncyCastleProvider());
-			this.env = env;
-			strPassword = env.getProperty("server.ssl.key-store-password");
-			charPassword = env.getProperty("server.ssl.key-store-password").toCharArray();
-			alias = env.getProperty("server.ssl.key-alias");
+			strPassword = "password";
+			charPassword = "password".toCharArray();
+			alias = "1";
 			ksRoot = KeyStore.getInstance("JKS");
 			ksIntermediate = KeyStore.getInstance("JKS");
 			ksEndEntity = KeyStore.getInstance("JKS");
@@ -64,13 +60,9 @@ public class CertificateKeyStoreRepository {
 	}
 
 	public X509Certificate findBySerialNumber(String serialNumber) {
-		for (X509Certificate x509Certificate : getCertificates()) {
-
-			if (x509Certificate.getSerialNumber().toString().equals(serialNumber)) {
+		for (X509Certificate x509Certificate : getCertificates()) 
+			if (x509Certificate.getSerialNumber().toString().equals(serialNumber)) 
 				return x509Certificate;
-			}
-		}
-
 		return null;
 	}
 

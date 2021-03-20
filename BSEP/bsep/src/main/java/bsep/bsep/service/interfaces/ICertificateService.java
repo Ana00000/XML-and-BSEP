@@ -10,5 +10,7 @@ public interface ICertificateService {
 	CertificateData findOne(Long id);
 
 	List<CertificateDTO> findAll();
+	
+	List<CertificateDTO> findAllValid();
 
 }

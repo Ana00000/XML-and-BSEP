@@ -1,10 +1,11 @@
 <template>
   <v-container>
     <v-layout row wrap>
-      <v-card class="mx-auto" id="certificateCard">
+
+      <v-card style="width: 40%; height: 700px; overflow-y: scroll" id="certificateCard">
         <v-toolbar color="light-blue darken-4" dark> </v-toolbar>
         <v-list two-line>
-          <v-list-item-group active-class="indigo--text" multiple>
+          <v-list-item-group active-class="indigo--text" single>
             <template v-for="(certificate, id) in certificates">
               <v-list-item :key="certificate.id">
                 <template>
@@ -41,6 +42,31 @@
           </v-list-item-group>
         </v-list>
       </v-card>
+      
+      <v-card class="mx-auto" style="width: 40%; height: 700px; overflow-y: scroll">
+        <v-toolbar color="light-blue darken-4" dark> </v-toolbar>
+        <v-list two-line>
+          <v-list-item-group active-class="indigo--text" disabled>
+            <template v-for="(certificate, id) in certificates">
+              <v-list-item :key="certificate.id">
+                <template>
+                  <v-list-item-content>
+                    <v-list-item-subtitle
+                      v-text="
+                        certificate.alias + ' ' + certificate.organization
+                      "
+                    />
+                  </v-list-item-content>
+                </template>
+              </v-list-item>
+              <v-divider
+                v-if="`A-${id}` < certificates.length - 1"
+                :key="`A-${id}`"
+              />
+            </template>
+          </v-list-item-group>
+        </v-list>
+      </v-card>
     </v-layout>
   </v-container>
 </template>
@@ -48,7 +74,21 @@
 <script>
 export default {
   name: "Certificates",
-  components: {},
+  data: () => ({
+    certificates: null,
+    user: null,
+    userEmail: null
+   }),
+  methods: {
+     getCertificates() {
+          this.userEmail = localStorage.getItem("userEmail");
+          this.$http.get('http://localhost:8081/certificate/allCertificates', this.userEmail)
+            .then(res => {
+              this.certificates = res.data;
+            })
+            .catch(err => console.log(err));
+      },
+  }
 };
 </script>
 

@@ -7,7 +7,7 @@
       <v-card-text>
         <v-form class="mx-auto ml-5 mr-5">
           <v-text-field
-              label="Username/Email"
+              label="Email"
               v-model="userEmail"
               prepend-icon="mdi-account-circle"/>
           <v-text-field
@@ -62,7 +62,7 @@ export default {
       if(!this.ValidateEmail()){
         return;
       }/*
-      this.$http.get('https://localhost:8080/users/findAll')
+      this.$http.get('http://localhost:8080/users/findAll')
       .then(response => {
         console.log(response.data);
 
@@ -73,7 +73,7 @@ export default {
         console.log(er.response.data);
       })*/
       
-      this.$http.post('/api/users/register',
+      this.$http.post('http://localhost:8080/users/register',
         {         
           userEmail : this.userEmail,
           lastName : this.lastName,
@@ -83,11 +83,8 @@ export default {
           typeOfUser : this.selectedTypeOfUser
       })
       .then(response => {
-        
         console.log(response.data.firstName);
-        
-        console.log(this.phoneNumber);
-        //window.location.href = 'http://localhost:8081/login';
+        window.location.href = 'http://localhost:8081/login';
       })
       .catch(er => {
         console.log('Error while registering in');

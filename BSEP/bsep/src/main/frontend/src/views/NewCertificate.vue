@@ -1,6 +1,17 @@
 <template>
   <div>
+    <br/>
     <v-container fluid class="container">
+
+    <v-combobox
+        class="combo"
+        :items="certificates"
+        :item-text="text"
+        v-model="selectedCertificatePurpose"
+        :label="label2"
+        hint="Choose certificate purpose."
+      />
+
       <v-row aria-rowspan="2">
         <v-col cols="5" />
         <v-col cols="3">
@@ -117,39 +128,7 @@
         :label="label1"
         hint="Choose certificate type."
       />
-
-      <v-combobox
-        class="combo"
-        :items="certificates"
-        :item-text="text"
-        v-model="selectedCertificatePurpose"
-        :label="label2"
-        hint="Choose certificate purpose."
-      />
-
-      <v-row rows="2" v-bind:hidden="selectedCertificateType == 'ROOT'">
-        <v-col cols="5" />
-        <v-col cols="3">
-          <v-text-field
-            label="Issuer serial number"
-            v-model="issuerSerialNumber"
-            hint="Issuer serial number should contain at least 3 characters!"
-            color="light-blue darken-4"
-          />
-        </v-col>
-      </v-row>
-
-      <v-row rows="2" v-bind:hidden="selectedCertificateType == 'ROOT'">
-        <v-col cols="5" />
-        <v-col cols="3">
-          <v-text-field
-            label="Issuer alias"
-            v-model="issuerAlias"
-            hint="Issuer alias should contain at least 2 characters!"
-            color="light-blue darken-4"
-          />
-        </v-col>
-      </v-row>
+    
     </v-container>
 
     <div class="center">

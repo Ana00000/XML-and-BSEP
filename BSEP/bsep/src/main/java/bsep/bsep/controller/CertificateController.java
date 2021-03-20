@@ -20,6 +20,7 @@ import bsep.bsep.dto.CertificateDTO;
 import bsep.bsep.dto.CertificateInfoDTO;
 import bsep.bsep.model.CertificateData;
 import bsep.bsep.service.CertificateService;
+import bsep.bsep.service.UserService;
 
 @Controller
 @CrossOrigin(origins = "", allowedHeaders = "")
@@ -27,20 +28,27 @@ import bsep.bsep.service.CertificateService;
 public class CertificateController {
 
 	private CertificateService certificateService;
-	
+
+	private UserService userService;
 
 	@Autowired
-	public CertificateController(CertificateService certificateService) {
+	public CertificateController(CertificateService certificateService, UserService userService) {
 		this.certificateService = certificateService;
-		
+		this.userService = userService;
 	}
 
-	@GetMapping(value = "/allValid")
-	public ResponseEntity<List<CertificateDTO>> getAllValidCertificatesDTO() {
+	@GetMapping(value = "/allCertificates/{userEmail}")
+	public ResponseEntity<List<CertificateDTO>> allCertificates(@PathVariable String userEmail) {
+		if (findTypeByEmail(userEmail).equals("ADMIN"))
+			return new ResponseEntity<>(certificateService.findAll(), HttpStatus.OK);
 
-		return new ResponseEntity<>(certificateService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(certificateService.findAllValid(), HttpStatus.OK);
 	}
-	
+
+	private String findTypeByEmail(String userEmail) {
+		return userService.findByUserEmail(userEmail).getTypeOfUser().name();
+	}
+
 	@GetMapping(value = "/loadToFile/{serialNumber}")
 	public ResponseEntity<Boolean> getAllValidCertificatesDTO(@PathVariable String serialNumber) {
 		try {
@@ -55,7 +63,7 @@ public class CertificateController {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		
+
 	}
 
 	@PostMapping(value = "/createCertificate", consumes = "application/json")
@@ -67,10 +75,11 @@ public class CertificateController {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 	}
-	private HttpStatus checkStatusForCreatingCertificate (CertificateData certificateData) {
-		return certificateData!=null ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
+
+	private HttpStatus checkStatusForCreatingCertificate(CertificateData certificateData) {
+		return certificateData != null ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
 	}
-	
+
 	@PutMapping(value = "/revokeCertificate/{serialNumber}", consumes = "application/json")
 	public ResponseEntity<Boolean> revokeCertificate(@PathVariable String serialNumber) {
 		try {
@@ -79,6 +88,6 @@ public class CertificateController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-	
+
 	}
 }

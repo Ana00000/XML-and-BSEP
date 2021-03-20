@@ -61,7 +61,7 @@ export default {
     methods:{
       logOff() {
         localStorage.setItem("token","");
-        window.location.href = "http://localhost:8080/login";
+        window.location.href = "http://localhost:8081/";
       }
     }
 }

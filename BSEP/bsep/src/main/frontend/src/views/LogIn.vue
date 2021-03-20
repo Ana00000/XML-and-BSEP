@@ -6,8 +6,8 @@
     <v-card-text>
       <v-form class="mx-auto ml-5 mr-5">
         <v-text-field
-          label="Username/email"
-          v-model="username"
+          label="Email"
+          v-model="userEmail"
           prepend-icon="mdi-account-circle"
         />
         <v-text-field
@@ -30,13 +30,13 @@
 
 <script>
 import axios from "axios";
-function redirectLogedUser() {
+function redirectLoggedUser() {
   var tokenString = "";
   tokenString = localStorage.getItem("token");
   const config = {
     headers: { Authorization: `Bearer ${tokenString}` },
   };
-  axios.get("api/users/redirectMeToMyHomePage", config).then(
+  axios.get("http://localhost:8080/users/redirectMeToMyHomePage", config).then(
     (response) => {
       console.log(response);
       window.location.href = response.data;
@@ -51,29 +51,30 @@ export default {
   name: "Login",
   data: () => ({
     showPassword: false,
-    username: "",
+    userEmail: "",
     password: "",
     users: [],
   }),
   computed: {
     user() {
-      return { email: this.username, password: this.password };
+      return { userEmail: this.userEmail, password: this.password };
     },
   },
   methods: {
     logIn() {
       this.$http
-        .post("api/users/login", this.user)
+        .post("http://localhost:8080/users/login", this.user)
         .then((resp) => {
           console.log(resp.data);
           localStorage.setItem("token", resp.data.accessToken);
-          redirectLogedUser();
+          localStorage.setItem("userEmail", this.user.userEmail);
+          redirectLoggedUser();
         })
         .catch((er) => {
           console.log("Error while logging in");
           console.log(er.response.data);
         });
-    },
+    }
   },
 };
 </script>

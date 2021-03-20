@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -12,15 +13,16 @@ import org.springframework.security.core.GrantedAuthority;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "AUTHORITY")
+@Table(name = "authority")
 public class Authority implements GrantedAuthority {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long id;
+	@SequenceGenerator(name = "mySeqGenAuthority", sequenceName = "mySeqAuthority", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mySeqGenAuthority")
+	@Column(name = "id", unique = true, nullable = false)
+	private Long id;
 
 	@Column(name = "name", nullable = false, unique = true)
 	String name;
