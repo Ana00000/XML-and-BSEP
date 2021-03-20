@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,22 +24,36 @@ import bsep.bsep.service.CertificateService;
 import bsep.bsep.service.UserService;
 
 @Controller
-@CrossOrigin(origins = "", allowedHeaders = "")
-@RequestMapping(value = "/certificate")
+@CrossOrigin(origins = "http://localhost:8081")
+@RequestMapping(value = "/certificate", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CertificateController {
 
 	private CertificateService certificateService;
+	private UserService userService;
 
 	
 	@Autowired
-	public CertificateController(CertificateService certificateService) {
+	public CertificateController(CertificateService certificateService, UserService userService) {
 		this.certificateService = certificateService;
+		this.userService = userService;
 	}
 
-	@GetMapping(value = "/allValid")
-	public ResponseEntity<List<CertificateDTO>> allValidCertificates() {
-	
+	@GetMapping(value = "/allValid/{userEmail}")
+	public ResponseEntity<List<CertificateDTO>> allValidCertificates(@PathVariable String userEmail) {
+		if(findTypeByEmail(userEmail).equals("ADMIN"))
+		{
+			System.out.println("ADMIN");
+			return new ResponseEntity<>(certificateService.findAllValid(), HttpStatus.OK);
+			
+		}
+			
+		//treba else drugu metodu
 		return new ResponseEntity<>(certificateService.findAllValid(), HttpStatus.OK);
+	}
+	
+	private String findTypeByEmail(String userEmail)
+	{
+		return userService.findByUserEmail(userEmail).getTypeOfUser().name();
 	}
 	
 	@GetMapping(value = "/allRevokedOrExpired")

@@ -91,7 +91,7 @@ public class CertificateService implements ICertificateService {
 		X509Certificate x509certificate = null;
 		Issuer issuer = null;
 
-		if (certificateInfoDTO.getCertificateType() == CertificateType.ROOT) {
+		if (certificateInfoDTO.getCertificateType().equals("ROOT")) {
 			issuer = generateIssuer(keyPairIssuer.getPrivate(), certificateInfoDTO);
 			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer, true, null);
 
@@ -178,11 +178,11 @@ public class CertificateService implements ICertificateService {
 	}
 
 	private Boolean isIntermedateCertificate(CertificateInfoDTO certificateInfoDTO) {
-		return certificateInfoDTO.getCertificateType() == CertificateType.INTERMEDIATE;
+		return certificateInfoDTO.getCertificateType().equals("INTERMEDIATE");
 	}
 
-	public CertificateData save(String serialNumber, CertificateType certificateType,
-			CertificatePurposeType certificatePurposeType) {
+	public CertificateData save(String serialNumber, String certificateType,
+			String certificatePurposeType) {
 		return certificateRepository
 				.save(convertCertificateInfoDTOToData(serialNumber, certificateType, certificatePurposeType));
 	}
@@ -313,16 +313,42 @@ public class CertificateService implements ICertificateService {
 		return invalidDate;
 	}
 
-	private CertificateData convertCertificateInfoDTOToData(String serialNumber, CertificateType certificateType,
-			CertificatePurposeType certificatePurposeType) {
+	private CertificateData convertCertificateInfoDTOToData(String serialNumber, String certificateType,
+			String certificatePurposeType) {
 		CertificateData certificateData = new CertificateData();
 		certificateData.setSerialNumber(serialNumber);
-		certificateData.setCertificateType(certificateType);
-		certificateData.setCertificatePurposeType(certificatePurposeType);
+		certificateData.setCertificateType(getCertificateType(certificateType));
+		certificateData.setCertificatePurposeType(getCertificatePurposeType(certificatePurposeType));
 		System.out.println("PURPOSE: " + certificatePurposeType);
 		certificateData.setCertificateStatus(CertificateStatus.VALID);
 
 		return certificateData;
+	}
+	
+	private CertificateType getCertificateType(String certificateType)
+	{
+		
+		if(certificateType.equals("ROOT"))
+			return CertificateType.ROOT;
+		else if(certificateType.equals("INTERMEDIATE"))
+			return CertificateType.INTERMEDIATE;
+		else
+			return CertificateType.ENDENTITY;
+			
+	}
+	
+	private CertificatePurposeType getCertificatePurposeType(String certificatePurposeType)
+	{//SERVICE, SUBSYSTEM, USER, NONE;
+		
+		if(certificatePurposeType.equals("SERVICE"))
+			return CertificatePurposeType.SERVICE;
+		else if(certificatePurposeType.equals("SUBSYSTEM"))
+			return CertificatePurposeType.SUBSYSTEM;
+		else if(certificatePurposeType.equals("USER"))
+			return CertificatePurposeType.USER;
+		else
+			return CertificatePurposeType.NONE;
+			
 	}
 
 	private CertificateDTO setCertificateData(CertificateData certificateData, X509Certificate certificateX509) {

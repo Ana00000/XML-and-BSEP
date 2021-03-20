@@ -66,13 +66,13 @@ public class CertificateKeyStoreRepository {
 		return null;
 	}
 
-	public void saveKeyStore(CertificateType certificateType, String alias, X509Certificate certificate,
+	public void saveKeyStore(String certificateType, String alias, X509Certificate certificate,
 			PrivateKey privateKey) {
 		try {
-			if (certificateType == CertificateType.ROOT) {
+			if (certificateType.equals("ROOT")) {
 				ksRoot.setKeyEntry(alias, privateKey, charPassword, new X509Certificate[] { certificate });
 				ksRoot.store(new FileOutputStream(ksRootPath), charPassword);
-			} else if (certificateType == CertificateType.INTERMEDIATE) {
+			} else if (certificateType.equals("INTERMEDIATE")) {
 				ksIntermediate.setKeyEntry(alias, privateKey, charPassword, new X509Certificate[] { certificate });
 				ksIntermediate.store(new FileOutputStream(ksIntermediatePath), charPassword);
 			} else {

@@ -160,6 +160,32 @@ export default {
     label1: "Certificates type",
     label2: "Certificate purpose",
   }),
+  methods: {
+     createCertificate() {
+      this.$http.post ('http://localhost:8080/certificate/createCertificate',
+          {
+              "commonName":this.commonName,
+              "givenName":this.givenName,
+              "surname":this.surname,
+              "organization":this.organization,
+              "organizationalUnitName":this.organizationalUnitName,
+              "organizationEmail":this.organizationEmail,
+              "countryCode":this.countryCode,
+              "alias":this.alias,
+              "endDate":this.endDate,
+              "certificateType":this.selectedCertificateType,
+              "certificatePurposeType":this.selectedCertificatePurpose,
+              "issuerSerialNumber":null,
+              "issuerAlias":this.alias
+            }).then(resp => {
+               console.log(resp.data);
+                alert("Created Root certificate.");
+            }).catch(err => {
+                alert("Doctor or patient is busy at this time.");
+                console.log(err.response.data);
+            })
+      }
+  }
 };
 </script>
 

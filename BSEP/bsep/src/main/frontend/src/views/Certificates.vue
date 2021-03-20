@@ -75,16 +75,26 @@
 export default {
   name: "Certificates",
   data: () => ({
-    certificates: null,
+    certificates: [],
     user: null,
     userEmail: null
    }),
+   mounted() {
+        this.init();
+        //this.getValidCertificates();
+    },
   methods: {
+      init() {
+    this.getValidCertificates()},
      getValidCertificates() {
-          this.$http.get('http://localhost:8080/certificate/allValid')
+          var userEmail = localStorage.getItem("userEmail");
+          this.$http.get('http://localhost:8080/certificate/allValid/'+ userEmail)
             .then(res => {
               this.certificates = res.data;
-            })
+              console.log(res.data);
+              console.log("then usao");
+              console.log(userEmail);
+                          })
             .catch(err => console.log(err));
       },
   }

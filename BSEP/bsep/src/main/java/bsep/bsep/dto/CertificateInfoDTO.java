@@ -14,19 +14,17 @@ public class CertificateInfoDTO {
 	private String countryCode;
 	private String alias;
 	private String endDate;
-	private CertificateType certificateType;
-	private CertificatePurposeType certificatePurposeType;
+	private String certificateType;
+	private String certificatePurposeType;
 	private String issuerSerialNumber;
 	private String issuerAlias;
 
 	public CertificateInfoDTO() {
 	}
 
-
 	public CertificateInfoDTO(String commonName, String givenName, String surname, String organization,
 			String organizationalUnitName, String organizationEmail, String countryCode, String alias, String endDate,
-			CertificateType certificateType, CertificatePurposeType certificatePurposeType, String issuerSerialNumber,
-			String issuerAlias) {
+			String certificateType, String certificatePurposeType, String issuerSerialNumber, String issuerAlias) {
 		super();
 		this.commonName = commonName;
 		this.givenName = givenName;
@@ -42,7 +40,6 @@ public class CertificateInfoDTO {
 		this.issuerSerialNumber = issuerSerialNumber;
 		this.issuerAlias = issuerAlias;
 	}
-
 
 	public String getCommonName() {
 		return commonName;
@@ -116,19 +113,19 @@ public class CertificateInfoDTO {
 		this.endDate = endDate;
 	}
 
-	public CertificateType getCertificateType() {
+	public String getCertificateType() {
 		return certificateType;
 	}
 
-	public void setCertificateType(CertificateType certificateType) {
+	public void setCertificateType(String certificateType) {
 		this.certificateType = certificateType;
 	}
 
-	public CertificatePurposeType getCertificatePurposeType() {
+	public String getCertificatePurposeType() {
 		return certificatePurposeType;
 	}
 
-	public void setCertificatePurposeType(CertificatePurposeType certificatePurposeType) {
+	public void setCertificatePurposeType(String certificatePurposeType) {
 		this.certificatePurposeType = certificatePurposeType;
 	}
 
@@ -140,15 +137,12 @@ public class CertificateInfoDTO {
 		this.issuerSerialNumber = issuerSerialNumber;
 	}
 
-
 	public String getIssuerAlias() {
 		return issuerAlias;
 	}
-
 
 	public void setIssuerAlias(String issuerAlias) {
 		this.issuerAlias = issuerAlias;
 	}
 
-	
 }
