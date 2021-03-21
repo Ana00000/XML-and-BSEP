@@ -7,9 +7,17 @@
       
         <v-toolbar color="light-blue darken-4" dark><v-toolbar-title class="flex text-center">VALID CERTIFICATES</v-toolbar-title></v-toolbar>
         <v-list two-line>
-          <v-list-item-group active-class="indigo--text" single>
+          <v-list-item-group
+            active-class="indigo--text"
+            v-model="selectedCertificate"
+            single
+          >
             <template v-for="(certificate, id) in certificates">
-              <v-list-item :key="certificate.id">
+              <v-list-item 
+              :key="certificate.id" 
+              :value="certificate"
+                v-on:click="redirectToCertificate"
+              >
                 <template>
                   <v-list-item-content class = "center text-wrap">
                   

@@ -179,6 +179,7 @@ export default {
     issuerCertificateType: null,
     issuerAlias: null,
     certificates: [],
+    dateValid: true,
     selectedCertificateType: "INTERMEDIATE",
     selectedCertificatePurpose: "NONE",
     certificatePurpose: ["SERVICE", "SUBSYSTEM", "USER", "NONE"],
@@ -198,6 +199,8 @@ export default {
     },
     createCertificate() {
       //this.validation();
+      this.validationOfEndDate();
+      if (this.dateValid){
       this.$http
         .post("http://localhost:8080/certificate/createCertificate", {
           commonName: this.commonName,
@@ -223,6 +226,8 @@ export default {
           alert("Certificate wasn't created, sorry.");
           console.log(err.response.data);
         });
+      }
+        
     },
     validation() {
       this.validationOfCommonName();
@@ -314,13 +319,26 @@ export default {
       }
     },
     validationOfEndDate() {
-      if (this.endDate.length < 6) {
-        alert("Your end date should contain at least 6 character!");
-        return;
-      } else if (this.endDate.length > 20) {
-        alert("Your end date shouldn't contain more than 20 characters!");
-        return;
+      this.dateValid = true;
+      var issuerEndDateSplit = this.issuerEndDate.split('-');
+      var issuerEDSDay = issuerEndDateSplit[2];
+      var issuerEDSMonth = issuerEndDateSplit[1];
+      var issuerEDSYear = issuerEndDateSplit[0];
+
+      var endDateSplit = this.endDate.split('-');
+      var eDSDay = endDateSplit[2];
+      var eDSMonth = endDateSplit[1];
+      var eDSYear = endDateSplit[0];
+
+      var issuerEndDateO = new Date(issuerEDSYear,issuerEDSMonth,issuerEDSDay);
+      var endDateO = new Date(eDSYear,eDSMonth,eDSDay);
+
+      if (issuerEndDateO<endDateO){
+        alert("Your expired date must be before issuer expired date!");
+        this.dateValid = false;
       }
+
+      console.log(issuerEDSDay+' '+issuerEDSMonth+' '+issuerEDSYear);
     },
   },
 };

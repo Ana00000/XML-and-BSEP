@@ -140,7 +140,7 @@
           color="primary"
           large
           elevation="20"
-          v-show="!isHiddenRole"
+          v-show="!isHidden"
           >Create</v-btn
         >
       </div>
@@ -188,7 +188,8 @@ export default {
     certificateType: null,
     certificatePurposeType: "",
     serialNbr: null,
-    isHiddenRole: false
+    isHiddenRole: false,
+    isHidden: false
   }),
   mounted() {
     this.serialNbr = localStorage.getItem("serialNumber");
@@ -208,7 +209,9 @@ export default {
         .then((resp) => {
           this.setCertificateInfo(resp.data);
           console.log(resp.data);
-          if (resp.data.certificateType == "ENDENTITY" && localStorage.getItem('role') != 'ADMIN'){
+          if (resp.data.certificateType == "ENDENTITY"){
+            this.isHidden = true;
+          } else if (resp.data.certificateType == "ENDENTITY" || localStorage.getItem('role') != 'ADMIN'){
             this.isHiddenRole = true;
           }
         })
