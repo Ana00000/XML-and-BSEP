@@ -8,9 +8,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import bsep.bsep.dto.UserDTO;
+import bsep.bsep.model.UserType;
 import bsep.bsep.model.Users;
 import bsep.bsep.repository.IUserRepository;
 import bsep.bsep.service.interfaces.IUserService;
+import ch.qos.logback.core.subst.Token.Type;
 
 @Service
 public class UserService implements IUserService {
@@ -112,5 +114,15 @@ public class UserService implements IUserService {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		System.out.print("Usao u servis :");
 		return userRepository.save(user);
+	}
+
+	public List<String> findAllUsersEmails() {
+		// TODO Auto-generated method stub
+		List<String> returnValues = new ArrayList<String>();
+		for (Users user : findAll()) {
+			if (user.getTypeOfUser()!=UserType.ADMIN)
+				returnValues.add(user.getUserEmail());
+		}
+		return returnValues;
 	}
 }

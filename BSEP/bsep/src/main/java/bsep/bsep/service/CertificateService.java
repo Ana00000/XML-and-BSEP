@@ -50,15 +50,17 @@ public class CertificateService implements ICertificateService {
 
 	private ICertificateRepository certificateRepository;
 	private CertificateKeyStoreRepository certificateKeyStoreRepository;
+	private UserService userService;
 	private final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
 	private final String END_CERT = "-----END CERTIFICATE-----";
 	private final String LINE_SEPARATOR = System.getProperty("line.separator");
 
 	@Autowired
 	public CertificateService(ICertificateRepository certificateRepository,
-			CertificateKeyStoreRepository certificateKeyStoreRepository) {
+			CertificateKeyStoreRepository certificateKeyStoreRepository, UserService userService) {
 		this.certificateRepository = certificateRepository;
 		this.certificateKeyStoreRepository = certificateKeyStoreRepository;
+		this.userService = userService;
 	}
 
 	@Override
@@ -86,7 +88,7 @@ public class CertificateService implements ICertificateService {
 		return certificatesDTO;
 	}
 
-	public CertificateData createCertificate(CertificateInfoDTO certificateInfoDTO) {
+	public CertificateData createCertificate(CertificateInfoDTO certificateInfoDTO) throws Exception {
 
 		Subject subject = generateSubject(certificateInfoDTO);
 		KeyPair keyPairIssuer = generateKeyPair();
@@ -111,7 +113,7 @@ public class CertificateService implements ICertificateService {
 
 		certificateKeyStoreRepository.saveKeyStore(certificateInfoDTO.getCertificateType(),
 				certificateInfoDTO.getAlias(), x509certificate, keyPairIssuer.getPrivate());
-		return save(x509certificate.getSerialNumber().toString(), certificateInfoDTO.getCertificateType(),
+		return save(x509certificate.getSerialNumber().toString(), subject.getUserEmail() , certificateInfoDTO.getCertificateType(),
 				certificateInfoDTO.getCertificatePurposeType());
 	}
 
@@ -192,18 +194,23 @@ public class CertificateService implements ICertificateService {
 		return certificateInfoDTO.getCertificateType().equals("INTERMEDIATE");
 	}
 
-	public CertificateData save(String serialNumber, String certificateType, String certificatePurposeType) {
+	public CertificateData save(String serialNumber, String subjectEmail, String certificateType, String certificatePurposeType) {
 		return certificateRepository
-				.save(convertCertificateInfoDTOToData(serialNumber, certificateType, certificatePurposeType));
+				.save(convertCertificateInfoDTOToData(serialNumber, subjectEmail,certificateType, certificatePurposeType));
 	}
 
 	private Issuer generateIssuer(PrivateKey issuerKey, CertificateInfoDTO certificateInfoDTO) {
 		return new Issuer(issuerKey, setBuilder(certificateInfoDTO).build());
 	}
 
-	private Subject generateSubject(CertificateInfoDTO certificateInfoDTO) {
-		return new Subject(generateKeyPair().getPublic(), setBuilder(certificateInfoDTO).build(),
+	private Subject generateSubject(CertificateInfoDTO certificateInfoDTO) throws Exception {
+		if (userService.findByUserEmail(certificateInfoDTO.getUserEmail())==null) {
+			 throw new Exception("Ne postoji user u bazi");
+		}
+		Subject subject = new Subject(generateKeyPair().getPublic(), setBuilder(certificateInfoDTO).build(),
 				generateSerialNumber(), LocalDate.now(), convertStringToLocalDate(certificateInfoDTO.getEndDate()));
+		subject.setUserEmail(certificateInfoDTO.getUserEmail());
+		return subject;
 	}
 
 	private LocalDate convertStringToLocalDate(String date) {
@@ -330,10 +337,11 @@ public class CertificateService implements ICertificateService {
 		return invalidDate;
 	}
 
-	private CertificateData convertCertificateInfoDTOToData(String serialNumber, String certificateType,
+	private CertificateData convertCertificateInfoDTOToData(String serialNumber, String subjectEmail, String certificateType,
 			String certificatePurposeType) {
 		CertificateData certificateData = new CertificateData();
 		certificateData.setSerialNumber(serialNumber);
+		certificateData.setSubjectEmail(subjectEmail);
 		certificateData.setCertificateType(getCertificateType(certificateType));
 		certificateData.setCertificatePurposeType(getCertificatePurposeType(certificatePurposeType));
 		System.out.println("PURPOSE: " + certificatePurposeType);
@@ -429,6 +437,37 @@ public class CertificateService implements ICertificateService {
 			} else if (val.getType().equals(BCStyle.PSEUDONYM)) {
 				certificateDTO.setAlias(val.getValue().toString());
 			}
+		}
+	}
+
+	public List<CertificateDTO> findAllForUser(String userEmail) {
+		// TODO Auto-generated method stub
+		List<CertificateDTO> certificatesDTO = new ArrayList<CertificateDTO>();
+
+		for (X509Certificate certificateX509 : certificateKeyStoreRepository.getCertificates())
+			getAllValidForUser(userEmail,certificatesDTO, certificateX509);
+		
+		return certificatesDTO;
+	}
+
+	private void getAllValidForUser(String userEmail, List<CertificateDTO> certificatesDTO,
+			X509Certificate certificateX509) {
+		// TODO Auto-generated method stub
+		for (CertificateData certificateData : certificateRepository.findAll()) {
+			/*
+			if (certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber()) && 
+					certificateData.getSubjectEmail().equals(userEmail) && certificateData.getCertificateStatus()==CertificateStatus.VALID) {
+				certificatesDTO.add(setCertificateData(certificateData, certificateX509));
+			}
+			*/
+			if (certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber())){
+				if (certificateData.getSubjectEmail().equals(userEmail) && certificateData.getCertificateStatus()==CertificateStatus.VALID) {
+					if (!checkCertificateExpired(certificateX509, certificateData)) {
+						certificatesDTO.add(setCertificateData(certificateData, certificateX509));
+					}
+				}
+			}
+				
 		}
 	}
 

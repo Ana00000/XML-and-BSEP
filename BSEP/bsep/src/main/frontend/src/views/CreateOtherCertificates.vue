@@ -150,6 +150,15 @@
         v-model="selectedCertificateType"
         :label="label1"
         hint="Choose certificate type."
+        />
+
+        <v-combobox
+        class="combo"
+        :item-text="text"
+        :items="usersEmailsItems"
+        v-model="selectedUserEmail"
+        :label="'USER EMAIL'"
+        hint="Choose certificate type."
       />
     </v-container>
 
@@ -186,6 +195,8 @@ export default {
     certificateTypes: ["ENDENTITY", "INTERMEDIATE"],
     label1: "Certificates type",
     label2: "Certificate purpose",
+    usersEmailsItems: [],
+    selectedUserEmail: null
   }),
   mounted() {
     this.init();
@@ -196,7 +207,19 @@ export default {
         this.issuerSerialNumber = localStorage.getItem("issuerSerialNumber");
         this.issuerEndDate = localStorage.getItem("endDate");
         this.issuerCertificateType = localStorage.getItem("issuerCertificateType");
+        this.getEmails();
     },
+    getEmails(){
+        this.$http
+        .get(
+          "http://localhost:8080/users/getUsersEmails"
+        )
+        .then((resp) => {
+          this.usersEmailsItems = resp.data;
+        })
+        .catch(console.log("Didn't set certificate info!"));
+    },
+
     createCertificate() {
       //this.validation();
       this.validationOfEndDate();
@@ -216,6 +239,7 @@ export default {
           certificatePurposeType: this.selectedCertificatePurpose,
           issuerSerialNumber: this.issuerSerialNumber,
           issuerAlias: this.issuerAlias,
+          userEmail: this.selectedUserEmail
         })
         .then((resp) => {
           console.log(resp.data);

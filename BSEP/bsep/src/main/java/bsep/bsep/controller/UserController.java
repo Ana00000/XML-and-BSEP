@@ -50,6 +50,11 @@ public class UserController {
 		return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
 	}
 	
+	@GetMapping("/getUsersEmails")
+	public ResponseEntity<List<String>> findAllUsersEmails() {
+		return new ResponseEntity<>(userService.findAllUsersEmails(), HttpStatus.OK);
+	}
+	
 	@GetMapping("/redirectMeToMyHomePage")
 	public String RedirectionToHome() {
 		return "http://localhost:8081/";
