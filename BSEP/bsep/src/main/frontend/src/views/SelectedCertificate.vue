@@ -140,7 +140,7 @@
           color="primary"
           large
           elevation="20"
-          v-show="!isHidden"
+          v-show="!isHiddenRole"
           >Create</v-btn
         >
       </div>
@@ -148,6 +148,7 @@
       <div class="center">
         <v-btn
           v-on:click="revokeCertificate"
+          v-show="!isHiddenRole"
           color="primary"
           large
           elevation="20"
@@ -187,7 +188,7 @@ export default {
     certificateType: null,
     certificatePurposeType: "",
     serialNbr: null,
-    isHidden: false,
+    isHiddenRole: false
   }),
   mounted() {
     this.serialNbr = localStorage.getItem("serialNumber");
@@ -207,8 +208,8 @@ export default {
         .then((resp) => {
           this.setCertificateInfo(resp.data);
           console.log(resp.data);
-          if (resp.data.certificateType == "ENDENTITY") {
-            this.isHidden = true;
+          if (resp.data.certificateType == "ENDENTITY" && localStorage.getItem('role') != 'ADMIN'){
+            this.isHiddenRole = true;
           }
         })
         .catch(console.log("Didn't set certificate info!"));
@@ -229,6 +230,9 @@ export default {
       this.issuerAlias = item.issuerSerialNumber;
     },
     createCertificate() {
+       localStorage.setItem("endDate", this.endDate);
+       localStorage.setItem("issuerAlias", this.alias);
+       localStorage.setItem("issuerSerialNumber", this.serialNbr);
        window.location.href = "http://localhost:8081/createOtherCertificates";
     },
     revokeCertificate() {
@@ -240,7 +244,7 @@ export default {
         .then((resp) => {
           console.log(resp.data);
           alert("You have successfully revoked the certificate.");
-          window.location.href = "http://localhost:8081/certificates";
+          window.location.href = "http://localhost:8081/invalidCertificates";
         })
         .catch((err) => console.log(err));
     },

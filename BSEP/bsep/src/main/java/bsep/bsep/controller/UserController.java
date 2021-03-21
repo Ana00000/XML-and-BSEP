@@ -65,7 +65,7 @@ public class UserController {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		Users user = (Users) authentication.getPrincipal();
 		String jwt = tokenUtils.generateToken(user.getUserEmail());
-		return ResponseEntity.ok(new UserTokenState(jwt, tokenUtils.getExpiredIn()));
+		return ResponseEntity.ok(new UserTokenState(jwt, tokenUtils.getExpiredIn(), user.getTypeOfUser().name()));
 	}
 
 	@PostMapping(value = "/register", consumes = "application/json")

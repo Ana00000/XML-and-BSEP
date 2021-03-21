@@ -68,6 +68,7 @@ export default {
           console.log(resp.data);
           localStorage.setItem("token", resp.data.accessToken);
           localStorage.setItem("userEmail", this.user.userEmail);
+          localStorage.setItem("role", resp.data.role);
           redirectLoggedUser();
         })
         .catch((er) => {

@@ -15,7 +15,7 @@ export default {
   el: "#app",
   components: {
     NavigationBar,
-  },
+  }
 };
 </script>
 

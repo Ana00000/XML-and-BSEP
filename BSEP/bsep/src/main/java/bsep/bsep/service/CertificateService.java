@@ -15,10 +15,12 @@ import java.security.cert.X509Certificate;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
@@ -207,6 +209,12 @@ public class CertificateService implements ICertificateService {
 	private LocalDate convertStringToLocalDate(String date) {
 		return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	}
+	
+	public LocalDate convertDateToLocalDate(java.util.Date date) {
+	    return date.toInstant()
+	      .atZone(ZoneId.systemDefault())
+	      .toLocalDate();
+	}
 
 	private Date convertStringToDate(String date) {
 		return Date.valueOf(convertStringToLocalDate(date));
@@ -362,9 +370,14 @@ public class CertificateService implements ICertificateService {
 		certificateDTO.setId(certificateData.getId());
 		certificateDTO.setCertificateType(certificateData.getCertificateType());
 		certificateDTO.setCertificateStatus(certificateData.getCertificateStatus());
-		certificateDTO.setEndDate(certificateX509.getNotAfter().toString());
+		certificateDTO.setEndDate(convertDateToString(certificateX509.getNotAfter()));
 		certificateDTO.setCertificatePurposeType(certificateData.getCertificatePurposeType());
 		return certificateDTO;
+	}
+	
+	private String convertDateToString(java.util.Date date) {
+		return DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.GERMAN).format(convertDateToLocalDate(date)); 
+		
 	}
 
 	public CertificateDTO convertX509ToCertificateDTO(X509Certificate certificateX509) {

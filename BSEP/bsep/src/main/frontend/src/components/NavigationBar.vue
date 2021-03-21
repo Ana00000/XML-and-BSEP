@@ -51,6 +51,7 @@ export default {
             appTitle: 'Security system',
             drawer: false,
             isUserLogged:false,
+            role : null,
             items: [
                 { title: 'Home', path: '/' },
                 { title: 'Certificates', path: '/certificates' },
@@ -59,9 +60,29 @@ export default {
             ]
         }
     },
+    mounted() {
+        this.init();
+    },
     methods:{
+    init(){
+        this.role =localStorage.getItem('role');
+        if (this.role != 'ADMIN'){
+            this.items = [
+                { title: 'Home', path: '/' },
+                { title: 'Certificates', path: '/certificates' }
+            ]
+        } else {
+             [
+                { title: 'Home', path: '/' },
+                { title: 'Certificates', path: '/certificates' },
+                { title: 'New root certificate', path: '/newRootCertificate' },
+                { title: 'Invalid certificates', path: '/invalidCertificates' }
+            ]
+        }
+    },
       logOff() {
         localStorage.setItem("token","");
+        localStorage.setItem("role","NONE");
         window.location.href = "http://localhost:8081/";
       }
     }
