@@ -1,8 +1,5 @@
 package bsep.bsep.dto;
 
-import bsep.bsep.model.CertificatePurposeType;
-import bsep.bsep.model.CertificateType;
-
 public class CertificateInfoDTO {
 
 	private String commonName;

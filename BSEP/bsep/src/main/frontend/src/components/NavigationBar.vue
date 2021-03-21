@@ -54,7 +54,8 @@ export default {
             items: [
                 { title: 'Home', path: '/' },
                 { title: 'Certificates', path: '/certificates' },
-                { title: 'New certificate', path: '/newCertificate' }
+                { title: 'New root certificate', path: '/newRootCertificate' },
+                { title: 'Invalid certificates', path: '/invalidCertificates' }
             ]
         }
     },

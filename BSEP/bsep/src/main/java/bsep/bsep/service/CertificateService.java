@@ -69,7 +69,7 @@ public class CertificateService implements ICertificateService {
 		List<CertificateDTO> certificatesDTO = new ArrayList<CertificateDTO>();
 
 		for (X509Certificate certificateX509 : certificateKeyStoreRepository.getCertificates()) {
-				getAllRevokedOrExpired(certificatesDTO, certificateX509);
+			getAllRevokedOrExpired(certificatesDTO, certificateX509);
 		}
 		return certificatesDTO;
 	}
@@ -161,6 +161,15 @@ public class CertificateService implements ICertificateService {
 		return null;
 	}
 
+	public CertificateDTO findCertificateDTOBySerialNumber(String serialNumber) {
+		for (CertificateDTO certificateDTO : findAllValid()) {
+			if (certificateDTO.getSerialNumber().equals(serialNumber)) {
+				return certificateDTO;
+			}
+		}
+		return null;
+	}
+
 	public void getSerialNumberOfChildrenCertificate(List<String> returnValues, CertificateDTO certificateDTO) {
 		returnValues.add(certificateDTO.getSerialNumber());
 		if (certificateDTO.getCertificateType() == CertificateType.ENDENTITY)
@@ -181,8 +190,7 @@ public class CertificateService implements ICertificateService {
 		return certificateInfoDTO.getCertificateType().equals("INTERMEDIATE");
 	}
 
-	public CertificateData save(String serialNumber, String certificateType,
-			String certificatePurposeType) {
+	public CertificateData save(String serialNumber, String certificateType, String certificatePurposeType) {
 		return certificateRepository
 				.save(convertCertificateInfoDTOToData(serialNumber, certificateType, certificatePurposeType));
 	}
@@ -247,7 +255,7 @@ public class CertificateService implements ICertificateService {
 			checkCertificateValidStatus(certificatesDTO, certificateX509, certificateData);
 		}
 	}
-	
+
 	private void getAllRevokedOrExpired(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509) {
 		for (CertificateData certificateData : certificateRepository.findAll()) {
 			checkCertificateRevokedOrExpiredStatus(certificatesDTO, certificateX509, certificateData);
@@ -262,13 +270,13 @@ public class CertificateService implements ICertificateService {
 		}
 		return false;
 	}
-	
-	private void checkCertificateRevokedOrExpiredStatus(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509,
-			CertificateData certificateData) {
+
+	private void checkCertificateRevokedOrExpiredStatus(List<CertificateDTO> certificatesDTO,
+			X509Certificate certificateX509, CertificateData certificateData) {
 		if (certificateX509.getSerialNumber().toString().equals(certificateData.getSerialNumber())) {
 			addRevokedOrExpiredCertificateToList(certificatesDTO, certificateX509, certificateData);
 		}
-		
+
 	}
 
 	private boolean addValidCertificateToList(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509,
@@ -279,10 +287,11 @@ public class CertificateService implements ICertificateService {
 		}
 		return false;
 	}
-	
-	private boolean addRevokedOrExpiredCertificateToList(List<CertificateDTO> certificatesDTO, X509Certificate certificateX509,
-			CertificateData certificateData) {
-		if ((certificateData.getCertificateStatus() == CertificateStatus.REVOKED) || (certificateData.getCertificateStatus() == CertificateStatus.EXPIRED) ) {
+
+	private boolean addRevokedOrExpiredCertificateToList(List<CertificateDTO> certificatesDTO,
+			X509Certificate certificateX509, CertificateData certificateData) {
+		if ((certificateData.getCertificateStatus() == CertificateStatus.REVOKED)
+				|| (certificateData.getCertificateStatus() == CertificateStatus.EXPIRED)) {
 			certificatesDTO.add(setCertificateData(certificateData, certificateX509));
 			return true;
 		}
@@ -324,31 +333,28 @@ public class CertificateService implements ICertificateService {
 
 		return certificateData;
 	}
-	
-	private CertificateType getCertificateType(String certificateType)
-	{
-		
-		if(certificateType.equals("ROOT"))
+
+	private CertificateType getCertificateType(String certificateType) {
+
+		if (certificateType.equals("ROOT"))
 			return CertificateType.ROOT;
-		else if(certificateType.equals("INTERMEDIATE"))
+		else if (certificateType.equals("INTERMEDIATE"))
 			return CertificateType.INTERMEDIATE;
 		else
 			return CertificateType.ENDENTITY;
-			
 	}
-	
-	private CertificatePurposeType getCertificatePurposeType(String certificatePurposeType)
-	{//SERVICE, SUBSYSTEM, USER, NONE;
-		
-		if(certificatePurposeType.equals("SERVICE"))
+
+	private CertificatePurposeType getCertificatePurposeType(String certificatePurposeType) {// SERVICE, SUBSYSTEM,
+																								// USER, NONE;
+
+		if (certificatePurposeType.equals("SERVICE"))
 			return CertificatePurposeType.SERVICE;
-		else if(certificatePurposeType.equals("SUBSYSTEM"))
+		else if (certificatePurposeType.equals("SUBSYSTEM"))
 			return CertificatePurposeType.SUBSYSTEM;
-		else if(certificatePurposeType.equals("USER"))
+		else if (certificatePurposeType.equals("USER"))
 			return CertificatePurposeType.USER;
 		else
 			return CertificatePurposeType.NONE;
-			
 	}
 
 	private CertificateDTO setCertificateData(CertificateData certificateData, X509Certificate certificateX509) {
@@ -356,7 +362,8 @@ public class CertificateService implements ICertificateService {
 		certificateDTO.setId(certificateData.getId());
 		certificateDTO.setCertificateType(certificateData.getCertificateType());
 		certificateDTO.setCertificateStatus(certificateData.getCertificateStatus());
-
+		certificateDTO.setEndDate(certificateX509.getNotAfter().toString());
+		certificateDTO.setCertificatePurposeType(certificateData.getCertificatePurposeType());
 		return certificateDTO;
 	}
 

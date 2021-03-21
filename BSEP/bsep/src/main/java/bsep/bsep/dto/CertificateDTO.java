@@ -1,5 +1,6 @@
 package bsep.bsep.dto;
 
+import bsep.bsep.model.CertificatePurposeType;
 import bsep.bsep.model.CertificateStatus;
 import bsep.bsep.model.CertificateType;
 
@@ -17,10 +18,12 @@ public class CertificateDTO {
 	private String alias;
 	private String version;
 	private String signatureAlgorithmName;
-	private CertificateStatus certificateStatus; 
-	private CertificateType certificateType; 
+	private CertificateStatus certificateStatus;
+	private CertificateType certificateType;
 	private String subject;
 	private String issuer;
+	private String endDate;
+	private CertificatePurposeType certificatePurposeType;
 
 	public CertificateDTO() {
 
@@ -29,7 +32,8 @@ public class CertificateDTO {
 	public CertificateDTO(Long id, String serialNumber, String commonName, String givenName, String surname,
 			String organization, String organizationalUnitName, String organizationEmail, String countryCode,
 			String alias, String version, String signatureAlgorithmName, CertificateStatus certificateStatus,
-			CertificateType certificateType, String subject, String issuer) {
+			CertificateType certificateType, String subject, String issuer, String endDate,
+			CertificatePurposeType certificatePurposeType) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
@@ -47,6 +51,8 @@ public class CertificateDTO {
 		this.certificateType = certificateType;
 		this.subject = subject;
 		this.issuer = issuer;
+		this.endDate = endDate;
+		this.certificatePurposeType = certificatePurposeType;
 	}
 
 	public Long getId() {
@@ -177,4 +183,19 @@ public class CertificateDTO {
 		this.countryCode = countryCode;
 	}
 
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+
+	public CertificatePurposeType getCertificatePurposeType() {
+		return certificatePurposeType;
+	}
+
+	public void setCertificatePurposeType(CertificatePurposeType certificatePurposeType) {
+		this.certificatePurposeType = certificatePurposeType;
+	}
 }

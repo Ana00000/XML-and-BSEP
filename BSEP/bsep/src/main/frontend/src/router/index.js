@@ -26,9 +26,24 @@ const routes = [
     component: () => import('../views/Certificates.vue')
   },
   {
-    path: '/newCertificate',
-    name: 'NewCertificate',
-    component: () => import('../views/NewCertificate.vue')
+    path: '/newRootCertificate',
+    name: 'NewRootCertificate',
+    component: () => import('../views/NewRootCertificate.vue')
+  },
+  {
+    path: '/invalidCertificates',
+    name: 'InvalidCertificates',
+    component: () => import('../views/InvalidCertificates.vue')
+  },
+  {
+    path: '/selectedCertificate',
+    name: 'SelectedCertificate',
+    component: () => import('../views/SelectedCertificate.vue')
+  },
+  {
+    path: '/createOtherCertificates',
+    name: 'CreateOtherCertificates',
+    component: () => import('../views/CreateOtherCertificates.vue')
   }
 ]
 

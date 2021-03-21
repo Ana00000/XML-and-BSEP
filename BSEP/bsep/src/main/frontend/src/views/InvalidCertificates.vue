@@ -7,20 +7,11 @@
       >
         <v-toolbar color="light-blue darken-4" dark> </v-toolbar>
         <v-list two-line>
-          <v-list-item-group
-            active-class="indigo--text"
-            v-model="selectedCertificate"
-            single
-          >
+          <v-list-item-group active-class="indigo--text" single>
             <template v-for="(certificate, id) in certificates">
-              <v-list-item
-                :key="certificate.id"
-                :value="certificate"
-                v-on:click="redirectToCertificate"
-              >
+              <v-list-item :key="certificate.id">
                 <template>
                   <v-list-item-content>
-                    <v-list-item-subtitle v-text="certificate.serialNumber" />
                     <v-list-item-subtitle
                       v-text="
                         certificate.commonName + ' ' + certificate.givenName
@@ -59,35 +50,26 @@
 
 <script>
 export default {
-  name: "Certificates",
+  name: "InvalidCertificates",
   data: () => ({
     certificates: [],
     user: null,
-    userEmail: null,
-    selectedCertificate: null,
   }),
   mounted() {
     this.init();
   },
   methods: {
     init() {
-      this.getValidCertificates();
+      this.getInvalidCertificates();
     },
-    getValidCertificates() {
-      var userEmail = localStorage.getItem("userEmail");
+    getInvalidCertificates() {
       this.$http
-        .get("http://localhost:8080/certificate/allValid/" + userEmail)
+        .get("http://localhost:8080/certificate/allRevokedOrExpired")
         .then((res) => {
           this.certificates = res.data;
+          console.log(res.data);
         })
         .catch((err) => console.log(err));
-    },
-    redirectToCertificate() {
-      localStorage.setItem(
-        "serialNumber",
-        this.selectedCertificate.serialNumber
-      );
-      window.location.href = "http://localhost:8081/selectedCertificate";
     },
   },
 };

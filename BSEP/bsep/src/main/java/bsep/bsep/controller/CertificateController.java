@@ -31,34 +31,47 @@ public class CertificateController {
 	private CertificateService certificateService;
 	private UserService userService;
 
-	
 	@Autowired
 	public CertificateController(CertificateService certificateService, UserService userService) {
 		this.certificateService = certificateService;
 		this.userService = userService;
 	}
 
+	
+	@CrossOrigin(origins = "/*")	
+	@PutMapping(value = "/revokeCertificate/{serialNumber}")
+	public ResponseEntity<Boolean> revokeCertificate(@PathVariable String serialNumber) {
+		try {
+			certificateService.revokeCertificate(serialNumber);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+	}
+	
+	@GetMapping(value = "/getCertificate/{serialNumber}")
+	public ResponseEntity<CertificateDTO> getCertificateDTOBySerialNumber(@PathVariable String serialNumber) {
+		return new ResponseEntity<>(certificateService.findCertificateDTOBySerialNumber(serialNumber), HttpStatus.OK);
+	}
+
 	@GetMapping(value = "/allValid/{userEmail}")
 	public ResponseEntity<List<CertificateDTO>> allValidCertificates(@PathVariable String userEmail) {
-		if(findTypeByEmail(userEmail).equals("ADMIN"))
-		{
-			System.out.println("ADMIN");
+		if (findTypeByEmail(userEmail).equals("ADMIN")) {
 			return new ResponseEntity<>(certificateService.findAllValid(), HttpStatus.OK);
-			
 		}
-			
-		//treba else drugu metodu
+
+		// treba else drugu metodu
 		return new ResponseEntity<>(certificateService.findAllValid(), HttpStatus.OK);
 	}
-	
-	private String findTypeByEmail(String userEmail)
-	{
+
+	private String findTypeByEmail(String userEmail) {
 		return userService.findByUserEmail(userEmail).getTypeOfUser().name();
 	}
-	
+
 	@GetMapping(value = "/allRevokedOrExpired")
 	public ResponseEntity<List<CertificateDTO>> allRevokedOrExpiredCertificates() {
-	
+
 		return new ResponseEntity<>(certificateService.findAllRevokedOrExpired(), HttpStatus.OK);
 	}
 
@@ -68,15 +81,12 @@ public class CertificateController {
 			certificateService.loadCertificateToFile(serialNumber);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (CertificateEncodingException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-
 	}
 
 	@PostMapping(value = "/createCertificate", consumes = "application/json")
@@ -91,16 +101,5 @@ public class CertificateController {
 
 	private HttpStatus checkStatusForCreatingCertificate(CertificateData certificateData) {
 		return certificateData != null ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
-	}
-
-	@PutMapping(value = "/revokeCertificate/{serialNumber}", consumes = "application/json")
-	public ResponseEntity<Boolean> revokeCertificate(@PathVariable String serialNumber) {
-		try {
-			certificateService.revokeCertificate(serialNumber);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-
 	}
 }
