@@ -97,7 +97,7 @@ public class CertificateService implements ICertificateService {
 
 		if (certificateInfoDTO.getCertificateType().equals("ROOT")) {
 			issuer = generateIssuer(keyPairIssuer.getPrivate(), certificateInfoDTO);
-			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer, true, null);
+			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer, true);
 
 		} else {
 			issuer = certificateKeyStoreRepository.getIssuerBySerialNumber(certificateInfoDTO.getIssuerSerialNumber(),
@@ -108,7 +108,7 @@ public class CertificateService implements ICertificateService {
 				return null;
 			}
 			x509certificate = new CertificateGenerator().generateCertificate(subject, issuer,
-					isIntermedateCertificate(certificateInfoDTO), convertStringToDate(certificateInfoDTO.getEndDate()));
+					isIntermedateCertificate(certificateInfoDTO));
 		}
 
 		certificateKeyStoreRepository.saveKeyStore(certificateInfoDTO.getCertificateType(),

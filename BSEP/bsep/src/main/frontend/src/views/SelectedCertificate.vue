@@ -209,9 +209,10 @@ export default {
         .then((resp) => {
           this.setCertificateInfo(resp.data);
           console.log(resp.data);
-          if (resp.data.certificateType == "ENDENTITY"){
+          if (resp.data.certificateType == "ENDENTITY" || (resp.data.certificateType == "INTERMEDIATE"  && localStorage.getItem('role') != 'ADMIN')){
             this.isHidden = true;
-          } else if (resp.data.certificateType == "ENDENTITY" || localStorage.getItem('role') != 'ADMIN'){
+          }
+          if (localStorage.getItem('role') != 'ADMIN'){
             this.isHiddenRole = true;
           }
         })
