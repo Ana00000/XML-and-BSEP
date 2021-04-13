@@ -1,5 +1,6 @@
 package bsep.bsep.controller;
 
+import java.io.Console;
 import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.util.List;
@@ -57,12 +58,12 @@ public class CertificateController {
 
 	@GetMapping(value = "/allValid/{userEmail}")
 	public ResponseEntity<List<CertificateDTO>> allValidCertificates(@PathVariable String userEmail) {
-		if (findTypeByEmail(userEmail).equals("ADMIN")) {
-			return new ResponseEntity<>(certificateService.findAllValid(), HttpStatus.OK);
-		}
-
-		// treba else drugu metodu
-		return new ResponseEntity<>(certificateService.findAllValid(), HttpStatus.OK);
+		return new ResponseEntity<>(getListOfCertificate(userEmail), HttpStatus.OK);
+	}
+	
+	private List<CertificateDTO> getListOfCertificate(String userEmail){
+		String typeOfUser = findTypeByEmail(userEmail);
+		return typeOfUser.equals("ADMIN")? certificateService.findAllValid() : certificateService.findAllForUser(userEmail); 
 	}
 
 	private String findTypeByEmail(String userEmail) {
@@ -95,6 +96,7 @@ public class CertificateController {
 			CertificateData certificateData = certificateService.createCertificate(certificateInfoDTO);
 			return new ResponseEntity<>(certificateData, checkStatusForCreatingCertificate(certificateData));
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 	}

@@ -14,7 +14,7 @@ public class UserTokenState {
 	public UserTokenState(String accessToken, long expiresIn, String role) {
 		this.accessToken = accessToken;
 		this.expiresIn = expiresIn;
-		this.role = role.equals("ADMIN") || role.equals("USER") || role.equals("DRUGA ROLA") ? role : "NONE";
+		this.role = role.equals("ADMIN") || role.equals("USER") ? role : "NONE";
 	}
 
 	public String getAccessToken() {

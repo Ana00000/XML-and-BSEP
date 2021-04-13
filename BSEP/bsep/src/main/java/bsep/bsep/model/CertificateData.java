@@ -22,6 +22,9 @@ public class CertificateData {
 
 	@Column(name = "serialNumber", unique = true, nullable = false)
 	private String serialNumber;
+	
+	@Column(name = "subjectEmail", unique = false, nullable = false)
+	private String subjectEmail;
 
 	@Enumerated(EnumType.ORDINAL)
 	private CertificateStatus certificateStatus;
@@ -35,15 +38,24 @@ public class CertificateData {
 	public CertificateData() {
 
 	}
-
-	public CertificateData(Long id, String serialNumber, CertificateStatus certificateStatus,
+	
+	public CertificateData(Long id, String serialNumber, String subjectEmail, CertificateStatus certificateStatus,
 			CertificateType certificateType, CertificatePurposeType certificatePurposeType) {
 		super();
 		this.id = id;
 		this.serialNumber = serialNumber;
+		this.subjectEmail = subjectEmail;
 		this.certificateStatus = certificateStatus;
 		this.certificateType = certificateType;
 		this.certificatePurposeType = certificatePurposeType;
+	}
+	
+	public String getSubjectEmail() {
+		return subjectEmail;
+	}
+
+	public void setSubjectEmail(String subjectEmail) {
+		this.subjectEmail = subjectEmail;
 	}
 
 	public Long getId() {

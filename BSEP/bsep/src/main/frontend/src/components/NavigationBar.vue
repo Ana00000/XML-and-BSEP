@@ -66,17 +66,21 @@ export default {
     methods:{
     init(){
         this.role =localStorage.getItem('role');
-        if (this.role != 'ADMIN'){
+        if (this.role == 'USER'){
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Certificates', path: '/certificates' }
             ]
-        } else {
+        } else if (this.role == 'ADMIN') {
              [
                 { title: 'Home', path: '/' },
                 { title: 'Certificates', path: '/certificates' },
                 { title: 'New root certificate', path: '/newRootCertificate' },
                 { title: 'Invalid certificates', path: '/invalidCertificates' }
+            ]
+        } else {
+            this.items = [
+                { title: 'Home', path: '/' }
             ]
         }
     },

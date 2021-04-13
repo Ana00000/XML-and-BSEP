@@ -158,8 +158,15 @@ export default {
     certificatePurpose: ["SERVICE", "SUBSYSTEM", "USER", "NONE"],
     label1: "Certificates type",
     label2: "Certificate purpose",
+    userEmail: null,
   }),
+  mounted() {
+    this.init();
+  },
   methods: {
+    init(){
+      this.userEmail = localStorage.getItem('userEmail');
+    },
     createCertificate() {
       //this.validation();
       this.$http
@@ -177,6 +184,7 @@ export default {
           certificatePurposeType: this.selectedCertificatePurpose,
           issuerSerialNumber: null,
           issuerAlias: this.alias,
+          userEmail: this.userEmail
         })
         .then((resp) => {
           console.log(resp.data);

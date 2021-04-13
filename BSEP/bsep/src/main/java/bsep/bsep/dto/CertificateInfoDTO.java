@@ -15,13 +15,15 @@ public class CertificateInfoDTO {
 	private String certificatePurposeType;
 	private String issuerSerialNumber;
 	private String issuerAlias;
+	private String userEmail;
 
 	public CertificateInfoDTO() {
 	}
 
 	public CertificateInfoDTO(String commonName, String givenName, String surname, String organization,
 			String organizationalUnitName, String organizationEmail, String countryCode, String alias, String endDate,
-			String certificateType, String certificatePurposeType, String issuerSerialNumber, String issuerAlias) {
+			String certificateType, String certificatePurposeType, String issuerSerialNumber, String issuerAlias,
+			String userEmail) {
 		super();
 		this.commonName = commonName;
 		this.givenName = givenName;
@@ -36,6 +38,15 @@ public class CertificateInfoDTO {
 		this.certificatePurposeType = certificatePurposeType;
 		this.issuerSerialNumber = issuerSerialNumber;
 		this.issuerAlias = issuerAlias;
+		this.userEmail = userEmail;
+	}
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
 	}
 
 	public String getCommonName() {

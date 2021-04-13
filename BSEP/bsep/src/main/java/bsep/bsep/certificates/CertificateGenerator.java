@@ -29,7 +29,7 @@ public class CertificateGenerator {
 	public CertificateGenerator() {
 	}
 
-	public X509Certificate generateCertificate(Subject subject, Issuer issuer, Boolean isCA, Date expirationDate) {
+	public X509Certificate generateCertificate(Subject subject, Issuer issuer, Boolean isCA) {
 		try {
 
 			Security.addProvider(new BouncyCastleProvider());
