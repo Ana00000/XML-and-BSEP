@@ -74,6 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/h2-console/**").permitAll()
 				.antMatchers("/api/foo").permitAll()
 				.antMatchers("/api/**").permitAll()
+				.antMatchers("/users/login").permitAll()
+				.antMatchers("/users/register").permitAll()
 				
 				// za svaki drugi zahtev korisnik mora biti autentifikovan
 				.anyRequest().authenticated().and()
@@ -81,7 +83,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				//.cors().disable()
 				.cors().and()
 
-				// umetni custom filter TokenAuthenticationFilter kako bi se vrsila provera JWT tokena umesto cistih korisnickog imena i lozinke (koje radi BasicAuthenticationFilter)
+				// umetni custom filter TokenAuthenticationFilter kako bi se vrsila provera JWT
+				// tokena umesto cistih korisnickog imena i lozinke (koje radi BasicAuthenticationFilter)
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, jwtUserDetailsService),
 						BasicAuthenticationFilter.class);
 		// zbog jednostavnosti primera
@@ -92,11 +95,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
-		web.ignoring().antMatchers(HttpMethod.PUT, "/certificate/*", "/certificate/**", "/certificate/revokeCertificate/*");
-		web.ignoring().antMatchers(HttpMethod.POST, "/users/*", "/users/login", "/users/register", "/certificate/createCertificate");
-
+		web.ignoring().antMatchers(HttpMethod.POST, "/users/login", "/users/register");
 		web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
-				"/**/*.css", "/**/*.js", "/auth/getRole", "/users/*", "/users/findAll", "/users/redirectMeToMyHomePage",  "/certificate/allValid/*", "/certificate/allValid/**", "/certificate/*", "/certificate/**", 
-				"/certificate/revokeCertificate/*");
+				"/**/*.css", "/**/*.js", "/auth/getRole");
 	}
 }

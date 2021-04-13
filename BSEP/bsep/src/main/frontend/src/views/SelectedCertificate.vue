@@ -189,10 +189,12 @@ export default {
     certificatePurposeType: "",
     serialNbr: null,
     isHiddenRole: false,
-    isHidden: false
+    isHidden: false,
+    token: null
   }),
   mounted() {
     this.serialNbr = localStorage.getItem("serialNumber");
+    this.token = localStorage.getItem("token");
     console.log(this.serialNbr);
     this.init();
   },
@@ -205,7 +207,10 @@ export default {
       this.$http
         .get(
           "http://localhost:8080/certificate/getCertificate/" + this.serialNbr
-        )
+        ,{
+        headers:{
+            'Authorization':"Bearer "+ this.token
+        }})
         .then((resp) => {
           this.setCertificateInfo(resp.data);
           console.log(resp.data);
@@ -242,9 +247,12 @@ export default {
     revokeCertificate() {
       this.$http
         .put(
-          "http://localhost:8080/certificate/revokeCertificate/" +
-            this.serialNbr
-        )
+          "http://localhost:8080/certificate/revokeCertificate/" + this.serialNbr
+          , {}, {
+            headers:{
+              'Authorization':"Bearer "+ this.token
+            }
+        })
         .then((resp) => {
           console.log(resp.data);
           alert("You have successfully revoked the certificate.");
@@ -254,7 +262,10 @@ export default {
     },
     downloadCertificate() {
       this.$http
-        .get("http://localhost:8080/certificate/loadToFile/" + this.serialNbr)
+        .get("http://localhost:8080/certificate/loadToFile/" + this.serialNbr, {
+        headers:{
+            'Authorization':"Bearer "+ this.token
+        }})
         .then((resp) => {
           console.log(resp.data);
           alert("Successfully downloaded the certificate.");

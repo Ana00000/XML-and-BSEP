@@ -73,18 +73,23 @@ export default {
     user: null,
     userEmail: null,
     selectedCertificate: null,
+    token: null
   }),
   mounted() {
     this.init();
   },
   methods: {
     init() {
+      this.token =localStorage.getItem("token");
       this.getValidCertificates();
     },
     getValidCertificates() {
       var userEmail = localStorage.getItem("userEmail");
       this.$http
-        .get("http://localhost:8080/certificate/allValid/" + userEmail)
+        .get("http://localhost:8080/certificate/allValid/" + userEmail,{
+        headers:{
+            'Authorization':"Bearer "+ this.token
+        }})
         .then((res) => {
           this.certificates = res.data;
         })

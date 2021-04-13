@@ -159,6 +159,7 @@ export default {
     label1: "Certificates type",
     label2: "Certificate purpose",
     userEmail: null,
+    token: null
   }),
   mounted() {
     this.init();
@@ -166,9 +167,12 @@ export default {
   methods: {
     init(){
       this.userEmail = localStorage.getItem('userEmail');
+      this.token = localStorage.getItem('token');
     },
     createCertificate() {
       //this.validation();
+
+      
       this.$http
         .post("http://localhost:8080/certificate/createCertificate", {
           commonName: this.commonName,
@@ -185,7 +189,10 @@ export default {
           issuerSerialNumber: null,
           issuerAlias: this.alias,
           userEmail: this.userEmail
-        })
+        },{
+        headers:{
+            'Authorization':"Bearer "+ this.token
+        }})
         .then((resp) => {
           console.log(resp.data);
           alert("Created Root certificate.");

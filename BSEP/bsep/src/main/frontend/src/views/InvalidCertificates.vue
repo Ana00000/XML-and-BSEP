@@ -63,17 +63,22 @@ export default {
   data: () => ({
     certificates: [],
     user: null,
+    token: null
   }),
   mounted() {
     this.init();
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       this.getInvalidCertificates();
     },
     getInvalidCertificates() {
       this.$http
-        .get("http://localhost:8080/certificate/allRevokedOrExpired")
+        .get("http://localhost:8080/certificate/allRevokedOrExpired",{
+        headers:{
+            'Authorization':"Bearer "+ this.token
+        }})
         .then((res) => {
           this.certificates = res.data;
           console.log(res.data);

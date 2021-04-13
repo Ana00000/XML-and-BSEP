@@ -196,7 +196,8 @@ export default {
     label1: "Certificates type",
     label2: "Certificate purpose",
     usersEmailsItems: [],
-    selectedUserEmail: null
+    selectedUserEmail: null,
+    token: null
   }),
   mounted() {
     this.init();
@@ -207,13 +208,16 @@ export default {
         this.issuerSerialNumber = localStorage.getItem("issuerSerialNumber");
         this.issuerEndDate = localStorage.getItem("endDate");
         this.issuerCertificateType = localStorage.getItem("issuerCertificateType");
+        this.token = localStorage.getItem("token");
         this.getEmails();
     },
     getEmails(){
         this.$http
         .get(
-          "http://localhost:8080/users/getUsersEmails"
-        )
+          "http://localhost:8080/users/getUsersEmails",{
+        headers:{
+            'Authorization':"Bearer "+ this.token
+        }})
         .then((resp) => {
           this.usersEmailsItems = resp.data;
         })
@@ -240,7 +244,10 @@ export default {
           issuerSerialNumber: this.issuerSerialNumber,
           issuerAlias: this.issuerAlias,
           userEmail: this.selectedUserEmail
-        })
+        },{
+        headers:{
+            'Authorization':"Bearer "+ this.token
+        }})
         .then((resp) => {
           console.log(resp.data);
           alert("Created certificate.");

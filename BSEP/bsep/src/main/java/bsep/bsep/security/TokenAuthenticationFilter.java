@@ -26,7 +26,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-/*
+
 		String userEmail;
 		String authToken = tokenUtils.getToken(request);
 
@@ -49,7 +49,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		// prosledi request dalje u sledeci filter
-		chain.doFilter(request, response);*/
+		chain.doFilter(request, response);
 	}
 
 }
