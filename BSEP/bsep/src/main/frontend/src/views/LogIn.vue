@@ -72,7 +72,9 @@ export default {
           redirectLoggedUser();
         })
         .catch((er) => {
-          console.log("Error while logging in");
+          alert("Invalid email and/or password! Please, try again!");
+          this.userEmail = '';
+          this.password = '';
           console.log(er.response.data);
         });
     },

@@ -81,6 +81,10 @@ public class Users implements UserDetails {
 		this.typeOfUser = typeOfUser;
 	}
 
+	public void setAuthorities(List<Authority> authorities) {
+		this.authorities = authorities;
+	}
+
 	public Long getId() {
 		return id;
 	}

@@ -170,7 +170,7 @@ export default {
       this.token = localStorage.getItem('token');
     },
     createCertificate() {
-      //this.validation();
+      if (!this.validation()) return;
 
       
       this.$http
@@ -204,64 +204,73 @@ export default {
         });
     },
     validation() {
-      this.validationOfCommonName();
-      this.validationOfGivenName();
-      this.validationOfSurname();
-      this.validationOfOrganization();
-      this.validationOfOrganizationalUnitName();
-      this.validationOfOrganizationEmailLength();
-      this.validationOfCountryCodeLength();
-      this.validationOfAlias();
-      this.validationOfEndDate();
+
+      if (this.validationOfCommonName() &&
+      this.validationOfGivenName() &&
+      this.validationOfSurname() &&
+      this.validationOfOrganization() &&
+      this.validationOfOrganizationalUnitName() &&
+      this.validationOfOrganizationEmailLength() &&
+      this.validationOfCountryCodeLength() &&
+      this.validationOfAlias() &&
+      this.validationOfEndDate()) return true;
+      return false;
+
     },
     validationOfCommonName() {
       if (this.commonName.length < 2) {
         alert("Your common name should contain at least 2 characters!");
-        return;
+        return false;
       } else if (this.name.length > 20) {
         alert("Your common name shouldn't contain more than 20 characters!");
-        return;
+        return false;
       }
+      return true;
     },
     validationOfGivenName() {
       if (this.givenName.length < 2) {
         alert("Your given name should contain at least 2 characters!");
-        return;
+        return false;
       } else if (this.givenName.length > 20) {
         alert("Your given name shouldn't contain more than 20 characters!");
-        return;
+        return false;
       }
+      return true;
     },
     validationOfSurname() {
       if (this.surname.length < 2) {
         alert("Your surname should contain at least 2 characters!");
-        return;
+        return false;
       } else if (this.surname.length > 35) {
         alert("Your surname shouldn't contain more than 35 characters!");
-        return;
+        return false;
       }
+      return true;
     },
     validationOfOrganization() {
       if (this.organization.length < 2) {
         alert("Your organization should contain at least 23 characters!");
-        return;
+        return false;
       } else if (this.organization.length > 20) {
         alert("Your organization shouldn't contain more than 20 characters!");
-        return;
+        return false;
       }
+      return true;
     },
     validationOfOrganizationalUnitName() {
       if (this.organizationalUnitName.length < 1) {
         alert(
           "Your organizational unit name should contain at least 1 character!"
         );
-        return;
+        return false;
       } else if (this.organizationalUnitName.length > 20) {
         alert(
           "Your organizational unit name shouldn't contain more than 20 characters!"
         );
-        return;
+        return false;
+
       }
+      return true;
     },
     validationOfOrganizationEmailLength() {
       if (
@@ -277,29 +286,32 @@ export default {
     validationOfCountryCodeLength() {
       if (this.countryCode.length < 2) {
         alert("Your country code should contain at least 2 characters!");
-        return;
+        return false;
       } else if (this.countryCode.length > 20) {
         alert("Your country code shouldn't contain more than 20 characters!");
-        return;
+        return false;
       }
+      return true;
     },
     validationOfAlias() {
       if (this.alias.length < 2) {
         alert("Your alias should contain at least 2 character!");
-        return;
+        return false;
       } else if (this.alias.length > 20) {
         alert("Your alias shouldn't contain more than 20 characters!");
-        return;
+        return false;
       }
+      return true;
     },
     validationOfEndDate() {
       if (this.endDate.length < 6) {
         alert("Your end date should contain at least 6 character!");
-        return;
+        return false;
       } else if (this.endDate.length > 20) {
         alert("Your end date shouldn't contain more than 20 characters!");
-        return;
+        return false;
       }
+      return true;
     },
   },
 };

@@ -20,6 +20,14 @@
             @click:append="showPassword = !showPassword"
           />
           <v-text-field
+            :type="showPassword ? 'text' : 'password'"
+            label="Repeat password"
+            v-model="passwordAgain"
+            prepend-icon="mdi-lock"
+            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="showPassword = !showPassword"
+          />
+          <v-text-field
             label="First name"
             v-model="firstName"
             prepend-icon="mdi-name-circle"
@@ -33,14 +41,6 @@
             label="Phone number"
             v-model="phoneNumber"
             prepend-icon="mdi-address-circle"
-          />
-
-          <v-combobox
-            :items="typesOfUsers"
-            :item-text="text"
-            v-model="selectedTypeOfUser"
-            :label="label1"
-            hint="Choose type of user."
           />
         </v-form>
       </v-card-text>
@@ -58,16 +58,15 @@ export default {
     showPassword: false,
     userEmail: "",
     password: "",
+    passwordAgain: "",
     phoneNumber: "",
     firstName: "",
     lastName: "",
-    users: [],
-    selectedTypeOfUser: "ADMIN",
-    label1: "Type of user",
+    users: []
   }),
   methods: {
     register() {
-      if (!this.ValidateEmail()) {
+      if (!this.ValidateEmail() || !this.ValidatePassword() || !this.validationOfName() || !this.validationOfSurname() || !this.validationOfPhoneNumber()) {
         return;
       } 
       this.$http
@@ -77,7 +76,7 @@ export default {
           password: this.password,
           firstName: this.firstName,
           phoneNumber: this.phoneNumber,
-          typeOfUser: this.selectedTypeOfUser,
+          typeOfUser: "USER",
         })
         .then((response) => {
           console.log(response.data.firstName);
@@ -99,6 +98,45 @@ export default {
       alert("You have entered an invalid email address!");
       return false;
     },
+    ValidatePassword() {
+      if (this.password!==this.passwordAgain){
+          alert("Passwords don't match !!!");
+          this.passwordAgain='';
+          return false;
+      }
+      return true;
+    },
+    validationOfName() {
+      if (this.firstName.length < 2) {
+        alert("Your first name should contain at least 2 character!");
+        return false;
+      } else if (this.firstName.length > 20) {
+        alert("Your first name shouldn't contain more than 20 characters!");
+        return false;
+      }
+      return true;
+    },
+    validationOfSurname() {
+      if (this.lastName.length < 2) {
+        alert("Your last name should contain at least 2 character!");
+        return false;
+      } else if (this.lastName.length > 20) {
+        alert("Your last name shouldn't contain more than 20 characters!");
+        return false;
+      }
+      return true;
+    },
+    validationOfPhoneNumber() {
+      if (this.phoneNumber.length < 2) {
+        alert("Your phone number should contain at least 2 character!");
+        return false;
+      } else if (this.phoneNumber.length > 20) {
+        alert("Your phone number shouldn't contain more than 20 characters!");
+        return false;
+      }
+      return true;
+    }
+
   },
 };
 </script>

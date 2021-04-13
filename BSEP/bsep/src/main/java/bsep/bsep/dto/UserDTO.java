@@ -73,7 +73,7 @@ public class UserDTO {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-
+	
 	public String getTypeOfUser() {
 		return typeOfUser;
 	}
@@ -81,4 +81,5 @@ public class UserDTO {
 	public void setTypeOfUser(String typeOfUser) {
 		this.typeOfUser = typeOfUser;
 	}
+	
 }
