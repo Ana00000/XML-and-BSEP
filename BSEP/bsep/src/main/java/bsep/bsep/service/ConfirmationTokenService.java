@@ -1,5 +1,7 @@
 package bsep.bsep.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,18 +13,28 @@ import bsep.bsep.service.interfaces.IConfirmationTokenService;
 @Service
 public class ConfirmationTokenService implements IConfirmationTokenService {
 
-	private IConfirmationTokenRepository iConfirmationTokenRepository;
-	
+	private final IConfirmationTokenRepository iConfirmationTokenRepository;
+
 	@Autowired
 	public ConfirmationTokenService(IConfirmationTokenRepository iConfirmationTokenRepository) {
 		this.iConfirmationTokenRepository = iConfirmationTokenRepository;
 	}
-	
+
+	public List<ConfirmationToken> findAll() {
+		return iConfirmationTokenRepository.findAll();
+	}
+
 	@Override
 	public ConfirmationToken findByConfirmationToken(String confirmationToken) {
-		for (ConfirmationToken confirmationTokenIt : iConfirmationTokenRepository.findAll()) {
-			if (confirmationToken.equals(confirmationTokenIt.getConfirmationToken())) return confirmationTokenIt;
+
+		for (ConfirmationToken confirmationTokenIt : findAll()) {
+
+			if (confirmationToken.equals(confirmationTokenIt.getConfirmationToken())) {
+
+				return confirmationTokenIt;
+			}
 		}
+
 		return null;
 	}
 

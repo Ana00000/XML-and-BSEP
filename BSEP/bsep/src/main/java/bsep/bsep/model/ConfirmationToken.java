@@ -36,8 +36,22 @@ public class ConfirmationToken {
     @OneToOne(targetEntity = Users.class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
     private Users users;
+    
+    public ConfirmationToken() {}
+    
+    
 
-    public ConfirmationToken(Users users) {
+    public ConfirmationToken(Long id, String confirmationToken, LocalDate createdDate, Users users) {
+		super();
+		this.id = id;
+		this.confirmationToken = confirmationToken;
+		this.createdDate = createdDate;
+		this.users = users;
+	}
+
+
+
+	public ConfirmationToken(Users users) {
         this.users = users;
         createdDate = LocalDate.now();
         confirmationToken = UUID.randomUUID().toString();

@@ -45,13 +45,14 @@ public class UserController {
 	private AuthenticationManager authenticationManager;
 
 	private final UserService userService;
-	
+
 	private final AuthorityService authorityService;
-	
+
 	private final ConfirmationTokenService confirmationTokenService;
 
 	@Autowired
-	public UserController(UserService userService, AuthorityService authorityService, ConfirmationTokenService confirmationTokenService) {
+	public UserController(UserService userService, AuthorityService authorityService,
+			ConfirmationTokenService confirmationTokenService) {
 		this.userService = userService;
 		this.authorityService = authorityService;
 		this.confirmationTokenService = confirmationTokenService;
@@ -61,12 +62,12 @@ public class UserController {
 	public ResponseEntity<List<Users>> findAll() {
 		return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/getUsersEmails")
 	public ResponseEntity<List<String>> findAllUsersEmails() {
 		return new ResponseEntity<>(userService.findAllUsersEmails(), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/redirectMeToMyHomePage")
 	public String RedirectionToHome() {
 		return "http://localhost:8081/";
@@ -105,23 +106,28 @@ public class UserController {
 		}
 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@PutMapping(value = "/confirm_account/{token}", consumes = "application/json")
 	public ResponseEntity<Boolean> confirmAccount(@PathVariable String token) {
-		System.out.println("Usao u metodu");
 		try {
+
 			ConfirmationToken confirmationToken = confirmationTokenService.findByConfirmationToken(token);
-			if (confirmationToken!=null) {
+			if (confirmationToken != null) {
+
 				Users users = userService.findByUserEmail(confirmationToken.getUsers().getUserEmail());
 				users.setConfirmed(true);
 				userService.update(users);
 				return new ResponseEntity<>(HttpStatus.OK);
 			} else {
+
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
+
 		} catch (Exception e) {
+
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+
 	}
 
 	private Users addPermissionsForUser(UserDTO userRequest) {
