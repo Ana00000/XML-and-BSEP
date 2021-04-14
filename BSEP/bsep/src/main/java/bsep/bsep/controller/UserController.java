@@ -26,6 +26,7 @@ import bsep.bsep.dto.UserDTO;
 import bsep.bsep.model.Authority;
 import bsep.bsep.model.ConfirmationToken;
 import bsep.bsep.model.Users;
+import bsep.bsep.security.ResourceConflictException;
 import bsep.bsep.security.TokenUtils;
 import bsep.bsep.security.UserTokenState;
 import bsep.bsep.service.AuthorityService;
