@@ -44,6 +44,11 @@ const routes = [
     path: '/createOtherCertificates',
     name: 'CreateOtherCertificates',
     component: () => import('../views/CreateOtherCertificates.vue')
+  },
+  {
+    path: '/checkCertificateValidity',
+    name: '/CheckCertificateValidity',
+    component: () => import('../views/CheckCertificateValidity.vue')
   }
 ]
 

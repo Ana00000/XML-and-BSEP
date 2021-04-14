@@ -56,7 +56,8 @@ export default {
                 { title: 'Home', path: '/' },
                 { title: 'Certificates', path: '/certificates' },
                 { title: 'New root certificate', path: '/newRootCertificate' },
-                { title: 'Invalid certificates', path: '/invalidCertificates' }
+                { title: 'Invalid certificates', path: '/invalidCertificates' },
+                { title: 'Check certificate validity', path: '/checkCertificateValidity'}
             ]
         }
     },
@@ -69,14 +70,16 @@ export default {
         if (this.role == 'USER'){
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Certificates', path: '/certificates' }
+                { title: 'Certificates', path: '/certificates' },
+                { title: 'Check certificate validity', path: '/checkCertificateValidity'}
             ]
         } else if (this.role == 'ADMIN') {
              [
                 { title: 'Home', path: '/' },
                 { title: 'Certificates', path: '/certificates' },
                 { title: 'New root certificate', path: '/newRootCertificate' },
-                { title: 'Invalid certificates', path: '/invalidCertificates' }
+                { title: 'Invalid certificates', path: '/invalidCertificates' },
+                { title: 'Check certificate validity', path: '/checkCertificateValidity'}
             ]
         } else {
             this.items = [
