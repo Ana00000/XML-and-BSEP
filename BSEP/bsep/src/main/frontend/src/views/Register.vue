@@ -65,10 +65,10 @@ export default {
     users: []
   }),
   methods: {
-    register() {
-      if (!this.ValidateEmail() || !this.ValidatePassword() || !this.validationOfName() || !this.validationOfSurname() || !this.validationOfPhoneNumber()) {
+    register() {/*
+      if (!this.ValidateEmail() || !this.ValidatePassword() || !this.validationOfFirstName() || !this.validationOfLastName() || !this.validationOfPhoneNumber()) {
         return;
-      } 
+      } */
       this.$http
         .post("http://localhost:8080/users/register", {
           userEmail: this.userEmail,
@@ -80,33 +80,55 @@ export default {
         })
         .then((response) => {
           console.log(response.data.firstName);
+          alert("Successfully registered.");
           window.location.href = "http://localhost:8081/login";
         })
         .catch((er) => {
+          alert("Email already exists.");
           console.log("Error while registering in");
           console.log(er.response.data);
         });
     },
     ValidateEmail() {
-      if (
-        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-          this.userEmail
-        )
-      ) {
-        return true;
+      if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.userEmail)) {
+        alert("You have entered an invalid email address!");
+        return false;
+      } else if (this.userEmail.length > 35) {
+        alert("Your email shouldn't contain more than 35 characters!");
+        return false;
       }
-      alert("You have entered an invalid email address!");
-      return false;
+      return true;
     },
     ValidatePassword() {
-      if (this.password!==this.passwordAgain){
+      if (this.password.length < 10) {
+        alert("Your password should contain at least 10 character!");
+        return false;
+      } else if (this.password.length > 30) {
+        alert("Your password shouldn't contain more than 30 characters!");
+        return false;
+      } else if(!this.password.match(/[a-z]/g)) {
+          alert("Your password should contain at least one small letter.");
+          this.passwordAgain='';
+          return false;
+      } else if(!this.password.match(/[A-Z]/g)) {
+          alert("Your password should contain at least one big letter.");
+          this.passwordAgain='';
+          return false;
+      } else if(!this.password.match(/[0-9]/g)) {
+          alert("Your password should contain at least one number.");
+          this.passwordAgain='';
+          return false;
+      } else if(!this.password.match(/[!@#$%^&*.,:'"]/g)) { 
+          alert("Your password should contain at least one special character.");
+          return false;
+      } else if (this.password !== this.passwordAgain){
           alert("Passwords don't match !!!");
           this.passwordAgain='';
           return false;
       }
       return true;
     },
-    validationOfName() {
+    validationOfFirstName() {
       if (this.firstName.length < 2) {
         alert("Your first name should contain at least 2 character!");
         return false;
@@ -116,27 +138,35 @@ export default {
       }
       return true;
     },
-    validationOfSurname() {
+    validationOfLastName() {
       if (this.lastName.length < 2) {
         alert("Your last name should contain at least 2 character!");
         return false;
-      } else if (this.lastName.length > 20) {
-        alert("Your last name shouldn't contain more than 20 characters!");
+      } else if (this.lastName.length > 25) {
+        alert("Your last name shouldn't contain more than 25 characters!");
         return false;
       }
       return true;
     },
     validationOfPhoneNumber() {
-      if (this.phoneNumber.length < 2) {
-        alert("Your phone number should contain at least 2 character!");
+      if(this.phoneNumber.match(/\d/g) == null){
+        alert("Your phone number needs numbers!");
         return false;
-      } else if (this.phoneNumber.length > 20) {
-        alert("Your phone number shouldn't contain more than 20 characters!");
+      } else if (this.phoneNumber.match(/\d/g).length < 9) {
+        alert("Your phone number should contain at least 9 numbers!");
         return false;
+      } else if (this.phoneNumber.match(/\d/g).length > 12) {
+        alert("Your phone number shouldn't contain more than 12 numbers!");
+        return false;
+      } else if(this.phoneNumber.match(/[a-zA-Z]/g)) {
+          alert("Your phone number shouldn't contain letters.");
+          return false;
+      } else if(this.phoneNumber.match(/[!@#$%^&*.,:'"]/g)) {
+          alert("Your phone number shouldn't contain special character other than [+, -, /].");
+          return false;
       }
       return true;
     }
-
   },
 };
 </script>

@@ -221,7 +221,7 @@ export default {
       if (this.commonName.length < 2) {
         alert("Your common name should contain at least 2 characters!");
         return false;
-      } else if (this.name.length > 20) {
+      } else if (this.commonName.length > 20) {
         alert("Your common name shouldn't contain more than 20 characters!");
         return false;
       }
