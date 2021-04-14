@@ -17,7 +17,6 @@
           <v-text-field
             label="Common name"
             v-model="commonName"
-            hint="Common name should contain at least 2 characters!"
             color="light-blue darken-4"
           />
         </v-col>
@@ -29,7 +28,6 @@
           <v-text-field
             label="Given name"
             v-model="givenName"
-            hint="Given name should contain at least 2 characters!"
             color="light-blue darken-4"
           />
         </v-col>
@@ -41,7 +39,6 @@
           <v-text-field
             label="Surname"
             v-model="surname"
-            hint="Surname should contain at least 2 characters!"
             color="light-blue darken-4"
           />
         </v-col>
@@ -53,7 +50,6 @@
           <v-text-field
             label="Organization"
             v-model="organization"
-            hint="Organization should contain at least 2 characters!"
             color="light-blue darken-4"
           />
         </v-col>
@@ -65,7 +61,6 @@
           <v-text-field
             label="Organizational unit name"
             v-model="organizationalUnitName"
-            hint="Organizational unit name should contain at least 1 character!"
             color="light-blue darken-4"
           />
         </v-col>
@@ -77,7 +72,6 @@
           <v-text-field
             label="Organization email"
             v-model="organizationEmail"
-            hint="Organization email should contain at least 10 characters!"
             color="light-blue darken-4"
           />
         </v-col>
@@ -89,7 +83,6 @@
           <v-text-field
             label="Country code"
             v-model="countryCode"
-            hint="Country code should contain at least 2 characters!"
             color="light-blue darken-4"
           />
         </v-col>
@@ -101,7 +94,6 @@
           <v-text-field
             label="Alias "
             v-model="alias"
-            hint="Alias should contain at least 2 characters!"
             color="light-blue darken-4"
           />
         </v-col>
@@ -113,7 +105,7 @@
           <v-text-field
             label="End date"
             v-model="endDate"
-            hint="End date should contain at least 6 characters!"
+            hint="End date should be in format yyyy-mm-dd"
             color="light-blue darken-4"
           />
         </v-col>
@@ -141,15 +133,15 @@
 export default {
   name: "NewRootCertificate",
   data: () => ({
-    commonName: null,
-    givenName: null,
-    surname: null,
-    organization: null,
-    organizationalUnitName: null,
-    organizationEmail: null,
-    countryCode: null,
-    alias: null,
-    endDate: null,
+    commonName: "",
+    givenName: "",
+    surname: "",
+    organization: "",
+    organizationalUnitName: "",
+    organizationEmail: "",
+    countryCode: "",
+    alias: "",
+    endDate: "",
     issuerSerialNumber: null,
     issuerAlias: null,
     certificates: [],
@@ -170,9 +162,7 @@ export default {
       this.token = localStorage.getItem('token');
     },
     createCertificate() {
-      if (!this.validation()) return;
-
-      
+      if (!this.validCertificate()) return;
       this.$http
         .post("http://localhost:8080/certificate/createCertificate", {
           commonName: this.commonName,
@@ -203,31 +193,25 @@ export default {
           console.log(err.response.data);
         });
     },
-    validation() {
-
-      if (this.validationOfCommonName() &&
-      this.validationOfGivenName() &&
-      this.validationOfSurname() &&
-      this.validationOfOrganization() &&
-      this.validationOfOrganizationalUnitName() &&
-      this.validationOfOrganizationEmailLength() &&
-      this.validationOfCountryCodeLength() &&
-      this.validationOfAlias() &&
-      this.validationOfEndDate()) return true;
+    validCertificate() {
+      if (this.validCommonName() && this.validGivenName() && this.validSurname() 
+      && this.validOrganization() &&this.validOrganizationalUnitName() &&
+      this.validOrganizationEmail() && this.validCountryCode() &&
+      this.validAlias() && this.validEndDate()) return true;
       return false;
 
     },
-    validationOfCommonName() {
+    validCommonName() {
       if (this.commonName.length < 2) {
         alert("Your common name should contain at least 2 characters!");
         return false;
-      } else if (this.name.length > 20) {
+      } else if (this.commonName.length > 20) {
         alert("Your common name shouldn't contain more than 20 characters!");
         return false;
       }
       return true;
     },
-    validationOfGivenName() {
+    validGivenName() {
       if (this.givenName.length < 2) {
         alert("Your given name should contain at least 2 characters!");
         return false;
@@ -237,7 +221,7 @@ export default {
       }
       return true;
     },
-    validationOfSurname() {
+    validSurname() {
       if (this.surname.length < 2) {
         alert("Your surname should contain at least 2 characters!");
         return false;
@@ -247,9 +231,9 @@ export default {
       }
       return true;
     },
-    validationOfOrganization() {
+    validOrganization() {
       if (this.organization.length < 2) {
-        alert("Your organization should contain at least 23 characters!");
+        alert("Your organization should contain at least 2 characters!");
         return false;
       } else if (this.organization.length > 20) {
         alert("Your organization shouldn't contain more than 20 characters!");
@@ -257,33 +241,27 @@ export default {
       }
       return true;
     },
-    validationOfOrganizationalUnitName() {
+    validOrganizationalUnitName() {
       if (this.organizationalUnitName.length < 1) {
-        alert(
-          "Your organizational unit name should contain at least 1 character!"
-        );
+        alert("Your organizational unit name should contain at least 1 character!");
         return false;
       } else if (this.organizationalUnitName.length > 20) {
-        alert(
-          "Your organizational unit name shouldn't contain more than 20 characters!"
-        );
+        alert("Your organizational unit name shouldn't contain more than 20 characters!");
         return false;
-
       }
       return true;
     },
-    validationOfOrganizationEmailLength() {
-      if (
-        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-          this.organizationEmail
-        )
-      ) {
-        return true;
+    validOrganizationEmail() {
+      if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.organizationEmail)) {
+        alert("You have entered an invalid organization email address!");
+        return false;
+      } else if (this.organizationEmail.length > 35) {
+        alert("Organization email address shouldn't contain more than 35 characters!");
+        return false;
       }
-      alert("You have entered an invalid organization email address!");
-      return false;
+      return true;
     },
-    validationOfCountryCodeLength() {
+    validCountryCode() {
       if (this.countryCode.length < 2) {
         alert("Your country code should contain at least 2 characters!");
         return false;
@@ -293,7 +271,7 @@ export default {
       }
       return true;
     },
-    validationOfAlias() {
+    validAlias() {
       if (this.alias.length < 2) {
         alert("Your alias should contain at least 2 character!");
         return false;
@@ -303,16 +281,43 @@ export default {
       }
       return true;
     },
-    validationOfEndDate() {
-      if (this.endDate.length < 6) {
-        alert("Your end date should contain at least 6 character!");
+    validEndDate() {
+       if(this.endDate.match(/\d/g) == null){
+        alert("Your end date needs numbers!");
         return false;
-      } else if (this.endDate.length > 20) {
-        alert("Your end date shouldn't contain more than 20 characters!");
+      } else if (this.endDate.match(/\d/g).length < 6) {
+        alert("Your end date should contain at least 6 numbers!");
+        return false;
+      } else if (this.endDate.match(/\d/g).length > 8) {
+        alert("Your end date shouldn't contain more than 8 numbers!");
+        return false;
+      } else if(this.endDate.match(/[a-zA-Z]/g)) {
+          alert("Your end date shouldn't contain letters.");
+          return false;
+      } else if(this.endDate.match(/[!@#$%^&*,:'/."]/g)) {
+          alert("Your end date shouldn't contain special character other than [-].");
+          return false;
+      }
+      var endDateSplit = this.endDate.split('-');
+      var eDSYear = endDateSplit[0];
+      var eDSMonth = endDateSplit[1];
+      var eDSDay = endDateSplit[2];
+
+      if (eDSYear > 3000 || eDSYear < 2021){
+        alert("Year of end date isn't valid");
+        return false;
+      }else if(eDSYear < 2025){
+        alert("End date must me valid 5 years from current date.");
+        return false;
+      }else if (eDSMonth > 12 || eDSMonth < 0){
+        alert("Month of end date isn't valid");
+        return false;
+      }else if (eDSDay > 31 || eDSDay < 1){
+        alert("Day of end date isn't valid");
         return false;
       }
       return true;
-    },
+    }
   },
 };
 </script>

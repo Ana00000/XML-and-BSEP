@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 import bsep.bsep.dto.UserDTO;
 import bsep.bsep.model.Authority;
 import bsep.bsep.model.Users;
-import bsep.bsep.security.ResourceConflictException;
 import bsep.bsep.security.TokenUtils;
 import bsep.bsep.security.UserTokenState;
 import bsep.bsep.service.AuthorityService;
 import bsep.bsep.service.UserService;
+import bsep.bsep.validation.UserValidation;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:8081")
@@ -41,25 +41,28 @@ public class UserController {
 	private AuthenticationManager authenticationManager;
 
 	private final UserService userService;
-	
+
 	private final AuthorityService authorityService;
+	
+	private UserValidation userValidation ;
 
 	@Autowired
 	public UserController(UserService userService, AuthorityService authorityService) {
 		this.userService = userService;
 		this.authorityService = authorityService;
+		this.userValidation = new UserValidation();
 	}
 
 	@GetMapping("/findAll")
 	public ResponseEntity<List<Users>> findAll() {
 		return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/getUsersEmails")
 	public ResponseEntity<List<String>> findAllUsersEmails() {
 		return new ResponseEntity<>(userService.findAllUsersEmails(), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/redirectMeToMyHomePage")
 	public String RedirectionToHome() {
 		return "http://localhost:8081/";
@@ -80,20 +83,16 @@ public class UserController {
 
 	@PostMapping(value = "/register", consumes = "application/json")
 	public ResponseEntity<Users> addUser(@RequestBody UserDTO userRequest) {
-		System.out.print(userRequest.getUserEmail());
-		Users existUser;
-		if (userRequest.getTypeOfUser().toUpperCase().equals("ADMIN")) {
+		if (userRequest.getTypeOfUser().toUpperCase().equals("ADMIN") || !userValidation.validUser(userRequest)) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}else if (userService.findByUserEmail(userRequest.getUserEmail()) != null) {
+			System.out.println("Username already exists.");
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
+		
 		try {
-			existUser = userService.findByUserEmail(userRequest.getUserEmail());
-
-			if (existUser != null) {
-				throw new ResourceConflictException(existUser.getId(), "Username already exists");
-			}
-			Users u = userService.save(addPermissionsForUser(userRequest));
-			System.out.print(u.toString());
-			return new ResponseEntity<>(u, HttpStatus.CREATED);
+			Users user = userService.save(addPermissionsForUser(userRequest));
+			return new ResponseEntity<>(user, HttpStatus.CREATED);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
