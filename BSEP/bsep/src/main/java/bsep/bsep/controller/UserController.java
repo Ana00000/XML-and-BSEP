@@ -26,12 +26,12 @@ import bsep.bsep.dto.UserDTO;
 import bsep.bsep.model.Authority;
 import bsep.bsep.model.ConfirmationToken;
 import bsep.bsep.model.Users;
-import bsep.bsep.security.ResourceConflictException;
 import bsep.bsep.security.TokenUtils;
 import bsep.bsep.security.UserTokenState;
 import bsep.bsep.service.AuthorityService;
 import bsep.bsep.service.ConfirmationTokenService;
 import bsep.bsep.service.UserService;
+import bsep.bsep.validation.UserValidation;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:8081")
@@ -47,6 +47,8 @@ public class UserController {
 	private final UserService userService;
 
 	private final AuthorityService authorityService;
+	
+	private UserValidation userValidation ;
 
 	private final ConfirmationTokenService confirmationTokenService;
 
@@ -56,6 +58,8 @@ public class UserController {
 		this.userService = userService;
 		this.authorityService = authorityService;
 		this.confirmationTokenService = confirmationTokenService;
+		this.userValidation = new UserValidation();
+
 	}
 
 	@GetMapping("/findAll")
@@ -97,9 +101,13 @@ public class UserController {
 	@PostMapping(value = "/register", consumes = "application/json")
 	public ResponseEntity<Users> addUser(@RequestBody UserDTO userRequest) {
 		Users existUser;
-		if (userRequest.getTypeOfUser().toUpperCase().equals("ADMIN")) {
+		if (userRequest.getTypeOfUser().toUpperCase().equals("ADMIN") || !userValidation.validUser(userRequest)) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}else if (userService.findByUserEmail(userRequest.getUserEmail()) != null) {
+			System.out.println("Username already exists.");
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
+		
 		try {
 			existUser = userService.findByUserEmail(userRequest.getUserEmail());
 
