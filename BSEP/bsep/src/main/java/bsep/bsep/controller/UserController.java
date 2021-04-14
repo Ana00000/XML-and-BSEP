@@ -80,7 +80,6 @@ public class UserController {
 
 	@PostMapping(value = "/register", consumes = "application/json")
 	public ResponseEntity<Users> addUser(@RequestBody UserDTO userRequest) {
-		System.out.print(userRequest.getUserEmail());
 		Users existUser;
 		if (userRequest.getTypeOfUser().toUpperCase().equals("ADMIN")) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -92,7 +91,6 @@ public class UserController {
 				throw new ResourceConflictException(existUser.getId(), "Username already exists");
 			}
 			Users u = userService.save(addPermissionsForUser(userRequest));
-			System.out.print(u.toString());
 			return new ResponseEntity<>(u, HttpStatus.CREATED);
 		} catch (Exception e) {
 			e.printStackTrace();

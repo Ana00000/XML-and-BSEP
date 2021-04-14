@@ -3,6 +3,8 @@ package bsep.bsep.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,6 @@ import bsep.bsep.model.UserType;
 import bsep.bsep.model.Users;
 import bsep.bsep.repository.IUserRepository;
 import bsep.bsep.service.interfaces.IUserService;
-import ch.qos.logback.core.subst.Token.Type;
 
 @Service
 public class UserService implements IUserService {
@@ -21,6 +22,11 @@ public class UserService implements IUserService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private EmailService emailService;
+	
+	private Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	@Autowired
 	public UserService(IUserRepository userRepository) {
@@ -112,12 +118,26 @@ public class UserService implements IUserService {
 	@Override
 	public Users save(Users user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		System.out.print("Usao u servis :");
+		sendConfirmationEmail(user);
 		return userRepository.save(user);
+	}
+	
+	private void sendConfirmationEmail(Users user) {
+		try {
+			
+			String supplierEmail = user.getUserEmail();
+			String subject = "Confirm registration";
+			String text = "Please confirm your registration by clicking the link below \n\n" + "http://localhost:8081/confirmRegistration" ;
+			emailService.sendNotificaitionAsync(supplierEmail, subject, text);
+			
+			System.out.println("Email sent");
+	
+		}catch(Exception e) {
+			logger.info("Error sending email: "+ e.getMessage());
+		}
 	}
 
 	public List<String> findAllUsersEmails() {
-		// TODO Auto-generated method stub
 		List<String> returnValues = new ArrayList<String>();
 		for (Users user : findAll()) {
 			if (user.getTypeOfUser()!=UserType.ADMIN)
