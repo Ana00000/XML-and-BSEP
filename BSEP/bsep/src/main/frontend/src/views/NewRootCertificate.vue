@@ -159,40 +159,44 @@ export default {
     label1: "Certificates type",
     label2: "Certificate purpose",
     userEmail: null,
-    token: null
+    token: null,
   }),
   mounted() {
     this.init();
   },
   methods: {
-    init(){
-      this.userEmail = localStorage.getItem('userEmail');
-      this.token = localStorage.getItem('token');
+    init() {
+      this.userEmail = localStorage.getItem("userEmail");
+      this.token = localStorage.getItem("token");
     },
     createCertificate() {
       if (!this.validation()) return;
 
-      
       this.$http
-        .post("http://localhost:8080/certificate/createCertificate", {
-          commonName: this.commonName,
-          givenName: this.givenName,
-          surname: this.surname,
-          organization: this.organization,
-          organizationalUnitName: this.organizationalUnitName,
-          organizationEmail: this.organizationEmail,
-          countryCode: this.countryCode,
-          alias: this.alias,
-          endDate: this.endDate,
-          certificateType: this.selectedCertificateType,
-          certificatePurposeType: this.selectedCertificatePurpose,
-          issuerSerialNumber: null,
-          issuerAlias: this.alias,
-          userEmail: this.userEmail
-        },{
-        headers:{
-            'Authorization':"Bearer "+ this.token
-        }})
+        .post(
+          "http://localhost:8080/certificate/createCertificate",
+          {
+            commonName: this.commonName,
+            givenName: this.givenName,
+            surname: this.surname,
+            organization: this.organization,
+            organizationalUnitName: this.organizationalUnitName,
+            organizationEmail: this.organizationEmail,
+            countryCode: this.countryCode,
+            alias: this.alias,
+            endDate: this.endDate,
+            certificateType: this.selectedCertificateType,
+            certificatePurposeType: this.selectedCertificatePurpose,
+            issuerSerialNumber: null,
+            issuerAlias: this.alias,
+            userEmail: this.userEmail,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
         .then((resp) => {
           console.log(resp.data);
           alert("Created Root certificate.");
@@ -204,24 +208,25 @@ export default {
         });
     },
     validation() {
-
-      if (this.validationOfCommonName() &&
-      this.validationOfGivenName() &&
-      this.validationOfSurname() &&
-      this.validationOfOrganization() &&
-      this.validationOfOrganizationalUnitName() &&
-      this.validationOfOrganizationEmailLength() &&
-      this.validationOfCountryCodeLength() &&
-      this.validationOfAlias() &&
-      this.validationOfEndDate()) return true;
+      if (
+        this.validationOfCommonName() &&
+        this.validationOfGivenName() &&
+        this.validationOfSurname() &&
+        this.validationOfOrganization() &&
+        this.validationOfOrganizationalUnitName() &&
+        this.validationOfOrganizationEmailLength() &&
+        this.validationOfCountryCodeLength() &&
+        this.validationOfAlias() &&
+        this.validationOfEndDate()
+      )
+        return true;
       return false;
-
     },
     validationOfCommonName() {
       if (this.commonName.length < 2) {
         alert("Your common name should contain at least 2 characters!");
         return false;
-      } else if (this.name.length > 20) {
+      } else if (this.commonName.length > 20) {
         alert("Your common name shouldn't contain more than 20 characters!");
         return false;
       }
@@ -268,7 +273,6 @@ export default {
           "Your organizational unit name shouldn't contain more than 20 characters!"
         );
         return false;
-
       }
       return true;
     },
@@ -294,8 +298,8 @@ export default {
       return true;
     },
     validationOfAlias() {
-      if (this.alias.length < 2) {
-        alert("Your alias should contain at least 2 character!");
+      if (this.alias.length < 1) {
+        alert("Your alias should contain at least 1 character!");
         return false;
       } else if (this.alias.length > 20) {
         alert("Your alias shouldn't contain more than 20 characters!");

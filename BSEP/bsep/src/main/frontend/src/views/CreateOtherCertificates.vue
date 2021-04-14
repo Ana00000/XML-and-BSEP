@@ -126,7 +126,6 @@
             label="Issuer Alias"
             v-model="issuerAlias"
             color="light-blue darken-4"
-            readonly
           />
         </v-col>
       </v-row>
@@ -204,7 +203,6 @@ export default {
   },
   methods: {
     init() {
-        this.issuerAlias = localStorage.getItem("issuerAlias");
         this.issuerSerialNumber = localStorage.getItem("issuerSerialNumber");
         this.issuerEndDate = localStorage.getItem("endDate");
         this.issuerCertificateType = localStorage.getItem("issuerCertificateType");
@@ -260,7 +258,6 @@ export default {
         
     },
     validation() {
-
       if (this.validationOfCommonName() &&
       this.validationOfGivenName() &&
       this.validationOfSurname() &&
@@ -269,6 +266,7 @@ export default {
       this.validationOfOrganizationEmailLength() &&
       this.validationOfCountryCodeLength() &&
       this.validationOfAlias() &&
+      this.validationOfIssuerAlias() &&
       this.validationOfEndDate()) return true;
       return false;
 
@@ -277,7 +275,7 @@ export default {
       if (this.commonName.length < 2) {
         alert("Your common name should contain at least 2 characters!");
         return false;
-      } else if (this.name.length > 20) {
+      } else if (this.commonName.length > 20) {
         alert("Your common name shouldn't contain more than 20 characters!");
         return false;
       }
@@ -350,10 +348,20 @@ export default {
       return true;
     },
     validationOfAlias() {
-      if (this.alias.length < 2) {
-        alert("Your alias should contain at least 2 character!");
+      if (this.alias.length < 1) {
+        alert("Your alias should contain at least 1 character!");
         return false;
       } else if (this.alias.length > 20) {
+        alert("Your alias shouldn't contain more than 20 characters!");
+        return false;
+      }
+      return true;
+    },
+    validationOfIssuerAlias() {
+      if (this.issuerAlias.length < 1) {
+        alert("Your alias should contain at least 1 character!");
+        return false;
+      } else if (this.issuerAlias.length > 20) {
         alert("Your alias shouldn't contain more than 20 characters!");
         return false;
       }
