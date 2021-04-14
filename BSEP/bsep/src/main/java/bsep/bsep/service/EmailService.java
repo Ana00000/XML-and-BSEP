@@ -25,10 +25,11 @@ public class EmailService {
 	 * Anotacija za oznacavanje asinhronog zadatka
 	 * Vise informacija na: https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#scheduling
 	 */
+	
 	@Async
 	public void sendNotificaitionAsync(String emailAddress, String subject, String text) throws MailException, InterruptedException {
 		
-
+		System.out.println(env.getProperty("spring.mail.username"));
 		SimpleMailMessage mail = new SimpleMailMessage();
 		mail.setTo(emailAddress);
 		mail.setFrom(env.getProperty("spring.mail.username"));

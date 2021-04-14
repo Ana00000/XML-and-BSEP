@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import bsep.bsep.dto.UserDTO;
+import bsep.bsep.model.ConfirmationToken;
 import bsep.bsep.model.UserType;
 import bsep.bsep.model.Users;
 import bsep.bsep.repository.IUserRepository;
@@ -23,14 +24,17 @@ public class UserService implements IUserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
-	@Autowired
 	private EmailService emailService;
+	
+	private final ConfirmationTokenService confirmationTokenService;
 	
 	private Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	@Autowired
-	public UserService(IUserRepository userRepository) {
+	public UserService(IUserRepository userRepository, ConfirmationTokenService confirmationTokenService,EmailService emailService) {
 		this.userRepository = userRepository;
+		this.confirmationTokenService = confirmationTokenService;
+		this.emailService = emailService;
 	}
 
 	public Users findOne(Long id) {
@@ -115,19 +119,26 @@ public class UserService implements IUserService {
 		return null;
 	}
 	
-	@Override
-	public Users save(Users user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		sendConfirmationEmail(user);
+	public Users update(Users user) {
 		return userRepository.save(user);
 	}
 	
-	private void sendConfirmationEmail(Users user) {
+	@Override
+	public Users save(Users user) {
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setConfirmed(false);
+		Users userNew = userRepository.save(user);
+		ConfirmationToken confirmationToken = confirmationTokenService.save(userNew);
+		sendConfirmationEmail(userNew, confirmationToken);
+		return userNew; 
+	}
+	
+	private void sendConfirmationEmail(Users user, ConfirmationToken confirmationToken) {
 		try {
 			
 			String supplierEmail = user.getUserEmail();
 			String subject = "Confirm registration";
-			String text = "Please confirm your registration by clicking the link below \n\n" + "http://localhost:8081/confirmRegistration" ;
+			String text = "Please confirm your registration by clicking the link below \n\n" + "http://localhost:8081/confirmRegistration/"+ confirmationToken.getConfirmationToken();
 			emailService.sendNotificaitionAsync(supplierEmail, subject, text);
 			
 			System.out.println("Email sent");

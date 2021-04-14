@@ -15,18 +15,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import bsep.bsep.dto.UserDTO;
 import bsep.bsep.model.Authority;
+import bsep.bsep.model.ConfirmationToken;
 import bsep.bsep.model.Users;
 import bsep.bsep.security.ResourceConflictException;
 import bsep.bsep.security.TokenUtils;
 import bsep.bsep.security.UserTokenState;
 import bsep.bsep.service.AuthorityService;
+import bsep.bsep.service.ConfirmationTokenService;
 import bsep.bsep.service.UserService;
 
 @RestController
@@ -43,11 +47,14 @@ public class UserController {
 	private final UserService userService;
 	
 	private final AuthorityService authorityService;
+	
+	private final ConfirmationTokenService confirmationTokenService;
 
 	@Autowired
-	public UserController(UserService userService, AuthorityService authorityService) {
+	public UserController(UserService userService, AuthorityService authorityService, ConfirmationTokenService confirmationTokenService) {
 		this.userService = userService;
 		this.authorityService = authorityService;
+		this.confirmationTokenService = confirmationTokenService;
 	}
 
 	@GetMapping("/findAll")
@@ -90,12 +97,31 @@ public class UserController {
 			if (existUser != null) {
 				throw new ResourceConflictException(existUser.getId(), "Username already exists");
 			}
-			Users u = userService.save(addPermissionsForUser(userRequest));
+			Users userWithPermissions = addPermissionsForUser(userRequest);
+			Users u = userService.save(userWithPermissions);
 			return new ResponseEntity<>(u, HttpStatus.CREATED);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+	}
+	
+	@PutMapping(value = "/confirm_account/{token}", consumes = "application/json")
+	public ResponseEntity<Boolean> confirmAccount(@PathVariable String token) {
+		System.out.println("Usao u metodu");
+		try {
+			ConfirmationToken confirmationToken = confirmationTokenService.findByConfirmationToken(token);
+			if (confirmationToken!=null) {
+				Users users = userService.findByUserEmail(confirmationToken.getUsers().getUserEmail());
+				users.setConfirmed(true);
+				userService.update(users);
+				return new ResponseEntity<>(HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	private Users addPermissionsForUser(UserDTO userRequest) {
