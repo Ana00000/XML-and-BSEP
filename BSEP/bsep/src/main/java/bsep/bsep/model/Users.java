@@ -46,6 +46,9 @@ public class Users implements UserDetails {
 
 	@Column(name = "phoneNumber", unique = false, nullable = false)
 	private String phoneNumber;
+	
+	@Column(name = "isConfirmed", unique = false, nullable = false)
+	private boolean isConfirmed;
 
 	@Enumerated(EnumType.ORDINAL)
 	private UserType typeOfUser;
@@ -70,7 +73,7 @@ public class Users implements UserDetails {
 	}
 
 	public Users(Long id, String userEmail, String password, String firstName, String lastName, String phoneNumber,
-			UserType typeOfUser) {
+			UserType typeOfUser, boolean isConfirmed) {
 		super();
 		this.id = id;
 		this.userEmail = userEmail;
@@ -79,8 +82,9 @@ public class Users implements UserDetails {
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
 		this.typeOfUser = typeOfUser;
+		this.isConfirmed = isConfirmed;
 	}
-
+	
 	public void setAuthorities(List<Authority> authorities) {
 		this.authorities = authorities;
 	}
@@ -170,4 +174,13 @@ public class Users implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
+	
+	public boolean isConfirmed() {
+		return isConfirmed;
+	}
+
+	public void setConfirmed(boolean isConfirmed) {
+		this.isConfirmed = isConfirmed;
+	}
+	
 }

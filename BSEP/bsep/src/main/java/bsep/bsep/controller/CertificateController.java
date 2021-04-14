@@ -23,6 +23,7 @@ import bsep.bsep.dto.CertificateInfoDTO;
 import bsep.bsep.model.CertificateData;
 import bsep.bsep.service.CertificateService;
 import bsep.bsep.service.UserService;
+import bsep.bsep.validation.CertificateValidation;
 
 @Controller
 @CrossOrigin(origins = "http://localhost:8081")
@@ -31,11 +32,13 @@ public class CertificateController {
 
 	private CertificateService certificateService;
 	private UserService userService;
+	private CertificateValidation certificateValidation;
 
 	@Autowired
 	public CertificateController(CertificateService certificateService, UserService userService) {
 		this.certificateService = certificateService;
 		this.userService = userService;
+		this.certificateValidation = new CertificateValidation();
 	}
 
 	@PostAuthorize("hasAuthority('USER_REVOKE_CERTIFICATE_PRIVILEGE')")
@@ -92,6 +95,8 @@ public class CertificateController {
 	@PostAuthorize("hasAuthority('USER_CREATE_CERTIFICATE_PRIVILEGE')")
 	@PostMapping(value = "/createCertificate", consumes = "application/json")
 	public ResponseEntity<CertificateData> createCertificate(@RequestBody CertificateInfoDTO certificateInfoDTO) {
+		if (!certificateValidation.validCertificate(certificateInfoDTO)) 
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		try {
 			CertificateData certificateData = certificateService.createCertificate(certificateInfoDTO);
 			return new ResponseEntity<>(certificateData, checkStatusForCreatingCertificate(certificateData));

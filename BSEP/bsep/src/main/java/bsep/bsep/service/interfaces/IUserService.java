@@ -22,6 +22,8 @@ public interface IUserService {
 	List<Users> findByFirstNameAndLastNameAllIgnoringCase(String firstName, String lastName);
 
 	Users save(Users user);
+	
+	Users update(Users user);
 
 	Users login(UserDTO userDTO);
 }
