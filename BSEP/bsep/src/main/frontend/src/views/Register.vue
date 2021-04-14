@@ -65,10 +65,10 @@ export default {
     users: []
   }),
   methods: {
-    register() {/*
+    register() {
       if (!this.ValidateEmail() || !this.ValidatePassword() || !this.validationOfFirstName() || !this.validationOfLastName() || !this.validationOfPhoneNumber()) {
         return;
-      } */
+      } 
       this.$http
         .post("http://localhost:8080/users/register", {
           userEmail: this.userEmail,
