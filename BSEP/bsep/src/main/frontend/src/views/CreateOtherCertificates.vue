@@ -118,7 +118,6 @@
             label="Issuer Alias"
             v-model="issuerAlias"
             color="light-blue darken-4"
-            readonly
           />
         </v-col>
       </v-row>
@@ -150,7 +149,7 @@
         :items="usersEmailsItems"
         v-model="selectedUserEmail"
         :label="'USER EMAIL'"
-        hint="Choose certificate type."
+        hint="Choose user email."
       />
     </v-container>
 
@@ -179,6 +178,7 @@ export default {
     issuerSerialNumber: null,
     issuerCertificateType: null,
     issuerAlias: null,
+    correctIssuerAlias: null,
     certificates: [],
     dateValid: true,
     selectedCertificateType: "INTERMEDIATE",
@@ -196,7 +196,7 @@ export default {
   },
   methods: {
     init() {
-        this.issuerAlias = localStorage.getItem("issuerAlias");
+        this.correctIssuerAlias = localStorage.getItem("issuerAlias");
         this.issuerSerialNumber = localStorage.getItem("issuerSerialNumber");
         this.issuerEndDate = localStorage.getItem("endDate");
         this.issuerCertificateType = localStorage.getItem("issuerCertificateType");
@@ -218,6 +218,7 @@ export default {
 
     createCertificate() {
       if(!this.validCertificate()) return;
+
       this.$http
         .post("http://localhost:8080/certificate/createCertificate", {
           commonName: this.commonName,
@@ -248,13 +249,13 @@ export default {
           console.log(err.response.data);
         });
     },
+
     validCertificate() {
       if (this.validCommonName() && this.validGivenName() && this.validSurname() 
       && this.validOrganization() &&this.validOrganizationalUnitName() &&
       this.validOrganizationEmail() && this.validCountryCode() &&
-      this.validAlias() && this.validEndDate() && this.validSelectedUserEmail()) return true;
+      this.validAlias() && this.validIssuerAlias() && this.validEndDate() && this.validSelectedUserEmail()) return true;
       return false;
-
     },
     validCommonName() {
       if (this.commonName.length < 2) {
@@ -326,12 +327,26 @@ export default {
       }
       return true;
     },
+
     validAlias() {
       if (this.alias.length < 2) {
         alert("Your alias should contain at least 2 character!");
         return false;
       } else if (this.alias.length > 20) {
         alert("Your alias shouldn't contain more than 20 characters!");
+        return false;
+      }
+      return true;
+    },
+    validIssuerAlias() {
+      if (this.issuerAlias.length < 2) {
+        alert("Your alias should contain at least 2 character!");
+        return false;
+      } else if (this.issuerAlias.length > 20) {
+        alert("Your alias shouldn't contain more than 20 characters!");
+        return false;
+      } else if (this.issuerAlias != this.correctIssuerAlias){
+        alert("You didn't enter a correct issuer alias!");
         return false;
       }
       return true;
@@ -375,7 +390,6 @@ export default {
         alert("Your expired date must be before issuer expired date!");
         return false;
       }
-
       console.log(issuerEDSDay+' '+issuerEDSMonth+' '+issuerEDSYear);
       return true;
     },

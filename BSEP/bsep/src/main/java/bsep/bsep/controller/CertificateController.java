@@ -51,6 +51,12 @@ public class CertificateController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@PostAuthorize("hasAuthority('USER_GET_CERTIFICATE_DTO_BY_SERIAL_NUMBER_PRIVILEGE')")
+	@GetMapping(value = "/{serialNumber}")
+	public ResponseEntity<CertificateData> checkCertificateValidity(@PathVariable String serialNumber) {
+		return new ResponseEntity<>(certificateService.findCertificateDataBySerialNumber(serialNumber), HttpStatus.OK);
+	}
 
 	@PostAuthorize("hasAuthority('USER_GET_CERTIFICATE_DTO_BY_SERIAL_NUMBER_PRIVILEGE')")
 	@GetMapping(value = "/getCertificate/{serialNumber}")

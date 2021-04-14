@@ -52,7 +52,7 @@ public class CertificateKeyStoreRepository {
 			ksRoot = KeyStore.getInstance("JKS");
 			ksIntermediate = KeyStore.getInstance("JKS");
 			ksEndEntity = KeyStore.getInstance("JKS");
-			createNewKeyStores();
+			//createNewKeyStores();
 			loadKeyStore();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -94,9 +94,9 @@ public class CertificateKeyStoreRepository {
 	}
 
 	private void createNewKeyStores() {
-		// createNewKeyStore(ksRoot, ksRootPath, strPassword);
-		//createNewKeyStore(ksIntermediate, ksIntermediatePath, strPassword);
-		//createNewKeyStore(ksEndEntity, ksEndEntityPath, strPassword);
+		createNewKeyStore(ksRoot, ksRootPath, strPassword);
+		createNewKeyStore(ksIntermediate, ksIntermediatePath, strPassword);
+		createNewKeyStore(ksEndEntity, ksEndEntityPath, strPassword);
 	}
 
 	private void createNewKeyStore(KeyStore keyStore, String fileName, String password) {

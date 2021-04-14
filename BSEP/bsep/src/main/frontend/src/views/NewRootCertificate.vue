@@ -151,38 +151,43 @@ export default {
     label1: "Certificates type",
     label2: "Certificate purpose",
     userEmail: null,
-    token: null
+    token: null,
   }),
   mounted() {
     this.init();
   },
   methods: {
-    init(){
-      this.userEmail = localStorage.getItem('userEmail');
-      this.token = localStorage.getItem('token');
+    init() {
+      this.userEmail = localStorage.getItem("userEmail");
+      this.token = localStorage.getItem("token");
     },
     createCertificate() {
       if (!this.validCertificate()) return;
       this.$http
-        .post("http://localhost:8080/certificate/createCertificate", {
-          commonName: this.commonName,
-          givenName: this.givenName,
-          surname: this.surname,
-          organization: this.organization,
-          organizationalUnitName: this.organizationalUnitName,
-          organizationEmail: this.organizationEmail,
-          countryCode: this.countryCode,
-          alias: this.alias,
-          endDate: this.endDate,
-          certificateType: this.selectedCertificateType,
-          certificatePurposeType: this.selectedCertificatePurpose,
-          issuerSerialNumber: null,
-          issuerAlias: this.alias,
-          userEmail: this.userEmail
-        },{
-        headers:{
-            'Authorization':"Bearer "+ this.token
-        }})
+        .post(
+          "http://localhost:8080/certificate/createCertificate",
+          {
+            commonName: this.commonName,
+            givenName: this.givenName,
+            surname: this.surname,
+            organization: this.organization,
+            organizationalUnitName: this.organizationalUnitName,
+            organizationEmail: this.organizationEmail,
+            countryCode: this.countryCode,
+            alias: this.alias,
+            endDate: this.endDate,
+            certificateType: this.selectedCertificateType,
+            certificatePurposeType: this.selectedCertificatePurpose,
+            issuerSerialNumber: null,
+            issuerAlias: this.alias,
+            userEmail: this.userEmail,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
         .then((resp) => {
           console.log(resp.data);
           alert("Created Root certificate.");
@@ -199,7 +204,6 @@ export default {
       this.validOrganizationEmail() && this.validCountryCode() &&
       this.validAlias() && this.validEndDate()) return true;
       return false;
-
     },
     validCommonName() {
       if (this.commonName.length < 2) {
