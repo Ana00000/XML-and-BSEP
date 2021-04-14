@@ -66,7 +66,7 @@ export default {
   }),
   methods: {
     register() {
-      if (!this.ValidateEmail() || !this.ValidatePassword() || !this.validationOfFirstName() || !this.validationOfLastName() || !this.validationOfPhoneNumber()) {
+      if (!this.validEmail() || !this.validPassword() || !this.validFirstName() || !this.validLastName() || !this.validPhoneNumber()) {
         return;
       } 
       this.$http
@@ -89,7 +89,7 @@ export default {
           console.log(er.response.data);
         });
     },
-    ValidateEmail() {
+    validEmail() {
       if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.userEmail)) {
         alert("You have entered an invalid email address!");
         return false;
@@ -99,7 +99,7 @@ export default {
       }
       return true;
     },
-    ValidatePassword() {
+    validPassword() {
       if (this.password.length < 10) {
         alert("Your password should contain at least 10 character!");
         return false;
@@ -128,7 +128,7 @@ export default {
       }
       return true;
     },
-    validationOfFirstName() {
+    validFirstName() {
       if (this.firstName.length < 2) {
         alert("Your first name should contain at least 2 character!");
         return false;
@@ -138,7 +138,7 @@ export default {
       }
       return true;
     },
-    validationOfLastName() {
+    validLastName() {
       if (this.lastName.length < 2) {
         alert("Your last name should contain at least 2 character!");
         return false;
@@ -148,7 +148,7 @@ export default {
       }
       return true;
     },
-    validationOfPhoneNumber() {
+    validPhoneNumber() {
       if(this.phoneNumber.match(/\d/g) == null){
         alert("Your phone number needs numbers!");
         return false;
