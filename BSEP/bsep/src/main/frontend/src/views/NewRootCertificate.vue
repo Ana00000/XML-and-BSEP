@@ -162,7 +162,7 @@ export default {
       this.token = localStorage.getItem('token');
     },
     createCertificate() {
-      //if (!this.validCertificate()) return;
+      if (!this.validCertificate()) return;
       this.$http
         .post("http://localhost:8080/certificate/createCertificate", {
           commonName: this.commonName,

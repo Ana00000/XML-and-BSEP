@@ -14,7 +14,8 @@ public class CertificateValidation {
 			|| !validOrganizationalUnitName(certificateRequest.getOrganizationalUnitName())
 			|| !validOrganizationEmail(certificateRequest.getOrganizationEmail()) 
 			|| !validCountryCode(certificateRequest.getCountryCode())
-			|| !validAlias(certificateRequest.getAlias()))
+			|| !validAlias(certificateRequest.getAlias())
+			|| !validEndDate(certificateRequest.getEndDate()))
 			return false;
 		return true;
 	}
@@ -127,6 +128,43 @@ public class CertificateValidation {
 			return false;
 		} else if (alias.length() > 20) {
 			System.out.println("Your alias shouldn't contain more than 20 characters!");
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean validEndDate(String endDate) {
+		if (endDate.isBlank()) {
+			System.out.println("Your end date needs to be inserted!");
+			return false;
+		}else if (Pattern.compile("[a-zA-Z]+").matcher(endDate).find()) {
+			System.out.println("Your end date shouldn't contain letters.");
+			return false;
+		}else if (Pattern.compile("[!@#$%^&*,:'/.\"]+").matcher(endDate).find()) {
+			System.out.println("Your end date shouldn't contain special character other than [-].");
+			return false;
+		}else if(!validEndDateParts(endDate)) return false;
+		
+		return true;
+	}
+
+	private boolean validEndDateParts(String endDate) {
+		String[] endDateSplit = endDate.split("-");
+		int eDSYear = Integer.parseInt(endDateSplit[0]);
+		int eDSMonth = Integer.parseInt(endDateSplit[1]);
+		int eDSDay = Integer.parseInt(endDateSplit[2]);
+		
+		if (eDSYear > 3000 || eDSYear < 2021){
+			 System.out.println("Year of end date isn't valid");
+				return false;
+		} else if (eDSYear < 2025) {
+			System.out.println("End date must me valid 5 years from current date.");
+			return false;
+		} else if (eDSMonth > 12 || eDSMonth < 0) {
+			System.out.println("Month of end date isn't valid");
+			return false;
+		} else if (eDSDay > 31 || eDSDay < 1) {
+			System.out.println("Day of end date isn't valid");
 			return false;
 		}
 		return true;

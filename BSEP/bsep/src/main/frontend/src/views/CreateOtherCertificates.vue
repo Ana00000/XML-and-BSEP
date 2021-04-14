@@ -247,8 +247,6 @@ export default {
           alert("Certificate wasn't created, sorry.");
           console.log(err.response.data);
         });
-      
-        
     },
     validCertificate() {
       if (this.validCommonName() && this.validGivenName() && this.validSurname() 
