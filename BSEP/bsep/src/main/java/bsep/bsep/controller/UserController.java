@@ -82,8 +82,16 @@ public class UserController {
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		Users user = (Users) authentication.getPrincipal();
-		String jwt = tokenUtils.generateToken(user.getUserEmail());
-		return ResponseEntity.ok(new UserTokenState(jwt, tokenUtils.getExpiredIn(), user.getTypeOfUser().name()));
+		
+		if(user.isConfirmed())
+		{
+			String jwt = tokenUtils.generateToken(user.getUserEmail());
+			return ResponseEntity.ok(new UserTokenState(jwt, tokenUtils.getExpiredIn(), user.getTypeOfUser().name()));
+		}
+		
+		System.out.println("bad request");
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
 	}
 
 	@PostMapping(value = "/register", consumes = "application/json")
@@ -99,8 +107,8 @@ public class UserController {
 				throw new ResourceConflictException(existUser.getId(), "Username already exists");
 			}
 			Users userWithPermissions = addPermissionsForUser(userRequest);
-			Users u = userService.save(userWithPermissions);
-			return new ResponseEntity<>(u, HttpStatus.CREATED);
+			Users userRegistered = userService.save(userWithPermissions);
+			return new ResponseEntity<>(userRegistered, HttpStatus.CREATED);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -113,13 +121,10 @@ public class UserController {
 
 			ConfirmationToken confirmationToken = confirmationTokenService.findByConfirmationToken(token);
 			if (confirmationToken != null) {
-
-				Users users = userService.findByUserEmail(confirmationToken.getUsers().getUserEmail());
-				users.setConfirmed(true);
-				userService.update(users);
+				setConfirmedAccount(confirmationToken);
 				return new ResponseEntity<>(HttpStatus.OK);
+				
 			} else {
-
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 
@@ -128,6 +133,12 @@ public class UserController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
+	}
+	
+	private void setConfirmedAccount(ConfirmationToken confirmationToken) {
+		Users users = userService.findByUserEmail(confirmationToken.getUsers().getUserEmail());
+		users.setConfirmed(true);
+		userService.update(users);
 	}
 
 	private Users addPermissionsForUser(UserDTO userRequest) {
