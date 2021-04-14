@@ -149,7 +149,7 @@
         :items="usersEmailsItems"
         v-model="selectedUserEmail"
         :label="'USER EMAIL'"
-        hint="Choose certificate type."
+        hint="Choose user email."
       />
     </v-container>
 
@@ -178,6 +178,7 @@ export default {
     issuerSerialNumber: null,
     issuerCertificateType: null,
     issuerAlias: null,
+    correctIssuerAlias: null,
     certificates: [],
     dateValid: true,
     selectedCertificateType: "INTERMEDIATE",
@@ -195,6 +196,7 @@ export default {
   },
   methods: {
     init() {
+        this.correctIssuerAlias = localStorage.getItem("issuerAlias");
         this.issuerSerialNumber = localStorage.getItem("issuerSerialNumber");
         this.issuerEndDate = localStorage.getItem("endDate");
         this.issuerCertificateType = localStorage.getItem("issuerCertificateType");
@@ -216,6 +218,7 @@ export default {
 
     createCertificate() {
       if(!this.validCertificate()) return;
+
       this.$http
         .post("http://localhost:8080/certificate/createCertificate", {
           commonName: this.commonName,
@@ -336,11 +339,14 @@ export default {
       return true;
     },
     validIssuerAlias() {
-      if (this.issuerAlias.length < 1) {
-        alert("Your alias should contain at least 1 character!");
+      if (this.issuerAlias.length < 2) {
+        alert("Your alias should contain at least 2 character!");
         return false;
       } else if (this.issuerAlias.length > 20) {
         alert("Your alias shouldn't contain more than 20 characters!");
+        return false;
+      } else if (this.issuerAlias != this.correctIssuerAlias){
+        alert("You didn't enter a correct issuer alias!");
         return false;
       }
       return true;
