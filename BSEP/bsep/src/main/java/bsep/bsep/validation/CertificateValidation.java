@@ -55,8 +55,8 @@ public class CertificateValidation {
 		} else if (surname.length() < 2) {
 			System.out.println("Your surname should contain at least 2 characters!");
 			return false;
-		} else if (surname.length() > 35) {
-			System.out.println("Your surname shouldn't contain more than 35 characters!");
+		} else if (surname.length() > 100) {
+			System.out.println("Your surname shouldn't contain more than 100 characters!");
 			return false;
 		}
 		return true;
