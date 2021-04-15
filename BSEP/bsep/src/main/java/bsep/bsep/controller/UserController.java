@@ -26,7 +26,6 @@ import bsep.bsep.dto.UserDTO;
 import bsep.bsep.model.Authority;
 import bsep.bsep.model.ConfirmationToken;
 import bsep.bsep.model.Users;
-import bsep.bsep.security.ResourceConflictException;
 import bsep.bsep.security.TokenUtils;
 import bsep.bsep.security.UserTokenState;
 import bsep.bsep.service.AuthorityService;
@@ -101,7 +100,6 @@ public class UserController {
 
 	@PostMapping(value = "/register", consumes = "application/json")
 	public ResponseEntity<Users> addUser(@RequestBody UserDTO userRequest) {
-		Users existUser;
 		if (userRequest.getTypeOfUser().toUpperCase().equals("ADMIN") || !userValidation.validUser(userRequest)) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}else if (userService.findByUserEmail(userRequest.getUserEmail()) != null) {
@@ -110,11 +108,6 @@ public class UserController {
 		}
 		
 		try {
-			existUser = userService.findByUserEmail(userRequest.getUserEmail());
-
-			if (existUser != null) {
-				throw new ResourceConflictException(existUser.getId(), "Username already exists");
-			}
 			Users userWithPermissions = addPermissionsForUser(userRequest);
 			Users userRegistered = userService.save(userWithPermissions);
 			return new ResponseEntity<>(userRegistered, HttpStatus.CREATED);

@@ -276,8 +276,8 @@ export default {
       return true;
     },
     validAlias() {
-      if (this.alias.length < 2) {
-        alert("Your alias should contain at least 2 character!");
+      if (this.alias.length < 1) {
+        alert("Your alias should contain at least 1 character!");
         return false;
       } else if (this.alias.length > 20) {
         alert("Your alias shouldn't contain more than 20 characters!");
@@ -300,6 +300,9 @@ export default {
           return false;
       } else if(this.endDate.match(/[!@#$%^&*,:'/."]/g)) {
           alert("Your end date shouldn't contain special character other than [-].");
+          return false;
+      } else if(!this.endDate.match(/[2][0-9]{3}-[0-1][0-9]-[0-3][0-9]/g)) {
+          alert("Your end date is not set in right format.");
           return false;
       }
       var endDateSplit = this.endDate.split('-');

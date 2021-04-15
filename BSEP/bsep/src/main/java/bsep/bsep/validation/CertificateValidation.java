@@ -143,6 +143,9 @@ public class CertificateValidation {
 		}else if (Pattern.compile("[!@#$%^&*,:'/.\"]+").matcher(endDate).find()) {
 			System.out.println("Your end date shouldn't contain special character other than [-].");
 			return false;
+		}else if (!Pattern.compile("[2][0-9]{3}-[0-1][0-9]-[0-3][0-9]").matcher(endDate).matches()) {
+			System.out.println("Your end date is not set in right format.");
+			return false;
 		}else if(!validEndDateParts(endDate)) return false;
 		
 		return true;
