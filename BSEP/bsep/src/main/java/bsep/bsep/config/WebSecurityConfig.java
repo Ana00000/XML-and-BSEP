@@ -60,6 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http
+		
 				// komunikacija izmedju klijenta i servera je stateless posto je u pitanju REST aplikacija
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
@@ -89,7 +90,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// umetni custom filter TokenAuthenticationFilter kako bi se vrsila provera JWT
 				// tokena umesto cistih korisnickog imena i lozinke (koje radi BasicAuthenticationFilter)
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, jwtUserDetailsService),
-						BasicAuthenticationFilter.class);
+						BasicAuthenticationFilter.class)
+
+				//Cross-Site Scripting (XSS) Attack
+				.headers()
+				.xssProtection()
+				.and()
+				.contentSecurityPolicy("script-src 'self'");
+		
+		
 		// zbog jednostavnosti primera
 		http.csrf().disable();
 	}

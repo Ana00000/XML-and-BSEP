@@ -87,8 +87,8 @@ public class UserValidation {
 		} else if (lastName.length() < 2) {
 			System.out.println("Your last name should contain at least 2 characters!");
 			return false;
-		} else if (lastName.length() > 25) {
-			System.out.println("Your last name shouldn't contain more than 25 characters!");
+		} else if (lastName.length() > 100) {
+			System.out.println("Your last name shouldn't contain more than 100 characters!");
 			return false;
 		}
 		return true;
