@@ -2,6 +2,7 @@ package bsep.bsep.validation;
 
 import java.util.regex.Pattern;
 
+import bsep.bsep.dto.UserChangePasswordDTO;
 import bsep.bsep.dto.UserDTO;
 
 public class UserValidation {
@@ -16,7 +17,7 @@ public class UserValidation {
 		return true;
 	}
 
-	private boolean validUserEmail(String userEmail) {
+	public boolean validUserEmail(String userEmail) {
 		String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*";
 		if (userEmail.isBlank()) {
 			System.out.println("Your email needs to be inserted!");
@@ -30,8 +31,16 @@ public class UserValidation {
 		}
 		return true;
 	}
+	
+	public boolean validPasswordAndConfirmPassword(UserChangePasswordDTO userChangePasswordDTO) {
+		if (!userChangePasswordDTO.getPassword().equals(userChangePasswordDTO.getConfirmedPassword()) || userChangePasswordDTO.getPassword().length()!=userChangePasswordDTO.getConfirmedPassword().length()) {
+			System.out.println("Your password and confirm password aren't equals!");
+			return false;
+		}
+		return true;
+	}
 
-	private boolean validPassword(String password) {
+	public boolean validPassword(String password) {
 		if (password.isBlank()) {
 			System.out.println("Your password needs to be inserted!");
 			return false;

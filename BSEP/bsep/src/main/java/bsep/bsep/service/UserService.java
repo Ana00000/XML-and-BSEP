@@ -123,6 +123,11 @@ public class UserService implements IUserService {
 		return userRepository.save(user);
 	}
 	
+	public Users updatePassword(Users user) {
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		return userRepository.save(user);
+	}
+	
 	@Override
 	public Users save(Users user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));

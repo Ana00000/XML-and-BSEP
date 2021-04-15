@@ -26,6 +26,16 @@ const routes = [
     component: () => import('../views/ConfirmRegistration.vue')
   },
   {
+    path: '/recoverPasswordEmail',
+    name: 'RecoverPasswordEmail',
+    component: () => import('../views/RecoverPasswordEmail.vue')
+  },
+  {
+    path: '/changePasswordByToken/:id',
+    name: 'ChangePasswordByToken',
+    component: () => import('../views/ChangePasswordByToken.vue')
+  },
+  {
     path: '/certificates',
     name: 'Certificates',
     component: () => import('../views/Certificates.vue')

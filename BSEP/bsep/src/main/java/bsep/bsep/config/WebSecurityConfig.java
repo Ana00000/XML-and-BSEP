@@ -75,6 +75,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/**").permitAll()
 				.antMatchers("/users/login").permitAll()
 				.antMatchers("/users/register").permitAll()
+				.antMatchers("/users/changePassword").permitAll()
+				.antMatchers("/users/findUserWithToken").permitAll()
+				.antMatchers("/users/recoverPasswordWithToken").permitAll()
 				.antMatchers("/users/confirm_account/*").permitAll()
 				
 				// za svaki drugi zahtev korisnik mora biti autentifikovan
@@ -95,8 +98,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
-		web.ignoring().antMatchers(HttpMethod.PUT, "/users/confirm_account/*");
-		web.ignoring().antMatchers(HttpMethod.POST, "/users/login", "/users/register");
+		web.ignoring().antMatchers(HttpMethod.PUT, "/users/confirm_account/*","/users/changePassword");
+		web.ignoring().antMatchers(HttpMethod.POST, "/users/login", "/users/register", "/users/recoverPasswordWithToken", "/users/findUserWithToken");
 		web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
 				"/**/*.css", "/**/*.js", "/auth/getRole");
 	}
