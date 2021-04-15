@@ -22,10 +22,7 @@ public class XSSFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		System.out.println("prva linija");
 		XSSRequestWrapper wrappedRequest = new XSSRequestWrapper((HttpServletRequest) request);
-		System.out.println("druga linija");
 		chain.doFilter(wrappedRequest, response);
-		System.out.println("treca linija");
 	}
 }

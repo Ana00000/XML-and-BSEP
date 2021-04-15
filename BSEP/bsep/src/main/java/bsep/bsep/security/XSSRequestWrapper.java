@@ -12,7 +12,6 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 	public XSSRequestWrapper(HttpServletRequest request) {
 		super(request);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

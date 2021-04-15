@@ -11,7 +11,6 @@ public class XSSUtils {
 			return null;
 		}
 		value = ESAPI.encoder().canonicalize(value).replaceAll("\0", "");
-		System.out.println(value + " VALUE JE");
 		return Jsoup.clean(value, Whitelist.none());
 	}
 }
