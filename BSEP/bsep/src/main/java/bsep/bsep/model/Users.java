@@ -37,6 +37,9 @@ public class Users implements UserDetails {
 
 	@Column(name = "password", unique = false, nullable = false)
 	private String password;
+	
+	@Column(name = "salt", unique = true, nullable = false)
+	private String salt;
 
 	@Column(name = "firstName", unique = false, nullable = false)
 	private String firstName;
@@ -72,12 +75,13 @@ public class Users implements UserDetails {
 			this.typeOfUser = UserType.USER;
 	}
 
-	public Users(Long id, String userEmail, String password, String firstName, String lastName, String phoneNumber,
+	public Users(Long id, String userEmail, String password, String salt, String firstName, String lastName, String phoneNumber,
 			UserType typeOfUser, boolean isConfirmed) {
 		super();
 		this.id = id;
 		this.userEmail = userEmail;
 		this.password = password;
+		this.salt = salt;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
@@ -111,6 +115,14 @@ public class Users implements UserDetails {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
 	}
 
 	public String getFirstName() {
