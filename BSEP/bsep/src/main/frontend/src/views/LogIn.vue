@@ -9,7 +9,7 @@
           label="Email"
           v-model="userEmail"
           prepend-icon="mdi-account-circle"
-        />
+        /> 
         <v-text-field
           :type="showPassword ? 'text' : 'password'"
           label="Password"
@@ -18,8 +18,13 @@
           :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append="showPassword = !showPassword"
         />
+        <a class="center" href="/recoverPasswordEmail">You forget your password?</a>
       </v-form>
+      
     </v-card-text>
+    <div >
+        
+    </div>
     <v-card-actions>
       <v-btn color="primary" class="mx-auto mb-5" large v-on:click="logIn">
         Log in
@@ -81,3 +86,24 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.helloMessage {
+  font-weight: bolder;
+  font-size: 20px;
+  height: 50px;
+}
+
+.center {
+  
+  padding: 31px;
+  text-align: center;
+}
+
+#certificateCard {
+  margin-top: 5%;
+  width: 70%;
+  height: 760px;
+  overflow-y: scroll;
+}
+</style>

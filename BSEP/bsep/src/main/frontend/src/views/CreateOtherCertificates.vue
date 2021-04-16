@@ -281,8 +281,8 @@ export default {
       if (this.surname.length < 2) {
         alert("Your surname should contain at least 2 characters!");
         return false;
-      } else if (this.surname.length > 35) {
-        alert("Your surname shouldn't contain more than 35 characters!");
+      } else if (this.surname.length > 100) {
+        alert("Your surname shouldn't contain more than 100 characters!");
         return false;
       }
       return true;

@@ -21,12 +21,12 @@ import bsep.bsep.model.Issuer;
 
 public class KeyStoreReader {
 
-	// KeyStore je Java klasa za citanje specijalizovanih datoteka koje se koriste
-	// za cuvanje kljuceva
-	// Tri tipa entiteta koji se obicno nalaze u ovakvim datotekama su:
-	// - Sertifikati koji ukljucuju javni kljuc
-	// - Privatni kljucevi
-	// - Tajni kljucevi, koji se koriste u simetricnima siframa
+	// KeyStore is a Java class for reading specialized files which are used for
+	// storing keys
+	// The three types if entities that are normally in these files are:
+	// - Certificates that use a public keys
+	// - Private keys
+	// - Secret keys, which are used in symmetric passwords
 	private KeyStore keyStore;
 
 	public KeyStoreReader() {
@@ -40,24 +40,26 @@ public class KeyStoreReader {
 	}
 
 	/**
-	 * Zadatak ove funkcije jeste da ucita podatke o izdavaocu i odgovarajuci
-	 * privatni kljuc. Ovi podaci se mogu iskoristiti da se novi sertifikati izdaju.
+	 * This function loads issuer data and the private key This data is used for
+	 * creating new certificates
 	 * 
-	 * @param keyStoreFile - datoteka odakle se citaju podaci
-	 * @param alias        - alias putem kog se identifikuje sertifikat izdavaoca
-	 * @param password     - lozinka koja je neophodna da se otvori key store
-	 * @param keyPass      - lozinka koja je neophodna da se izvuce privatni kljuc
-	 * @return - podatke o izdavaocu i odgovarajuci privatni kljuc
+	 * @param keyStoreFile - file that contains the data
+	 * @param alias        - alias that identifies the issuer of the certificate
+	 * @param password     - password used to open the key store
+	 * @param keyPass      - password used to access the private key
+	 * @return - issuer data and the private key
 	 */
 	public Issuer readIssuerFromStore(String keyStoreFile, String alias, char[] password, char[] keyPass) {
 		try {
-			// Datoteka se ucitava
+			// Load the file
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
 			keyStore.load(in, password);
-			// Iscitava se sertifikat koji ima dati alias
+
+			// Read the certificate with the specific alias
 			Certificate cert = keyStore.getCertificate(alias);
-			// Iscitava se privatni kljuc vezan za javni kljuc koji se nalazi na sertifikatu
-			// sa datim aliasom
+
+			// Read the private key related to the public key from the certificate with the
+			// specific alias
 			PrivateKey privKey = (PrivateKey) keyStore.getKey(alias, keyPass);
 
 			X500Name issuerName = new JcaX509CertificateHolder((X509Certificate) cert).getSubject();
@@ -79,13 +81,13 @@ public class KeyStoreReader {
 	}
 
 	/**
-	 * Ucitava sertifikat is KS fajla
+	 * Loading the certificate from the KS file
 	 */
 	public Certificate readCertificate(String keyStoreFile, String keyStorePass, String alias) {
 		try {
-			// kreiramo instancu KeyStore
+			// Creating a KeyStore instance
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
-			// ucitavamo podatke
+			// Loading data
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
 			ks.load(in, keyStorePass.toCharArray());
 
@@ -110,13 +112,13 @@ public class KeyStoreReader {
 	}
 
 	/**
-	 * Ucitava privatni kljuc is KS fajla
+	 * Loading the private key from the KS file
 	 */
 	public PrivateKey readPrivateKey(String keyStoreFile, String keyStorePass, String alias, String pass) {
 		try {
-			// kreiramo instancu KeyStore
+			// Creating a KeyStore instance
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
-			// ucitavamo podatke
+			// Loading data
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
 			ks.load(in, keyStorePass.toCharArray());
 

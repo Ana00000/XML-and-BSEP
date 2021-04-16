@@ -33,39 +33,35 @@ public class CertificateGenerator {
 		try {
 
 			Security.addProvider(new BouncyCastleProvider());
-			// Posto klasa za generisanje sertifikata ne moze da primi direktno privatni
-			// kljuc pravi se builder za objekat
-			// Ovaj objekat sadrzi privatni kljuc izdavaoca sertifikata i koristiti se za
-			// potpisivanje sertifikata
-			// Parametar koji se prosledjuje je algoritam koji se koristi za potpisivanje
-			// sertifiakta
+			// Because the class for generating certificates can not receive the private key directly, we need to make the object builder
+			// This object builder contains the private key of the certificate issuer which is used for signing the certificates
+			// The parameter is the algorithm used for signing certificates
 			JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
-			// Takodje se navodi koji provider se koristi, u ovom slucaju Bouncy Castle
+			
+			// We also need to state the provider (in this case it's Bouncy Castle)
 			builder = builder.setProvider("BC");
 
-			// Formira se objekat koji ce sadrzati privatni kljuc i koji ce se koristiti za
-			// potpisivanje sertifikata
+			// Forming the object which will contain the private key and it will be used for signing certificates
 			ContentSigner contentSigner = builder.build(issuer.getPrivateKey());
 
 			Date endDate = Date.valueOf(subject.getEndDate());
 		
-			// Postavljaju se podaci za generisanje sertifiakta
+			// Setting data for generating certificates
 			X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(issuer.getX500name(),
 					new BigInteger(subject.getSerialNumber().trim()), Date.valueOf(subject.getStartDate()), endDate,
 					subject.getX500name(), subject.getPublicKey());
 
 			addOfExtensions(isCA, certGen);
 
-			// Generise se sertifikat
+			// Generating certificate
 			X509CertificateHolder certHolder = certGen.build(contentSigner);
 
-			// Builder generise sertifikat kao objekat klase X509CertificateHolder
-			// Nakon toga je potrebno certHolder konvertovati u sertifikat, za sta se
-			// koristi certConverter
+			// The builder generates a certificate as an X509CertificateHolder object
+			// After that it is necessary to use certConverter to convert certHolder into a certificate 
 			JcaX509CertificateConverter certConverter = new JcaX509CertificateConverter();
 			certConverter = certConverter.setProvider("BC");
 
-			// Konvertuje objekat u sertifikat
+			// Converting an object into a certificate
 			return certConverter.getCertificate(certHolder);
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();

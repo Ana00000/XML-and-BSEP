@@ -22,14 +22,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import bsep.bsep.dto.EmailDTO;
+import bsep.bsep.dto.TokenDTO;
+import bsep.bsep.dto.UserChangePasswordDTO;
 import bsep.bsep.dto.UserDTO;
 import bsep.bsep.model.Authority;
 import bsep.bsep.model.ConfirmationToken;
+import bsep.bsep.model.RecoverPasswordToken;
 import bsep.bsep.model.Users;
 import bsep.bsep.security.TokenUtils;
 import bsep.bsep.security.UserTokenState;
 import bsep.bsep.service.AuthorityService;
 import bsep.bsep.service.ConfirmationTokenService;
+import bsep.bsep.service.RecoverPasswordTokenService;
 import bsep.bsep.service.UserService;
 import bsep.bsep.validation.UserValidation;
 
@@ -49,14 +54,17 @@ public class UserController {
 	private final AuthorityService authorityService;
 	
 	private UserValidation userValidation ;
+	
+	private final RecoverPasswordTokenService recoverPasswordTokenService;
 
 	private final ConfirmationTokenService confirmationTokenService;
 
 	@Autowired
 	public UserController(UserService userService, AuthorityService authorityService,
-			ConfirmationTokenService confirmationTokenService) {
+			ConfirmationTokenService confirmationTokenService, RecoverPasswordTokenService recoverPasswordTokenService) {
 		this.userService = userService;
 		this.authorityService = authorityService;
+		this.recoverPasswordTokenService = recoverPasswordTokenService;
 		this.confirmationTokenService = confirmationTokenService;
 		this.userValidation = new UserValidation();
 
@@ -75,6 +83,47 @@ public class UserController {
 	@GetMapping("/redirectMeToMyHomePage")
 	public String RedirectionToHome() {
 		return "http://localhost:8081/";
+	}
+	
+	@PostMapping("/recoverPasswordWithToken")
+	public ResponseEntity<Boolean> recoveringPassword(@RequestBody EmailDTO recoveryPasswordRequestEmail) {
+		if (!userValidation.validUserEmail(recoveryPasswordRequestEmail.getEmailOfUser())) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		Users user = userService.findByUserEmail(recoveryPasswordRequestEmail.getEmailOfUser());
+		if (user==null || !user.isConfirmed())
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		recoverPasswordTokenService.saveTokenAndSendEmailToUser(new RecoverPasswordToken(user));
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@PostMapping("/findUserWithToken")
+	public ResponseEntity<Users> findUserByToken(@RequestBody TokenDTO token) {
+		RecoverPasswordToken recoverPasswordToken = recoverPasswordTokenService.findRecoverPasswordTokenByToken(token.getToken());
+		if (recoverPasswordToken != null && recoverPasswordToken.getUsers()!=null)
+		return new ResponseEntity<>(recoverPasswordToken.getUsers(), HttpStatus.OK);
+		
+		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+	}
+	
+	@PutMapping(value = "/changePassword", consumes = "application/json")
+	public ResponseEntity<Boolean> changePassword(@RequestBody UserChangePasswordDTO userChangePasswordDTO) {
+		if (!userValidation.validUserEmail(userChangePasswordDTO.getEmailOfUser()) || !userValidation.validPassword(userChangePasswordDTO.getPassword()) ||
+				!userValidation.validPassword(userChangePasswordDTO.getConfirmedPassword()) || !userValidation.validPasswordAndConfirmPassword(userChangePasswordDTO))
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		try {
+			Users users = userService.findByUserEmail(userChangePasswordDTO.getEmailOfUser());
+			if (users ==null) {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+			users.setPassword(userChangePasswordDTO.getPassword());
+			userService.updatePassword(users);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
 	}
 
 	@PostMapping("/login")
@@ -100,7 +149,6 @@ public class UserController {
 		
 		System.out.println("bad request");
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
 	}
 
 	@PostMapping(value = "/register", consumes = "application/json")
@@ -121,6 +169,8 @@ public class UserController {
 		}
 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 	}
+	
+	
 
 	@PutMapping(value = "/confirm_account/{token}", consumes = "application/json")
 	public ResponseEntity<Boolean> confirmAccount(@PathVariable String token) {

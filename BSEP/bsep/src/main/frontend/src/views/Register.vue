@@ -142,8 +142,8 @@ export default {
       if (this.lastName.length < 2) {
         alert("Your last name should contain at least 2 character!");
         return false;
-      } else if (this.lastName.length > 25) {
-        alert("Your last name shouldn't contain more than 25 characters!");
+      } else if (this.lastName.length > 100) {
+        alert("Your last name shouldn't contain more than 100 characters!");
         return false;
       }
       return true;
