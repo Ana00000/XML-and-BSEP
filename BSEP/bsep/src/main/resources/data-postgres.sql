@@ -6,9 +6,9 @@ insert into authority(id, name) values (nextval('my_seq_authority'), 'USER_GET_A
 insert into authority(id, name) values (nextval('my_seq_authority'), 'USER_CREATE_CERTIFICATE_PRIVILEGE');
 
 insert into users(id, user_email,password,salt,first_name,last_name,phone_number,type_of_user, is_confirmed) 
-values (nextval('my_seq_users'),'marko.jaksic@gmail.com','$2y$10$/XcdRf.025QT5LAtn7BmzuYS9A1bYjq7iiavkbDldg1BCU5wSqGta','150420211740','Marko','Jaksic','065-322-3211',1, true);
+values (nextval('my_seq_users'),'marko.jaksic@gmail.com','$2y$12$nWP3x.xVmAB6K5tfEUCzNegDKXueubCWs5ia0g7Ua3pFyZfebVMym','NMa234w2s42WAr12lFqOSQ==','Marko','Jaksic','+31642253634',1, true);
 insert into users(id, user_email,password,salt,first_name,last_name,phone_number,type_of_user, is_confirmed) 
-values (nextval('my_seq_users'),'jana.jaksic@gmail.com','$2y$10$WbCJVG7ex0K2L3jlSgHkROewKK.Fo0lqD5.nb4qz8ZIOQdLi6oSIW','150420211741','Marko','Jaksic','065-322-3211',0, true);
+values (nextval('my_seq_users'),'jana.jaksic@gmail.com','$2y$12$n5BEot0LGg.hzsfumrtRwOkYuwwDcRk9lgsQw4ghG6XbF2voYC.NO','J68kywreweHiLCAna5S532==','Jana','Jaksic','+31636363634',0, true);
 
 insert into users_authorities(users_id, authorities_id) values (1, 2);
 insert into users_authorities(users_id, authorities_id) values (1, 3);
