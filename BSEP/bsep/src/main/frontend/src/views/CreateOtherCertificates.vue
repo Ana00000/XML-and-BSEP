@@ -264,7 +264,7 @@ export default {
       } else if (this.commonName.length > 20) {
         alert("Your common name shouldn't contain more than 20 characters!");
         return false;
-      } else if(this.commonName.match(/[!@#$%^&*.,:'<>+-/"]/g)) { 
+      } else if(this.commonName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
           alert("Your common name shouldn't contain special characters.");
           return false;
       } else if (this.commonName.match(/[ ]/g)) {
@@ -289,7 +289,7 @@ export default {
       } else if (this.givenName.length > 20) {
         alert("Your given name shouldn't contain more than 20 characters!");
         return false;
-      } else if(this.givenName.match(/[!@#$%^&*.,:'<>+-/"]/g)) { 
+      } else if(this.givenName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
           alert("Your given name shouldn't contain special characters.");
           return false;
       } else if (this.givenName.match(/[ ]/g)) {
@@ -314,7 +314,7 @@ export default {
       } else if (this.surname.length > 35) {
         alert("Your surname shouldn't contain more than 35 characters!");
         return false;
-      } else if(this.surname.match(/[!@#$%^&*.,:'<>+-/"]/g)) { 
+      } else if(this.surname.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
           alert("Your surname shouldn't contain special characters.");
           return false;
       } else if (this.surname.match(/[ ]/g)) {
@@ -339,7 +339,7 @@ export default {
       } else if (this.organization.length > 20) {
         alert("Your organization shouldn't contain more than 20 characters!");
         return false;
-      } else if(this.organization.match(/[!@#$%^&*.,:'<>+-/"]/g)) { 
+      } else if(this.organization.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
           alert("Your organization shouldn't contain special characters.");
           return false;
       }
@@ -352,7 +352,7 @@ export default {
       } else if (this.organizationalUnitName.length > 20) {
         alert("Your organizational unit name shouldn't contain more than 20 characters!");
         return false;
-      } else if(this.organizationalUnitName.match(/[!@#$%^&*.,:'<>+-/"]/g)) { 
+      } else if(this.organizationalUnitName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
           alert("Your organizational unit name shouldn't contain special characters.");
           return false;
       } else if (this.organizationalUnitName.match(/\d/g)) {
@@ -378,7 +378,7 @@ export default {
       } else if (this.countryCode.match(/[ ]/g)) {
         alert("Your country code shouldn't contain spaces!");
         return false;
-      } else if(this.countryCode.match(/[!@#$%^&*.,:'<>+-/"]/g)) {
+      } else if(this.countryCode.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) {
           alert("Your country code shouldn't contain special characters.");
           return false;
       } else if(this.countryCode.match(/\d/g) == null){
@@ -394,7 +394,7 @@ export default {
       return true;
     },
     validAlias() {
-      if(this.alias.match(/[!@#$%^&*.,:'<>+-/"]/g)) {
+      if(this.alias.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) {
           alert("Your alias shouldn't contain special characters.");
           return false;
       } else if (this.alias.match(/[ ]/g)) {
@@ -410,20 +410,17 @@ export default {
       return true;
     },
     validIssuerAlias() {
-      if(this.issuerAlias.match(/[!@#$%^&*.,:'<>+-/"]/g)) {
-          alert("Your alias shouldn't contain special characters.");
+      if(this.issuerAlias.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) {
+          alert("Your issuer alias shouldn't contain special characters.");
           return false;
       } else if (this.issuerAlias.match(/[ ]/g)) {
-        alert("Your alias shouldn't contain spaces!");
+        alert("Your issuer alias shouldn't contain spaces!");
         return false;
-      } else if (this.issuerAlias.match(/\d/g)) {
-        alert("Your alias shouldn't contain numbers!");
-        return false;
-      } else if (this.issuerAlias.length < 2) {
-        alert("Your alias should contain at least 2 character!");
+      }  else if (this.issuerAlias.length < 1) {
+        alert("Your issuer alias should contain at least 1 character!");
         return false;
       } else if (this.issuerAlias.length > 20) {
-        alert("Your alias shouldn't contain more than 20 characters!");
+        alert("Your issuer alias shouldn't contain more than 20 characters!");
         return false;
       } else if (this.issuerAlias != this.correctIssuerAlias){
         alert("You didn't enter a correct issuer alias!");
@@ -444,7 +441,7 @@ export default {
       } else if(this.endDate.match(/[a-zA-Z]/g)) {
           alert("Your end date shouldn't contain letters.");
           return false;
-      } else if(this.endDate.match(/[!@#$%^&*,:'/.<>+"]/g)) {
+      } else if(this.endDate.match(/[!@#$%^&*,:'/.<>+\\"]/g)) {
           alert("Your end date shouldn't contain special character other than [-].");
           return false;
       } else if (this.endDate.match(/[ ]/g)) {

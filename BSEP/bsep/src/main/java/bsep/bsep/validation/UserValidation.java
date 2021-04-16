@@ -9,6 +9,14 @@ public class UserValidation {
 	
 	public UserValidation() {}
 	
+	public boolean validPasswordAndConfirmPassword(UserChangePasswordDTO userChangePasswordDTO) {
+		if (!userChangePasswordDTO.getPassword().equals(userChangePasswordDTO.getConfirmedPassword()) || userChangePasswordDTO.getPassword().length()!=userChangePasswordDTO.getConfirmedPassword().length()) {
+			System.out.println("Your password and confirm password aren't equals!");
+			return false;
+		}
+		return true;
+	}
+	
 	public boolean validUser(UserDTO userRequest) {
 		if (!validUserEmail(userRequest.getUserEmail()) || !validPassword(userRequest.getPassword())
 				|| !validFirstName(userRequest.getFirstName()) || !validLastName(userRequest.getLastName())
@@ -27,14 +35,6 @@ public class UserValidation {
 			return false;
 		} else if (userEmail.length() > 35) {
 			System.out.println("Your email shouldn't contain more than 35 characters!");
-			return false;
-		}
-		return true;
-	}
-	
-	public boolean validPasswordAndConfirmPassword(UserChangePasswordDTO userChangePasswordDTO) {
-		if (!userChangePasswordDTO.getPassword().equals(userChangePasswordDTO.getConfirmedPassword()) || userChangePasswordDTO.getPassword().length()!=userChangePasswordDTO.getConfirmedPassword().length()) {
-			System.out.println("Your password and confirm password aren't equals!");
 			return false;
 		}
 		return true;
@@ -59,7 +59,7 @@ public class UserValidation {
 		} else if (!Pattern.compile("[0-9]+").matcher(password).find()) {
 			System.out.println("Your password should contain at least one number.");
 			return false;
-		} else if (!Pattern.compile("[!@#$%^&*.,:'\\\"]+").matcher(password).find()) {
+		} else if (!Pattern.compile("[!@#$%^&*.,:'+-/\\\"]+").matcher(password).find()) {
 			System.out.println("Your password should contain at least special character.");
 			return false;
 		}

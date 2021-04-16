@@ -118,7 +118,7 @@ export default {
           alert("Your password should contain at least one number.");
           this.passwordAgain='';
           return false;
-      } else if(!this.password.match(/[!@#$%^&*.,:'+-/"]/g)) { 
+      } else if(!this.password.match(/[!@#$%^&*.,:'+-/\\"]/g)) { 
           alert("Your password should contain at least one special character (other than <>).");
           return false;
       } else if(this.password.match(/[<>]/g)) { 
@@ -141,7 +141,7 @@ export default {
       } else if (this.firstName.length > 20) {
         alert("Your first name shouldn't contain more than 20 characters!");
         return false;
-      } else if(this.firstName.match(/[!@#$%^&*.,:'<>+-/"]/g)) { 
+      } else if(this.firstName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
           alert("Your first name shouldn't contain special characters.");
           return false;
       } else if (this.firstName.match(/[ ]/g)) {
@@ -169,7 +169,7 @@ export default {
       } else if (this.lastName.length > 35) {
         alert("Your last name shouldn't contain more than 35 characters!");
         return false;
-      } else if(this.lastName.match(/[!@#$%^&*.,:'<>+-/"]/g)) { 
+      } else if(this.lastName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
           alert("Your last name shouldn't contain special characters.");
           return false;
       } else if (this.lastName.match(/[ ]/g)) {
@@ -194,7 +194,7 @@ export default {
       }  else if (this.phoneNumber.match(/[ ]/g)) {
         alert("Your phone number shouldn't contain spaces!");
         return false;
-      } else if(this.phoneNumber.match(/[!@#$%^&*.,:'<>"]/g)) {
+      } else if(this.phoneNumber.match(/[!@#$%^&*.,:'<>\\"]/g)) {
           alert("Your phone number shouldn't contain special character other than [+, -, /].");
           return false;
       } else if(this.phoneNumber.match(/\d/g) == null){
