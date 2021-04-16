@@ -181,11 +181,11 @@ export default {
           alert("Your phone number shouldn't contain letters.");
           return false;
       } else if (this.phoneNumber.match(/[ ]/g)) {
-        alert("Your phone number shouldn't contain spaces!");
-        return false;
-      } if (this.phoneNumber.match(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s./0-9]*$/g)) {
-        alert("Your phone number is not in right form!");
-        return false;
+          alert("Your phone number shouldn't contain spaces!");
+          return false;
+      } else if (!/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\\s./0-9]*$/.test(this.phoneNumber)) {
+          alert("Your phone number is not in right form!");
+          return false;
       }
       return true;
     }

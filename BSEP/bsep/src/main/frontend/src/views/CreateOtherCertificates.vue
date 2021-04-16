@@ -362,23 +362,8 @@ export default {
       return true;
     },
     validCountryCode() {
-      if(this.countryCode.match(/[a-zA-Z]/g)) {
-          alert("Your country code shouldn't contain letters.");
-          return false;
-      } else if (this.countryCode.match(/[ ]/g)) {
-        alert("Your country code shouldn't contain spaces!");
-        return false;
-      } else if(this.countryCode.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) {
-          alert("Your country code shouldn't contain special characters.");
-          return false;
-      } else if(this.countryCode.match(/\d/g) == null){
-        alert("Your country code needs numbers!");
-        return false;
-      } else if (this.countryCode.match(/\d/g).length < 2) {
-        alert("Your country code should contain at least 2 numbers!");
-        return false;
-      } else if (this.countryCode.match(/\d/g).length > 7) {
-        alert("Your country code shouldn't contain more than 7 numbers!");
+      if (!/^[A-Z]{2,3}$/.test(this.countryCode)) {
+        alert("You have entered an invalid country code!");
         return false;
       }
       return true;

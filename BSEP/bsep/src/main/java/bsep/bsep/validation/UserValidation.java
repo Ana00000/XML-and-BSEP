@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import bsep.bsep.dto.UserChangePasswordDTO;
 import bsep.bsep.dto.UserDTO;
 
-public class UserValidation {
+public class UserValidation extends GeneralValidation {
 
 	public UserValidation() {
 	}
@@ -147,66 +147,5 @@ public class UserValidation {
 			return false;
 		}
 		return true;
-	}
-
-	private boolean IsProperEmail(String value) {
-		String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*";
-		if (Pattern.compile(ePattern).matcher(value).matches())
-			return true;
-		return false;
-	}
-
-	private boolean IsTooShort(String value, int limit) {
-		if (value.length() < limit)
-			return true;
-		return false;
-	}
-
-	private boolean IsTooLong(String value, int limit) {
-		if (value.length() > limit)
-			return true;
-		return false;
-	}
-
-	private boolean HasLowercaseLetter(String value) {
-		if (Pattern.compile("[a-z]+").matcher(value).find())
-			return true;
-		return false;
-	}
-
-	private boolean HasUppercaseLetter(String value) {
-		if (Pattern.compile("[A-Z]+").matcher(value).find())
-			return true;
-		return false;
-	}
-
-	private boolean HasNumber(String value) {
-		if (Pattern.compile("[0-9]+").matcher(value).find())
-			return true;
-		return false;
-	}
-
-	private boolean HasSpecialCharacter(String value) {
-		if (Pattern.compile("[!@#$%^&*.,:'-/+]+").matcher(value).find())
-			return true;
-		return false;
-	}
-
-	private boolean HasLessOrGreaterThanCharacter(String value) {
-		if (Pattern.compile("[<>]").matcher(value).find())
-			return true;
-		return false;
-	}
-
-	private boolean HasSpace(String value) {
-		if (Pattern.compile("[ ]").matcher(value).find())
-			return true;
-		return false;
-	}
-
-	private boolean HasUppercaseLetterAtStartOnly(String value) {
-		if (Pattern.compile("^[A-Z][a-z]+").matcher(value).matches())
-			return true;
-		return false;
 	}
 }
