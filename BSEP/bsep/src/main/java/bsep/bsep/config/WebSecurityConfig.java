@@ -30,85 +30,88 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new BCryptPasswordEncoder();
 	}
 
-	// Servis koji se koristi za citanje podataka o korisnicima aplikacije
+	// Service used for reading application users data
 	@Autowired
 	private CustomUserDetailsService jwtUserDetailsService;
 
-	// Handler za vracanje 401 kada klijent sa neodogovarajucim korisnickim imenom i lozinkom pokusa da pristupi resursu
+	// Handler for returning 401 when a client with invalid username and password
+	// tries to access the resource
 	@Autowired
 	private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-	// Registrujemo authentication manager koji ce da uradi autentifikaciju korisnika za nas
+	// Registering the authentication manager which will do the user authentication
+	// for us
 	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
 
-	// Definisemo uputstvo za authentication managera koji servis da koristi da izvuce podatke o korisniku koji zeli da se autentifikuje,
-	//kao i kroz koji enkoder da provuce lozinku koju je dobio od klijenta u zahtevu da bi adekvatan hash koji dobije kao rezultat bcrypt algoritma uporedio sa onim koji se nalazi u bazi (posto se u bazi ne cuva plain lozinka)
+	// Definition of instructions for the authentication manager
+	// Defining which service should the authentication manager use to extract user
+	// for authentication data
+	// Defining which encoder should be used to encode the password from the user's
+	// request so the resulting hash can be compared with the hash from the database
+	// using the bcrypt algorithm
+	// (the password in the database is not in plain text)
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
 	}
 
-	// Injektujemo implementaciju iz TokenUtils klase kako bismo mogli da koristimo njene metode za rad sa JWT u TokenAuthenticationFilteru
+	// Injection of TokenUtils class implementation so we can use it's methods for
+	// JWT in TokenAuthenticationFilteru
 	@Autowired
 	private TokenUtils tokenUtils;
 
-	// Definisemo prava pristupa odredjenim URL-ovima
+	// Defining access rules for specific URL
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http
-		
-				// komunikacija izmedju klijenta i servera je stateless posto je u pitanju REST aplikacija
+
+				// Communication between the client and server is statelss because it is a REST
+				// application
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
-				// sve neautentifikovane zahteve obradi uniformno i posalji 401 gresku
+				// All unauthenticated request should be uniform processed and return 401 error
 				.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
-				// svim korisnicima dopusti da pristupe putanjama /auth/**, (/h2-console/** ako se koristi H2 baza) i /api/foo
-				.authorizeRequests()
-				.antMatchers("/auth/**").permitAll()
-				.antMatchers("/auth/**/*").permitAll()
-				.antMatchers("/h2-console/**").permitAll()
-				.antMatchers("/api/foo").permitAll()
-				.antMatchers("/api/**").permitAll()
-				.antMatchers("/users/login").permitAll()
-				.antMatchers("/users/register").permitAll()
-				.antMatchers("/users/changePassword").permitAll()
-				.antMatchers("/users/findUserWithToken").permitAll()
-				.antMatchers("/users/recoverPasswordWithToken").permitAll()
-				.antMatchers("/users/confirm_account/*").permitAll()
-				
-				// za svaki drugi zahtev korisnik mora biti autentifikovan
+				// Allow access to paths /auth/**, (/h2-console/** if H2 database is used) and
+				// /api/foo to all users
+				.authorizeRequests().antMatchers("/auth/**").permitAll().antMatchers("/auth/**/*").permitAll()
+				.antMatchers("/h2-console/**").permitAll().antMatchers("/api/foo").permitAll().antMatchers("/api/**")
+				.permitAll().antMatchers("/users/login").permitAll().antMatchers("/users/register").permitAll()
+				.antMatchers("/users/changePassword").permitAll().antMatchers("/users/findUserWithToken").permitAll()
+				.antMatchers("/users/recoverPasswordWithToken").permitAll().antMatchers("/users/confirm_account/*")
+				.permitAll()
+
+				// For any other request the user must be authenticated
 				.anyRequest().authenticated().and()
-				// za development svrhe ukljuci konfiguraciju za CORS iz WebConfig klase
-				//.cors().disable()
+
+				// For development purposes turn on CORS configuration from WebConfig class
+				// .cors().disable()
 				.cors().and()
 
-				// umetni custom filter TokenAuthenticationFilter kako bi se vrsila provera JWT
-				// tokena umesto cistih korisnickog imena i lozinke (koje radi BasicAuthenticationFilter)
+				// Add custom filter TokenAuthenticationFilter for JWT token check instead of
+				// using the username and password (which is done with the
+				// BasicAuthenticationFilter)
 				.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, jwtUserDetailsService),
 						BasicAuthenticationFilter.class)
 
-				//Cross-Site Scripting (XSS) Attack
-				.headers()
-				.xssProtection()
-				.and()
-				.contentSecurityPolicy("script-src 'self'");
-		
-		
-		// zbog jednostavnosti primera
+				// Cross-Site Scripting (XSS) Attack
+				.headers().xssProtection().and().contentSecurityPolicy("script-src 'self'");
+
+		// Because of the simplicity of the example
 		http.csrf().disable();
 	}
 
-	// Generalna bezbednost aplikacije
+	// General application security
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
-		web.ignoring().antMatchers(HttpMethod.PUT, "/users/confirm_account/*","/users/changePassword");
-		web.ignoring().antMatchers(HttpMethod.POST, "/users/login", "/users/register", "/users/recoverPasswordWithToken", "/users/findUserWithToken");
+		// TokenAuthenticationFilter will ignore everything under the listed path
+		web.ignoring().antMatchers(HttpMethod.PUT, "/users/confirm_account/*", "/users/changePassword");
+		web.ignoring().antMatchers(HttpMethod.POST, "/users/login", "/users/register",
+				"/users/recoverPasswordWithToken", "/users/findUserWithToken");
 		web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
 				"/**/*.css", "/**/*.js", "/auth/getRole");
 	}

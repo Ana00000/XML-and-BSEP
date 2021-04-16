@@ -13,12 +13,12 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
 public class KeyStoreWriter {
-	// KeyStore je Java klasa za citanje specijalizovanih datoteka koje se koriste
-	// za cuvanje kljuceva
-	// Tri tipa entiteta koji se obicno nalaze u ovakvim datotekama su:
-	// - Sertifikati koji ukljucuju javni kljuc
-	// - Privatni kljucevi
-	// - Tajni kljucevi, koji se koriste u simetricnima siframa
+	// KeyStore is a Java class for reading specialized files which are used for
+	// storing keys
+	// The three types if entities that are normally in these files are:
+	// - Certificates that use a public keys
+	// - Private keys
+	// - Secret keys, which are used in symmetric passwords
 	private KeyStore keyStore;
 
 	public KeyStoreWriter() {
@@ -36,8 +36,8 @@ public class KeyStoreWriter {
 			if (fileName != null) {
 				keyStore.load(new FileInputStream(fileName), password);
 			} else {
-				// Ako je cilj kreirati novi KeyStore poziva se i dalje load, pri cemu je prvi
-				// parametar null
+				// If the goals is to create a new KeyStore, we call load with the first
+				// parameter null
 				keyStore.load(null, password);
 			}
 		} catch (NoSuchAlgorithmException e) {

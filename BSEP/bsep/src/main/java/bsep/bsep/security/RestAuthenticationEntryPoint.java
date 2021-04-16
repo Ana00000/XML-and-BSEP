@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-	// Metoda koja se izvrsava ukoliko za prosledjene kredencijale korisnik pokusa
-	// da pristupi zasticenom REST servisu
-	// Metoda vraca 401 Unauthorized response, ukoliko postoji Login Page u
-	// aplikaciji, pozeljno je da se korisnik redirektuje na tu stranicu
+	// Method which is called if a user tries to access a protected REST service
+	// Method returns 401 Unauthorized response
+	// If there is a Login Page in the application, it is suggested to redirect to
+	// that page
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException {

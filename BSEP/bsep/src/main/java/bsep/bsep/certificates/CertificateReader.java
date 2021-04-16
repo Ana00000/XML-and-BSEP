@@ -12,7 +12,7 @@ import java.util.Iterator;
 
 /**
  *
- * Cita sertifikat iz fajla
+ * Reading file certificate
  */
 public class CertificateReader {
 
@@ -20,9 +20,9 @@ public class CertificateReader {
 	public static final String BIN_ENC_CERT_FILE = "./data/testSertifikat2.cer";
 
 	public void testIt() {
-		System.out.println("Cita sertifikat iz Base64 formata");
+		System.out.println("Reading certificate from Base64 format");
 		readFromBase64EncFile();
-		System.out.println("\n\nCita sertifikat iz binarnog formata");
+		System.out.println("\n\nReading certificate from binary format");
 		readFromBinEncFile();
 	}
 
@@ -33,10 +33,10 @@ public class CertificateReader {
 
 			CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
-			// Cita sertifikat po sertifikat
-			// Svaki certifikat je izmedju
+			// Reading all certificates
+			// Every certificate is between
 			// -----BEGIN CERTIFICATE-----,
-			// i
+			// and
 			// -----END CERTIFICATE-----.
 			while (bis.available() > 0) {
 				Certificate cert = cf.generateCertificate(bis);
@@ -56,7 +56,7 @@ public class CertificateReader {
 		try {
 			FileInputStream fis = new FileInputStream(BIN_ENC_CERT_FILE);
 			CertificateFactory cf = CertificateFactory.getInstance("X.509");
-			// Ovde se vade svi sertifkati
+			// Getting all certificates
 			Collection c = cf.generateCertificates(fis);
 			Iterator i = c.iterator();
 			while (i.hasNext()) {
