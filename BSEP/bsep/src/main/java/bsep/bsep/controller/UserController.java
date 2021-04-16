@@ -81,10 +81,8 @@ public class UserController {
 	public ResponseEntity<UserTokenState> login(@RequestBody UserDTO authenticationRequest,
 			HttpServletResponse response) {
 	
-		Users loginUser = userService.login(authenticationRequest);
-		
 		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-				authenticationRequest.getUserEmail(), loginUser.getPassword()));
+				authenticationRequest.getUserEmail(), authenticationRequest.getPassword()+ userService.login(authenticationRequest).getSalt()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		Users user = (Users) authentication.getPrincipal();

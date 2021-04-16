@@ -126,13 +126,9 @@ public class UserService implements IUserService {
 	public Users login(UserDTO userDTO) {
 		List<Users> users = findAll();
 		for (Users user : users) {
+			if (user.getUserEmail().equals(userDTO.getUserEmail()) && verifyHash(generatePasswordWithSalt(userDTO.getPassword(), user.getSalt()), user.getPassword())) 
+					return user;
 			
-			String password = generatePasswordWithSalt(userDTO.getPassword(), user.getSalt());
-		
-			System.out.println("\n" + userDTO.getPassword()+" "+user.getSalt() + " " + generatePasswordWithSalt(userDTO.getPassword(), user.getSalt()) + " " + user.getPassword() + " " + userDTO.getUserEmail());
-			  
-			if (user.getUserEmail().equals(userDTO.getUserEmail()) && verifyHash(password, user.getPassword())) 
-				return user;
 		}
 		
 		return null;
@@ -162,16 +158,19 @@ public class UserService implements IUserService {
 		byte[] salt = new byte[16];
 		// Get a random salt
 		random.nextBytes(salt);
+		System.out.println("SALT " + salt.toString());
 		return salt;
 	}
 	
 	public boolean verifyHash(String password, String hash)
 	{
+		System.out.println("verify hash");
 		return BCrypt.checkpw(password, hash);
 	}
 	
 	public String hashPassword(String password)
 	{
+		System.out.println("has password");
 		return BCrypt.hashpw(password, BCrypt.gensalt(12));
 	}
 	
