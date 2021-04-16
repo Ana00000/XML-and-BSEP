@@ -218,7 +218,6 @@ export default {
 
     createCertificate() {
       if(!this.validCertificate()) return;
-
       this.$http
         .post("http://localhost:8080/certificate/createCertificate", {
           commonName: this.commonName,
@@ -273,11 +272,8 @@ export default {
       } else if (this.commonName.match(/\d/g)) {
         alert("Your common name shouldn't contain numbers!");
         return false;
-      } else if (!this.commonName.match(/[A-Z][a-z]+/g)) {
-        alert("Your common name needs to have upper letter at the start!");
-        return false;
-      } else if (this.commonName.match(/[A-Z][a-z]+[A-Z]+/g)) {
-        alert("Your common name needs to have upper letter only at the start!");
+      } else if (!/^[A-Z][a-z]+$/.test(this.commonName)) {
+        alert("Your common name needs to have one upper letter at the start!");
         return false;
       }
       return true;
@@ -298,11 +294,8 @@ export default {
       } else if (this.givenName.match(/\d/g)) {
         alert("Your given name shouldn't contain numbers!");
         return false;
-      } else if (!this.givenName.match(/[A-Z][a-z]+/g)) {
-        alert("Your given name needs to have upper letter at the start!");
-        return false;
-      } else if (this.givenName.match(/[A-Z][a-z]+[A-Z]+/g)) {
-        alert("Your given name needs to have upper letter only at the start!");
+      } else if (!/^[A-Z][a-z]+$/.test(this.givenName)) {
+        alert("Your given name needs to have one upper letter at the start!");
         return false;
       }
       return true;
@@ -323,11 +316,8 @@ export default {
       } else if (this.surname.match(/\d/g)) {
         alert("Your surname shouldn't contain numbers!");
         return false;
-      } else if (!this.surname.match(/[A-Z][a-z]+/g)) {
-        alert("Your surname needs to have upper letter at the start!");
-        return false;
-      } else if (this.surname.match(/[A-Z][a-z]+[A-Z]+/g)) {
-        alert("Your surname needs to have upper letter only at the start!");
+      } else if (!/^[A-Z][a-z]+$/.test(this.surname)) {
+        alert("Your surname needs to have one upper letter at the start!");
         return false;
       }
       return true;
