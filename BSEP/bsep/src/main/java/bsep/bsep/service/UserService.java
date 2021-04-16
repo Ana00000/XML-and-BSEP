@@ -57,16 +57,6 @@ public class UserService implements IUserService {
 		return null;
 	}
 
-	public Users findOneBySalt(String salt) {
-		List<Users> users = findAll();
-		for (Users user : users) {
-			if (user.getSalt().equals(salt)) {
-				return user;
-			}
-		}
-		return null;
-	}
-
 	public List<Users> findAll() {
 		return userRepository.findAll();
 	}
@@ -137,7 +127,12 @@ public class UserService implements IUserService {
 	}
 
 	public Users updatePassword(Users user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		byte[] salt = generateSalt();
+		String encodedSalt = Base64.getEncoder().encodeToString(salt);
+		user.setSalt(encodedSalt);
+		String password = generatePasswordWithSalt(user.getPassword(), encodedSalt);
+		String securePassword = hashPassword(password);
+		user.setPassword(securePassword);
 		return userRepository.save(user);
 	}
 	
