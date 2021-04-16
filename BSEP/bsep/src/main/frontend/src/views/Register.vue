@@ -66,9 +66,7 @@ export default {
   }),
   methods: {
     register() {
-      if (!this.validEmail() || !this.validPassword() || !this.validFirstName() || !this.validLastName() || !this.validPhoneNumber()) {
-        return;
-      } 
+      if (!this.validEmail() || !this.validPassword() || !this.validFirstName() || !this.validLastName() || !this.validPhoneNumber()) return;
       this.$http
         .post("http://localhost:8080/users/register", {
           userEmail: this.userEmail,
@@ -118,9 +116,15 @@ export default {
           alert("Your password should contain at least one number.");
           this.passwordAgain='';
           return false;
-      } else if(!this.password.match(/[!@#$%^&*.,:'"]/g)) { 
-          alert("Your password should contain at least one special character.");
+      } else if(!this.password.match(/[!@#$%^&*.,:'+-/\\"]/g)) { 
+          alert("Your password should contain at least one special character (other than <>).");
           return false;
+      } else if(this.password.match(/[<>]/g)) { 
+          alert("Your password shouldn't contain special character < or >.");
+          return false;
+      } else if (this.password.match(/[ ]/g)) {
+        alert("Your password shouldn't contain spaces!");
+        return false;
       } else if (this.password !== this.passwordAgain){
           alert("Passwords don't match !!!");
           this.passwordAgain='';
@@ -135,6 +139,18 @@ export default {
       } else if (this.firstName.length > 20) {
         alert("Your first name shouldn't contain more than 20 characters!");
         return false;
+      } else if(this.firstName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
+          alert("Your first name shouldn't contain special characters.");
+          return false;
+      } else if (this.firstName.match(/[ ]/g)) {
+        alert("Your first name shouldn't contain spaces!");
+        return false;
+      } else if (this.firstName.match(/\d/g)) {
+        alert("Your first name shouldn't contain numbers!");
+        return false;
+      } else if (!/^[A-Z][a-z]+$/.test(this.firstName)) {
+        alert("Your first name needs to have one upper letter at the start!");
+        return false;
       }
       return true;
     },
@@ -142,27 +158,33 @@ export default {
       if (this.lastName.length < 2) {
         alert("Your last name should contain at least 2 character!");
         return false;
-      } else if (this.lastName.length > 100) {
-        alert("Your last name shouldn't contain more than 100 characters!");
+      } else if (this.lastName.length > 35) {
+        alert("Your last name shouldn't contain more than 35 characters!");
+        return false;
+      } else if(this.lastName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
+          alert("Your last name shouldn't contain special characters.");
+          return false;
+      } else if (this.lastName.match(/[ ]/g)) {
+        alert("Your last name shouldn't contain spaces!");
+        return false;
+      } else if (this.lastName.match(/\d/g)) {
+        alert("Your last name shouldn't contain numbers!");
+        return false;
+      } else if (!/^[A-Z][a-z]+$/.test(this.lastName)) {
+        alert("Your last name needs to have one upper letter at the start!");
         return false;
       }
       return true;
     },
     validPhoneNumber() {
-      if(this.phoneNumber.match(/\d/g) == null){
-        alert("Your phone number needs numbers!");
-        return false;
-      } else if (this.phoneNumber.match(/\d/g).length < 9) {
-        alert("Your phone number should contain at least 9 numbers!");
-        return false;
-      } else if (this.phoneNumber.match(/\d/g).length > 12) {
-        alert("Your phone number shouldn't contain more than 12 numbers!");
-        return false;
-      } else if(this.phoneNumber.match(/[a-zA-Z]/g)) {
+      if(this.phoneNumber.match(/[a-zA-Z]/g)) {
           alert("Your phone number shouldn't contain letters.");
           return false;
-      } else if(this.phoneNumber.match(/[!@#$%^&*.,:'"]/g)) {
-          alert("Your phone number shouldn't contain special character other than [+, -, /].");
+      } else if (this.phoneNumber.match(/[ ]/g)) {
+          alert("Your phone number shouldn't contain spaces!");
+          return false;
+      } else if (!/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\\s./0-9]*$/.test(this.phoneNumber)) {
+          alert("Your phone number is not in right form!");
           return false;
       }
       return true;
