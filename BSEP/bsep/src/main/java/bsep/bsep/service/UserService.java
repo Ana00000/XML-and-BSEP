@@ -1,11 +1,14 @@
 package bsep.bsep.service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +39,7 @@ public class UserService implements IUserService {
 		this.confirmationTokenService = confirmationTokenService;
 		this.emailService = emailService;
 	}
-
+	
 	public Users findOne(Long id) {
 		List<Users> users = findAll();
 		for (Users user : users) {
@@ -57,6 +60,16 @@ public class UserService implements IUserService {
 		return null;
 	}
 
+	public Users findOneBySalt(String salt) {
+		List<Users> users = findAll();
+		for (Users user : users) {
+			if (user.getSalt().equals(salt)) {
+				return user;
+			}
+		}
+		return null;
+	}
+	
 	public List<Users> findAll() {
 		return userRepository.findAll();
 	}
@@ -112,10 +125,16 @@ public class UserService implements IUserService {
 	@Override
 	public Users login(UserDTO userDTO) {
 		List<Users> users = findAll();
-		for (Users user : users)
-			if (user.getUserEmail().equals(userDTO.getUserEmail()) && user.getPassword().equals(userDTO.getPassword()))
+		for (Users user : users) {
+			
+			String password = generatePasswordWithSalt(userDTO.getPassword(), user.getSalt());
+		
+			System.out.println("\n" + userDTO.getPassword()+" "+user.getSalt() + " " + generatePasswordWithSalt(userDTO.getPassword(), user.getSalt()) + " " + user.getPassword() + " " + userDTO.getUserEmail());
+			  
+			if (user.getUserEmail().equals(userDTO.getUserEmail()) && verifyHash(password, user.getPassword())) 
 				return user;
-
+		}
+		
 		return null;
 	}
 	
@@ -125,7 +144,12 @@ public class UserService implements IUserService {
 	
 	@Override
 	public Users save(Users user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		byte[] salt = generateSalt();
+		String encodedSalt = Base64.getEncoder().encodeToString(salt);
+		user.setSalt(encodedSalt);
+		String password = generatePasswordWithSalt(user.getPassword(), encodedSalt);
+		String securePassword = hashPassword(password);
+		user.setPassword(securePassword);
 		user.setConfirmed(false);
 		Users userNew = userRepository.save(user);
 		ConfirmationToken confirmationToken = confirmationTokenService.save(userNew);
@@ -133,6 +157,33 @@ public class UserService implements IUserService {
 		return userNew; 
 	}
 	
+	private static byte[] generateSalt() {
+		SecureRandom random = new SecureRandom();
+		byte[] salt = new byte[16];
+		// Get a random salt
+		random.nextBytes(salt);
+		return salt;
+	}
+	
+	public boolean verifyHash(String password, String hash)
+	{
+		return BCrypt.checkpw(password, hash);
+	}
+	
+	public String hashPassword(String password)
+	{
+		return BCrypt.hashpw(password, BCrypt.gensalt(12));
+	}
+	
+	private String generatePasswordWithSalt(String inputPassword, String salt) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(inputPassword);
+		stringBuilder.append(salt);
+		return stringBuilder.toString();
+	}
+	
+	
+
 	private void sendConfirmationEmail(Users user, ConfirmationToken confirmationToken) {
 		try {
 			
@@ -156,4 +207,5 @@ public class UserService implements IUserService {
 		}
 		return returnValues;
 	}
+
 }
