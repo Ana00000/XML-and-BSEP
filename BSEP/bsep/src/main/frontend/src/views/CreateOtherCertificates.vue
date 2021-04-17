@@ -206,7 +206,7 @@ export default {
     getEmails(){
         this.$http
         .get(
-          "http://localhost:8080/users/getUsersEmails",{
+          "https://localhost:8080/users/getUsersEmails",{
         headers:{
             'Authorization':"Bearer "+ this.token
         }})
@@ -220,7 +220,7 @@ export default {
       if(!this.validCertificate()) return;
 
       this.$http
-        .post("http://localhost:8080/certificate/createCertificate", {
+        .post("https://localhost:8080/certificate/createCertificate", {
           commonName: this.commonName,
           givenName: this.givenName,
           surname: this.surname,
@@ -242,7 +242,7 @@ export default {
         .then((resp) => {
           console.log(resp.data);
           alert("Created certificate.");
-          window.location.href = "http://localhost:8081/certificates";
+          window.location.href = "https://localhost:8081/certificates";
         })
         .catch((err) => {
           alert("Certificate wasn't created, sorry.");

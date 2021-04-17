@@ -82,7 +82,7 @@ public class UserController {
 
 	@GetMapping("/redirectMeToMyHomePage")
 	public String RedirectionToHome() {
-		return "http://localhost:8081/";
+		return "https://localhost:8081/";
 	}
 	
 	@PostMapping("/recoverPasswordWithToken")

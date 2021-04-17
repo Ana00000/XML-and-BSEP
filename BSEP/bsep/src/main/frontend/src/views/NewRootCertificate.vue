@@ -165,7 +165,7 @@ export default {
       if (!this.validCertificate()) return;
       this.$http
         .post(
-          "http://localhost:8080/certificate/createCertificate",
+          "https://localhost:8080/certificate/createCertificate",
           {
             commonName: this.commonName,
             givenName: this.givenName,
@@ -191,7 +191,7 @@ export default {
         .then((resp) => {
           console.log(resp.data);
           alert("Created Root certificate.");
-          window.location.href = "http://localhost:8081/certificates";
+          window.location.href = "https://localhost:8081/certificates";
         })
         .catch((err) => {
           alert("Certificate wasn't created, sorry.");

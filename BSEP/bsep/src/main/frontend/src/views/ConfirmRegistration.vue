@@ -22,7 +22,7 @@ export default {
       this.confirmationToken = hrefPaths[4];
       alert(this.confirmationToken);
       this.$http
-        .put("http://localhost:8080/users/confirm_account/" + this.confirmationToken, {})
+        .put("https://localhost:8080/users/confirm_account/" + this.confirmationToken, {})
         .then((res) => {
           console.log(res);
           this.message = "You are successfully verified your account! You can log in on system!"
@@ -33,7 +33,7 @@ export default {
         });
     },
     redirectToLogIn() {
-      window.location.href = "http://localhost:8081/logIn";
+      window.location.href = "https://localhost:8081/logIn";
     },
   },
 };

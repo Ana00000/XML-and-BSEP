@@ -68,11 +68,7 @@ export default {
   methods: {
     logIn() {
       this.$http
-        .post("https://localhost:8080/users/login", this.user, {
-          headers: {
-          "Access-Control-Allow-Origin": "*",
-        }
-        })
+        .post("https://localhost:8080/users/login", this.user)
         .then((resp) => {
           console.log(resp.data);
           localStorage.setItem("token", resp.data.accessToken);

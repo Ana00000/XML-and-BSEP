@@ -70,7 +70,7 @@ export default {
         return;
       } 
       this.$http
-        .post("http://localhost:8080/users/register", {
+        .post("https://localhost:8080/users/register", {
           userEmail: this.userEmail,
           lastName: this.lastName,
           password: this.password,
@@ -81,7 +81,7 @@ export default {
         .then((response) => {
           console.log(response.data.firstName);
           alert("Successfully registered.");
-          window.location.href = "http://localhost:8081/login";
+          window.location.href = "https://localhost:8081/login";
         })
         .catch((er) => {
           alert("Email already exists.");

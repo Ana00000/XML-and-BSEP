@@ -66,7 +66,7 @@ export default {
       hrefPaths=  hrefPath.split('/');
       this.confirmationToken = hrefPaths[4];
       this.$http
-        .post("http://localhost:8080/users/findUserWithToken", {
+        .post("https://localhost:8080/users/findUserWithToken", {
             token: this.confirmationToken
         })
         .then((res) => {
@@ -87,7 +87,7 @@ export default {
         }
         alert(this.password+" "+this.confirmPassword)
         this.$http
-        .put("http://localhost:8080/users/changePassword", {
+        .put("https://localhost:8080/users/changePassword", {
             emailOfUser: this.userEmail,
             password: this.password,
             confirmedPassword: this.confirmPassword
@@ -95,7 +95,7 @@ export default {
         .then((res) => {
           console.log(res);
           alert("You are successfully change password on your account! You can log in on system!");
-          window.location.href = "http://localhost:8081/logIn";
+          window.location.href = "https://localhost:8081/logIn";
         })
         .catch((err) => {
           console.log(err);
@@ -103,7 +103,7 @@ export default {
         });
     },
     redirectToLogIn() {
-      window.location.href = "http://localhost:8081/logIn";
+      window.location.href = "https://localhost:8081/logIn";
     },
     validPassword() {
       if (this.password.length < 10) {

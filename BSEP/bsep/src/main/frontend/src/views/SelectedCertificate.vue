@@ -206,7 +206,7 @@ export default {
       console.log(this.serialNbr);
       this.$http
         .get(
-          "http://localhost:8080/certificate/getCertificate/" + this.serialNbr
+          "https://localhost:8080/certificate/getCertificate/" + this.serialNbr
         ,{
         headers:{
             'Authorization':"Bearer "+ this.token
@@ -242,12 +242,12 @@ export default {
        localStorage.setItem("endDate", this.endDate);
        localStorage.setItem("issuerAlias", this.alias);
        localStorage.setItem("issuerSerialNumber", this.serialNbr);
-       window.location.href = "http://localhost:8081/createOtherCertificates";
+       window.location.href = "https://localhost:8081/createOtherCertificates";
     },
     revokeCertificate() {
       this.$http
         .put(
-          "http://localhost:8080/certificate/revokeCertificate/" + this.serialNbr
+          "https://localhost:8080/certificate/revokeCertificate/" + this.serialNbr
           , {}, {
             headers:{
               'Authorization':"Bearer "+ this.token
@@ -256,13 +256,13 @@ export default {
         .then((resp) => {
           console.log(resp.data);
           alert("You have successfully revoked the certificate.");
-          window.location.href = "http://localhost:8081/invalidCertificates";
+          window.location.href = "https://localhost:8081/invalidCertificates";
         })
         .catch((err) => console.log(err));
     },
     downloadCertificate() {
       this.$http
-        .get("http://localhost:8080/certificate/loadToFile/" + this.serialNbr, {
+        .get("https://localhost:8080/certificate/loadToFile/" + this.serialNbr, {
         headers:{
             'Authorization':"Bearer "+ this.token
         }})
