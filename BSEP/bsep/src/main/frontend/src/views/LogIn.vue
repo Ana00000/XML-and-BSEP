@@ -41,7 +41,7 @@ function redirectLoggedUser() {
   const config = {
     headers: { Authorization: `Bearer ${tokenString}` },
   };
-  axios.get("http://localhost:8080/users/redirectMeToMyHomePage", config).then(
+  axios.get("https://localhost:8080/users/redirectMeToMyHomePage", config).then(
     (response) => {
       console.log(response);
       window.location.href = response.data;
@@ -68,7 +68,11 @@ export default {
   methods: {
     logIn() {
       this.$http
-        .post("http://localhost:8080/users/login", this.user)
+        .post("https://localhost:8080/users/login", this.user, {
+          headers: {
+          "Access-Control-Allow-Origin": "*",
+        }
+        })
         .then((resp) => {
           console.log(resp.data);
           localStorage.setItem("token", resp.data.accessToken);

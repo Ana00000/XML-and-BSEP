@@ -39,7 +39,7 @@ import bsep.bsep.service.UserService;
 import bsep.bsep.validation.UserValidation;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "https://localhost:8081")
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 

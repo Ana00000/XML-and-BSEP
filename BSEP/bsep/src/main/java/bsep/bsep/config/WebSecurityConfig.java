@@ -89,7 +89,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.anyRequest().authenticated().and()
 
 				// For development purposes turn on CORS configuration from WebConfig class
-				// .cors().disable()
+				//.cors().disable()
 				.cors().and()
 
 				// Add custom filter TokenAuthenticationFilter for JWT token check instead of

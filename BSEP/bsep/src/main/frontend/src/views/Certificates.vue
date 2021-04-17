@@ -86,7 +86,7 @@ export default {
     getValidCertificates() {
       var userEmail = localStorage.getItem("userEmail");
       this.$http
-        .get("http://localhost:8080/certificate/allValid/" + userEmail,{
+        .get("https://localhost:8080/certificate/allValid/" + userEmail,{
         headers:{
             'Authorization':"Bearer "+ this.token
         }})
@@ -100,7 +100,7 @@ export default {
         "serialNumber",
         this.selectedCertificate.serialNumber
       );
-      window.location.href = "http://localhost:8081/selectedCertificate";
+      window.location.href = "https://localhost:8081/selectedCertificate";
     },
   },
 };
