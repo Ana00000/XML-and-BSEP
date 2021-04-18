@@ -49,25 +49,26 @@ public class CertificateController {
 	public ResponseEntity<Boolean> revokeCertificate(@PathVariable String serialNumber) {
 		try {
 			certificateService.revokeCertificate(serialNumber);
-			logger.info("action=revokeCertificate status=success");
+			logger.info("action=revokeCertificate status=success certificateSerialNumber={}", serialNumber);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
-			logger.error("action=revokeCertificate status=failure message={}", e.getMessage());
+			logger.error("action=revokeCertificate status=failure message={} certificateSerialNumber={}",
+					e.getMessage(), serialNumber);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostAuthorize("hasAuthority('USER_GET_CERTIFICATE_DTO_BY_SERIAL_NUMBER_PRIVILEGE')")
 	@GetMapping(value = "/{serialNumber}")
 	public ResponseEntity<CertificateData> checkCertificateValidity(@PathVariable String serialNumber) {
-		logger.info("action=checkCertificateValidity status=success");
+		logger.info("action=checkCertificateValidity status=success certificateSerialNumber={}", serialNumber);
 		return new ResponseEntity<>(certificateService.findCertificateDataBySerialNumber(serialNumber), HttpStatus.OK);
 	}
 
 	@PostAuthorize("hasAuthority('USER_GET_CERTIFICATE_DTO_BY_SERIAL_NUMBER_PRIVILEGE')")
 	@GetMapping(value = "/getCertificate/{serialNumber}")
 	public ResponseEntity<CertificateDTO> getCertificateDTOBySerialNumber(@PathVariable String serialNumber) {
-		logger.info("action=getCertificate status=success");
+		logger.info("action=getCertificate status=success certificateSerialNumber={}", serialNumber);
 		return new ResponseEntity<>(certificateService.findCertificateDTOBySerialNumber(serialNumber), HttpStatus.OK);
 	}
 
@@ -87,45 +88,50 @@ public class CertificateController {
 
 	@PostAuthorize("hasAuthority('USER_GET_ALL_VALID_CERTIFICATES_DTO_PRIVILEGE')")
 	@GetMapping(value = "/loadToFile/{serialNumber}")
-	public ResponseEntity<Boolean> getAllValidCertificatesDTO(@PathVariable String serialNumber) {
+	public ResponseEntity<Boolean> loadToFile(@PathVariable String serialNumber) {
 		try {
 			certificateService.loadCertificateToFile(serialNumber);
-			logger.info("action=loadToFile status=success");
+			logger.info("action=loadToFile status=success certificateSerialNumber={}", serialNumber);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (CertificateEncodingException | IOException e) {
 			e.printStackTrace();
-			logger.error("action=loadToFile status=failure message={}", e.getMessage());
+			logger.error("action=loadToFile status=failure message={} certificateSerialNumber={}", e.getMessage(),
+					serialNumber);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("action=loadToFile status=failure message={}", e.getMessage());
+			logger.error("action=loadToFile status=failure message={} certificateSerialNumber={}", e.getMessage(),
+					serialNumber);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostAuthorize("hasAuthority('USER_CREATE_CERTIFICATE_PRIVILEGE')")
 	@PostMapping(value = "/createCertificate", consumes = "application/json")
 	public ResponseEntity<CertificateData> createCertificate(@RequestBody CertificateInfoDTO certificateInfoDTO) {
-		if (!certificateValidation.validCertificate(certificateInfoDTO))
-		{
+		String certificateAlias = certificateInfoDTO.getAlias();
+		if (!certificateValidation.validCertificate(certificateInfoDTO)) {
 			String message = "Certificate is not valid";
-			logger.error("action=createCertificate status=failure message={}", message);
+			logger.error("action=createCertificate status=failure message={} certificateAlias={}", message,
+					certificateAlias);
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		try {
 			CertificateData certificateData = certificateService.createCertificate(certificateInfoDTO);
-			logger.info("action=createCertificate status=success");
+			logger.info("action=createCertificate status=success certificateAlias={}", certificateAlias);
 			return new ResponseEntity<>(certificateData, checkStatusForCreatingCertificate(certificateData));
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("action=createCertificate status=failure message={}", e.getMessage());
+			logger.error("action=createCertificate status=failure message={} certificateAlias={}", e.getMessage(),
+					certificateAlias);
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	private List<CertificateDTO> getListOfCertificate(String userEmail){
+
+	private List<CertificateDTO> getListOfCertificate(String userEmail) {
 		String typeOfUser = findTypeByEmail(userEmail);
-		return typeOfUser.equals("ADMIN")? certificateService.findAllValid() : certificateService.findAllForUser(userEmail); 
+		return typeOfUser.equals("ADMIN") ? certificateService.findAllValid()
+				: certificateService.findAllForUser(userEmail);
 	}
 
 	private String findTypeByEmail(String userEmail) {
