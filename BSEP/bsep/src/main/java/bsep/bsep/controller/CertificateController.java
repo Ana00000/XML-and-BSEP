@@ -49,8 +49,10 @@ public class CertificateController {
 	public ResponseEntity<Boolean> revokeCertificate(@PathVariable String serialNumber) {
 		try {
 			certificateService.revokeCertificate(serialNumber);
+			logger.info("action=revokeCertificate status=success");
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
+			logger.error("action=revokeCertificate status=failure message={}", e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -58,25 +60,28 @@ public class CertificateController {
 	@PostAuthorize("hasAuthority('USER_GET_CERTIFICATE_DTO_BY_SERIAL_NUMBER_PRIVILEGE')")
 	@GetMapping(value = "/{serialNumber}")
 	public ResponseEntity<CertificateData> checkCertificateValidity(@PathVariable String serialNumber) {
+		logger.info("action=checkCertificateValidity status=success");
 		return new ResponseEntity<>(certificateService.findCertificateDataBySerialNumber(serialNumber), HttpStatus.OK);
 	}
 
 	@PostAuthorize("hasAuthority('USER_GET_CERTIFICATE_DTO_BY_SERIAL_NUMBER_PRIVILEGE')")
 	@GetMapping(value = "/getCertificate/{serialNumber}")
 	public ResponseEntity<CertificateDTO> getCertificateDTOBySerialNumber(@PathVariable String serialNumber) {
+		logger.info("action=getCertificate status=success");
 		return new ResponseEntity<>(certificateService.findCertificateDTOBySerialNumber(serialNumber), HttpStatus.OK);
 	}
 
 	@PostAuthorize("hasAuthority('USER_ALL_VALID_CERTIFICATES_PRIVILEGE')")
 	@GetMapping(value = "/allValid/{userEmail}")
 	public ResponseEntity<List<CertificateDTO>> allValidCertificates(@PathVariable String userEmail) {
+		logger.info("action=allValidCertificates status=success");
 		return new ResponseEntity<>(getListOfCertificate(userEmail), HttpStatus.OK);
 	}
 
 	@PostAuthorize("hasAuthority('USER_ALL_REVOKED_OR_EXPIRED_CERTIFICATES_PRIVILEGE')")
 	@GetMapping(value = "/allRevokedOrExpired")
 	public ResponseEntity<List<CertificateDTO>> allRevokedOrExpiredCertificates() {
-
+		logger.info("action=allRevokedOrExpired status=success");
 		return new ResponseEntity<>(certificateService.findAllRevokedOrExpired(), HttpStatus.OK);
 	}
 
@@ -85,12 +90,15 @@ public class CertificateController {
 	public ResponseEntity<Boolean> getAllValidCertificatesDTO(@PathVariable String serialNumber) {
 		try {
 			certificateService.loadCertificateToFile(serialNumber);
+			logger.info("action=loadToFile status=success");
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (CertificateEncodingException | IOException e) {
 			e.printStackTrace();
+			logger.error("action=loadToFile status=failure message={}", e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("action=loadToFile status=failure message={}", e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -98,13 +106,19 @@ public class CertificateController {
 	@PostAuthorize("hasAuthority('USER_CREATE_CERTIFICATE_PRIVILEGE')")
 	@PostMapping(value = "/createCertificate", consumes = "application/json")
 	public ResponseEntity<CertificateData> createCertificate(@RequestBody CertificateInfoDTO certificateInfoDTO) {
-		if (!certificateValidation.validCertificate(certificateInfoDTO)) 
+		if (!certificateValidation.validCertificate(certificateInfoDTO))
+		{
+			String message = "Certificate is not valid";
+			logger.error("action=createCertificate status=failure message={}", message);
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
 		try {
 			CertificateData certificateData = certificateService.createCertificate(certificateInfoDTO);
+			logger.info("action=createCertificate status=success");
 			return new ResponseEntity<>(certificateData, checkStatusForCreatingCertificate(certificateData));
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("action=createCertificate status=failure message={}", e.getMessage());
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 	}
