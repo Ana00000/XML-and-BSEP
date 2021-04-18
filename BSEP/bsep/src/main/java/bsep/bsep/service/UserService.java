@@ -1,12 +1,14 @@
 package bsep.bsep.service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import bsep.bsep.dto.UserDTO;
@@ -20,18 +22,16 @@ import bsep.bsep.service.interfaces.IUserService;
 public class UserService implements IUserService {
 
 	private final IUserRepository userRepository;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 	
 	private EmailService emailService;
-	
+
 	private final ConfirmationTokenService confirmationTokenService;
-	
+
 	private Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	@Autowired
-	public UserService(IUserRepository userRepository, ConfirmationTokenService confirmationTokenService,EmailService emailService) {
+	public UserService(IUserRepository userRepository, ConfirmationTokenService confirmationTokenService,
+			EmailService emailService) {
 		this.userRepository = userRepository;
 		this.confirmationTokenService = confirmationTokenService;
 		this.emailService = emailService;
@@ -112,53 +112,90 @@ public class UserService implements IUserService {
 	@Override
 	public Users login(UserDTO userDTO) {
 		List<Users> users = findAll();
-		for (Users user : users)
-			if (user.getUserEmail().equals(userDTO.getUserEmail()) && user.getPassword().equals(userDTO.getPassword()))
+		for (Users user : users) {
+			if (user.getUserEmail().equals(userDTO.getUserEmail())
+					&& verifyHash(generatePasswordWithSalt(userDTO.getPassword(), user.getSalt()), user.getPassword()))
 				return user;
+
+		}
 
 		return null;
 	}
-	
+
 	public Users update(Users user) {
 		return userRepository.save(user);
 	}
-	
+
 	public Users updatePassword(Users user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		byte[] salt = generateSalt();
+		String encodedSalt = Base64.getEncoder().encodeToString(salt);
+		user.setSalt(encodedSalt);
+		String password = generatePasswordWithSalt(user.getPassword(), encodedSalt);
+		String securePassword = hashPassword(password);
+		user.setPassword(securePassword);
 		return userRepository.save(user);
 	}
 	
 	@Override
 	public Users save(Users user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		byte[] salt = generateSalt();
+		String encodedSalt = Base64.getEncoder().encodeToString(salt);
+		user.setSalt(encodedSalt);
+		String password = generatePasswordWithSalt(user.getPassword(), encodedSalt);
+		String securePassword = hashPassword(password);
+		user.setPassword(securePassword);
 		user.setConfirmed(false);
 		Users userNew = userRepository.save(user);
 		ConfirmationToken confirmationToken = confirmationTokenService.save(userNew);
 		sendConfirmationEmail(userNew, confirmationToken);
-		return userNew; 
+		return userNew;
 	}
-	
+
+	private static byte[] generateSalt() {
+		SecureRandom random = new SecureRandom();
+		byte[] salt = new byte[16];
+		random.nextBytes(salt);
+		return salt;
+	}
+
+	public boolean verifyHash(String password, String hash) {
+		return BCrypt.checkpw(password, hash);
+	}
+
+	public String hashPassword(String password) {
+		return BCrypt.hashpw(password, BCrypt.gensalt(12));
+	}
+
+	private String generatePasswordWithSalt(String inputPassword, String salt) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(inputPassword);
+		stringBuilder.append(salt);
+		return stringBuilder.toString();
+	}
+
 	private void sendConfirmationEmail(Users user, ConfirmationToken confirmationToken) {
 		try {
-			
+
 			String supplierEmail = user.getUserEmail();
 			String subject = "Confirm registration";
-			String text = "Please confirm your registration by clicking the link below \n\n" + "http://localhost:8081/confirmRegistration/"+ confirmationToken.getConfirmationToken();
+			String text = "Please confirm your registration by clicking the link below \n\n"
+					+ "http://localhost:8081/confirmRegistration/" + confirmationToken.getConfirmationToken();
 			emailService.sendNotificaitionAsync(supplierEmail, subject, text);
-			
+
 			System.out.println("Email sent");
-	
-		}catch(Exception e) {
-			logger.info("Error sending email: "+ e.getMessage());
+
+		} catch (Exception e) {
+			logger.info("Error sending email: " + e.getMessage());
 		}
 	}
 
 	public List<String> findAllUsersEmails() {
 		List<String> returnValues = new ArrayList<String>();
 		for (Users user : findAll()) {
-			if (user.getTypeOfUser()!=UserType.ADMIN)
+			if (user.getTypeOfUser() != UserType.ADMIN)
 				returnValues.add(user.getUserEmail());
 		}
 		return returnValues;
 	}
+
 }
