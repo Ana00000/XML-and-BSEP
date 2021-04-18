@@ -133,7 +133,7 @@ public class CertificateService implements ICertificateService {
 		String certificate = BEGIN_CERT + LINE_SEPARATOR + new String(encoder.encode(bytes)) + LINE_SEPARATOR
 				+ END_CERT;
 
-		writeBytesToFile(serialNumber + ".cer", certificate.getBytes());
+		writeBytesToFile("certificates\\"+serialNumber + ".cer", certificate.getBytes());
 
 	}
 
