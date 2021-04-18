@@ -165,7 +165,7 @@ export default {
       if (!this.validCertificate()) return;
       this.$http
         .post(
-          "http://localhost:8080/certificate/createCertificate",
+          "https://localhost:8080/certificate/createCertificate",
           {
             commonName: this.commonName,
             givenName: this.givenName,
@@ -191,7 +191,7 @@ export default {
         .then((resp) => {
           console.log(resp.data);
           alert("Created Root certificate.");
-          window.location.href = "http://localhost:8081/certificates";
+          window.location.href = "https://localhost:8081/certificates";
         })
         .catch((err) => {
           alert("Certificate wasn't created, sorry.");
@@ -212,6 +212,18 @@ export default {
       } else if (this.commonName.length > 20) {
         alert("Your common name shouldn't contain more than 20 characters!");
         return false;
+      } else if(this.commonName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
+          alert("Your common name shouldn't contain special characters.");
+          return false;
+      } else if (this.commonName.match(/[ ]/g)) {
+        alert("Your common name shouldn't contain spaces!");
+        return false;
+      } else if (this.commonName.match(/\d/g)) {
+        alert("Your common name shouldn't contain numbers!");
+        return false;
+      } else if (!/^[A-Z][a-z]+$/.test(this.commonName)) {
+        alert("Your common name needs to have one upper letter at the start!");
+        return false;
       }
       return true;
     },
@@ -221,6 +233,18 @@ export default {
         return false;
       } else if (this.givenName.length > 20) {
         alert("Your given name shouldn't contain more than 20 characters!");
+        return false;
+      } else if(this.givenName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
+          alert("Your given name shouldn't contain special characters.");
+          return false;
+      } else if (this.givenName.match(/[ ]/g)) {
+        alert("Your given name shouldn't contain spaces!");
+        return false;
+      } else if (this.givenName.match(/\d/g)) {
+        alert("Your given name shouldn't contain numbers!");
+        return false;
+      } else if (!/^[A-Z][a-z]+$/.test(this.givenName)) {
+        alert("Your given name needs to have one upper letter at the start!");
         return false;
       }
       return true;
@@ -232,6 +256,18 @@ export default {
       } else if (this.surname.length > 35) {
         alert("Your surname shouldn't contain more than 35 characters!");
         return false;
+      } else if(this.surname.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
+          alert("Your surname shouldn't contain special characters.");
+          return false;
+      } else if (this.surname.match(/[ ]/g)) {
+        alert("Your surname shouldn't contain spaces!");
+        return false;
+      } else if (this.surname.match(/\d/g)) {
+        alert("Your surname shouldn't contain numbers!");
+        return false;
+      } else if (!/^[A-Z][a-z]+$/.test(this.surname)) {
+        alert("Your surname needs to have one upper letter at the start!");
+        return false;
       }
       return true;
     },
@@ -242,15 +278,24 @@ export default {
       } else if (this.organization.length > 20) {
         alert("Your organization shouldn't contain more than 20 characters!");
         return false;
+      } else if(this.organization.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
+          alert("Your organization shouldn't contain special characters.");
+          return false;
       }
       return true;
     },
     validOrganizationalUnitName() {
-      if (this.organizationalUnitName.length < 1) {
-        alert("Your organizational unit name should contain at least 1 character!");
+      if (this.organizationalUnitName.length < 2) {
+        alert("Your organizational unit name should contain at least 2 characters!");
         return false;
       } else if (this.organizationalUnitName.length > 20) {
         alert("Your organizational unit name shouldn't contain more than 20 characters!");
+        return false;
+      } else if(this.organizationalUnitName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
+          alert("Your organizational unit name shouldn't contain special characters.");
+          return false;
+      } else if (this.organizationalUnitName.match(/\d/g)) {
+        alert("Your organizational unit name shouldn't contain numbers!");
         return false;
       }
       return true;
@@ -266,23 +311,26 @@ export default {
       return true;
     },
     validCountryCode() {
-      if (this.countryCode.length < 2) {
-        alert("Your country code should contain at least 2 characters!");
-        return false;
-      } else if (this.countryCode.length > 20) {
-        alert("Your country code shouldn't contain more than 20 characters!");
+      if (!/^[A-Z]{2,3}$/.test(this.countryCode)) {
+        alert("You have entered an invalid country code!");
         return false;
       }
       return true;
     },
     validAlias() {
-      if (this.alias.length < 1) {
+      if(this.alias.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) {
+          alert("Your alias shouldn't contain special characters.");
+          return false;
+      } else if (this.alias.match(/[ ]/g)) {
+        alert("Your alias shouldn't contain spaces!");
+        return false;
+      } else if (this.alias.length < 1) {
         alert("Your alias should contain at least 1 character!");
         return false;
       } else if (this.alias.length > 20) {
         alert("Your alias shouldn't contain more than 20 characters!");
         return false;
-      }
+      } 
       return true;
     },
     validEndDate() {
@@ -298,11 +346,17 @@ export default {
       } else if(this.endDate.match(/[a-zA-Z]/g)) {
           alert("Your end date shouldn't contain letters.");
           return false;
-      } else if(this.endDate.match(/[!@#$%^&*,:'/."]/g)) {
+      } else if(this.endDate.match(/[!@#$%^&*,:'/.<>+\\"]/g)) {
           alert("Your end date shouldn't contain special character other than [-].");
           return false;
+      } else if (this.endDate.match(/[ ]/g)) {
+        alert("Your end date shouldn't contain spaces!");
+        return false;
       } else if(!this.endDate.match(/[2][0-9]{3}-[0-1][0-9]-[0-3][0-9]/g)) {
           alert("Your end date is not set in right format.");
+          return false;
+      } else if(this.endDate.match(/[2][0-9]{3}-[0-1][0-9]-[0-3][0-9][-]+/g)) {
+          alert("Your end date can't contain - at end of input.");
           return false;
       }
       var endDateSplit = this.endDate.split('-');

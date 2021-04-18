@@ -9,7 +9,7 @@
           label="Email"
           v-model="userEmail"
           prepend-icon="mdi-account-circle"
-        />
+        /> 
         <v-text-field
           :type="showPassword ? 'text' : 'password'"
           label="Password"
@@ -18,8 +18,13 @@
           :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append="showPassword = !showPassword"
         />
+        <a class="center" href="/recoverPasswordEmail">You forget your password?</a>
       </v-form>
+      
     </v-card-text>
+    <div >
+        
+    </div>
     <v-card-actions>
       <v-btn color="primary" class="mx-auto mb-5" large v-on:click="logIn">
         Log in
@@ -36,7 +41,7 @@ function redirectLoggedUser() {
   const config = {
     headers: { Authorization: `Bearer ${tokenString}` },
   };
-  axios.get("http://localhost:8080/users/redirectMeToMyHomePage", config).then(
+  axios.get("https://localhost:8080/users/redirectMeToMyHomePage", config).then(
     (response) => {
       console.log(response);
       window.location.href = response.data;
@@ -63,7 +68,7 @@ export default {
   methods: {
     logIn() {
       this.$http
-        .post("http://localhost:8080/users/login", this.user)
+        .post("https://localhost:8080/users/login", this.user)
         .then((resp) => {
           console.log(resp.data);
           localStorage.setItem("token", resp.data.accessToken);
@@ -81,3 +86,24 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.helloMessage {
+  font-weight: bolder;
+  font-size: 20px;
+  height: 50px;
+}
+
+.center {
+  
+  padding: 31px;
+  text-align: center;
+}
+
+#certificateCard {
+  margin-top: 5%;
+  width: 70%;
+  height: 760px;
+  overflow-y: scroll;
+}
+</style>

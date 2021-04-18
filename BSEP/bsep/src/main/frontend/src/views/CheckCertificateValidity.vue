@@ -62,7 +62,7 @@ export default {
     checkValidity() {
       this.$http
         .get(
-          "http://localhost:8080/certificate/" +
+          "https://localhost:8080/certificate/" +
             this.serialNumber,
           {
             headers: {

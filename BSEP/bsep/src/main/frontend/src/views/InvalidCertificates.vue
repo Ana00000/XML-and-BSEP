@@ -75,7 +75,7 @@ export default {
     },
     getInvalidCertificates() {
       this.$http
-        .get("http://localhost:8080/certificate/allRevokedOrExpired",{
+        .get("https://localhost:8080/certificate/allRevokedOrExpired",{
         headers:{
             'Authorization':"Bearer "+ this.token
         }})

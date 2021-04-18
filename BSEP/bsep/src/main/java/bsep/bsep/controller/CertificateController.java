@@ -26,7 +26,7 @@ import bsep.bsep.service.UserService;
 import bsep.bsep.validation.CertificateValidation;
 
 @Controller
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "https://localhost:8081")
 @RequestMapping(value = "/certificate", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CertificateController {
 
