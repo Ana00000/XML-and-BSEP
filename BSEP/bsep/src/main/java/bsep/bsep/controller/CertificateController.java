@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +35,7 @@ public class CertificateController {
 	private CertificateService certificateService;
 	private UserService userService;
 	private CertificateValidation certificateValidation;
+	private Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	@Autowired
 	public CertificateController(CertificateService certificateService, UserService userService) {

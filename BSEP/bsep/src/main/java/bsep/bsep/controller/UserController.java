@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,6 +60,8 @@ public class UserController {
 	private final RecoverPasswordTokenService recoverPasswordTokenService;
 
 	private final ConfirmationTokenService confirmationTokenService;
+	
+	private Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	@Autowired
 	public UserController(UserService userService, AuthorityService authorityService,
@@ -70,30 +74,40 @@ public class UserController {
 
 	}
 
-	@GetMapping("/findAll")
-	public ResponseEntity<List<Users>> findAll() {
+	@GetMapping("/findAllUsers")
+	public ResponseEntity<List<Users>> findAllUsers() {
+		logger.info("action=findAllUsers status=success");
 		return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
 	}
 
 	@GetMapping("/getUsersEmails")
 	public ResponseEntity<List<String>> findAllUsersEmails() {
+		logger.info("action=getUsersEmails status=success");
 		return new ResponseEntity<>(userService.findAllUsersEmails(), HttpStatus.OK);
 	}
 
 	@GetMapping("/redirectMeToMyHomePage")
 	public String RedirectionToHome() {
+		logger.info("action=redirectMeToMyHomePage status=success");
 		return "https://localhost:8081/";
 	}
 	
 	@PostMapping("/recoverPasswordWithToken")
 	public ResponseEntity<Boolean> recoveringPassword(@RequestBody EmailDTO recoveryPasswordRequestEmail) {
 		if (!userValidation.validUserEmail(recoveryPasswordRequestEmail.getEmailOfUser())) {
+			String message = "User email is not valid";
+			logger.error("action=recoverPasswordWithToken status=faliure message={}", message);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		Users user = userService.findByUserEmail(recoveryPasswordRequestEmail.getEmailOfUser());
-		if (user==null || !user.isConfirmed())
+		if (user==null || !user.isConfirmed()) {
+			String message = "User not found or not confirmed";
+			logger.error("action=recoverPasswordWithToken status=faliure message={}", message);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+			
 		recoverPasswordTokenService.saveTokenAndSendEmailToUser(new RecoverPasswordToken(user));
+		logger.info("action=recoverPasswordWithToken status=success");
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -101,8 +115,13 @@ public class UserController {
 	public ResponseEntity<Users> findUserByToken(@RequestBody TokenDTO token) {
 		RecoverPasswordToken recoverPasswordToken = recoverPasswordTokenService.findRecoverPasswordTokenByToken(token.getToken());
 		if (recoverPasswordToken != null && recoverPasswordToken.getUsers()!=null)
-		return new ResponseEntity<>(recoverPasswordToken.getUsers(), HttpStatus.OK);
+		{
+			logger.info("action=findUserByToken status=success");
+			return new ResponseEntity<>(recoverPasswordToken.getUsers(), HttpStatus.OK);
+		}
 		
+		String message = "User not found";
+		logger.error("action=findUserByToken status=failure message={}", message);
 		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 	}
 	
@@ -110,17 +129,25 @@ public class UserController {
 	public ResponseEntity<Boolean> changePassword(@RequestBody UserChangePasswordDTO userChangePasswordDTO) {
 		if (!userValidation.validUserEmail(userChangePasswordDTO.getEmailOfUser()) || !userValidation.validPassword(userChangePasswordDTO.getPassword()) ||
 				!userValidation.validPassword(userChangePasswordDTO.getConfirmedPassword()) || !userValidation.validPasswordAndConfirmPassword(userChangePasswordDTO))
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			{
+				String message = "Bad credentials";
+				logger.error("action=changePassword status=failure message={}", message);
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
 		try {
 			Users users = userService.findByUserEmail(userChangePasswordDTO.getEmailOfUser());
 			if (users ==null) {
+				String message = "User not found";
+				logger.error("action=changePassword status=failure message={}", message);
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 			users.setPassword(userChangePasswordDTO.getPassword());
 			userService.updatePassword(users);
+			logger.info("action=changePassword status=success");
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
-
+			
+			logger.error("action=changePassword status=failure message={}", e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
@@ -144,29 +171,40 @@ public class UserController {
 		if(user.isConfirmed())
 		{
 			String jwt = tokenUtils.generateToken(user.getUserEmail());
+			logger.info("action=login status=success");
 			return ResponseEntity.ok(new UserTokenState(jwt, tokenUtils.getExpiredIn(), user.getTypeOfUser().name()));
 		}
 		
 		System.out.println("bad request");
+		String message = "Bad request";
+		logger.error("action=login status=failure message={}", message);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@PostMapping(value = "/register", consumes = "application/json")
 	public ResponseEntity<Users> addUser(@RequestBody UserDTO userRequest) {
 		if (userRequest.getTypeOfUser().toUpperCase().equals("ADMIN") || !userValidation.validUser(userRequest)) {
+			String message = "User info is not valid";
+			logger.error("action=register status=failure message={}", message);
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}else if (userService.findByUserEmail(userRequest.getUserEmail()) != null) {
 			System.out.println("Username already exists.");
+			String message = "User email already exists";
+			logger.error("action=register status=failure message={}", message);
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		
 		try {
 			Users userWithPermissions = addPermissionsForUser(userRequest);
 			Users userRegistered = userService.save(userWithPermissions);
+			logger.info("action=register status=success");
 			return new ResponseEntity<>(userRegistered, HttpStatus.CREATED);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("action=register status=failure message={}", e.getMessage());
 		}
+		String message="Bad request";
+		logger.error("action=register status=failure message={}", message);
 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 	}
 	
@@ -179,14 +217,18 @@ public class UserController {
 			ConfirmationToken confirmationToken = confirmationTokenService.findByConfirmationToken(token);
 			if (confirmationToken != null) {
 				setConfirmedAccount(confirmationToken);
+				logger.info("action=confirmAccount status=success");
 				return new ResponseEntity<>(HttpStatus.OK);
 				
 			} else {
+				String message = "Confirmation token is not valid";
+				logger.error("action=confirmAccount status=failure message={}", message);
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 
 		} catch (Exception e) {
 
+			logger.error("action=confirmAccount status=failure message={}", e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
