@@ -85,7 +85,6 @@ export default {
         if (!this.validPassword() || !this.validConfirmPassword() || !this.validPasswords()) {
             return;
         }
-        alert(this.password+" "+this.confirmPassword)
         this.$http
         .put("https://localhost:8080/users/changePassword", {
             emailOfUser: this.userEmail,
