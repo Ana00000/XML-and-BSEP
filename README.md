@@ -29,3 +29,7 @@
     
     ex. "General-decore: added badges in readme" 
     
+## Diagram
+- Link to diagrams.net:
+  https://app.diagrams.net/#HAna00000%2FXML-and-BSEP%2Fdevelop%2FXML%2FUntitled%20Diagram.drawio
+    
