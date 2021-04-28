@@ -5,12 +5,15 @@ import (
 	"./model"
 	"./repository"
 	"./service"
+	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"log"
+	"net/http"
 	_ "os"
 	_ "strconv"
 )
@@ -42,10 +45,9 @@ func initHandler(service *service.ProductService) *handler.ProductHandler{
 func handleFunc(handler *handler.ProductHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
-	router.HandleFunc("/", nil).Methods("GET")
-	router.HandleFunc("/", nil).Methods("POST")
+	router.HandleFunc("/", handler.CreateProduct).Methods("POST")
 
-//	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
 }
 
 func main() {
