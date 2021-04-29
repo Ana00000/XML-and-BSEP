@@ -26,7 +26,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.User{}, &model.RegisteredUser{})
+	db.AutoMigrate(&model.User{}, &model.RegisteredUser{}, &model.Admin{})
 	return db
 }
 
@@ -38,12 +38,20 @@ func initRegisteredUserRepo(database *gorm.DB) *repository.RegisteredUserReposit
 	return &repository.RegisteredUserRepository { Database: database }
 }
 
+func initAdminRepo(database *gorm.DB) *repository.AdminRepository{
+	return &repository.AdminRepository { Database: database }
+}
+
 func initUserService(repo *repository.UserRepository) *service.UserService{
 	return &service.UserService { Repo: repo }
 }
 
 func initRegisteredUserService(repo *repository.RegisteredUserRepository) *service.RegisteredUserService{
 	return &service.RegisteredUserService { Repo: repo }
+}
+
+func initAdminService(repo *repository.AdminRepository) *service.AdminService{
+	return &service.AdminService { Repo: repo }
 }
 
 func initUserHandler(service *service.UserService) *handler.UserHandler{
@@ -54,11 +62,16 @@ func initRegisteredUserHandler(service *service.RegisteredUserService) *handler.
 	return &handler.RegisteredUserHandler { Service: service }
 }
 
-func handleFunc(userHandler *handler.UserHandler, registeredUserHandler *handler.RegisteredUserHandler){
+func initAdminHandler(service *service.AdminService) *handler.AdminHandler{
+	return &handler.AdminHandler { Service: service }
+}
+
+func handleFunc(userHandler *handler.UserHandler, registeredUserHandler *handler.RegisteredUserHandler, adminHandler *handler.AdminHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/user/", userHandler.CreateUser).Methods("POST")
 	router.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser).Methods("POST")
+	router.HandleFunc("/admin/", adminHandler.CreateAdmin).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
 }
@@ -67,9 +80,12 @@ func main() {
 	database := initDB()
 	userRepo := initUserRepo(database)
 	registeredUserRepo := initRegisteredUserRepo(database)
+	adminRepo := initAdminRepo(database)
 	userService := initUserService(userRepo)
 	registeredUserService := initRegisteredUserService(registeredUserRepo)
+	adminService := initAdminService(adminRepo)
 	userHandler := initUserHandler(userService)
 	registeredUserHandler := initRegisteredUserHandler(registeredUserService)
-	handleFunc(userHandler, registeredUserHandler)
+	adminHandler := initAdminHandler(adminService)
+	handleFunc(userHandler, registeredUserHandler, adminHandler)
 }
