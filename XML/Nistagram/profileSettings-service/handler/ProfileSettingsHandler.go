@@ -28,6 +28,10 @@ func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWrit
 		UserId: profileSettingsDTO.UserId,
 		UserVisibility:      profileSettingsDTO.UserVisibility,
 		MessageApprovalType:       profileSettingsDTO.MessageApprovalType,
+		MutedProfiles: nil,
+		BlockedProfiles: nil,
+		ApprovedMessageProfiles: nil,
+		RejectedMessageProfiles: nil,
 	}
 
 	err = handler.Service.CreateProfileSettings(&profileSettings)
