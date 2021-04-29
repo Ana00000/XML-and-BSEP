@@ -29,6 +29,7 @@ func (handler *CampaignHandler) CreateCampaign(w http.ResponseWriter, r *http.Re
 		ID:                     uuid.UUID{},
 		Advertisements:         nil,
 		ExposureTime:           expTime,
+		ChosenGroups:			nil,
 	}
 
 	err = handler.Service.CreateCampaign(&campaign)

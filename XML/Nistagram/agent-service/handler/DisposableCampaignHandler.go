@@ -30,6 +30,7 @@ func (handler *DisposableCampaignHandler) CreateDisposableCampaign(w http.Respon
 			ID:                     uuid.UUID{},
 			Advertisements:         nil,
 			ExposureTime:           expTime,
+			ChosenGroups:			nil,
 		},
 	}
 

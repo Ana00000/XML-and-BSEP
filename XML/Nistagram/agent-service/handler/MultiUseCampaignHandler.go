@@ -31,6 +31,7 @@ func (handler *MultiUseCampaignHandler) CreateMultiUseCampaign(w http.ResponseWr
 			ID:                     uuid.UUID{},
 			Advertisements:         nil,
 			ExposureTime:           expoTime,
+			ChosenGroups:			nil,
 		},
 		ExpiryTime: expiTime,
 		Frequency:  multiUseCampaignDTO.Frequency,
