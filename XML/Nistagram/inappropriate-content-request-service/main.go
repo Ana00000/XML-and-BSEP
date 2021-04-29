@@ -26,7 +26,8 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.InappropriateContentRequest{}, &model.PostICR{}, &model.StoryICR{}, &model.CommentICR{})
+	db.AutoMigrate(&model.InappropriateContentRequest{}, &model.PostICR{}, &model.StoryICR{},
+	               &model.CommentICR{}, &model.VerificationRequest{}, &model.AgentRegistrationRequest{})
 	return db
 }
 
@@ -46,6 +47,14 @@ func initCommentICRRepo(database *gorm.DB) *repository.CommentICRRepository{
 	return &repository.CommentICRRepository { Database: database }
 }
 
+func initVerificationRequestRepo(database *gorm.DB) *repository.VerificationRequestRepository{
+	return &repository.VerificationRequestRepository { Database: database }
+}
+
+func initAgentRegistrationRequestRepo(database *gorm.DB) *repository.AgentRegistrationRequestRepository{
+	return &repository.AgentRegistrationRequestRepository { Database: database }
+}
+
 func initInappropriateContentRequestServices(repo *repository.InappropriateContentRequestRepository) *service.InappropriateContentRequestService{
 	return &service.InappropriateContentRequestService { Repo: repo }
 }
@@ -60,6 +69,14 @@ func initStoryICRServices(repo *repository.StoryICRRepository) *service.StoryICR
 
 func initCommentICRServices(repo *repository.CommentICRRepository) *service.CommentICRService{
 	return &service.CommentICRService { Repo: repo }
+}
+
+func initVerificationRequestServices(repo *repository.VerificationRequestRepository) *service.VerificationRequestService{
+	return &service.VerificationRequestService { Repo: repo }
+}
+
+func initAgentRegistrationRequestServices(repo *repository.AgentRegistrationRequestRepository) *service.AgentRegistrationRequestService{
+	return &service.AgentRegistrationRequestService { Repo: repo }
 }
 
 func initInappropriateContentRequestHandler(service *service.InappropriateContentRequestService) *handler.InappropriateContentRequestHandler{
@@ -78,31 +95,53 @@ func initCommentICRHandler(service *service.CommentICRService) *handler.CommentI
 	return &handler.CommentICRHandler { Service: service }
 }
 
+func initVerificationRequestHandler(service *service.VerificationRequestService) *handler.VerificationRequestHandler{
+	return &handler.VerificationRequestHandler { Service: service }
+}
+
+func initAgentRegistrationRequestHandler(service *service.AgentRegistrationRequestService) *handler.AgentRegistrationRequestHandler{
+	return &handler.AgentRegistrationRequestHandler { Service: service }
+}
+
 func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContentRequestHandler, postICRHandler *handler.PostICRHandler,
-	storyICRHandler *handler.StoryICRHandler, commentICRHandler *handler.CommentICRHandler){
+	storyICRHandler *handler.StoryICRHandler, commentICRHandler *handler.CommentICRHandler, verificationRequestHandler *handler.VerificationRequestHandler,
+	agentRegistrationRequestHandler *handler.AgentRegistrationRequestHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/inappropriateContentRequest", inappropriateContentRequestHandler.CreateInappropriateContentRequest).Methods("POST")
 	router.HandleFunc("/postICR", postICRHandler.CreatePostICR).Methods("POST")
 	router.HandleFunc("/storyICR", storyICRHandler.CreateStoryICR).Methods("POST")
 	router.HandleFunc("/commentICR", commentICRHandler.CreateCommentICR).Methods("POST")
+	router.HandleFunc("/verificationRequest", verificationRequestHandler.CreateVerificationRequest).Methods("POST")
+	router.HandleFunc("/agentRegistrationRequestHandler", agentRegistrationRequestHandler.CreateAgentRegistrationRequest).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8083"), router))
 }
 
 func main() {
 	database := initDB()
+
 	inappropriateContentRequestRepo := initInappropriateContentRequestRepo(database)
 	postICRRepo := initPostICRRepo(database)
 	storyICRRepo := initStoryICRRepo(database)
 	commentICRRepo := initCommentICRRepo(database)
+	verificationRequestRepo := initVerificationRequestRepo(database)
+	agentRegistrationRequestRepo := initAgentRegistrationRequestRepo(database)
+
 	inappropriateContentRequestService := initInappropriateContentRequestServices(inappropriateContentRequestRepo)
 	postICRService := initPostICRServices(postICRRepo)
 	storyICRService := initStoryICRServices(storyICRRepo)
 	commentICRService := initCommentICRServices(commentICRRepo)
+	verificationRequestService := initVerificationRequestServices(verificationRequestRepo)
+	agentRegistrationRequestService := initAgentRegistrationRequestServices(agentRegistrationRequestRepo)
+
 	inappropriateContentRequestHandler := initInappropriateContentRequestHandler(inappropriateContentRequestService)
 	postICRHandler := initPostICRHandler(postICRService)
 	storyICRHandler := initStoryICRHandler(storyICRService)
 	commentICRHandler := initCommentICRHandler(commentICRService)
-	handleFunc(inappropriateContentRequestHandler, postICRHandler,storyICRHandler, commentICRHandler)
+	verificationRequestRHandler := initVerificationRequestHandler(verificationRequestService)
+	agentRegistrationRequestHandler := initAgentRegistrationRequestHandler(agentRegistrationRequestService)
+
+	handleFunc(inappropriateContentRequestHandler, postICRHandler,storyICRHandler, commentICRHandler,
+		verificationRequestRHandler,agentRegistrationRequestHandler)
 }
