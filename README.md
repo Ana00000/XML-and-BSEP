@@ -28,6 +28,11 @@
     [XML/BSEP/General] + "-" + [feat/refactor/test/fix/decore] + ": " + [commit_description]
     
     ex. "General-decore: added badges in readme" 
+- Branch name:
+
+    [XML/BSEP] + "-feature/" + [branch_description]
+    
+    ex. "XML-feature/log-file" 
     
 ## Diagram
 - Link to diagrams.net:
