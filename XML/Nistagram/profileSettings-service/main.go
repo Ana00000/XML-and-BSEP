@@ -45,7 +45,7 @@ func initHandler(service *service.ProfileSettingsService) *handler.ProfileSettin
 func handleFunc(handler *handler.ProfileSettingsHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
-	router.HandleFunc("/", handler.CreateProfileSettings).Methods("POST")
+	router.HandleFunc("/profile_settings/", handler.CreateProfileSettings).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
 }
