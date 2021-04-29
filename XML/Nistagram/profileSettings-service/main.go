@@ -1,6 +1,7 @@
 package main
 
 import (
+	registerUserPath "../user-service/model"
 	"./handler"
 	"./model"
 	"./repository"
@@ -26,7 +27,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.ProfileSettings{})
+	db.AutoMigrate(&model.ProfileSettings{}, &registerUserPath.RegisteredUser{})
 	return db
 }
 
