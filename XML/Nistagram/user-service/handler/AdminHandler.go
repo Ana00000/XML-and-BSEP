@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"net/http"
 	_ "strconv"
+	"time"
 )
 
 type AdminHandler struct {
@@ -22,7 +23,8 @@ func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
+	layout := "2006-01-02T15:04:05.000Z"
+	dateOfBirth,_ :=time.Parse(layout,adminDTO.DateOfBirth)
 	admin := model.Admin{
 		User : model.User{
 			ID:          uuid.UUID{},
@@ -33,7 +35,7 @@ func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request)
 			FirstName:   adminDTO.FirstName,
 			LastName:    adminDTO.LastName,
 			Gender:      adminDTO.Gender,
-			DateOfBirth: adminDTO.DateOfBirth,
+			DateOfBirth: dateOfBirth,
 			Website:     adminDTO.Website,
 			Biography:   adminDTO.Biography,
 		},
