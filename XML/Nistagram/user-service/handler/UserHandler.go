@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"net/http"
 	_ "strconv"
+	"time"
 )
 
 type UserHandler struct {
@@ -22,7 +23,8 @@ func (handler *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
+	layout := "2006-01-02T15:04:05.000Z"
+	dateOfBirth,_ :=time.Parse(layout,userDTO.DateOfBirth)
 	user := model.User{
 		ID:          uuid.UUID{},
 		Username: 	 userDTO.Username,
@@ -32,7 +34,7 @@ func (handler *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		FirstName:   userDTO.FirstName,
 		LastName:    userDTO.LastName,
 		Gender:      userDTO.Gender,
-		DateOfBirth: userDTO.DateOfBirth,
+		DateOfBirth: dateOfBirth,
 		Website:     userDTO.Website,
 		Biography:   userDTO.Biography,
 	}

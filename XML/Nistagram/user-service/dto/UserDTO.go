@@ -2,7 +2,6 @@ package dto
 
 import (
 	"../model"
-	"time"
 )
 
 type UserDTO struct {
@@ -13,7 +12,7 @@ type UserDTO struct {
 	FirstName string `json: "firstName"`
 	LastName string `json: "lastName"`
 	Gender model.Gender `json:"gender"`
-	DateOfBirth time.Time `json: "dateOfBirth"`
+	DateOfBirth string `json: "dateOfBirth"`
 	Website string `json: "website"`
 	Biography string `json: "biography"`
 }
