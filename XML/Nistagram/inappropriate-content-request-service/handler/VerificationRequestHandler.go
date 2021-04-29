@@ -28,6 +28,7 @@ func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.Resp
 		FirstName:   			   verificationRequestDTO.FirstName,
 		LastName:     			   verificationRequestDTO.LastName,
 		OfficialDocumentPath:      verificationRequestDTO.OfficialDocumentPath,
+		UserCategory:      		   verificationRequestDTO.UserCategory,
 	}
 
 	err = handler.Service.CreateVerificationRequest(&verificationRequest)
