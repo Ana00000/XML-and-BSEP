@@ -21,8 +21,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Message{})
-	db.AutoMigrate(&model.MessageContent{})
+	db.AutoMigrate(&model.MessageContent{}, &model.Message{})
 	return db
 }
 
