@@ -8,7 +8,7 @@ import (
 
 type Message struct {
 	ID uuid.UUID `json:"id"`
-	MessageContentID uuid.UUID `json:"messageContentID"`
+	MessageContentID uuid.UUID `json:"messageContentID" gorm:"not null"`
 	IsDisposable bool `json:"isDisposable" gorm:"not null"`
 	CreationDate time.Time `json:"creationDate" gorm:"not null"`
 	SenderUserID uuid.UUID `json:"senderUserID" gorm:"not null"`

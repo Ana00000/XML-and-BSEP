@@ -1,6 +1,7 @@
 package model
 
 import (
+	postPath "../../post-service/model"
 	storyPath "../../story-service/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -14,6 +15,7 @@ type Location struct {
 	City string `json:"city" gorm:"not null"`
 	StreetName string `json:"streetName" gorm:"not null"`
 	StreetNumber string `json:"streetNumber" gorm:"not null"`
+	Posts []postPath.Post `json:"posts" gorm:"foreignKey:LocationID"`
 	Stories []storyPath.Story `json:"stories" gorm:"foreignKey:LocationId"`
 }
 
