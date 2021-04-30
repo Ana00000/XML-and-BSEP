@@ -8,7 +8,7 @@ import (
 type Activity struct {
 	ID uuid.UUID `json:"id"`
 	PostID uuid.UUID `json:"postID" gorm:"not null"`
-	Post Post
+	// Post Post
 	UserID uuid.UUID `json:"userID" gorm:"not null"`
 	Liked bool `json:"liked" gorm:"not null"`
 	IsFavorite bool `json:"isFavorite" gorm:"not null"`
