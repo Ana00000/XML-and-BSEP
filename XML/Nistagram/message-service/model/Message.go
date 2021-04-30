@@ -11,8 +11,8 @@ type Message struct {
 	MessageContentID uuid.UUID `json:"messageContentID" gorm:"not null"`
 	IsDisposable bool `json:"isDisposable" gorm:"not null"`
 	CreationDate time.Time `json:"creationDate" gorm:"not null"`
-	SenderUserID string `json:"senderUserID" gorm:"not null"`
-	ReceiverUserID string `json:"receiverUserID" gorm:"not null"`
+	SenderUserID uuid.UUID `json:"senderUserID" gorm:"not null"`
+	ReceiverUserID uuid.UUID `json:"receiverUserID" gorm:"not null"`
 	IsDeleted bool `json:"isDeleted" gorm:"not null"`
 }
 

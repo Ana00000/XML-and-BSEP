@@ -8,8 +8,8 @@ type MessageDTO struct {
 	MessageContentID  uuid.UUID `json:"messageContentID"`
 	IsDisposable bool `json:"isDisposable"`
 	CreationDate string `json:"creationDate"`
-	SenderUserID string `json:"senderUserID"`
-	ReceiverUserID string `json:"receiverUserID"`
+	SenderUserID uuid.UUID `json:"senderUserID"`
+	ReceiverUserID uuid.UUID `json:"receiverUserID"`
 	IsDeleted bool `json:"isDeleted"`
 }
 
