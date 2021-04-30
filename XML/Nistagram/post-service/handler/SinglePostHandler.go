@@ -33,7 +33,7 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 			Description: singlePostDTO.Description,
 			CreationDate: creationDate,
 			UserID: singlePostDTO.UserID,
-			// Location
+			LocationID: singlePostDTO.LocationID,
 			IsDeleted: singlePostDTO.IsDeleted,
 		},
 		// Content

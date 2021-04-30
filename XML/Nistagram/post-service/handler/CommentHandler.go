@@ -33,6 +33,7 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 		CreationDate: creationDate,
 		UserID: commentDTO.UserID,
 		PostID: commentDTO.PostID,
+		CommentICRs: nil,
 	}
 
 	err = handler.Service.CreateComment(&comment)

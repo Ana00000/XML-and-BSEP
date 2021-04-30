@@ -33,10 +33,9 @@ func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.
 			Description: postAlbumDTO.Description,
 			CreationDate: creationDate,
 			UserID: postAlbumDTO.UserID,
-			// Location
+			LocationID: postAlbumDTO.LocationID,
 			IsDeleted: postAlbumDTO.IsDeleted,
 		},
-		// List<Content>
 	}
 	err = handler.Service.CreatePostAlbum(&postAlbum)
 	if err != nil {
