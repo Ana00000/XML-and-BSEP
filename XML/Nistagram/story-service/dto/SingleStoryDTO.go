@@ -2,15 +2,14 @@ package dto
 
 import (
 	contentPath "../../content-service/model"
-	locationPath "../../location-service/model"
 	"../model"
-	"time"
+	"github.com/google/uuid"
 )
 
 type SingleStoryDTO struct {
-	CreationDate time.Time `json: "creationDate"`
+	CreationDate string `json:"creationDate"`
 	UserId string `json:"userId"`
-	Location locationPath.Location `json:"location"`
+	LocationId uuid.UUID `json:"locationId"`
 	IsDeleted bool `json:"isDeleted"`
 	Type model.StoryType `json:"storyType"`
 	Content contentPath.Content `json:"content"`

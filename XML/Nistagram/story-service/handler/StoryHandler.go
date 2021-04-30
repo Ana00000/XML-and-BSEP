@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"net/http"
 	_ "strconv"
+	"time"
 )
 
 type StoryHandler struct {
@@ -23,13 +24,16 @@ func (handler *StoryHandler) CreateStory(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	layout := "2006-01-02T15:04:05.000Z"
+	creationDate,_ :=time.Parse(layout,storyDTO.CreationDate)
 	story := model.Story{
 		ID:          uuid.UUID{},
-		CreationDate: storyDTO.CreationDate,
+		CreationDate: creationDate,
 		UserId:      storyDTO.UserId,
-		Location:      storyDTO.Location,
+		LocationId: storyDTO.LocationId,
 		IsDeleted:      storyDTO.IsDeleted,
 		Type:      storyDTO.Type,
+		StoryICRs: nil,
 
 	}
 
