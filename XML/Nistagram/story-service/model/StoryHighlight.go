@@ -6,9 +6,10 @@ import (
 )
 
 type StoryHighlight struct {
-	ID uuid.UUID `json: "id"`
+	ID uuid.UUID `json:"id"`
 	UserId string `json:"userId" gorm:"not null"`
 	Title string `json:"title" gorm:"not null"`
+	Stories []SingleStory `gorm:"many2many:single_story_story_highlights"`
 
 }
 
