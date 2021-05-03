@@ -6,6 +6,5 @@ import (
 
 type SingleStory struct {
 	Story
-	Content contentPath.Content `json:"content" gorm:"not null"`
-
+	StoryContent contentPath.SingleStoryContent `json:"story_content" gorm:"foreignKey:SingleStoryId"`
 }
