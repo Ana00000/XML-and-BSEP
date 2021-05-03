@@ -1,6 +1,7 @@
 package model
 
 import (
+	messageContentPath "../../content-service/model"
 	commentICRPath "../../requests-service/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -9,7 +10,7 @@ import (
 
 type Comment struct {
 	ID uuid.UUID `json:"id"`
-	ContentID uuid.UUID `json:"contentID" gorm:"not null"`
+	Content messageContentPath.CommentContent `json:"content" gorm:"foreignKey:CommentId"`
 	CreationDate time.Time `json:"creationDate" gorm:"not null"`
 	UserID uuid.UUID `json:"userID" gorm:"not null"`
 	PostID uuid.UUID `json:"postID" gorm:"not null"`
