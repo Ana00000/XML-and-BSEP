@@ -7,8 +7,8 @@ import (
 
 type Advertisement struct {
 	ID uuid.UUID `json:"id"`
-	AdvertisementContentId string `json:"advertisement_content_id"`
-	CampaignRefer uuid.UUID `json:"campaign_refer"`
+	AdvertisementContentId string `json:"advertisement_content_id" gorm:"not null"`
+	CampaignId uuid.UUID `json:"campaign_id" gorm:"not null"`
 }
 
 func(advertisement * Advertisement) BeforeCreate(scope *gorm.DB) error {

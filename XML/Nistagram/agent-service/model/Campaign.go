@@ -9,7 +9,7 @@ import (
 
 type Campaign struct {
 	ID uuid.UUID `json:"id"`
-	Advertisements []Advertisement `json:"advertisements" gorm:"foreignKey:CampaignRefer"`
+	Advertisements []Advertisement `json:"advertisements" gorm:"foreignKey:CampaignId"`
 	ExposureTime time.Time `json:"exposure_time" gorm:"not null"`
 	ChosenGroups []user.UserCategory `gorm:"many2many:campaign_chosen_groups"`
 }
