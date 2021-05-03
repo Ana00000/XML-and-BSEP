@@ -1,13 +1,14 @@
 package model
 
 import (
+	advertisementContentPath "../../content-service/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Advertisement struct {
 	ID uuid.UUID `json:"id"`
-	AdvertisementContentId string `json:"advertisement_content_id" gorm:"not null"`
+	AdvertisementContent advertisementContentPath.AdvertisementContent `json:"advertisement_content_id" gorm:"foreignKey:AdvertisementId"`
 	CampaignId uuid.UUID `json:"campaign_id" gorm:"not null"`
 }
 
