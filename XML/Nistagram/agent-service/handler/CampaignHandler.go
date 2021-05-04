@@ -27,9 +27,8 @@ func (handler *CampaignHandler) CreateCampaign(w http.ResponseWriter, r *http.Re
 	expTime,_ :=time.Parse(layout,campaignDTO.ExposureTime)
 	campaign := model.Campaign{
 		ID:                     uuid.UUID{},
-		Advertisements:         nil,
+		//Advertisements:         nil,
 		ExposureTime:           expTime,
-		ChosenGroups:			nil,
 	}
 
 	err = handler.Service.CreateCampaign(&campaign)

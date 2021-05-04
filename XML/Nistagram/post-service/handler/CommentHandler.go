@@ -29,11 +29,11 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 
 	comment := model.Comment{
 		ID: uuid.UUID{},
-		ContentID: commentDTO.ContentID,
+		//ContentID: commentDTO.ContentID,
 		CreationDate: creationDate,
 		UserID: commentDTO.UserID,
 		PostID: commentDTO.PostID,
-		CommentICRs: nil,
+		//CommentICRs: nil,
 	}
 
 	err = handler.Service.CreateComment(&comment)

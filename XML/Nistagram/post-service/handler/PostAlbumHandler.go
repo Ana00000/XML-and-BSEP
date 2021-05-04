@@ -33,7 +33,7 @@ func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.
 			Description: postAlbumDTO.Description,
 			CreationDate: creationDate,
 			UserID: postAlbumDTO.UserID,
-			LocationID: postAlbumDTO.LocationID,
+			LocationId: postAlbumDTO.LocationID,
 			IsDeleted: postAlbumDTO.IsDeleted,
 		},
 	}

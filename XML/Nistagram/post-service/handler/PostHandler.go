@@ -32,11 +32,11 @@ func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		Description:  postDTO.Description,
 		CreationDate: creationDate,
 		UserID:       postDTO.UserID,
-		Activities: nil,
-		Comments: nil,
-		LocationID: postDTO.LocationID,
+		//Activities: nil,
+		//Comments: nil,
+		LocationId: postDTO.LocationID,
 		IsDeleted: postDTO.IsDeleted,
-		PostICRs: nil,
+		//PostICRs: nil,
 	}
 
 	err = handler.Service.CreatePost(&post)

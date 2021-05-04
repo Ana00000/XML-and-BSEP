@@ -6,12 +6,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type PostMessageContentRepository struct {
+type PostMessageSubstanceRepository struct {
 	Database * gorm.DB
 }
 
-func (repo * PostMessageContentRepository) CreatePostMessageContent(postMessageContent *model.PostMessageContent) error {
-	result := repo.Database.Create(postMessageContent)
+func (repo * PostMessageSubstanceRepository) CreatePostMessageSubstance(postMessageSubstance *model.PostMessageSubstance) error {
+	result := repo.Database.Create(postMessageSubstance)
 	fmt.Print(result)
 	return nil
 }

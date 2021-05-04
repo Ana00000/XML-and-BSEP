@@ -24,8 +24,8 @@ func (handler *AgentRegistrationRequestHandler) CreateAgentRegistrationRequest(w
 	}
 
 	agentRegistrationRequest := model.AgentRegistrationRequest{
-		ID:         uuid.UUID{},
-		UserId:   	agentRegistrationRequestDTO.UserId,
+		ID:      uuid.UUID{},
+		AgentId: agentRegistrationRequestDTO.AgentId,
 	}
 
 	err = handler.Service.CreateAgentRegistrationRequest(&agentRegistrationRequest)

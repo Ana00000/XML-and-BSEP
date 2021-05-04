@@ -25,8 +25,7 @@ func (handler *AdvertisementHandler) CreateAdvertisement(w http.ResponseWriter, 
 
 	advertisement := model.Advertisement{
 		ID:                     uuid.UUID{},
-		AdvertisementContentId: advertisementDTO.AdvertisementContentId,
-		CampaignRefer:          advertisementDTO.CampaignRefer,
+		CampaignId:          advertisementDTO.CampaignId,
 	}
 
 	err = handler.Service.CreateAdvertisement(&advertisement)

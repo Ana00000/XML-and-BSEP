@@ -5,12 +5,12 @@ import (
 	"../repository"
 )
 
-type StoryMessageContentService struct {
-	Repo *repository.StoryMessageContentRepository
+type StoryMessageSubstanceService struct {
+	Repo *repository.StoryMessageSubstanceRepository
 }
 
-func (service * StoryMessageContentService) CreateStoryMessageContent(storyMessageContent *model.StoryMessageContent) error {
-	service.Repo.CreateStoryMessageContent(storyMessageContent)
+func (service * StoryMessageSubstanceService) CreateStoryMessageSubstance(storyMessageSubstance *model.StoryMessageSubstance) error {
+	service.Repo.CreateStoryMessageSubstance(storyMessageSubstance)
 	return nil
 }
 

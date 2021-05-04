@@ -5,5 +5,5 @@ import (
 )
 
 type AgentRegistrationRequestDTO struct {
-	UserId uuid.UUID `json:"userId"`
+	AgentId uuid.UUID `json:"userId"`
 }

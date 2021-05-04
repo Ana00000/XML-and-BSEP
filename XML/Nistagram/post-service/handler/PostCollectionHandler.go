@@ -27,7 +27,7 @@ func (handler *PostCollectionHandler) CreatePostCollection(w http.ResponseWriter
 		ID: uuid.UUID{},
 		Title: postCollectionDTO.Title,
 		UserID: postCollectionDTO.UserID,
-		Posts: nil,
+		//Posts: nil,
 	}
 
 	err = handler.Service.CreatePostCollection(&postCollection)

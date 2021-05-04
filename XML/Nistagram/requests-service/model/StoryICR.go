@@ -1,6 +1,8 @@
 package model
 
+import "github.com/google/uuid"
+
 type StoryICR struct {
 	InappropriateContentRequest
-	StoryId string `json: "storyId" gorm:"not null"`
+	StoryId uuid.UUID `json:"storyId" gorm:"not null"`
 }

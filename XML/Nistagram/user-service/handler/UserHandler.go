@@ -26,17 +26,19 @@ func (handler *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	layout := "2006-01-02T15:04:05.000Z"
 	dateOfBirth,_ :=time.Parse(layout,userDTO.DateOfBirth)
 	user := model.User{
-		ID:          uuid.UUID{},
-		Username: 	 userDTO.Username,
-		Password:    userDTO.Password,
-		Email:       userDTO.Email,
-		PhoneNumber: userDTO.PhoneNumber,
-		FirstName:   userDTO.FirstName,
-		LastName:    userDTO.LastName,
-		Gender:      userDTO.Gender,
-		DateOfBirth: dateOfBirth,
-		Website:     userDTO.Website,
-		Biography:   userDTO.Biography,
+		ID:               uuid.UUID{},
+		Username:         userDTO.Username,
+		Password:         userDTO.Password,
+		Email:            userDTO.Email,
+		PhoneNumber:      userDTO.PhoneNumber,
+		FirstName:        userDTO.FirstName,
+		LastName:         userDTO.LastName,
+		Gender:           userDTO.Gender,
+		DateOfBirth:      dateOfBirth,
+		Website:          userDTO.Website,
+		Biography:        userDTO.Biography,
+		//SentMessages:     nil,
+		//ReceivedMessages: nil,
 	}
 
 	err = handler.Service.CreateUser(&user)

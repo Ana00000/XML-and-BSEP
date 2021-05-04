@@ -26,7 +26,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.User{}, &model.RegisteredUser{}, &model.Admin{})
+	db.AutoMigrate(&model.User{}, &model.RegisteredUser{}, &model.Admin{}, &model.ClassicUser{}, &model.Agent{})
 	return db
 }
 
@@ -42,6 +42,14 @@ func initAdminRepo(database *gorm.DB) *repository.AdminRepository{
 	return &repository.AdminRepository { Database: database }
 }
 
+func initClassicUserRepo(database *gorm.DB) *repository.ClassicUserRepository{
+	return &repository.ClassicUserRepository { Database: database }
+}
+
+func initAgentRepo(database *gorm.DB) *repository.AgentRepository{
+	return &repository.AgentRepository { Database: database }
+}
+
 func initUserService(repo *repository.UserRepository) *service.UserService{
 	return &service.UserService { Repo: repo }
 }
@@ -52,6 +60,14 @@ func initRegisteredUserService(repo *repository.RegisteredUserRepository) *servi
 
 func initAdminService(repo *repository.AdminRepository) *service.AdminService{
 	return &service.AdminService { Repo: repo }
+}
+
+func initClassicUserService(repo *repository.ClassicUserRepository) *service.ClassicUserService{
+	return &service.ClassicUserService { Repo: repo }
+}
+
+func initAgentService(repo *repository.AgentRepository) *service.AgentService{
+	return &service.AgentService { Repo: repo }
 }
 
 func initUserHandler(service *service.UserService) *handler.UserHandler{
@@ -66,12 +82,22 @@ func initAdminHandler(service *service.AdminService) *handler.AdminHandler{
 	return &handler.AdminHandler { Service: service }
 }
 
-func handleFunc(userHandler *handler.UserHandler, registeredUserHandler *handler.RegisteredUserHandler, adminHandler *handler.AdminHandler){
+func initClassicUserHandler(service *service.ClassicUserService) *handler.ClassicUserHandler{
+	return &handler.ClassicUserHandler { Service: service }
+}
+
+func initAgentHandler(service *service.AgentService) *handler.AgentHandler{
+	return &handler.AgentHandler { Service: service }
+}
+
+func handleFunc(userHandler *handler.UserHandler, registeredUserHandler *handler.RegisteredUserHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, classicUserHandler *handler.ClassicUserHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/user/", userHandler.CreateUser).Methods("POST")
 	router.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser).Methods("POST")
 	router.HandleFunc("/admin/", adminHandler.CreateAdmin).Methods("POST")
+	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
+	router.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
 }
@@ -81,11 +107,17 @@ func main() {
 	userRepo := initUserRepo(database)
 	registeredUserRepo := initRegisteredUserRepo(database)
 	adminRepo := initAdminRepo(database)
+	classicUserRepo := initClassicUserRepo(database)
+	agentRepo := initAgentRepo(database)
 	userService := initUserService(userRepo)
 	registeredUserService := initRegisteredUserService(registeredUserRepo)
 	adminService := initAdminService(adminRepo)
+	classicUserService := initClassicUserService(classicUserRepo)
+	agentService := initAgentService(agentRepo)
 	userHandler := initUserHandler(userService)
 	registeredUserHandler := initRegisteredUserHandler(registeredUserService)
 	adminHandler := initAdminHandler(adminService)
-	handleFunc(userHandler, registeredUserHandler, adminHandler)
+	classicUserHandler := initClassicUserHandler(classicUserService)
+	agentHandler := initAgentHandler(agentService)
+	handleFunc(userHandler, registeredUserHandler, adminHandler,agentHandler,classicUserHandler)
 }

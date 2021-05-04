@@ -10,28 +10,28 @@ import (
 	"net/http"
 )
 
-type StoryMessageContentHandler struct {
-	Service * service.StoryMessageContentService
+type StoryMessageSubstanceHandler struct {
+	Service * service.StoryMessageSubstanceService
 }
 
-func (handler *StoryMessageContentHandler) CreateStoryMessageContent(w http.ResponseWriter, r *http.Request) {
-	var storyMessageContentDTO dto.StoryMessageContentDTO
-	err := json.NewDecoder(r.Body).Decode(&storyMessageContentDTO)
+func (handler *StoryMessageSubstanceHandler) CreateStoryMessageSubstance(w http.ResponseWriter, r *http.Request) {
+	var storyMessageSubstanceDTO dto.StoryMessageSubstanceDTO
+	err := json.NewDecoder(r.Body).Decode(&storyMessageSubstanceDTO)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	storyMessageContent := model.StoryMessageContent{
-		MessageContent : model.MessageContent{
-			ID: uuid.UUID{},
-			Text: storyMessageContentDTO.Text,
+	storyMessageSubstance := model.StoryMessageSubstance{
+		MessageSubstance: model.MessageSubstance{
+			ID:   uuid.UUID{},
+			Text: storyMessageSubstanceDTO.Text,
 		},
-		// Story
+		StoryId: storyMessageSubstanceDTO.StoryId,
 	}
 
-	err = handler.Service.CreateStoryMessageContent(&storyMessageContent)
+	err = handler.Service.CreateStoryMessageSubstance(&storyMessageSubstance)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)

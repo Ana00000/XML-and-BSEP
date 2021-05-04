@@ -1,7 +1,9 @@
 package dto
 
+import "github.com/google/uuid"
+
 type StoryICRDTO struct {
 	Note string `json:"note"`
-	UserId string `json:"userId"`
-	StoryId string `json:"storyId"`
+	UserId uuid.UUID `json:"userId"`
+	StoryId uuid.UUID `json:"storyId"`
 }

@@ -10,28 +10,28 @@ import (
 	"net/http"
 )
 
-type PostMessageContentHandler struct {
-	Service * service.PostMessageContentService
+type PostMessageSubstanceHandler struct {
+	Service * service.PostMessageSubstanceService
 }
 
-func (handler *PostMessageContentHandler) CreatePostMessageContent(w http.ResponseWriter, r *http.Request) {
-	var postMessageContentDTO dto.PostMessageContentDTO
-	err := json.NewDecoder(r.Body).Decode(&postMessageContentDTO)
+func (handler *PostMessageSubstanceHandler) CreatePostMessageSubstance(w http.ResponseWriter, r *http.Request) {
+	var postMessageSubstanceDTO dto.PostMessageSubstanceDTO
+	err := json.NewDecoder(r.Body).Decode(&postMessageSubstanceDTO)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	postMessageContent := model.PostMessageContent{
-		MessageContent : model.MessageContent{
-			ID: uuid.UUID{},
-			Text: postMessageContentDTO.Text,
+	postMessageSubstance := model.PostMessageSubstance{
+		MessageSubstance: model.MessageSubstance{
+			ID:   uuid.UUID{},
+			Text: postMessageSubstanceDTO.Text,
 		},
-		// Post
+		PostId: postMessageSubstanceDTO.PostId,
 	}
 
-	err = handler.Service.CreatePostMessageContent(&postMessageContent)
+	err = handler.Service.CreatePostMessageSubstance(&postMessageSubstance)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)

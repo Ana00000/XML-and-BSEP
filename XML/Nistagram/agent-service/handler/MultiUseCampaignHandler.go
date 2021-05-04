@@ -24,16 +24,15 @@ func (handler *MultiUseCampaignHandler) CreateMultiUseCampaign(w http.ResponseWr
 		return
 	}
 	layout := "2006-01-02T15:04:05.000Z"
-	expoTime,_ :=time.Parse(layout,multiUseCampaignDTO.ExposureTime)
-	expiTime,_ :=time.Parse(layout,multiUseCampaignDTO.ExpiryTime)
+	exposureTime,_ :=time.Parse(layout,multiUseCampaignDTO.ExposureTime)
+	expiryTime,_ :=time.Parse(layout,multiUseCampaignDTO.ExpiryTime)
 	multiUseCampaign := model.MultiUseCampaign{
 		Campaign:   model.Campaign{
 			ID:                     uuid.UUID{},
-			Advertisements:         nil,
-			ExposureTime:           expoTime,
-			ChosenGroups:			nil,
+			//Advertisements:         nil,
+			ExposureTime:           exposureTime,
 		},
-		ExpiryTime: expiTime,
+		ExpiryTime: expiryTime,
 		Frequency:  multiUseCampaignDTO.Frequency,
 	}
 

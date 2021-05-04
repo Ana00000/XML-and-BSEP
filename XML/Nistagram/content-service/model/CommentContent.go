@@ -4,5 +4,5 @@ import "github.com/google/uuid"
 
 type CommentContent struct {
 	Content
-	 uuid.UUID `json:"comment_id" gorm:"not null"`
+	CommentId uuid.UUID `json:"comment_id" gorm:"not null"`
 }

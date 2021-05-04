@@ -26,19 +26,25 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	layout := "2006-01-02T15:04:05.000Z"
 	dateOfBirth,_ :=time.Parse(layout,registeredUserDTO.DateOfBirth)
 	registeredUser := model.RegisteredUser{
-		User : model.User{
-			ID:          uuid.UUID{},
-			Username:    registeredUserDTO.Username,
-			Password:    registeredUserDTO.Password,
-			Email:       registeredUserDTO.Email,
-			PhoneNumber: registeredUserDTO.PhoneNumber,
-			FirstName:   registeredUserDTO.FirstName,
-			LastName:    registeredUserDTO.LastName,
-			Gender:      registeredUserDTO.Gender,
-			DateOfBirth: dateOfBirth,
-			Website:     registeredUserDTO.Website,
-			Biography:   registeredUserDTO.Biography,
+		User: model.User{
+			ID:               uuid.UUID{},
+			Username:         registeredUserDTO.Username,
+			Password:         registeredUserDTO.Password,
+			Email:            registeredUserDTO.Email,
+			PhoneNumber:      registeredUserDTO.PhoneNumber,
+			FirstName:        registeredUserDTO.FirstName,
+			LastName:         registeredUserDTO.LastName,
+			Gender:           registeredUserDTO.Gender,
+			DateOfBirth:      dateOfBirth,
+			Website:          registeredUserDTO.Website,
+			Biography:        registeredUserDTO.Biography,
+			//SentMessages:     nil,
+			//ReceivedMessages: nil,
 		},
+		//Following:                   nil,
+		//Followers:                   nil,
+		//Campaigns:                   nil,
+		//InappropriateContentRequest: nil,
 	}
 
 	err = handler.Service.CreateRegisteredUser(&registeredUser)

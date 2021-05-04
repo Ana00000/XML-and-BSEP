@@ -27,17 +27,19 @@ func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request)
 	dateOfBirth,_ :=time.Parse(layout,adminDTO.DateOfBirth)
 	admin := model.Admin{
 		User : model.User{
-			ID:          uuid.UUID{},
-			Username:    adminDTO.Username,
-			Password:    adminDTO.Password,
-			Email:       adminDTO.Email,
-			PhoneNumber: adminDTO.PhoneNumber,
-			FirstName:   adminDTO.FirstName,
-			LastName:    adminDTO.LastName,
-			Gender:      adminDTO.Gender,
-			DateOfBirth: dateOfBirth,
-			Website:     adminDTO.Website,
-			Biography:   adminDTO.Biography,
+			ID:               uuid.UUID{},
+			Username:         adminDTO.Username,
+			Password:         adminDTO.Password,
+			Email:            adminDTO.Email,
+			PhoneNumber:      adminDTO.PhoneNumber,
+			FirstName:        adminDTO.FirstName,
+			LastName:         adminDTO.LastName,
+			Gender:           adminDTO.Gender,
+			DateOfBirth:      dateOfBirth,
+			Website:          adminDTO.Website,
+			Biography:        adminDTO.Biography,
+			//SentMessages:     nil,
+			//ReceivedMessages: nil,
 		},
 	}
 

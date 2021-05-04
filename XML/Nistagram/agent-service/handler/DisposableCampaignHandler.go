@@ -28,9 +28,8 @@ func (handler *DisposableCampaignHandler) CreateDisposableCampaign(w http.Respon
 	disposableCampaign := model.DisposableCampaign{
 		Campaign:   model.Campaign{
 			ID:                     uuid.UUID{},
-			Advertisements:         nil,
+			//Advertisements:         nil,
 			ExposureTime:           expTime,
-			ChosenGroups:			nil,
 		},
 	}
 

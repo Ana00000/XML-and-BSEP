@@ -5,11 +5,11 @@ import (
 	"../repository"
 )
 
-type MessageContentService struct {
-	Repo *repository.MessageContentRepository
+type MessageSubstanceService struct {
+	Repo *repository.MessageSubstanceRepository
 }
 
-func (service * MessageContentService) CreateMessageContent(messageContent *model.MessageContent) error {
-	service.Repo.CreateMessageContent(messageContent)
+func (service * MessageSubstanceService) CreateMessageSubstance(messageSubstance *model.MessageSubstance) error {
+	service.Repo.CreateMessageSubstance(messageSubstance)
 	return nil
 }

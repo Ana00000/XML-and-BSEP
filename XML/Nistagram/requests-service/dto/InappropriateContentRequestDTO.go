@@ -1,6 +1,8 @@
 package dto
 
+import "github.com/google/uuid"
+
 type InappropriateContentRequestDTO struct {
 	Note string `json:"note"`
-	UserId string `json:"userId"`
+	UserId uuid.UUID `json:"userId"`
 }

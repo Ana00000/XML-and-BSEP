@@ -31,9 +31,8 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 		City:      locationDTO.City,
 		StreetName:       locationDTO.StreetName,
 		StreetNumber:       locationDTO.StreetNumber,
-		Posts: nil,
-		Stories: nil,
-
+		/*Posts: nil,
+		Stories: nil,*/
 	}
 
 	err = handler.Service.CreateLocation(&location)

@@ -29,7 +29,7 @@ func (handler *MessageHandler) CreateMessage(w http.ResponseWriter, r *http.Requ
 
 	message := model.Message{
 		ID: uuid.UUID{},
-		MessageContentID: messageDTO.MessageContentID,
+		MessageSubstanceId: messageDTO.MessageContentID,
 		IsDisposable: messageDTO.IsDisposable,
 		CreationDate: creationDate,
 		SenderUserID: messageDTO.SenderUserID,

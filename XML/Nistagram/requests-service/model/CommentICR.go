@@ -1,6 +1,8 @@
 package model
 
+import "github.com/google/uuid"
+
 type CommentICR struct {
 	InappropriateContentRequest
-	CommentId string `json:"commentId" gorm:"not null"`
+	CommentId uuid.UUID `json:"commentId" gorm:"not null"`
 }
