@@ -8,7 +8,7 @@ import (
 type RegisteredUserFollowers struct {
 	ID uuid.UUID `json:"id"`
 	RegisteredUserId uuid.UUID `json:"registered_user_id" gorm:"not null"`
-	FollowerUserId uuid.UUID `json:"following_user_id" gorm:"not null"`
+	FollowerUserId uuid.UUID `json:"follower_user_id" gorm:"not null"`
 }
 
 func(registeredUserFollowers * RegisteredUserFollowers) BeforeCreate(scope *gorm.DB) error {

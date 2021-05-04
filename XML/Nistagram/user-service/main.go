@@ -26,7 +26,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.User{}, &model.RegisteredUser{}, &model.Admin{}, &model.ClassicUser{}, &model.Agent{})
+	db.AutoMigrate(&model.User{}, &model.RegisteredUser{}, &model.Admin{}, &model.ClassicUser{}, &model.Agent{},&model.RegisteredUserFollowers{},&model.RegisteredUserFollowings{}, &model.RegisteredUserCampaigns{})
 	return db
 }
 
@@ -50,6 +50,18 @@ func initAgentRepo(database *gorm.DB) *repository.AgentRepository{
 	return &repository.AgentRepository { Database: database }
 }
 
+func initRegisteredUserCampaignsRepo(database *gorm.DB) *repository.RegisteredUserCampaignsRepository{
+	return &repository.RegisteredUserCampaignsRepository { Database: database }
+}
+
+func initRegisteredUserFollowersRepo(database *gorm.DB) *repository.RegisteredUserFollowersRepository{
+	return &repository.RegisteredUserFollowersRepository { Database: database }
+}
+
+func initRegisteredUserFollowingsRepo(database *gorm.DB) *repository.RegisteredUserFollowingsRepository{
+	return &repository.RegisteredUserFollowingsRepository { Database: database }
+}
+
 func initUserService(repo *repository.UserRepository) *service.UserService{
 	return &service.UserService { Repo: repo }
 }
@@ -68,6 +80,18 @@ func initClassicUserService(repo *repository.ClassicUserRepository) *service.Cla
 
 func initAgentService(repo *repository.AgentRepository) *service.AgentService{
 	return &service.AgentService { Repo: repo }
+}
+
+func initRegisteredUserCampaignsService(repo *repository.RegisteredUserCampaignsRepository) *service.RegisteredUserCampaignsService{
+	return &service.RegisteredUserCampaignsService { Repo: repo }
+}
+
+func initRegisteredUserFollowingsService(repo *repository.RegisteredUserFollowingsRepository) *service.RegisteredUserFollowingsService{
+	return &service.RegisteredUserFollowingsService { Repo: repo }
+}
+
+func initRegisteredUserFollowersService(repo *repository.RegisteredUserFollowersRepository) *service.RegisteredUserFollowersService{
+	return &service.RegisteredUserFollowersService { Repo: repo }
 }
 
 func initUserHandler(service *service.UserService) *handler.UserHandler{
@@ -90,7 +114,19 @@ func initAgentHandler(service *service.AgentService) *handler.AgentHandler{
 	return &handler.AgentHandler { Service: service }
 }
 
-func handleFunc(userHandler *handler.UserHandler, registeredUserHandler *handler.RegisteredUserHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, classicUserHandler *handler.ClassicUserHandler){
+func initRegisteredUserCampaignsHandler(service *service.RegisteredUserCampaignsService) *handler.RegisteredUserCampaignsHandler{
+	return &handler.RegisteredUserCampaignsHandler { Service: service }
+}
+
+func initRegisteredUserFollowersHandler(service *service.RegisteredUserFollowersService) *handler.RegisteredUserFollowersHandler{
+	return &handler.RegisteredUserFollowersHandler { Service: service }
+}
+
+func initRegisteredUserFollowingsHandler(service *service.RegisteredUserFollowingsService) *handler.RegisteredUserFollowingsHandler{
+	return &handler.RegisteredUserFollowingsHandler { Service: service }
+}
+
+func handleFunc(userHandler *handler.UserHandler, registeredUserHandler *handler.RegisteredUserHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, classicUserHandler *handler.ClassicUserHandler,registeredUserCampaignsHandler *handler.RegisteredUserCampaignsHandler,registeredUserFollowingsHandler *handler.RegisteredUserFollowingsHandler,registeredUserFollowersHandler *handler.RegisteredUserFollowersHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/user/", userHandler.CreateUser).Methods("POST")
@@ -98,7 +134,9 @@ func handleFunc(userHandler *handler.UserHandler, registeredUserHandler *handler
 	router.HandleFunc("/admin/", adminHandler.CreateAdmin).Methods("POST")
 	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
 	router.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser).Methods("POST")
-
+	router.HandleFunc("/registered_user_campaigns/", registeredUserCampaignsHandler.CreateRegisteredUserCampaigns).Methods("POST")
+	router.HandleFunc("/registered_user_followings/", registeredUserFollowingsHandler.CreateRegisteredUserFollowings).Methods("POST")
+	router.HandleFunc("/registered_user_followers/", registeredUserFollowersHandler.CreateRegisteredUserFollowers).Methods("POST")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
 }
 
@@ -109,15 +147,24 @@ func main() {
 	adminRepo := initAdminRepo(database)
 	classicUserRepo := initClassicUserRepo(database)
 	agentRepo := initAgentRepo(database)
+	registeredUserCampaignsRepo := initRegisteredUserCampaignsRepo(database)
+	registeredUserFollowersRepo := initRegisteredUserFollowersRepo(database)
+	registeredUserFollowingsRepo := initRegisteredUserFollowingsRepo(database)
 	userService := initUserService(userRepo)
 	registeredUserService := initRegisteredUserService(registeredUserRepo)
 	adminService := initAdminService(adminRepo)
 	classicUserService := initClassicUserService(classicUserRepo)
 	agentService := initAgentService(agentRepo)
+	registeredUserCampaignsService := initRegisteredUserCampaignsService(registeredUserCampaignsRepo)
+	registeredUserFollowersService := initRegisteredUserFollowersService(registeredUserFollowersRepo)
+	registeredUserFollowingsService := initRegisteredUserFollowingsService(registeredUserFollowingsRepo)
 	userHandler := initUserHandler(userService)
 	registeredUserHandler := initRegisteredUserHandler(registeredUserService)
 	adminHandler := initAdminHandler(adminService)
 	classicUserHandler := initClassicUserHandler(classicUserService)
 	agentHandler := initAgentHandler(agentService)
-	handleFunc(userHandler, registeredUserHandler, adminHandler,agentHandler,classicUserHandler)
+	registeredUserCampaignsHandler := initRegisteredUserCampaignsHandler(registeredUserCampaignsService)
+	registeredUserFollowersHandler := initRegisteredUserFollowersHandler(registeredUserFollowersService)
+	registeredUserFollowingsHandler := initRegisteredUserFollowingsHandler(registeredUserFollowingsService)
+	handleFunc(userHandler, registeredUserHandler, adminHandler,agentHandler,classicUserHandler,registeredUserCampaignsHandler,registeredUserFollowingsHandler,registeredUserFollowersHandler)
 }
