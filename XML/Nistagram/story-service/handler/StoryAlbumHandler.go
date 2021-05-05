@@ -34,7 +34,7 @@ func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *htt
 			LocationId:      storyAlbumDTO.LocationId,
 			IsDeleted:      storyAlbumDTO.IsDeleted,
 			Type:      storyAlbumDTO.Type,
-			StoryICRs: nil,
+			//StoryICRs: nil,
 		},
 	}
 

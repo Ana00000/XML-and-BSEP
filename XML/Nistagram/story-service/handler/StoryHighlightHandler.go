@@ -28,7 +28,7 @@ func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter
 		ID:          uuid.UUID{},
 		Title: storyHighlightDTO.Title,
 		UserId:      storyHighlightDTO.UserId,
-		Stories: nil,
+		//Stories: nil,
 	}
 
 	err = handler.Service.CreateStoryHighlight(&storyHighlight)

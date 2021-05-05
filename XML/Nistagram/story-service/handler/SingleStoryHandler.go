@@ -34,9 +34,9 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 		LocationId:      singleStoryDTO.LocationId,
 		IsDeleted:      singleStoryDTO.IsDeleted,
 		Type:      singleStoryDTO.Type,
-		StoryICRs: nil,
+		//StoryICRs: nil,
 		},
-		Content: singleStoryDTO.Content,
+		//Content: singleStoryDTO.Content,
 	}
 
 	err = handler.Service.CreateSingleStory(&singleStory)

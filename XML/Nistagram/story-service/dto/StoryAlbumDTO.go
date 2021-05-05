@@ -7,7 +7,7 @@ import (
 
 type StoryAlbumDTO struct {
 	CreationDate string `json:"creationDate"`
-	UserId string `json:"userId"`
+	UserId uuid.UUID `json:"userId"`
 	LocationId uuid.UUID `json:"locationId"`
 	IsDeleted bool `json:"isDeleted"`
 	Type model.StoryType `json:"storyType"`

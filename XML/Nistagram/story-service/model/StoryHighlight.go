@@ -9,7 +9,7 @@ type StoryHighlight struct {
 	ID uuid.UUID `json:"id"`
 	UserId uuid.UUID `json:"userId" gorm:"not null"`
 	Title string `json:"title" gorm:"not null"`
-	Stories []SingleStory `gorm:"many2many:single_story_story_highlights"`
+	//Stories []SingleStory `gorm:"many2many:single_story_story_highlights"`
 }
 
 func(storyHighlight * StoryHighlight) BeforeCreate(scope *gorm.DB) error {

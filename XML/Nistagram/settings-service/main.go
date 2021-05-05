@@ -1,7 +1,6 @@
 package main
 
 import (
-	registerUserPath "../user-service/model"
 	"./handler"
 	"./model"
 	"./repository"
@@ -27,34 +26,104 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.ProfileSettings{}, &registerUserPath.RegisteredUser{})
+	db.AutoMigrate(&model.ProfileSettings{},&model.ProfileSettingsRejectedMessageProfiles{},&model.ProfileSettingsApprovedMessageProfiles{},&model.ProfileSettingsMutedProfiles{},&model.ProfileSettingsBlockedProfiles{})
 	return db
 }
 
-func initRepo(database *gorm.DB) *repository.ProfileSettingsRepository{
+func initProfileSettingsRepo(database *gorm.DB) *repository.ProfileSettingsRepository{
 	return &repository.ProfileSettingsRepository { Database: database }
 }
 
-func initServices(repo *repository.ProfileSettingsRepository) *service.ProfileSettingsService{
+func initProfileSettingsServices(repo *repository.ProfileSettingsRepository) *service.ProfileSettingsService{
 	return &service.ProfileSettingsService { Repo: repo }
 }
 
-func initHandler(service *service.ProfileSettingsService) *handler.ProfileSettingsHandler{
+func initProfileSettingsHandler(service *service.ProfileSettingsService) *handler.ProfileSettingsHandler{
 	return &handler.ProfileSettingsHandler { Service: service }
 }
 
-func handleFunc(handler *handler.ProfileSettingsHandler){
+func initProfileSettingsRejectedMessageProfilesRepo(database *gorm.DB) *repository.ProfileSettingsRejectedMessageProfilesRepository{
+	return &repository.ProfileSettingsRejectedMessageProfilesRepository { Database: database }
+}
+
+func initProfileSettingsRejectedMessageProfilesServices(repo *repository.ProfileSettingsRejectedMessageProfilesRepository) *service.ProfileSettingsRejectedMessageProfilesService{
+	return &service.ProfileSettingsRejectedMessageProfilesService { Repo: repo }
+}
+
+func initProfileSettingsRejectedMessageProfilesHandler(service *service.ProfileSettingsRejectedMessageProfilesService) *handler.ProfileSettingsRejectedMessageProfilesHandler{
+	return &handler.ProfileSettingsRejectedMessageProfilesHandler { Service: service }
+}
+
+func initProfileSettingsApprovedMessageProfilesRepo(database *gorm.DB) *repository.ProfileSettingsApprovedMessageProfilesRepository{
+	return &repository.ProfileSettingsApprovedMessageProfilesRepository { Database: database }
+}
+
+func initProfileSettingsApprovedMessageProfilesServices(repo *repository.ProfileSettingsApprovedMessageProfilesRepository) *service.ProfileSettingsApprovedMessageProfilesService{
+	return &service.ProfileSettingsApprovedMessageProfilesService { Repo: repo }
+}
+
+func initProfileSettingsApprovedMessageProfilesHandler(service *service.ProfileSettingsApprovedMessageProfilesService) *handler.ProfileSettingsApprovedMessageProfilesHandler{
+	return &handler.ProfileSettingsApprovedMessageProfilesHandler { Service: service }
+}
+
+func initProfileSettingsMutedProfilesRepo(database *gorm.DB) *repository.ProfileSettingsMutedProfilesRepository{
+	return &repository.ProfileSettingsMutedProfilesRepository { Database: database }
+}
+
+func initProfileSettingsMutedProfilesServices(repo *repository.ProfileSettingsMutedProfilesRepository) *service.ProfileSettingsMutedProfilesService{
+	return &service.ProfileSettingsMutedProfilesService { Repo: repo }
+}
+
+func initProfileSettingsMutedProfilesHandler(service *service.ProfileSettingsMutedProfilesService) *handler.ProfileSettingsMutedProfilesHandler{
+	return &handler.ProfileSettingsMutedProfilesHandler { Service: service }
+}
+
+func initProfileSettingsBlockedProfilesRepo(database *gorm.DB) *repository.ProfileSettingsBlockedProfilesRepository{
+	return &repository.ProfileSettingsBlockedProfilesRepository { Database: database }
+}
+
+func initProfileSettingsBlockedProfilesServices(repo *repository.ProfileSettingsBlockedProfilesRepository) *service.ProfileSettingsBlockedProfilesService{
+	return &service.ProfileSettingsBlockedProfilesService { Repo: repo }
+}
+
+func initProfileSettingsBlockedProfilesHandler(service *service.ProfileSettingsBlockedProfilesService) *handler.ProfileSettingsBlockedProfilesHandler{
+	return &handler.ProfileSettingsBlockedProfilesHandler { Service: service }
+}
+
+func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerProfileSettingsApprovedMessageProfiles *handler.ProfileSettingsApprovedMessageProfilesHandler,
+	handlerProfileSettingsBlockedProfiles *handler.ProfileSettingsBlockedProfilesHandler, handlerProfileSettingsMutedProfiles *handler.ProfileSettingsMutedProfilesHandler,
+	handlerProfileSettingsRejectedMessageProfiles *handler.ProfileSettingsRejectedMessageProfilesHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
-	router.HandleFunc("/settings/", handler.CreateProfileSettings).Methods("POST")
+	router.HandleFunc("/profile_settings/", handlerProfileSettings.CreateProfileSettings).Methods("POST")
+	router.HandleFunc("/profile_settings_approved_message_profiles/", handlerProfileSettingsApprovedMessageProfiles.CreateProfileSettingsApprovedMessageProfiles).Methods("POST")
+	router.HandleFunc("/profile_settings_blocked_profiles/", handlerProfileSettingsBlockedProfiles.CreateProfileSettingsBlockedProfiles).Methods("POST")
+	router.HandleFunc("/profile_settings_muted_profiles/", handlerProfileSettingsMutedProfiles.CreateProfileSettingsMutedProfiles).Methods("POST")
+	router.HandleFunc("/profile_settings_rejected_message_profiles/", handlerProfileSettingsRejectedMessageProfiles.CreateProfileSettingsRejectedMessageProfiles).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
 }
 
 func main() {
 	database := initDB()
-	repo := initRepo(database)
-	service := initServices(repo)
-	handler := initHandler(service)
-	handleFunc(handler)
+	repoProfileSettings := initProfileSettingsRepo(database)
+	serviceProfileSettings := initProfileSettingsServices(repoProfileSettings)
+	handlerProfileSettings := initProfileSettingsHandler(serviceProfileSettings)
+
+	repoProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesRepo(database)
+	serviceProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesServices(repoProfileSettingsApprovedMessageProfiles)
+	handlerProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesHandler(serviceProfileSettingsApprovedMessageProfiles)
+
+	repoProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesRepo(database)
+	serviceProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesServices(repoProfileSettingsBlockedProfiles)
+	handlerProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesHandler(serviceProfileSettingsBlockedProfiles)
+
+	repoProfileSettingsMutedProfiles := initProfileSettingsMutedProfilesRepo(database)
+	serviceProfileSettingsMutedProfiles := initProfileSettingsMutedProfilesServices(repoProfileSettingsMutedProfiles)
+	handlerProfileSettingsMutedProfiles := initProfileSettingsMutedProfilesHandler(serviceProfileSettingsMutedProfiles)
+
+	repoProfileSettingsRejectedMessageProfiles := initProfileSettingsRejectedMessageProfilesRepo(database)
+	serviceProfileSettingsRejectedMessageProfiles := initProfileSettingsRejectedMessageProfilesServices(repoProfileSettingsRejectedMessageProfiles)
+	handlerProfileSettingsRejectedMessageProfiles := initProfileSettingsRejectedMessageProfilesHandler(serviceProfileSettingsRejectedMessageProfiles)
+	handleFunc(handlerProfileSettings,handlerProfileSettingsApprovedMessageProfiles,handlerProfileSettingsBlockedProfiles,handlerProfileSettingsMutedProfiles,handlerProfileSettingsRejectedMessageProfiles)
 }

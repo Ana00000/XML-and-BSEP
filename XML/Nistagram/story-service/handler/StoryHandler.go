@@ -33,8 +33,7 @@ func (handler *StoryHandler) CreateStory(w http.ResponseWriter, r *http.Request)
 		LocationId: storyDTO.LocationId,
 		IsDeleted:      storyDTO.IsDeleted,
 		Type:      storyDTO.Type,
-		StoryICRs: nil,
-
+		//StoryICRs: nil,
 	}
 
 	err = handler.Service.CreateStory(&story)
