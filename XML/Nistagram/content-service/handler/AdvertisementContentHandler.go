@@ -30,6 +30,7 @@ func (handler *AdvertisementContentHandler) CreateAdvertisementContent(w http.Re
 			Type: advertisementContentDTO.Type,
 		},
 		Link:    advertisementContentDTO.Link,
+		AdvertisementId: advertisementContentDTO.AdvertisementId,
 	}
 
 	err = handler.Service.CreateAdvertisementContent(&advertisementContent)

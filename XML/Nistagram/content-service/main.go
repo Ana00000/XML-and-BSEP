@@ -26,50 +26,159 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Content{}, &model.AdvertisementContent{})
+	db.AutoMigrate(&model.Content{}, &model.AdvertisementContent{},&model.CommentContent{},&model.PostAlbumContent{},&model.SinglePostContent{},&model.SingleStoryContent{},&model.MessageContent{},&model.StoryAlbumContent{})
 	return db
 }
 
-func initContentRepo(database *gorm.DB) *repository.ContentRepository{
-	return &repository.ContentRepository { Database: database }
-}
+
 
 func initAdvertisementContentRepo(database *gorm.DB) *repository.AdvertisementContentRepository{
 	return &repository.AdvertisementContentRepository { Database: database }
-}
-
-func initContentService(repo *repository.ContentRepository) *service.ContentService{
-	return &service.ContentService { Repo: repo }
 }
 
 func initAdvertisementContentService(repo *repository.AdvertisementContentRepository) *service.AdvertisementContentService{
 	return &service.AdvertisementContentService { Repo: repo }
 }
 
-func initContentHandler(service *service.ContentService) *handler.ContentHandler{
-	return &handler.ContentHandler { Service: service }
-}
-
 func initAdvertisementContentHandler(service *service.AdvertisementContentService) *handler.AdvertisementContentHandler{
 	return &handler.AdvertisementContentHandler { Service: service }
 }
 
-func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementContent *handler.AdvertisementContentHandler){
+func initContentRepo(database *gorm.DB) *repository.ContentRepository{
+	return &repository.ContentRepository { Database: database }
+}
+
+func initContentService(repo *repository.ContentRepository) *service.ContentService{
+	return &service.ContentService { Repo: repo }
+}
+
+func initContentHandler(service *service.ContentService) *handler.ContentHandler{
+	return &handler.ContentHandler { Service: service }
+}
+
+func initPostAlbumContentRepo(database *gorm.DB) *repository.PostAlbumContentRepository{
+	return &repository.PostAlbumContentRepository { Database: database }
+}
+
+func initPostAlbumContentService(repo *repository.PostAlbumContentRepository) *service.PostAlbumContentService{
+	return &service.PostAlbumContentService { Repo: repo }
+}
+
+func initPostAlbumContentHandler(service *service.PostAlbumContentService) *handler.PostAlbumContentHandler{
+	return &handler.PostAlbumContentHandler { Service: service }
+}
+
+func initStoryAlbumContentRepo(database *gorm.DB) *repository.StoryAlbumContentRepository{
+	return &repository.StoryAlbumContentRepository { Database: database }
+}
+
+func initStoryAlbumContentService(repo *repository.StoryAlbumContentRepository) *service.StoryAlbumContentService{
+	return &service.StoryAlbumContentService { Repo: repo }
+}
+
+func initStoryAlbumContentHandler(service *service.StoryAlbumContentService) *handler.StoryAlbumContentHandler{
+	return &handler.StoryAlbumContentHandler { Service: service }
+}
+
+func initSingleStoryContentRepo(database *gorm.DB) *repository.SingleStoryContentRepository{
+	return &repository.SingleStoryContentRepository { Database: database }
+}
+
+func initSingleStoryContentService(repo *repository.SingleStoryContentRepository) *service.SingleStoryContentService{
+	return &service.SingleStoryContentService { Repo: repo }
+}
+
+func initSingleStoryContentHandler(service *service.SingleStoryContentService) *handler.SingleStoryContentHandler{
+	return &handler.SingleStoryContentHandler { Service: service }
+}
+
+func initSinglePostContentRepo(database *gorm.DB) *repository.SinglePostContentRepository{
+	return &repository.SinglePostContentRepository { Database: database }
+}
+
+func initSinglePostContentService(repo *repository.SinglePostContentRepository) *service.SinglePostContentService{
+	return &service.SinglePostContentService { Repo: repo }
+}
+
+func initSinglePostContentHandler(service *service.SinglePostContentService) *handler.SinglePostContentHandler{
+	return &handler.SinglePostContentHandler { Service: service }
+}
+
+func initCommentContentRepo(database *gorm.DB) *repository.CommentContentRepository{
+	return &repository.CommentContentRepository { Database: database }
+}
+
+func initCommentContentService(repo *repository.CommentContentRepository) *service.CommentContentService{
+	return &service.CommentContentService { Repo: repo }
+}
+
+func initCommentContentHandler(service *service.CommentContentService) *handler.CommentContentHandler{
+	return &handler.CommentContentHandler { Service: service }
+}
+
+func initMessageContentRepo(database *gorm.DB) *repository.MessageContentRepository{
+	return &repository.MessageContentRepository { Database: database }
+}
+
+func initMessageContentService(repo *repository.MessageContentRepository) *service.MessageContentService{
+	return &service.MessageContentService { Repo: repo }
+}
+
+func initMessageContentHandler(service *service.MessageContentService) *handler.MessageContentHandler{
+	return &handler.MessageContentHandler { Service: service }
+}
+
+
+
+func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementContent *handler.AdvertisementContentHandler,
+	handlerPostAlbumContent *handler.PostAlbumContentHandler, handlerSinglePostContent *handler.SinglePostContentHandler,
+	handlerStoryAlbumContent *handler.StoryAlbumContentHandler, handlerSingleStoryContent *handler.SingleStoryContentHandler,
+	handlerCommentContent *handler.CommentContentHandler, handlerMessageContent *handler.MessageContentHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/content/", handlerContent.CreateContent).Methods("POST")
 	router.HandleFunc("/advertisement_content/", handlerAdvertisementContent.CreateAdvertisementContent).Methods("POST")
-
+	router.HandleFunc("/post_album_content/", handlerPostAlbumContent.CreatePostAlbumContent).Methods("POST")
+	router.HandleFunc("/single_post_content/", handlerSinglePostContent.CreateSinglePostContent).Methods("POST")
+	router.HandleFunc("/story_album_content/", handlerStoryAlbumContent.CreateStoryAlbumContent).Methods("POST")
+	router.HandleFunc("/single_story_content/", handlerSingleStoryContent.CreateSingleStoryContent).Methods("POST")
+	router.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent).Methods("POST")
+	router.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent).Methods("POST")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
 }
 
 func main() {
 	database := initDB()
 	repoContent := initContentRepo(database)
-	repoAdvertisementContent := initAdvertisementContentRepo(database)
 	serviceContent := initContentService(repoContent)
-	serviceAdvertisementContent := initAdvertisementContentService(repoAdvertisementContent)
 	handlerContent := initContentHandler(serviceContent)
+
+	repoAdvertisementContent := initAdvertisementContentRepo(database)
+	serviceAdvertisementContent := initAdvertisementContentService(repoAdvertisementContent)
 	handlerAdvertisementContent := initAdvertisementContentHandler(serviceAdvertisementContent)
-	handleFunc(handlerContent, handlerAdvertisementContent)
+
+	repoPostAlbumContent := initPostAlbumContentRepo(database)
+	servicePostAlbumContent := initPostAlbumContentService(repoPostAlbumContent)
+	handlerPostAlbumContent := initPostAlbumContentHandler(servicePostAlbumContent)
+
+	repoSinglePostContent := initSinglePostContentRepo(database)
+	serviceSinglePostContent := initSinglePostContentService(repoSinglePostContent)
+	handlerSinglePostContent := initSinglePostContentHandler(serviceSinglePostContent)
+
+	repoStoryAlbumContent := initStoryAlbumContentRepo(database)
+	serviceStoryAlbumContent := initStoryAlbumContentService(repoStoryAlbumContent)
+	handlerStoryAlbumContent := initStoryAlbumContentHandler(serviceStoryAlbumContent)
+
+	repoSingleStoryContent := initSingleStoryContentRepo(database)
+	serviceSingleStoryContent := initSingleStoryContentService(repoSingleStoryContent)
+	handlerSingleStoryContent := initSingleStoryContentHandler(serviceSingleStoryContent)
+
+	repoCommentContent := initCommentContentRepo(database)
+	serviceCommentContent := initCommentContentService(repoCommentContent)
+	handlerCommentContent := initCommentContentHandler(serviceCommentContent)
+
+	repoMessageContent := initMessageContentRepo(database)
+	serviceMessageContent := initMessageContentService(repoMessageContent)
+	handlerMessageContent := initMessageContentHandler(serviceMessageContent)
+	handleFunc(handlerContent, handlerAdvertisementContent,handlerPostAlbumContent,handlerSinglePostContent,handlerStoryAlbumContent,handlerSingleStoryContent,handlerCommentContent,handlerMessageContent)
 }

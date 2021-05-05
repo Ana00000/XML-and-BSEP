@@ -1,0 +1,42 @@
+package handler
+
+import (
+	"../dto"
+	"../model"
+	"../service"
+	"encoding/json"
+	"fmt"
+	"github.com/google/uuid"
+	"net/http"
+	_ "strconv"
+)
+
+type SingleStoryContentHandler struct {
+	Service * service.SingleStoryContentService
+}
+
+func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.ResponseWriter, r *http.Request) {
+	var singleStoryContentDTO dto.SingleStoryContentDTO
+	err := json.NewDecoder(r.Body).Decode(&singleStoryContentDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	singleStoryContent := model.SingleStoryContent{
+		Content: model.Content{
+			ID:   uuid.UUID{},
+			Path: singleStoryContentDTO.Path,
+			Type: singleStoryContentDTO.Type,
+		},
+		SingleStoryId: singleStoryContentDTO.SingleStoryId,
+	}
+
+	err = handler.Service.CreateSingleStoryContent(&singleStoryContent)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}

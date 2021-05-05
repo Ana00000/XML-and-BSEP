@@ -21,7 +21,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.MessageContent{}, &model.Message{}, &model.StoryMessageContent{}, &model.PostMessageContent{})
+	db.AutoMigrate(&model.MessageSubstance{}, &model.Message{}, &model.StoryMessageSubstance{}, &model.PostMessageSubstance{})
 	return db
 }
 
@@ -29,58 +29,58 @@ func initMessageRepo(database *gorm.DB) *repository.MessageRepository{
 	return &repository.MessageRepository{ Database: database }
 }
 
-func initMessageContentRepo(database *gorm.DB) *repository.MessageContentRepository{
-	return &repository.MessageContentRepository{ Database: database }
+func initMessageSubstanceRepo(database *gorm.DB) *repository.MessageSubstanceRepository{
+	return &repository.MessageSubstanceRepository{ Database: database }
 }
 
-func initStoryMessageContentRepo(database *gorm.DB) *repository.StoryMessageContentRepository{
-	return &repository.StoryMessageContentRepository{ Database: database }
+func initStoryMessageSubstanceRepo(database *gorm.DB) *repository.StoryMessageSubstanceRepository{
+	return &repository.StoryMessageSubstanceRepository{ Database: database }
 }
 
-func initPostMessageContentRepo(database *gorm.DB) *repository.PostMessageContentRepository{
-	return &repository.PostMessageContentRepository{ Database: database }
+func initPostMessageSubstanceRepo(database *gorm.DB) *repository.PostMessageSubstanceRepository{
+	return &repository.PostMessageSubstanceRepository{ Database: database }
 }
 
 func initMessageService(repo *repository.MessageRepository) *service.MessageService{
 	return &service.MessageService{ Repo: repo }
 }
 
-func initMessageContentService(repo *repository.MessageContentRepository) *service.MessageContentService{
-	return &service.MessageContentService{ Repo: repo }
+func initMessageSubstanceService(repo *repository.MessageSubstanceRepository) *service.MessageSubstanceService{
+	return &service.MessageSubstanceService{ Repo: repo }
 }
 
-func initStoryMessageContentService(repo *repository.StoryMessageContentRepository) *service.StoryMessageContentService{
-	return &service.StoryMessageContentService{ Repo: repo }
+func initStoryMessageSubstanceService(repo *repository.StoryMessageSubstanceRepository) *service.StoryMessageSubstanceService{
+	return &service.StoryMessageSubstanceService{ Repo: repo }
 }
 
-func initPostMessageContentService(repo *repository.PostMessageContentRepository) *service.PostMessageContentService{
-	return &service.PostMessageContentService{ Repo: repo }
+func initPostMessageSubstanceService(repo *repository.PostMessageSubstanceRepository) *service.PostMessageSubstanceService{
+	return &service.PostMessageSubstanceService{ Repo: repo }
 }
 
 func initMessageHandler(service *service.MessageService) *handler.MessageHandler{
 	return &handler.MessageHandler{ Service: service }
 }
 
-func initMessageContentHandler(service *service.MessageContentService) *handler.MessageContentHandler{
-	return &handler.MessageContentHandler{ Service: service }
+func initMessageSubstanceHandler(service *service.MessageSubstanceService) *handler.MessageSubstanceHandler{
+	return &handler.MessageSubstanceHandler{ Service: service }
 }
 
-func initStoryMessageContentHandler(service *service.StoryMessageContentService) *handler.StoryMessageContentHandler{
-	return &handler.StoryMessageContentHandler{ Service: service }
+func initStoryMessageSubstanceHandler(service *service.StoryMessageSubstanceService) *handler.StoryMessageSubstanceHandler{
+	return &handler.StoryMessageSubstanceHandler{ Service: service }
 }
 
-func initPostMessageContentHandler(service *service.PostMessageContentService) *handler.PostMessageContentHandler{
-	return &handler.PostMessageContentHandler{ Service: service }
+func initPostMessageSubstanceHandler(service *service.PostMessageSubstanceService) *handler.PostMessageSubstanceHandler{
+	return &handler.PostMessageSubstanceHandler{ Service: service }
 }
 
-func handleFunc(handlerMessage *handler.MessageHandler, handlerMessageContent *handler.MessageContentHandler,
-				handlerStoryMessageContent *handler.StoryMessageContentHandler, handlerPostMessageContent *handler.PostMessageContentHandler){
+func handleFunc(handlerMessage *handler.MessageHandler, handlerMessageSubstance *handler.MessageSubstanceHandler,
+				handlerStoryMessageSubstance *handler.StoryMessageSubstanceHandler, handlerPostMessageSubstance *handler.PostMessageSubstanceHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/message/", handlerMessage.CreateMessage).Methods("POST")
-	router.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent).Methods("POST")
-	router.HandleFunc("/story_message_content/", handlerStoryMessageContent.CreateStoryMessageContent).Methods("POST")
-	router.HandleFunc("/post_message_content/", handlerPostMessageContent.CreatePostMessageContent).Methods("POST")
+	router.HandleFunc("/message_content/", handlerMessageSubstance.CreateMessageSubstance).Methods("POST")
+	router.HandleFunc("/story_message_content/", handlerStoryMessageSubstance.CreateStoryMessageSubstance).Methods("POST")
+	router.HandleFunc("/post_message_content/", handlerPostMessageSubstance.CreatePostMessageSubstance).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
 }
@@ -88,16 +88,16 @@ func handleFunc(handlerMessage *handler.MessageHandler, handlerMessageContent *h
 func main() {
 	database := initDB()
 	repoMessage := initMessageRepo(database)
-	repoMessageContent := initMessageContentRepo(database)
-	repoStoryMessageContent := initStoryMessageContentRepo(database)
-	repoPostMessageContent := initPostMessageContentRepo(database)
+	repoMessageSubstance := initMessageSubstanceRepo(database)
+	repoStoryMessageSubstance := initStoryMessageSubstanceRepo(database)
+	repoPostMessageSubstance := initPostMessageSubstanceRepo(database)
 	serviceMessage := initMessageService(repoMessage)
-	serviceMessageContent := initMessageContentService(repoMessageContent)
-	serviceStoryMessageContent := initStoryMessageContentService(repoStoryMessageContent)
-	servicePostMessageContent := initPostMessageContentService(repoPostMessageContent)
+	serviceMessageSubstance := initMessageSubstanceService(repoMessageSubstance)
+	serviceStoryMessageSubstance := initStoryMessageSubstanceService(repoStoryMessageSubstance)
+	servicePostMessageSubstance := initPostMessageSubstanceService(repoPostMessageSubstance)
 	handlerMessage := initMessageHandler(serviceMessage)
-	handlerMessageContent := initMessageContentHandler(serviceMessageContent)
-	handlerStoryMessageContent := initStoryMessageContentHandler(serviceStoryMessageContent)
-	handlerPostMessageContent := initPostMessageContentHandler(servicePostMessageContent)
-	handleFunc(handlerMessage, handlerMessageContent, handlerStoryMessageContent, handlerPostMessageContent)
+	handlerMessageSubstance := initMessageSubstanceHandler(serviceMessageSubstance)
+	handlerStoryMessageSubstance := initStoryMessageSubstanceHandler(serviceStoryMessageSubstance)
+	handlerPostMessageSubstance := initPostMessageSubstanceHandler(servicePostMessageSubstance)
+	handleFunc(handlerMessage, handlerMessageSubstance, handlerStoryMessageSubstance, handlerPostMessageSubstance)
 }

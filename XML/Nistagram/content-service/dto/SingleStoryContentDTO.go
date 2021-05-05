@@ -5,9 +5,8 @@ import (
 	"github.com/google/uuid"
 )
 
-type AdvertisementContentDTO struct {
+type SingleStoryContentDTO struct {
 	Path string `json:"path"`
 	Type model.ContentType `json:"type"`
-	Link string `json:"link"`
-	AdvertisementId uuid.UUID `json:"advertisement_id"`
+	SingleStoryId uuid.UUID `json:"single_story_id"`
 }

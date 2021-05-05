@@ -26,8 +26,20 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Product{}, &model.Campaign{}, &model.Advertisement{}, &model.MultiUseCampaign{}, &model.DisposableCampaign{})
+	db.AutoMigrate(&model.Product{}, &model.Campaign{}, &model.Advertisement{}, &model.MultiUseCampaign{}, &model.DisposableCampaign{}, &model.CampaignChosenGroup{})
 	return db
+}
+
+func initCampaignChosenGroupRepo(database *gorm.DB) *repository.CampaignChosenGroupRepository{
+	return &repository.CampaignChosenGroupRepository { Database: database }
+}
+
+func initCampaignChosenGroupServices(repo *repository.CampaignChosenGroupRepository) *service.CampaignChosenGroupService{
+	return &service.CampaignChosenGroupService { Repo: repo }
+}
+
+func initCampaignChosenGroupHandler(service *service.CampaignChosenGroupService) *handler.CampaignChosenGroupHandler{
+	return &handler.CampaignChosenGroupHandler { Service: service }
 }
 
 func initProductRepo(database *gorm.DB) *repository.ProductRepository{
@@ -91,7 +103,8 @@ func initProductHandler(service *service.ProductService) *handler.ProductHandler
 }
 
 
-func handleFunc(handlerProduct *handler.ProductHandler,handlerMultiUseCampaign *handler.MultiUseCampaignHandler,handlerDisposableCampaign *handler.DisposableCampaignHandler,handlerCampaign *handler.CampaignHandler,handlerAdvertisement *handler.AdvertisementHandler){
+func handleFunc(handlerProduct *handler.ProductHandler,handlerMultiUseCampaign *handler.MultiUseCampaignHandler,handlerDisposableCampaign *handler.DisposableCampaignHandler,handlerCampaign *handler.CampaignHandler,handlerAdvertisement *handler.AdvertisementHandler,
+	handlerCampaignChosenGroup *handler.CampaignChosenGroupHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/product/", handlerProduct.CreateProduct).Methods("POST")
@@ -99,7 +112,7 @@ func handleFunc(handlerProduct *handler.ProductHandler,handlerMultiUseCampaign *
 	router.HandleFunc("/disposable_campaign/", handlerDisposableCampaign.CreateDisposableCampaign).Methods("POST")
 	router.HandleFunc("/campaign/", handlerCampaign.CreateCampaign).Methods("POST")
 	router.HandleFunc("/advertisement/", handlerAdvertisement.CreateAdvertisement).Methods("POST")
-
+	router.HandleFunc("/campaign_chosen_group/", handlerCampaignChosenGroup.CreateCampaignChosenGroup).Methods("POST")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8087"), router))
 }
 
@@ -120,5 +133,9 @@ func main() {
 	handlerDisposableCampaign := initDisposableCampaignHandler(serviceDisposableCampaign)
 	handlerCampaign := initCampaignHandler(serviceCampaign)
 	handlerAdvertisement := initAdvertisementHandler(serviceAdvertisement)
-	handleFunc(handlerProduct,handlerMultiUseCampaign,handlerDisposableCampaign,handlerCampaign,handlerAdvertisement)
+
+	repoCampaignChosenGroup := initCampaignChosenGroupRepo(database)
+	serviceCampaignChosenGroup := initCampaignChosenGroupServices(repoCampaignChosenGroup)
+	handlerCampaignChosenGroup := initCampaignChosenGroupHandler(serviceCampaignChosenGroup)
+	handleFunc(handlerProduct,handlerMultiUseCampaign,handlerDisposableCampaign,handlerCampaign,handlerAdvertisement,handlerCampaignChosenGroup)
 }

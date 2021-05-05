@@ -97,7 +97,21 @@ func initSinglePostHandler(service *service.SinglePostService) *handler.SinglePo
 	return &handler.SinglePostHandler{ Service: service }
 }
 
-func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handler.CommentHandler, handlerPost *handler.PostHandler, handlerPostAlbum *handler.PostAlbumHandler, handlerPostCollection *handler.PostCollectionHandler, handlerSinglePost *handler.SinglePostHandler){
+func initPostCollectionPostsRepo(database *gorm.DB) *repository.PostCollectionPostsRepository{
+	return &repository.PostCollectionPostsRepository { Database: database }
+}
+
+func initPostCollectionPostsServices(repo *repository.PostCollectionPostsRepository) *service.PostCollectionPostsService{
+	return &service.PostCollectionPostsService { Repo: repo }
+}
+
+func initPostCollectionPostsHandler(service *service.PostCollectionPostsService) *handler.PostCollectionPostsHandler{
+	return &handler.PostCollectionPostsHandler { Service: service }
+}
+
+func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handler.CommentHandler, handlerPost *handler.PostHandler,
+	handlerPostAlbum *handler.PostAlbumHandler, handlerPostCollection *handler.PostCollectionHandler,
+	handlerSinglePost *handler.SinglePostHandler, handlerPostCollectionPosts *handler.PostCollectionPostsHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/activity/", handlerActivity.CreateActivity).Methods("POST")
@@ -106,12 +120,15 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/post_album/", handlerPostAlbum.CreatePostAlbum).Methods("POST")
 	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
 	router.HandleFunc("/single_post/", handlerSinglePost.CreateSinglePost).Methods("POST")
-
+	router.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts).Methods("POST")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
 }
 
 func main() {
 	database := initDB()
+	repoPostCollectionPosts := initPostCollectionPostsRepo(database)
+	servicePostCollectionPosts := initPostCollectionPostsServices(repoPostCollectionPosts)
+	handlerPostCollectionPosts := initPostCollectionPostsHandler(servicePostCollectionPosts)
 	repoActivity := initActivityRepo(database)
 	repoComment := initCommentRepo(database)
 	repoPost := initPostRepo(database)
@@ -130,5 +147,5 @@ func main() {
 	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
 	handlerSinglePost := initSinglePostHandler(serviceSinglePost)
-	handleFunc(handlerActivity, handlerComment, handlerPost, handlerPostAlbum, handlerPostCollection, handlerSinglePost)
+	handleFunc(handlerActivity, handlerComment, handlerPost, handlerPostAlbum, handlerPostCollection, handlerSinglePost, handlerPostCollectionPosts)
 }
