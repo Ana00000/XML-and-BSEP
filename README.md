@@ -2,9 +2,9 @@
                                                    
 ## Welcome!
 
- - XML - XML i veb servisi
- - BSEP - Bezbednost u sistemima elektronskog poslovanja (group 7)
- - Project is integration of XML and BSEP
+ - XML -> XML i veb servisi -> XML and Web Services (Team 25)
+ - BSEP -> Bezbednost u sistemima elektronskog poslovanja -> E-Business Systems Security (Team 7)
+ - Project is an integration of XML and BSEP
  - Team members:
 
 
