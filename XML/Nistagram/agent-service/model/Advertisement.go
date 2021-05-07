@@ -7,7 +7,6 @@ import (
 
 type Advertisement struct {
 	ID uuid.UUID `json:"id"`
-	//AdvertisementContent advertisementContentPath.AdvertisementContent `json:"advertisement_content_id" gorm:"foreignKey:AdvertisementId"`
 	CampaignId uuid.UUID `json:"campaign_id" gorm:"not null"`
 }
 

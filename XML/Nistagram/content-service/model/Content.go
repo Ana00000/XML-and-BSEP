@@ -6,7 +6,7 @@ import (
 )
 
 type Content struct {
-	ID uuid.UUID `json: "id"`
+	ID uuid.UUID `json:"id"`
 	Path string `json:"path" gorm:"not null"`
 	Type ContentType `json:"type" gorm:"not null"`
 }

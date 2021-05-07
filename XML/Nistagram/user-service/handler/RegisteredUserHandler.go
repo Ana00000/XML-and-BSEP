@@ -17,7 +17,7 @@ type RegisteredUserHandler struct {
 }
 
 func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter, r *http.Request) {
-	var registeredUserDTO dto.RegisteredUserDTO
+	var registeredUserDTO dto.UserDTO
 	err := json.NewDecoder(r.Body).Decode(&registeredUserDTO)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

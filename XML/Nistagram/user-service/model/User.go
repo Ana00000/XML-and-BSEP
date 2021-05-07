@@ -18,8 +18,6 @@ type User struct {
 	DateOfBirth  time.Time `json:"dateOfBirth" gorm:"not null"`
 	Website      string `json:"website" gorm:"not null"`
 	Biography    string `json:"biography" gorm:"not null"`
-	//SentMessages []messagePath.Message `json:"sent_messages" gorm:"foreignKey:SenderUserID"`
-	//ReceivedMessages []messagePath.Message `json:"received_messages" gorm:"foreignKey:ReceiverUserID"`
 }
 
 func(user * User) BeforeCreate(scope *gorm.DB) error {
