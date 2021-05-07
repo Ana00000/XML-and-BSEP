@@ -13,7 +13,6 @@ type Story struct {
 	LocationId uuid.UUID `json:"locationId" gorm:"not null"`
 	IsDeleted bool `json:"isDeleted" gorm:"not null"`
 	Type StoryType `json:"type" gorm:"not null"`
-	//StoryICRs []requestsPath.StoryICR `json:"storyICRs" gorm:"foreignKey:StoryId"`
 }
 
 func(story * Story) BeforeCreate(scope *gorm.DB) error {

@@ -11,5 +11,4 @@ type SingleStoryDTO struct {
 	LocationId uuid.UUID `json:"locationId"`
 	IsDeleted bool `json:"isDeleted"`
 	Type model.StoryType `json:"storyType"`
-	//Content contentPath.Content `json:"content"`
 }
