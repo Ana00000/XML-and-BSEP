@@ -10,6 +10,9 @@ type ProfileSettingsApprovedMessageProfilesService struct {
 }
 
 func (service * ProfileSettingsApprovedMessageProfilesService) CreateProfileSettingsApprovedMessageProfiles(profileSettingsApprovedMessageProfiles *model.ProfileSettingsApprovedMessageProfiles) error {
-	service.Repo.CreateProfileSettingsApprovedMessageProfiles(profileSettingsApprovedMessageProfiles)
+	err := service.Repo.CreateProfileSettingsApprovedMessageProfiles(profileSettingsApprovedMessageProfiles)
+	if err != nil {
+		return err
+	}
 	return nil
 }

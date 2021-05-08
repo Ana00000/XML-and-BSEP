@@ -10,6 +10,9 @@ type AdminService struct {
 }
 
 func (service * AdminService) CreateAdmin(admin *model.Admin) error {
-	service.Repo.CreateAdmin(admin)
+	err := service.Repo.CreateAdmin(admin)
+	if err != nil {
+		return err
+	}
 	return nil
 }

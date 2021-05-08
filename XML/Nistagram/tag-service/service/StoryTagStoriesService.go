@@ -10,6 +10,9 @@ type StoryTagStoriesService struct {
 }
 
 func (service * StoryTagStoriesService) CreateStoryTagStories(storyTagStories *model.StoryTagStories) error {
-	service.Repo.CreateStoryTagStories(storyTagStories)
+	err := service.Repo.CreateStoryTagStories(storyTagStories)
+	if err != nil {
+		return err
+	}
 	return nil
 }

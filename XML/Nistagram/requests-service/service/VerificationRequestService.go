@@ -10,6 +10,9 @@ type VerificationRequestService struct {
 }
 
 func (service * VerificationRequestService) CreateVerificationRequest(verificationRequest *model.VerificationRequest) error {
-	service.Repo.CreateVerificationRequest(verificationRequest)
+	err := service.Repo.CreateVerificationRequest(verificationRequest)
+	if err != nil {
+		return err
+	}
 	return nil
 }

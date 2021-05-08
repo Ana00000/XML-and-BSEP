@@ -10,6 +10,9 @@ type PostTagService struct {
 }
 
 func (service * PostTagService) CreatePostTag(postTag *model.PostTag) error {
-	service.Repo.CreatePostTag(postTag)
+	err := service.Repo.CreatePostTag(postTag)
+	if err != nil {
+		return err
+	}
 	return nil
 }

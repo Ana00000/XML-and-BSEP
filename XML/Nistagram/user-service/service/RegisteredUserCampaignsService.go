@@ -10,6 +10,9 @@ type RegisteredUserCampaignsService struct {
 }
 
 func (service * RegisteredUserCampaignsService) CreateRegisteredUserCampaigns(registeredUserCampaigns *model.RegisteredUserCampaigns) error {
-	service.Repo.CreateRegisteredUserCampaigns(registeredUserCampaigns)
+	err := service.Repo.CreateRegisteredUserCampaigns(registeredUserCampaigns)
+	if err != nil {
+		return err
+	}
 	return nil
 }

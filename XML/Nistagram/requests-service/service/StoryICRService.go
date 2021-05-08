@@ -10,6 +10,9 @@ type StoryICRService struct {
 }
 
 func (service * StoryICRService) CreateStoryICR(storyICR *model.StoryICR) error {
-	service.Repo.CreateStoryICR(storyICR)
+	err := service.Repo.CreateStoryICR(storyICR)
+	if err != nil {
+		return err
+	}
 	return nil
 }

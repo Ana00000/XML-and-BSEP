@@ -10,6 +10,9 @@ type UserService struct {
 }
 
 func (service * UserService) CreateUser(user *model.User) error {
-	service.Repo.CreateUser(user)
+	err := service.Repo.CreateUser(user)
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -10,6 +10,9 @@ type ProfileSettingsRejectedMessageProfilesService struct {
 }
 
 func (service * ProfileSettingsRejectedMessageProfilesService) CreateProfileSettingsRejectedMessageProfiles(profileSettingsRejectedMessageProfiles *model.ProfileSettingsRejectedMessageProfiles) error {
-	service.Repo.CreateProfileSettingsRejectedMessageProfiles(profileSettingsRejectedMessageProfiles)
+	err := service.Repo.CreateProfileSettingsRejectedMessageProfiles(profileSettingsRejectedMessageProfiles)
+	if err != nil {
+		return err
+	}
 	return nil
 }

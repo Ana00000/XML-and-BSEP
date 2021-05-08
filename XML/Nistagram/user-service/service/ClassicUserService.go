@@ -10,6 +10,9 @@ type ClassicUserService struct {
 }
 
 func (service * ClassicUserService) CreateClassicUser(classicUser *model.ClassicUser) error {
-	service.Repo.CreateClassicUser(classicUser)
+	err := service.Repo.CreateClassicUser(classicUser)
+	if err != nil {
+		return err
+	}
 	return nil
 }

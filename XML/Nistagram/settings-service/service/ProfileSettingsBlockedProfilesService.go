@@ -10,6 +10,9 @@ type ProfileSettingsBlockedProfilesService struct {
 }
 
 func (service * ProfileSettingsBlockedProfilesService) CreateProfileSettingsBlockedProfiles(profileSettingsBlockedProfiles *model.ProfileSettingsBlockedProfiles) error {
-	service.Repo.CreateProfileSettingsBlockedProfiles(profileSettingsBlockedProfiles)
+	err := service.Repo.CreateProfileSettingsBlockedProfiles(profileSettingsBlockedProfiles)
+	if err != nil {
+		return err
+	}
 	return nil
 }

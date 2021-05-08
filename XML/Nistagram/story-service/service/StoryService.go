@@ -10,6 +10,9 @@ type StoryService struct {
 }
 
 func (service * StoryService) CreateStory(story *model.Story) error {
-	service.Repo.CreateStory(story)
+	err := service.Repo.CreateStory(story)
+	if err != nil {
+		return err
+	}
 	return nil
 }

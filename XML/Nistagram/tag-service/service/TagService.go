@@ -11,6 +11,9 @@ type TagService struct {
 }
 
 func (service * TagService) CreateTag(tag *model.Tag) error {
-	service.Repo.CreateTag(tag)
+	err := service.Repo.CreateTag(tag)
+	if err != nil {
+		return err
+	}
 	return nil
 }

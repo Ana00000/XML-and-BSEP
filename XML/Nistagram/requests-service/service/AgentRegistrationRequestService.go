@@ -10,6 +10,9 @@ type AgentRegistrationRequestService struct {
 }
 
 func (service * AgentRegistrationRequestService) CreateAgentRegistrationRequest(agentRegistrationRequest *model.AgentRegistrationRequest) error {
-	service.Repo.CreateAgentRegistrationRequest(agentRegistrationRequest)
+	err := service.Repo.CreateAgentRegistrationRequest(agentRegistrationRequest)
+	if err != nil {
+		return err
+	}
 	return nil
 }

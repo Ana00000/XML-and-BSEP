@@ -10,6 +10,9 @@ type RegisteredUserFollowersService struct {
 }
 
 func (service * RegisteredUserFollowersService) CreateRegisteredUserFollowers(registeredUserFollowers *model.RegisteredUserFollowers) error {
-	service.Repo.CreateRegisteredUserFollowers(registeredUserFollowers)
+	err := service.Repo.CreateRegisteredUserFollowers(registeredUserFollowers)
+	if err != nil {
+		return err
+	}
 	return nil
 }

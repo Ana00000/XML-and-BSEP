@@ -10,6 +10,9 @@ type PostICRService struct {
 }
 
 func (service * PostICRService) CreatePostICR(postICR *model.PostICR) error {
-	service.Repo.CreatePostICR(postICR)
+	err := service.Repo.CreatePostICR(postICR)
+	if err != nil {
+		return err
+	}
 	return nil
 }

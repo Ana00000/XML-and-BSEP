@@ -10,6 +10,9 @@ type ProfileSettingsMutedProfilesService struct {
 }
 
 func (service * ProfileSettingsMutedProfilesService) CreateProfileSettingsMutedProfiles(profileSettingsMutedProfiles *model.ProfileSettingsMutedProfiles) error {
-	service.Repo.CreateProfileSettingsMutedProfiles(profileSettingsMutedProfiles)
+	err := service.Repo.CreateProfileSettingsMutedProfiles(profileSettingsMutedProfiles)
+	if err != nil {
+		return err
+	}
 	return nil
 }

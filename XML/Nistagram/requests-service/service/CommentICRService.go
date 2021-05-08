@@ -10,6 +10,9 @@ type CommentICRService struct {
 }
 
 func (service * CommentICRService) CreateCommentICR(commentICR *model.CommentICR) error {
-	service.Repo.CreateCommentICR(commentICR)
+	err := service.Repo.CreateCommentICR(commentICR)
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -10,6 +10,9 @@ type CommentTagService struct {
 }
 
 func (service * CommentTagService) CreateCommentTag(commentTag *model.CommentTag) error {
-	service.Repo.CreateCommentTag(commentTag)
+	err := service.Repo.CreateCommentTag(commentTag)
+	if err != nil {
+		return err
+	}
 	return nil
 }

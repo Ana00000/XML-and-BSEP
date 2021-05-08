@@ -10,6 +10,9 @@ type InappropriateContentRequestService struct {
 }
 
 func (service * InappropriateContentRequestService) CreateInappropriateContentRequest(inappropriateContentRequest *model.InappropriateContentRequest) error {
-	service.Repo.CreateInappropriateContentRequest(inappropriateContentRequest)
+	err := service.Repo.CreateInappropriateContentRequest(inappropriateContentRequest)
+	if err != nil {
+		return err
+	}
 	return nil
 }

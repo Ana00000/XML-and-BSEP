@@ -10,6 +10,9 @@ type ProfileSettingsService struct {
 }
 
 func (service * ProfileSettingsService) CreateProfileSettings(profileSettings *model.ProfileSettings) error {
-	service.Repo.CreateProfileSettings(profileSettings)
+	err := service.Repo.CreateProfileSettings(profileSettings)
+	if err != nil {
+		return err
+	}
 	return nil
 }

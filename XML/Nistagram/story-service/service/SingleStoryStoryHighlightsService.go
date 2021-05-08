@@ -10,6 +10,9 @@ type SingleStoryStoryHighlightsService struct {
 }
 
 func (service * SingleStoryStoryHighlightsService) CreateSingleStoryStoryHighlights(singleStoryStoryHighlights *model.SingleStoryStoryHighlights) error {
-	service.Repo.CreateSingleStoryStoryHighlights(singleStoryStoryHighlights)
+	err := service.Repo.CreateSingleStoryStoryHighlights(singleStoryStoryHighlights)
+	if err != nil {
+		return err
+	}
 	return nil
 }
