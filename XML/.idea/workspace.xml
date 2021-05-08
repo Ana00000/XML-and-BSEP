@@ -2,43 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/dto/AdvertisementDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/dto/AdvertisementDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/dto/CampaignChosenGroupsDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/dto/CampaignChosenGroupsDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/dto/CampaignDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/dto/CampaignDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/dto/DisposableCampaignDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/dto/DisposableCampaignDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/dto/MultiUseCampaignDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/dto/MultiUseCampaignDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/dto/ProductDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/dto/ProductDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/handler/AdvertisementHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/AdvertisementHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/handler/CampaignChosenGroupHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignChosenGroupHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/handler/CampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/handler/DisposableCampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/DisposableCampaignHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/handler/MultiUseCampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/MultiUseCampaignHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/handler/ProductHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/ProductHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/model/Advertisement.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/model/Advertisement.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/model/Campaign.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/model/Campaign.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/model/CampaignChosenGroups.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/model/CampaignChosenGroups.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/model/DisposableCampaign.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/model/DisposableCampaign.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/model/MultiUseCampagne.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/model/MultiUseCampagne.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/model/Product.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/model/Product.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/model/UserCategory.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/model/UserCategory.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/repository/AdvertisementRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/repository/AdvertisementRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/repository/CampaignChosenGroupRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/repository/CampaignChosenGroupRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/repository/CampaignRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/repository/CampaignRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/repository/DisposableCampaignRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/repository/DisposableCampaignRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/repository/MultiUseCampaignRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/repository/MultiUseCampaignRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/repository/ProductRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/repository/ProductRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/service/AdvertisementService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/service/AdvertisementService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/service/CampaignChosenGroupService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/service/CampaignChosenGroupService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/service/CampaignService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/service/CampaignService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/service/DisposableCampaignService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/service/DisposableCampaignService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/service/MultiUseCampaignService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/service/MultiUseCampaignService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/agent-service/service/ProductsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/service/ProductsService.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Agent/model/AgentUser.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Agent/model/Gender.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Agent/model/Product.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Agent/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/.idea/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
   </component>
   <component name="GOROOT" url="file://$PROJECT_DIR$/../../../../../../../Program Files/Go" />
   <component name="Git.Settings">
@@ -51,6 +31,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -72,5 +53,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
