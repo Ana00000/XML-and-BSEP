@@ -26,7 +26,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Product{}, &model.Campaign{}, &model.Advertisement{}, &model.MultiUseCampaign{}, &model.DisposableCampaign{}, &model.CampaignChosenGroup{})
+	db.AutoMigrate(&model.Campaign{}, &model.Advertisement{}, &model.MultiUseCampaign{}, &model.DisposableCampaign{}, &model.CampaignChosenGroup{})
 	return db
 }
 
@@ -40,10 +40,6 @@ func initCampaignChosenGroupServices(repo *repository.CampaignChosenGroupReposit
 
 func initCampaignChosenGroupHandler(service *service.CampaignChosenGroupService) *handler.CampaignChosenGroupHandler{
 	return &handler.CampaignChosenGroupHandler { Service: service }
-}
-
-func initProductRepo(database *gorm.DB) *repository.ProductRepository{
-	return &repository.ProductRepository { Database: database }
 }
 
 func initCampaignRepo(database *gorm.DB) *repository.CampaignRepository{
@@ -78,10 +74,6 @@ func initCampaignServices(repo *repository.CampaignRepository) *service.Campaign
 	return &service.CampaignService { Repo: repo }
 }
 
-func initProductServices(repo *repository.ProductRepository) *service.ProductService{
-	return &service.ProductService { Repo: repo }
-}
-
 func initAdvertisementHandler(service *service.AdvertisementService) *handler.AdvertisementHandler{
 	return &handler.AdvertisementHandler { Service: service }
 }
@@ -98,16 +90,12 @@ func initMultiUseCampaignHandler(service *service.MultiUseCampaignService) *hand
 	return &handler.MultiUseCampaignHandler { Service: service }
 }
 
-func initProductHandler(service *service.ProductService) *handler.ProductHandler{
-	return &handler.ProductHandler { Service: service }
-}
 
 
-func handleFunc(handlerProduct *handler.ProductHandler,handlerMultiUseCampaign *handler.MultiUseCampaignHandler,handlerDisposableCampaign *handler.DisposableCampaignHandler,handlerCampaign *handler.CampaignHandler,handlerAdvertisement *handler.AdvertisementHandler,
+func handleFunc(handlerMultiUseCampaign *handler.MultiUseCampaignHandler,handlerDisposableCampaign *handler.DisposableCampaignHandler,handlerCampaign *handler.CampaignHandler,handlerAdvertisement *handler.AdvertisementHandler,
 	handlerCampaignChosenGroup *handler.CampaignChosenGroupHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
-	router.HandleFunc("/product/", handlerProduct.CreateProduct).Methods("POST")
 	router.HandleFunc("/multi_use_campaign/", handlerMultiUseCampaign.CreateMultiUseCampaign).Methods("POST")
 	router.HandleFunc("/disposable_campaign/", handlerDisposableCampaign.CreateDisposableCampaign).Methods("POST")
 	router.HandleFunc("/campaign/", handlerCampaign.CreateCampaign).Methods("POST")
@@ -118,17 +106,17 @@ func handleFunc(handlerProduct *handler.ProductHandler,handlerMultiUseCampaign *
 
 func main() {
 	database := initDB()
-	repoProduct := initProductRepo(database)
+
 	repoMultiUseCampaign := initMultiUseCampaignRepo(database)
 	repoDisposableCampaign := initDisposableCampaignRepo(database)
 	repoCampaign := initCampaignRepo(database)
 	repoAdvertisement := initAdvertisementRepo(database)
-	serviceProduct := initProductServices(repoProduct)
+
 	serviceMultiUseCampaign := initMultiUseCampaignServices(repoMultiUseCampaign)
 	serviceDisposableCampaign := initDisposableCampaignServices(repoDisposableCampaign)
 	serviceCampaign := initCampaignServices(repoCampaign)
 	serviceAdvertisement := initAdvertisementServices(repoAdvertisement)
-	handlerProduct := initProductHandler(serviceProduct)
+
 	handlerMultiUseCampaign := initMultiUseCampaignHandler(serviceMultiUseCampaign)
 	handlerDisposableCampaign := initDisposableCampaignHandler(serviceDisposableCampaign)
 	handlerCampaign := initCampaignHandler(serviceCampaign)
@@ -137,5 +125,5 @@ func main() {
 	repoCampaignChosenGroup := initCampaignChosenGroupRepo(database)
 	serviceCampaignChosenGroup := initCampaignChosenGroupServices(repoCampaignChosenGroup)
 	handlerCampaignChosenGroup := initCampaignChosenGroupHandler(serviceCampaignChosenGroup)
-	handleFunc(handlerProduct,handlerMultiUseCampaign,handlerDisposableCampaign,handlerCampaign,handlerAdvertisement,handlerCampaignChosenGroup)
+	handleFunc(handlerMultiUseCampaign,handlerDisposableCampaign,handlerCampaign,handlerAdvertisement,handlerCampaignChosenGroup)
 }
