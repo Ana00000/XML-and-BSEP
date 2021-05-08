@@ -39,13 +39,7 @@ func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request)
 				DateOfBirth:      dateOfBirth,
 				Website:          agentDTO.Website,
 				Biography:        agentDTO.Biography,
-				//SentMessages:     nil,
-				//ReceivedMessages: nil,
 			},
-			//Following:                   nil,
-			//Followers:                   nil,
-			//Campaigns:                   nil,
-			//InappropriateContentRequest: nil,
 		},
 		AgentRegistrationRequestId: agentDTO.AgentRegistrationRequestId,
 	}

@@ -4,7 +4,7 @@ import (
 	"../model"
 )
 
-type AgentDTO struct {
+type AgentUserDTO struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Email string `json:"email"`

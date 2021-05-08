@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Agent/dto/AgentUserDTO.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Agent/handler/AgentUserHandler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Agent/handler/ProductHandler.go" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Agent/repository/ProductRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Agent/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Agent/dto/AgentUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/dto/AgentUserDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Agent/dto/ProductDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/dto/ProductDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Agent/model/Product.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/model/Product.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Agent/repository/AgentUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/repository/AgentUserRepository.go" afterDir="false" />
@@ -60,6 +62,7 @@
       <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/StoryTagService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/service/StoryTagService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/StoryTagStoriesService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/service/StoryTagStoriesService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/TagService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/service/TagService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/AgentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/AgentHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/AdminService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/AdminService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/AgentService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/AgentService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserService.go" afterDir="false" />

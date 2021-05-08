@@ -9,7 +9,7 @@ type AgentUserService struct {
 	Repo * repository.AgentUserRepository
 }
 
-func (service * AgentUserService) CreateUser(user *model.AgentUser) error {
+func (service * AgentUserService) CreateAgentUser(user *model.AgentUser) error {
 	err := service.Repo.CreateAgentUser(user)
 	if err != nil {
 		return err
