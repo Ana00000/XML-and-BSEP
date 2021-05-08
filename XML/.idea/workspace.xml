@@ -4,6 +4,7 @@
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/Agent/handler/AgentUserHandler.go" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Agent/handler/ProductHandler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Agent/main.go" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Agent/repository/ProductRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Agent/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/.idea/.gitignore" afterDir="false" />
