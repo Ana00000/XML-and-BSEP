@@ -10,6 +10,9 @@ type MessageService struct {
 }
 
 func (service * MessageService) CreateMessage(message *model.Message) error {
-	service.Repo.CreateMessage(message)
+	err := service.Repo.CreateMessage(message)
+	if err != nil {
+		return err
+	}
 	return nil
 }

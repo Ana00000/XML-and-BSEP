@@ -10,6 +10,9 @@ type PostService struct {
 }
 
 func (service * PostService) CreatePost(post *model.Post) error {
-	service.Repo.CreatePost(post)
+	err := service.Repo.CreatePost(post)
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -10,6 +10,9 @@ type DisposableCampaignService struct {
 }
 
 func (service * DisposableCampaignService) CreateDisposableCampaign(disposableCampaign *model.DisposableCampaign) error {
-	service.Repo.CreateDisposableCampaign(disposableCampaign)
+	err := service.Repo.CreateDisposableCampaign(disposableCampaign)
+	if err != nil {
+		return err
+	}
 	return nil
 }

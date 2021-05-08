@@ -10,7 +10,10 @@ type StoryMessageSubstanceService struct {
 }
 
 func (service * StoryMessageSubstanceService) CreateStoryMessageSubstance(storyMessageSubstance *model.StoryMessageSubstance) error {
-	service.Repo.CreateStoryMessageSubstance(storyMessageSubstance)
+	err := service.Repo.CreateStoryMessageSubstance(storyMessageSubstance)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

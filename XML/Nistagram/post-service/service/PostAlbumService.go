@@ -10,6 +10,9 @@ type PostAlbumService struct {
 }
 
 func (service * PostAlbumService) CreatePostAlbum(postAlbum *model.PostAlbum) error {
-	service.Repo.CreatePostAlbum(postAlbum)
+	err := service.Repo.CreatePostAlbum(postAlbum)
+	if err != nil {
+		return err
+	}
 	return nil
 }

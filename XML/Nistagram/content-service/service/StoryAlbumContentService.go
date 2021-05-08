@@ -10,6 +10,9 @@ type StoryAlbumContentService struct {
 }
 
 func (service * StoryAlbumContentService) CreateStoryAlbumContent(storyAlbumContent *model.StoryAlbumContent) error {
-	service.Repo.CreateStoryAlbumContent(storyAlbumContent)
+	err := service.Repo.CreateStoryAlbumContent(storyAlbumContent)
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -10,6 +10,9 @@ type MultiUseCampaignService struct {
 }
 
 func (service * MultiUseCampaignService) CreateMultiUseCampaign(multiUseCampaign *model.MultiUseCampaign) error {
-	service.Repo.CreateMultiUseCampaign(multiUseCampaign)
+	err := service.Repo.CreateMultiUseCampaign(multiUseCampaign)
+	if err != nil {
+		return err
+	}
 	return nil
 }

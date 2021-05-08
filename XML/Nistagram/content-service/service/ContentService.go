@@ -10,6 +10,9 @@ type ContentService struct {
 }
 
 func (service * ContentService) CreateContent(content *model.Content) error {
-	service.Repo.CreateContent(content)
+	err := service.Repo.CreateContent(content)
+	if err != nil {
+		return err
+	}
 	return nil
 }

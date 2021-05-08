@@ -10,6 +10,9 @@ type SinglePostService struct {
 }
 
 func (service * SinglePostService) CreateSinglePost(singlePost *model.SinglePost) error {
-	service.Repo.CreateSinglePost(singlePost)
+	err := service.Repo.CreateSinglePost(singlePost)
+	if err != nil {
+		return err
+	}
 	return nil
 }

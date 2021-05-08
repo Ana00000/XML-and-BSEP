@@ -10,7 +10,10 @@ type PostMessageSubstanceService struct {
 }
 
 func (service * PostMessageSubstanceService) CreatePostMessageSubstance(postMessageSubstance *model.PostMessageSubstance) error {
-	service.Repo.CreatePostMessageSubstance(postMessageSubstance)
+	err := service.Repo.CreatePostMessageSubstance(postMessageSubstance)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

@@ -10,6 +10,9 @@ type ProductService struct {
 }
 
 func (service * ProductService) CreateProduct(product *model.Product) error {
-	service.Repo.CreateProduct(product)
+	err := service.Repo.CreateProduct(product)
+	if err != nil {
+		return err
+	}
 	return nil
 }

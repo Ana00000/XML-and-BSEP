@@ -10,6 +10,9 @@ type ActivityService struct {
 }
 
 func (service * ActivityService) CreateActivity(activity *model.Activity) error {
-	service.Repo.CreateActivity(activity)
+	err := service.Repo.CreateActivity(activity)
+	if err != nil {
+		return err
+	}
 	return nil
 }

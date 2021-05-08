@@ -10,6 +10,9 @@ type CampaignChosenGroupService struct {
 }
 
 func (service * CampaignChosenGroupService) CreateCampaignChosenGroup(campaignChosenGroup *model.CampaignChosenGroup) error {
-	service.Repo.CreateCampaignChosenGroup(campaignChosenGroup)
+	err := service.Repo.CreateCampaignChosenGroup(campaignChosenGroup)
+	if err != nil {
+		return err
+	}
 	return nil
 }

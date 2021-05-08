@@ -10,6 +10,9 @@ type LocationService struct {
 }
 
 func (service * LocationService) CreateLocation(location *model.Location) error {
-	service.Repo.CreateLocation(location)
+	err := service.Repo.CreateLocation(location)
+	if err != nil {
+		return err
+	}
 	return nil
 }

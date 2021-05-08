@@ -10,6 +10,9 @@ type AdvertisementContentService struct {
 }
 
 func (service * AdvertisementContentService) CreateAdvertisementContent(advertisementContent *model.AdvertisementContent) error {
-	service.Repo.CreateAdvertisementContent(advertisementContent)
+	err := service.Repo.CreateAdvertisementContent(advertisementContent)
+	if err != nil {
+		return err
+	}
 	return nil
 }

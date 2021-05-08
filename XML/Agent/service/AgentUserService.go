@@ -10,6 +10,9 @@ type AgentUserService struct {
 }
 
 func (service * AgentUserService) CreateUser(user *model.AgentUser) error {
-	service.Repo.CreateAgentUser(user)
+	err := service.Repo.CreateAgentUser(user)
+	if err != nil {
+		return err
+	}
 	return nil
 }

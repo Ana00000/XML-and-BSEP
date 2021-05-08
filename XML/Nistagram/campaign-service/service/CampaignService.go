@@ -10,6 +10,9 @@ type CampaignService struct {
 }
 
 func (service * CampaignService) CreateCampaign(campaign *model.Campaign) error {
-	service.Repo.CreateCampaign(campaign)
+	err := service.Repo.CreateCampaign(campaign)
+	if err != nil {
+		return err
+	}
 	return nil
 }

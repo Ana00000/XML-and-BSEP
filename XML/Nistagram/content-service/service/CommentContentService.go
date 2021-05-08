@@ -10,6 +10,9 @@ type CommentContentService struct {
 }
 
 func (service * CommentContentService) CreateCommentContent(commentContent *model.CommentContent) error {
-	service.Repo.CreateCommentContent(commentContent)
+	err := service.Repo.CreateCommentContent(commentContent)
+	if err != nil {
+		return err
+	}
 	return nil
 }
