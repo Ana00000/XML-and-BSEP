@@ -128,8 +128,8 @@ func initRegisteredUserFollowingsHandler(service *service.RegisteredUserFollowin
 
 func handleFunc(userHandler *handler.UserHandler, registeredUserHandler *handler.RegisteredUserHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, classicUserHandler *handler.ClassicUserHandler,registeredUserCampaignsHandler *handler.RegisteredUserCampaignsHandler,registeredUserFollowingsHandler *handler.RegisteredUserFollowingsHandler,registeredUserFollowersHandler *handler.RegisteredUserFollowersHandler){
 	router := mux.NewRouter().StrictSlash(true)
-
-
+	router.HandleFunc("/login/", userHandler.LogIn).Methods("POST")
+	router.HandleFunc("/users/", userHandler.FindAllUsers).Methods("GET")
 	router.HandleFunc("/admin/", adminHandler.CreateAdmin).Methods("POST")
 	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
 	router.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser).Methods("POST")

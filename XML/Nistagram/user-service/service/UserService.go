@@ -16,3 +16,16 @@ func (service * UserService) CreateUser(user *model.User) error {
 	}
 	return nil
 }
+
+func (service * UserService) FindAllUsers() []model.User{
+	users := service.Repo.FindAllUsers()
+	if users != nil {
+		return users
+	}
+	return nil
+}
+
+func (service *UserService) FindByUserName(userName string) *model.User {
+	user := service.Repo.FindByUserName(userName)
+	return user
+}
