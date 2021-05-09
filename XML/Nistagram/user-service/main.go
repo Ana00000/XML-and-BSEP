@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -106,8 +106,8 @@ func initAdminHandler(service *service.AdminService) *handler.AdminHandler{
 	return &handler.AdminHandler { Service: service }
 }
 
-func initClassicUserHandler(service *service.ClassicUserService) *handler.ClassicUserHandler{
-	return &handler.ClassicUserHandler { Service: service }
+func initClassicUserHandler(classicUserService *service.ClassicUserService, userService *service.UserService, registeredUserService *service.RegisteredUserService ) *handler.ClassicUserHandler{
+	return &handler.ClassicUserHandler { classicUserService, userService, registeredUserService }
 }
 
 func initAgentHandler(service *service.AgentService) *handler.AgentHandler{
@@ -129,8 +129,7 @@ func initRegisteredUserFollowingsHandler(service *service.RegisteredUserFollowin
 func handleFunc(userHandler *handler.UserHandler, registeredUserHandler *handler.RegisteredUserHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, classicUserHandler *handler.ClassicUserHandler,registeredUserCampaignsHandler *handler.RegisteredUserCampaignsHandler,registeredUserFollowingsHandler *handler.RegisteredUserFollowingsHandler,registeredUserFollowersHandler *handler.RegisteredUserFollowersHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
-	router.HandleFunc("/user/", userHandler.CreateUser).Methods("POST")
-	router.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser).Methods("POST")
+
 	router.HandleFunc("/admin/", adminHandler.CreateAdmin).Methods("POST")
 	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
 	router.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser).Methods("POST")
@@ -161,7 +160,7 @@ func main() {
 	userHandler := initUserHandler(userService)
 	registeredUserHandler := initRegisteredUserHandler(registeredUserService)
 	adminHandler := initAdminHandler(adminService)
-	classicUserHandler := initClassicUserHandler(classicUserService)
+	classicUserHandler := initClassicUserHandler(classicUserService, userService, registeredUserService)
 	agentHandler := initAgentHandler(agentService)
 	registeredUserCampaignsHandler := initRegisteredUserCampaignsHandler(registeredUserCampaignsService)
 	registeredUserFollowersHandler := initRegisteredUserFollowersHandler(registeredUserFollowersService)
