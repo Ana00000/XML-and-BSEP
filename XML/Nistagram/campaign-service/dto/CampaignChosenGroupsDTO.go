@@ -7,5 +7,5 @@ import (
 
 type CampaignChosenGroupDTO struct {
 	CampaignId uuid.UUID `json:"campaign_id"`
-	UserCategoryValue model.UserCategory `json:"user_category_value"`
+	RegisteredUserCategory model.RegisteredUserCategory `json:"registered_user_category"`
 }

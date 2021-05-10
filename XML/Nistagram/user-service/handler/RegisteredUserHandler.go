@@ -58,7 +58,7 @@ func SendConfirmationMail(user model.User, token uuid.UUID) {
 }
 
 func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter, r *http.Request) {
-	var registeredUserDTO dto.ClassicUserDTO
+	var registeredUserDTO dto.RegisteredUserDTO
 
 	err := json.NewDecoder(r.Body).Decode(&registeredUserDTO)
 	if err != nil {
@@ -94,9 +94,9 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 				IsConfirmed: 	  false,
 				UserType: model.REGISTERED_USER, //SET VALUE
 			},
+			IsDeleted: false,
 		},
-		IsBlocked:            false,
-		RegisteredUserCategory:         registeredUserDTO.ClassicUserCategory,
+		RegisteredUserCategory:         registeredUserDTO.RegisteredUserCategory,
 		OfficialDocumentPath: registeredUserDTO.OfficialDocumentPath,
 
 	}

@@ -5,7 +5,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 )
 
-type ClassicUserDTO struct {
+type RegisteredUserDTO struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Email string `json:"email"`
@@ -16,7 +16,7 @@ type ClassicUserDTO struct {
 	DateOfBirth string `json:"dateOfBirth"`
 	Website string `json:"website"`
 	Biography string `json:"biography"`
-	ClassicUserCategory model.ClassicUserCategory `json:"user_category"`
+	RegisteredUserCategory model.RegisteredUserCategory `json:"user_category"`
 	OfficialDocumentPath string `json:"official_document_path"`
 	SettingsId uuid.UUID `json:"settings_id"`
 }

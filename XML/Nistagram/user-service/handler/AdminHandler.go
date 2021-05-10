@@ -39,6 +39,7 @@ func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request)
 			Website:     adminDTO.Website,
 			Biography:   adminDTO.Biography,
 			IsConfirmed: true,
+			UserType: model.ADMIN, //SET VALUE
 		},
 	}
 

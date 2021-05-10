@@ -36,12 +36,12 @@ func (handler *ConfirmationTokenHandler) VerifyConfirmationToken(w http.Response
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	err := handler.ClassicUserService.UpdateClassicUserConfirmed(confirmationToken.UserId, true)
+	err := handler.RegisteredUserService.UpdateRegisteredUserConfirmed(confirmationToken.UserId, true)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	err = handler.RegisteredUserService.UpdateRegisteredUserConfirmed(confirmationToken.UserId, true)
+	err = handler.ClassicUserService.UpdateClassicUserConfirmed(confirmationToken.UserId, true)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
