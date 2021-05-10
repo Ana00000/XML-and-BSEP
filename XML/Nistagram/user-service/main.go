@@ -1,15 +1,15 @@
 package main
 
 import (
-	"./handler"
-	"./model"
-	"./repository"
-	"./service"
 	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -26,7 +26,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.User{}, &model.RegisteredUser{}, &model.Admin{}, &model.ClassicUser{}, &model.Agent{},&model.RegisteredUserFollowers{},&model.RegisteredUserFollowings{}, &model.RegisteredUserCampaigns{})
+	db.AutoMigrate(&model.User{}, &model.RegisteredUser{}, &model.Admin{}, &model.ClassicUser{}, &model.Agent{},&model.RegisteredUserFollowers{},&model.RegisteredUserFollowings{}, &model.RegisteredUserCampaigns{}, &model.ConfirmationToken{})
 	return db
 }
 
@@ -62,6 +62,10 @@ func initRegisteredUserFollowingsRepo(database *gorm.DB) *repository.RegisteredU
 	return &repository.RegisteredUserFollowingsRepository { Database: database }
 }
 
+func initConfirmationTokenRepo(database *gorm.DB) *repository.ConfirmationTokenRepository{
+	return &repository.ConfirmationTokenRepository { Database: database }
+}
+
 func initUserService(repo *repository.UserRepository) *service.UserService{
 	return &service.UserService { Repo: repo }
 }
@@ -86,6 +90,10 @@ func initRegisteredUserCampaignsService(repo *repository.RegisteredUserCampaigns
 	return &service.RegisteredUserCampaignsService { Repo: repo }
 }
 
+func initConfirmationTokenService(repo *repository.ConfirmationTokenRepository) *service.ConfirmationTokenService{
+	return &service.ConfirmationTokenService { Repo: repo }
+}
+
 func initRegisteredUserFollowingsService(repo *repository.RegisteredUserFollowingsRepository) *service.RegisteredUserFollowingsService{
 	return &service.RegisteredUserFollowingsService { Repo: repo }
 }
@@ -106,8 +114,8 @@ func initAdminHandler(service *service.AdminService) *handler.AdminHandler{
 	return &handler.AdminHandler { Service: service }
 }
 
-func initClassicUserHandler(service *service.ClassicUserService) *handler.ClassicUserHandler{
-	return &handler.ClassicUserHandler { Service: service }
+func initClassicUserHandler(classicUserService *service.ClassicUserService, userService *service.UserService, registeredUserService *service.RegisteredUserService,  confirmationTokenService *service.ConfirmationTokenService) *handler.ClassicUserHandler{
+	return &handler.ClassicUserHandler { classicUserService, userService, registeredUserService , confirmationTokenService}
 }
 
 func initAgentHandler(service *service.AgentService) *handler.AgentHandler{
@@ -126,13 +134,22 @@ func initRegisteredUserFollowingsHandler(service *service.RegisteredUserFollowin
 	return &handler.RegisteredUserFollowingsHandler { Service: service }
 }
 
-func handleFunc(userHandler *handler.UserHandler, registeredUserHandler *handler.RegisteredUserHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, classicUserHandler *handler.ClassicUserHandler,registeredUserCampaignsHandler *handler.RegisteredUserCampaignsHandler,registeredUserFollowingsHandler *handler.RegisteredUserFollowingsHandler,registeredUserFollowersHandler *handler.RegisteredUserFollowersHandler){
-	router := mux.NewRouter().StrictSlash(true)
+func initConfirmationTokenHandler(confirmationTokenService *service.ConfirmationTokenService, userService *service.UserService, registeredUserService *service.RegisteredUserService, classicUserService *service.ClassicUserService) *handler.ConfirmationTokenHandler{
+	return &handler.ConfirmationTokenHandler{
+		ConfirmationTokenService: confirmationTokenService,
+		ClassicUserService:       classicUserService,
+		RegisteredUserService:    registeredUserService,
+		UserService:              userService,
+	}
+}
 
-	router.HandleFunc("/user/", userHandler.CreateUser).Methods("POST")
-	router.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser).Methods("POST")
+func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, classicUserHandler *handler.ClassicUserHandler,registeredUserCampaignsHandler *handler.RegisteredUserCampaignsHandler,registeredUserFollowingsHandler *handler.RegisteredUserFollowingsHandler,registeredUserFollowersHandler *handler.RegisteredUserFollowersHandler){
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/login/", userHandler.LogIn).Methods("POST")
+	router.HandleFunc("/users/", userHandler.FindAllUsers).Methods("GET")
 	router.HandleFunc("/admin/", adminHandler.CreateAdmin).Methods("POST")
 	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
+	router.HandleFunc("/confirm_registration/{confirmationToken}/{userId}", confirmationTokenHandler.VerifyConfirmationToken).Methods("POST")
 	router.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser).Methods("POST")
 	router.HandleFunc("/registered_user_campaigns/", registeredUserCampaignsHandler.CreateRegisteredUserCampaigns).Methods("POST")
 	router.HandleFunc("/registered_user_followings/", registeredUserFollowingsHandler.CreateRegisteredUserFollowings).Methods("POST")
@@ -147,11 +164,13 @@ func main() {
 	adminRepo := initAdminRepo(database)
 	classicUserRepo := initClassicUserRepo(database)
 	agentRepo := initAgentRepo(database)
+	confirmationTokenRepo := initConfirmationTokenRepo(database)
 	registeredUserCampaignsRepo := initRegisteredUserCampaignsRepo(database)
 	registeredUserFollowersRepo := initRegisteredUserFollowersRepo(database)
 	registeredUserFollowingsRepo := initRegisteredUserFollowingsRepo(database)
 	userService := initUserService(userRepo)
 	registeredUserService := initRegisteredUserService(registeredUserRepo)
+	confirmationTokenService := initConfirmationTokenService(confirmationTokenRepo)
 	adminService := initAdminService(adminRepo)
 	classicUserService := initClassicUserService(classicUserRepo)
 	agentService := initAgentService(agentRepo)
@@ -159,12 +178,13 @@ func main() {
 	registeredUserFollowersService := initRegisteredUserFollowersService(registeredUserFollowersRepo)
 	registeredUserFollowingsService := initRegisteredUserFollowingsService(registeredUserFollowingsRepo)
 	userHandler := initUserHandler(userService)
-	registeredUserHandler := initRegisteredUserHandler(registeredUserService)
+	//registeredUserHandler := initRegisteredUserHandler(registeredUserService)
 	adminHandler := initAdminHandler(adminService)
-	classicUserHandler := initClassicUserHandler(classicUserService)
+	classicUserHandler := initClassicUserHandler(classicUserService, userService, registeredUserService,confirmationTokenService)
 	agentHandler := initAgentHandler(agentService)
+	confirmationTokenHandler := initConfirmationTokenHandler(confirmationTokenService,userService,registeredUserService,classicUserService)
 	registeredUserCampaignsHandler := initRegisteredUserCampaignsHandler(registeredUserCampaignsService)
 	registeredUserFollowersHandler := initRegisteredUserFollowersHandler(registeredUserFollowersService)
 	registeredUserFollowingsHandler := initRegisteredUserFollowingsHandler(registeredUserFollowingsService)
-	handleFunc(userHandler, registeredUserHandler, adminHandler,agentHandler,classicUserHandler,registeredUserCampaignsHandler,registeredUserFollowingsHandler,registeredUserFollowersHandler)
+	handleFunc(userHandler, confirmationTokenHandler, adminHandler,agentHandler,classicUserHandler,registeredUserCampaignsHandler,registeredUserFollowingsHandler,registeredUserFollowersHandler)
 }

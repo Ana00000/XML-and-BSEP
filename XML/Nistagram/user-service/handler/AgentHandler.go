@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"../dto"
-	"../model"
-	"../service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 	_ "strconv"
 	"time"
@@ -39,6 +39,7 @@ func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request)
 				DateOfBirth:      dateOfBirth,
 				Website:          agentDTO.Website,
 				Biography:        agentDTO.Biography,
+				IsConfirmed: 	  false,
 			},
 		},
 		AgentRegistrationRequestId: agentDTO.AgentRegistrationRequestId,

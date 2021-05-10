@@ -1,8 +1,9 @@
 package service
 
 import (
-	"../model"
-	"../repository"
+	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 )
 
 type UserService struct {
@@ -11,6 +12,27 @@ type UserService struct {
 
 func (service * UserService) CreateUser(user *model.User) error {
 	err := service.Repo.CreateUser(user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (service * UserService) FindAllUsers() []model.User{
+	users := service.Repo.FindAllUsers()
+	if users != nil {
+		return users
+	}
+	return nil
+}
+
+func (service *UserService) FindByUserName(userName string) *model.User {
+	user := service.Repo.FindByUserName(userName)
+	return user
+}
+
+func (service *UserService) UpdateUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
+	err := service.Repo.UpdateUserConfirmed(userId,isConfirmed)
 	if err != nil {
 		return err
 	}
