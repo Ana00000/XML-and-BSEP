@@ -110,13 +110,13 @@ export default {
     firstName: "",
     lastName: "",
     genders: ["FEMALE", "MALE", "OTHER"],
-    selectedGender: "FEMALE",
+    selectedGender: 0,
     label1: "Gender",
     dateOfBirth: "",
     website: "",
     biography: "",
     userCategories: ["INFLUENCER", "SPORTS", "NEW_MEDIA", "BUSINESS", "BRAND", "ORGANIZATION"],
-    selectedUserCategory: "INFLUENCER", 
+    selectedUserCategory: 0, 
     label2: "User category",
     officialDocumentPath: "",
     users: []
@@ -128,25 +128,39 @@ export default {
           || !this.validDateOfBirth() || !this.validWebsite() || !this.validBiography()
           || !this.validOfficialDocumentPath())  
           return;
+      
+      console.log(this.username);
+      console.log(this.userEmail);
+      console.log(this.lastName);
+      console.log(this.password);
+      console.log(this.firstName);
+      console.log(this.phoneNumber);
+      console.log(this.selectedGender);
+      console.log(this.dateOfBirth);
+      console.log(this.website);
+      console.log(this.biography);
+      console.log(this.selectedUserCategory);
+      console.log(this.officialDocumentPath);
       this.$http
-        .post("https://localhost:8080/users/register", {
+        .post("http://localhost:8082/classic_user/", {
           username: this.username,
-          userEmail: this.userEmail,
-          lastName: this.lastName,
           password: this.password,
-          firstName: this.firstName,
+          email : this.userEmail,
           phoneNumber: this.phoneNumber,
+          firstName: this.firstName,
+          lastName: this.lastName,
           gender: this.selectedGender,
-          dateOfBirth: this.dateOfBirth,
+          dateOfBirth: this.dateOfBirth + "T11:45:26.371Z",
           website: this.website,
           biography: this.biography,
-          userCategory: this.selectedUserCategory,
-          officialDocumentPath : this.officialDocumentPath 
+          is_blocked: false,
+          user_category: this.selectedUserCategory,
+          official_document_path : this.officialDocumentPath 
         })
         .then((response) => {
           console.log(response.data.firstName);
           alert("Successfully registered.");
-          window.location.href = "https://localhost:8081/login";
+          window.location.href = "http://localhost:8081/logIn";
         })
         .catch((er) => {
           alert("Email already exists.");

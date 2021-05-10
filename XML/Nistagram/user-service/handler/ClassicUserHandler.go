@@ -40,7 +40,7 @@ func SendConfirmationMail(user model.User, token uuid.UUID) {
 	m.SetHeader("Subject", "Confirmation mail")
 
 	// Set E-Mail body. You can set plain text or html with text/html
-	text:= "Dear "+user.FirstName+",\n\nPlease, click on link in below to confirm your registration on us social network!\n\nhttp://localhost:8082/confirm_registration/"+token.String()+"/"+user.ID.String()
+	text:= "Dear "+user.FirstName+",\n\nPlease, click on link in below to confirm your registration on us social network!\n\nhttp://localhost:8081/confirmRegistration/"+token.String()+"/"+user.ID.String()
 	m.SetBody("text/plain", text)
 
 	// Settings for SMTP server
@@ -73,9 +73,31 @@ func (handler *ClassicUserHandler) CreateClassicUser(w http.ResponseWriter, r *h
 	password := sb.String()
 	hash,_ := HashPassword(password)
 
+	gender := model.OTHER
+	switch classicUserDTO.Gender {
+		case "MALE":
+			gender = model.MALE
+		case "FEMALE":
+			gender = model.FEMALE
+	}
+
+	userCategory := model.ORGANIZATION
+	switch classicUserDTO.Gender {
+	case "INFLUENCER":
+		userCategory = model.INFLUENCER
+	case "SPORTS":
+		userCategory = model.SPORTS
+	case "NEW_MEDIA":
+		userCategory = model.NEW_MEDIA
+	case "BUSINESS":
+		userCategory = model.BUSINESS
+	case "BRAND":
+		userCategory = model.BRAND
+	}
+	fmt.Printf(classicUserDTO.DateOfBirth)
 	userId := uuid.New()
 	layout := "2006-01-02T15:04:05.000Z"
-	dateOfBirth,_ :=time.Parse(layout,classicUserDTO.DateOfBirth)
+	dateOfBirth, _ := time.Parse(layout, classicUserDTO.DateOfBirth)
 	classicUser := model.ClassicUser{
 		RegisteredUser:       model.RegisteredUser{
 			User:                        model.User{
@@ -86,7 +108,7 @@ func (handler *ClassicUserHandler) CreateClassicUser(w http.ResponseWriter, r *h
 				PhoneNumber:      classicUserDTO.PhoneNumber,
 				FirstName:        classicUserDTO.FirstName,
 				LastName:         classicUserDTO.LastName,
-				Gender:           classicUserDTO.Gender,
+				Gender:           gender,
 				DateOfBirth:      dateOfBirth,
 				Website:          classicUserDTO.Website,
 				Biography:        classicUserDTO.Biography,
@@ -95,7 +117,7 @@ func (handler *ClassicUserHandler) CreateClassicUser(w http.ResponseWriter, r *h
 			},
 		},
 		IsBlocked:            false,
-		UserCategory:         classicUserDTO.UserCategory,
+		UserCategory:         userCategory,
 		OfficialDocumentPath: classicUserDTO.OfficialDocumentPath,
 
 	}

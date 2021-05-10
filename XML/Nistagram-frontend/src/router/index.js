@@ -21,7 +21,7 @@ const routes = [
     component: () => import('../views/Register.vue')
   },
   {
-    path: '/confirmRegistration/:id',
+    path: '/confirmRegistration/:confirmationToken/:userId',
     name: 'ConfirmRegistration',
     component: () => import('../views/ConfirmRegistration.vue')
   },

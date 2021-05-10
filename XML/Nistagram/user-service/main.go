@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
+	"github.com/rs/cors"
+	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
@@ -143,19 +144,30 @@ func initConfirmationTokenHandler(confirmationTokenService *service.Confirmation
 	}
 }
 
-func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, classicUserHandler *handler.ClassicUserHandler,registeredUserCampaignsHandler *handler.RegisteredUserCampaignsHandler,registeredUserFollowingsHandler *handler.RegisteredUserFollowingsHandler,registeredUserFollowersHandler *handler.RegisteredUserFollowersHandler){
+func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler,adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, classicUserHandler *handler.ClassicUserHandler,registeredUserCampaignsHandler *handler.RegisteredUserCampaignsHandler,registeredUserFollowingsHandler *handler.RegisteredUserFollowingsHandler,registeredUserFollowersHandler *handler.RegisteredUserFollowersHandler){
 	router := mux.NewRouter().StrictSlash(true)
+
 	router.HandleFunc("/login/", userHandler.LogIn).Methods("POST")
+	router.HandleFunc("/confirm_registration/{confirmationToken}/{userId}", confirmationTokenHandler.VerifyConfirmationToken).Methods("POST")
+	router.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser).Methods("POST")
+
 	router.HandleFunc("/users/", userHandler.FindAllUsers).Methods("GET")
 	router.HandleFunc("/admin/", adminHandler.CreateAdmin).Methods("POST")
 	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
-	router.HandleFunc("/confirm_registration/{confirmationToken}/{userId}", confirmationTokenHandler.VerifyConfirmationToken).Methods("POST")
-	router.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser).Methods("POST")
 	router.HandleFunc("/registered_user_campaigns/", registeredUserCampaignsHandler.CreateRegisteredUserCampaigns).Methods("POST")
 	router.HandleFunc("/registered_user_followings/", registeredUserFollowingsHandler.CreateRegisteredUserFollowings).Methods("POST")
 	router.HandleFunc("/registered_user_followers/", registeredUserFollowersHandler.CreateRegisteredUserFollowers).Methods("POST")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
+
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser)
+	mux.HandleFunc("/login/", userHandler.LogIn)
+	mux.HandleFunc("/confirm_registration/{confirmationToken}/{userId}", confirmationTokenHandler.VerifyConfirmationToken)
+	handler := cors.Default().Handler(mux)
+	//go http.ListenAndServe(":8081", handler(router))
+	log.Fatal(http.ListenAndServe(":8082", handler))
 }
+
 
 func main() {
 	database := initDB()

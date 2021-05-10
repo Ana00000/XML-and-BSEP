@@ -9,6 +9,7 @@ export default {
   name: "ConfirmRegistration",
   data: () => ({
     confirmationToken:"",
+    userId: "",
     message: ""
   }),
   mounted() {
@@ -20,15 +21,16 @@ export default {
       var hrefPaths = [];
       hrefPaths=  hrefPath.split('/');
       this.confirmationToken = hrefPaths[4];
+      this.userId = hrefPaths[5];
       this.$http
-        .put("https://localhost:8080/users/confirm_account/" + this.confirmationToken, {})
+        .post("http://localhost:8082/confirm_registration/" + this.confirmationToken +  "/" + this.userId, {})
         .then((res) => {
           console.log(res);
-          this.message = "You are successfully verified your account! You can log in on system!"
+          this.message = "You have successfully verified your account! You can log in on system!"
         })
         .catch((err) => {
           console.log(err);
-          this.message = "Your token are invalid or expiried! Please, contact system admin!"
+          this.message = "Your token is invalid or expiried! Please, contact system admin!"
         });
     },
     redirectToLogIn() {

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
@@ -53,14 +54,20 @@ func CreateToken(userName string) (string, error) {
 }
 
 func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("USAO")
 	var logInUserDTO dto.LogInUserDTO
 	err := json.NewDecoder(r.Body).Decode(&logInUserDTO)
 	if err != nil {
+		fmt.Println("USAOLOSE")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	var user = handler.Service.FindByUserName(logInUserDTO.Username)
 
+	if !user.IsConfirmed {
+		fmt.Println("GRESKA")
+	}
+	fmt.Println("PROSAO")
 	if user == nil || !user.IsConfirmed {
 		w.WriteHeader(http.StatusBadRequest)
 		return

@@ -34,24 +34,6 @@
 </template>
 
 <script>
-import axios from "axios";
-function redirectLoggedUser() {
-  var tokenString = "";
-  tokenString = localStorage.getItem("token");
-  const config = {
-    headers: { Authorization: `Bearer ${tokenString}` },
-  };
-  axios.get("https://localhost:8080/users/redirectMeToMyHomePage", config).then(
-    (response) => {
-      console.log(response);
-      window.location.href = response.data;
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-}
-
 export default {
   name: "Login",
   data: () => ({
@@ -67,14 +49,17 @@ export default {
   },
   methods: {
     logIn() {
+      console.log(this.username);
+      console.log(this.password);
       this.$http
-        .post("https://localhost:8080/users/login", this.user)
+        .post("http://localhost:8082/login/", {
+           username: this.username,
+           password: this.password
+        })
         .then((resp) => {
           console.log(resp.data);
-          localStorage.setItem("token", resp.data.accessToken);
           localStorage.setItem("username", this.user.username);
-          localStorage.setItem("role", resp.data.role);
-          redirectLoggedUser();
+          window.location.href = "http://localhost:8081/";
         })
         .catch((er) => {
           alert("Invalid username and/or password! Please, try again!");
