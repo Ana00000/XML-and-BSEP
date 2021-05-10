@@ -2,12 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/LogInUserDTO.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ConfirmationTokenHandler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/model/ConfirmationToken.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ConfirmationTokenRepository.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ConfirmationTokenService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/AdminHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/AdminHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/AgentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/AgentHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/UserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/UserRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/UserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/UserService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -25,6 +35,9 @@
   <component name="GOROOT" url="file://$PROJECT_DIR$/../../../../../../../../Program Files/Go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Nistagram/user-service/service/ConfirmationTokenService.go" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="1sFbPW6JhRUwbnRHpMdDHoBIIyb" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -75,5 +88,16 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/Nistagram/user-service/service/ConfirmationTokenService.go</url>
+          <line>27</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 )
@@ -28,4 +29,12 @@ func (service * UserService) FindAllUsers() []model.User{
 func (service *UserService) FindByUserName(userName string) *model.User {
 	user := service.Repo.FindByUserName(userName)
 	return user
+}
+
+func (service *UserService) UpdateUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
+	err := service.Repo.UpdateUserConfirmed(userId,isConfirmed)
+	if err != nil {
+		return err
+	}
+	return nil
 }

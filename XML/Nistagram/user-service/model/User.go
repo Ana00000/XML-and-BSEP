@@ -2,7 +2,6 @@ package model
 
 import (
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -19,9 +18,5 @@ type User struct {
 	Website    string `json:"website" gorm:"not null"`
 	Biography  string `json:"biography" gorm:"not null"`
 	Salt string `json:"salt" gorm:"not null"`
-}
-
-func(user * User) BeforeCreate(scope *gorm.DB) error {
-	user.ID = uuid.New()
-	return nil
+	IsConfirmed bool `json:"is_confirmed" gorm:"not null"`
 }

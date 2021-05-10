@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 	_ "strconv"
 	"time"
@@ -27,19 +27,18 @@ func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request)
 	dateOfBirth,_ :=time.Parse(layout,adminDTO.DateOfBirth)
 	admin := model.Admin{
 		User : model.User{
-			ID:               uuid.UUID{},
-			Username:         adminDTO.Username,
-			Password:         adminDTO.Password,
-			Email:            adminDTO.Email,
-			PhoneNumber:      adminDTO.PhoneNumber,
-			FirstName:        adminDTO.FirstName,
-			LastName:         adminDTO.LastName,
-			Gender:           adminDTO.Gender,
-			DateOfBirth:      dateOfBirth,
-			Website:          adminDTO.Website,
-			Biography:        adminDTO.Biography,
-			//SentMessages:     nil,
-			//ReceivedMessages: nil,
+			ID:          uuid.UUID{},
+			Username:    adminDTO.Username,
+			Password:    adminDTO.Password,
+			Email:       adminDTO.Email,
+			PhoneNumber: adminDTO.PhoneNumber,
+			FirstName:   adminDTO.FirstName,
+			LastName:    adminDTO.LastName,
+			Gender:      adminDTO.Gender,
+			DateOfBirth: dateOfBirth,
+			Website:     adminDTO.Website,
+			Biography:   adminDTO.Biography,
+			IsConfirmed: true,
 		},
 	}
 

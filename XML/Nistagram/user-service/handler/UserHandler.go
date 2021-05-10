@@ -61,7 +61,7 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 	}
 	var user = handler.Service.FindByUserName(logInUserDTO.Username)
 
-	if user == nil {
+	if user == nil || !user.IsConfirmed {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
