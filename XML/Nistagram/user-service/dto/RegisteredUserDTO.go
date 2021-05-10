@@ -1,8 +1,8 @@
 package dto
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 )
 
 type ClassicUserDTO struct {
@@ -16,7 +16,7 @@ type ClassicUserDTO struct {
 	DateOfBirth string `json:"dateOfBirth"`
 	Website string `json:"website"`
 	Biography string `json:"biography"`
-	UserCategory model.UserCategory `json:"user_category"`
+	ClassicUserCategory model.ClassicUserCategory `json:"user_category"`
 	OfficialDocumentPath string `json:"official_document_path"`
 	SettingsId uuid.UUID `json:"settings_id"`
 }

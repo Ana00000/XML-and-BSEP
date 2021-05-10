@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -51,7 +52,7 @@ func SendRecoveryPasswordMail(user *model.User, token uuid.UUID) {
 }
 
 //Function when user clicks -> FORGOT PASSWORD -> enters email -> clicks RECOVER to get email
-func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w http.ResponseWriter, r *http.Request){
+func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w http.ResponseWriter, r *http.Request) {
 	var emailDTO dto.EmailDTO
 	err := json.NewDecoder(r.Body).Decode(&emailDTO)
 	if err != nil {
@@ -60,13 +61,13 @@ func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w ht
 	}
 
 	var user = handler.UserService.FindByEmail(emailDTO.Email)
-	recoveryPasswordToken:= model.RecoveryPasswordToken{
-		ID:                uuid.New(),
+	recoveryPasswordToken := model.RecoveryPasswordToken{
+		ID:                    uuid.New(),
 		RecoveryPasswordToken: uuid.New(),
-		UserId:            user.ID,
-		CreatedTime:       time.Now(),
-		ExpirationTime:       time.Now().Add(time.Minute * 5),
-		IsValid:           true,
+		UserId:                user.ID,
+		CreatedTime:           time.Now(),
+		ExpirationTime:        time.Now().Add(time.Minute * 5),
+		IsValid:               true,
 	}
 	err = handler.RecoveryPasswordTokenService.CreateRecoveryPasswordToken(&recoveryPasswordToken)
 	if err != nil {
@@ -79,3 +80,32 @@ func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w ht
 
 }
 
+//Function that gets called when USER clicks on the link in the email
+func (handler *RecoveryPasswordTokenHandler) VerifyRecoveryPasswordToken(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	token := vars["recoveryPasswordToken"]
+	userId := vars["userId"]
+	userIdUUID := uuid.MustParse(userId)
+	tokenUUID:= uuid.MustParse(token)
+
+	var recoveryPasswordToken= handler.RecoveryPasswordTokenService.FindByToken(tokenUUID)
+	if !recoveryPasswordToken.IsValid{
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if recoveryPasswordToken.UserId!=userIdUUID || recoveryPasswordToken.ExpirationTime.Before(time.Now()){
+		err := handler.RecoveryPasswordTokenService.UpdateRecoveryPasswordTokenValidity(recoveryPasswordToken.RecoveryPasswordToken, false)
+		if err != nil {
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var user = handler.UserService.FindByID(userIdUUID)
+	emailJson, _ := json.Marshal(user.Email)
+	w.Write(emailJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}

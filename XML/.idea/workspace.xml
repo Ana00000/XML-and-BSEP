@@ -2,12 +2,34 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/EmailDTO.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/UserChangePasswordDTO.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/model/UserType.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/ClassicUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserCampaignsDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/ClassicUserCampaignsDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserFollowersDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/ClassicUserFollowersDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserFollowingsDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/ClassicUserFollowingsDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserCampaignsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserCampaignsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserFollowersHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserFollowersHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserFollowingsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserFollowingsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/ClassicUser.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/ClassicUser.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/RegisteredUser.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/RegisteredUser.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/RegisteredUserCampaigns.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/ClassicUserCampaigns.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/RegisteredUserFollowers.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/ClassicUserFollowers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/RegisteredUserFollowings.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/ClassicUserFollowings.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/UserCategory.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/RegisteredUserCategory.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserCampaignsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserCampaignsRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserFollowersRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowersRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserFollowingsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowingsRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/UserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/UserRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserCampaignsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserCampaignsService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserFollowersService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserFollowersService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserFollowingsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserFollowingsService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/UserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/UserService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

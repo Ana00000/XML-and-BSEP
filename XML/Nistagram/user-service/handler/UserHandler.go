@@ -83,9 +83,10 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	tokenJson, _ := json.Marshal(token)
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(tokenJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 
 }
