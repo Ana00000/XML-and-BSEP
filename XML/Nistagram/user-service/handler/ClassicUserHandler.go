@@ -40,7 +40,7 @@ func SendConfirmationMail(user model.User, token uuid.UUID) {
 	m.SetHeader("Subject", "Confirmation mail")
 
 	// Set E-Mail body. You can set plain text or html with text/html
-	text:= "Dear "+user.FirstName+",\n\nPlease, click on link in below to confirm your registration on us social network!\n\nhttp://localhost:8082/confirm_registration/"+token.String()+"/"+user.ID.String()
+	text:= "Dear "+user.FirstName+",\n\nPlease, click on link in below to confirm your registration on our social network!\n\nhttp://localhost:8082/confirm_registration/"+token.String()+"/"+user.ID.String()
 	m.SetBody("text/plain", text)
 
 	// Settings for SMTP server

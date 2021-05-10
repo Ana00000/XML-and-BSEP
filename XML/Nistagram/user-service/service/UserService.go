@@ -31,6 +31,11 @@ func (service *UserService) FindByUserName(userName string) *model.User {
 	return user
 }
 
+func (service *UserService) FindByEmail(email string) *model.User {
+	user := service.Repo.FindByEmail(email)
+	return user
+}
+
 func (service *UserService) UpdateUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
 	err := service.Repo.UpdateUserConfirmed(userId,isConfirmed)
 	if err != nil {
