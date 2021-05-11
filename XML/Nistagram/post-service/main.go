@@ -1,12 +1,12 @@
 package main
 
 import (
-	"./handler"
-	"./model"
-	"./repository"
-	"./service"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/handler"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"

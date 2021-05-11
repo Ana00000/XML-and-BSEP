@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"../model"
 	"fmt"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"gorm.io/gorm"
 )
 
