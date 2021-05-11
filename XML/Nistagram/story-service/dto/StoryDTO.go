@@ -1,10 +1,9 @@
 package dto
 
 import (
-	"../model"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 )
-
 
 type StoryDTO struct {
 	CreationDate string `json:"creationDate"`
