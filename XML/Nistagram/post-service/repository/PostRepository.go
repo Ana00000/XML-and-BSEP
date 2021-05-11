@@ -15,3 +15,9 @@ func (repo * PostRepository) CreatePost(post *model.Post) error {
 	fmt.Print(result)
 	return nil
 }
+
+func (repo * PostRepository) UpdatePost(post *model.Post) error {
+	result := repo.Database.Create(post)
+	fmt.Print(result)
+	return nil
+}
