@@ -31,7 +31,7 @@ const routes = [
     component: () => import('../views/RecoverPasswordEmail.vue')
   },
   {
-    path: '/changePasswordByToken/:id',
+    path: '/changePasswordByToken/:token/:id',
     name: 'ChangePasswordByToken',
     component: () => import('../views/ChangePasswordByToken.vue')
   }

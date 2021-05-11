@@ -24,3 +24,10 @@ func (repo *ClassicUserRepository) UpdateClassicUserConfirmed(userId uuid.UUID, 
 	fmt.Println("updating")
 	return nil
 }
+
+func (repo *ClassicUserRepository) UpdateClassicUserPassword(userId uuid.UUID, password string) error {
+	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ?", userId).Update("password", password)
+	fmt.Println(result.RowsAffected)
+	fmt.Println("updating")
+	return nil
+}

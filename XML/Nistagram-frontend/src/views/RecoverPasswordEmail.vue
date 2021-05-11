@@ -37,16 +37,16 @@ export default {
       if (!this.validCertificate()) return;
       this.$http
         .post(
-          "https://localhost:8080/users/recoverPasswordWithToken",
+          "http://localhost:8080/recovery_password/",
           {
-              emailOfUser: this.emailRecover
+              email: this.emailRecover
           }
           
         )
         .then((resp) => {
           console.log(resp.data);
           alert("Send email on "+this.emailRecover+"!");
-          window.location.href = "https://localhost:8081/";
+          window.location.href = "http://localhost:8081/";
         })
         .catch((err) => {
           alert("Your email is incorect or don't exist account");
@@ -54,7 +54,7 @@ export default {
         });
     },
     redirectToLogIn() {
-      window.location.href = "https://localhost:8081/logIn";
+      window.location.href = "http://localhost:8081/logIn";
     },
     validCertificate() {
       if (this.validRecoverEmail()) return true;

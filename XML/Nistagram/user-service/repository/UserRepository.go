@@ -48,3 +48,10 @@ func (repo *UserRepository) UpdateUserConfirmed(userId uuid.UUID, isConfirmed bo
 	fmt.Println("updating")
 	return nil
 }
+
+func (repo *UserRepository) UpdateUserPassword(userId uuid.UUID, password string) error {
+	result := repo.Database.Model(&model.User{}).Where("id = ?", userId).Update("password", password)
+	fmt.Println(result.RowsAffected)
+	fmt.Println("updating")
+	return nil
+}

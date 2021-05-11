@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 )
@@ -11,6 +12,14 @@ type AdminService struct {
 
 func (service * AdminService) CreateAdmin(admin *model.Admin) error {
 	err := service.Repo.CreateAdmin(admin)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (service *AdminService) UpdateAdminPassword(userId uuid.UUID, password string) error {
+	err := service.Repo.UpdateAdminPassword(userId,password)
 	if err != nil {
 		return err
 	}

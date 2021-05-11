@@ -47,3 +47,11 @@ func (service *UserService) UpdateUserConfirmed(userId uuid.UUID, isConfirmed bo
 	}
 	return nil
 }
+
+func (service *UserService) UpdateUserPassword(userId uuid.UUID, password string) error {
+	err := service.Repo.UpdateUserPassword(userId,password)
+	if err != nil {
+		return err
+	}
+	return nil
+}
