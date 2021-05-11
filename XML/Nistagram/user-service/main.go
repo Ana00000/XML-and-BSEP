@@ -3,10 +3,10 @@ package main
 import (
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
-	"github.com/rs/cors"
 	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
@@ -148,7 +148,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/login/", userHandler.LogIn).Methods("POST")
-	router.HandleFunc("/confirm_registration/{confirmationToken}/{userId}", confirmationTokenHandler.VerifyConfirmationToken).Methods("POST")
+	router.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken).Methods("POST")
 	router.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser).Methods("POST")
 
 	router.HandleFunc("/users/", userHandler.FindAllUsers).Methods("GET")
@@ -162,10 +162,10 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	mux := http.NewServeMux()
 	mux.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser)
 	mux.HandleFunc("/login/", userHandler.LogIn)
-	mux.HandleFunc("/confirm_registration/{confirmationToken}/{userId}", confirmationTokenHandler.VerifyConfirmationToken)
-	handler := cors.Default().Handler(mux)
-	//go http.ListenAndServe(":8081", handler(router))
-	log.Fatal(http.ListenAndServe(":8082", handler))
+	mux.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken)
+	handlerVar := cors.Default().Handler(mux)
+	//go http.ListenAndServe(":8081", handlerVar(router))
+	log.Fatal(http.ListenAndServe(":8082", handlerVar))
 }
 
 

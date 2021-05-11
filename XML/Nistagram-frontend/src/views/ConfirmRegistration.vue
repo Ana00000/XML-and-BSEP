@@ -22,8 +22,12 @@ export default {
       hrefPaths=  hrefPath.split('/');
       this.confirmationToken = hrefPaths[4];
       this.userId = hrefPaths[5];
+      alert(this.confirmationToken+"/"+this.userId)
       this.$http
-        .post("http://localhost:8082/confirm_registration/" + this.confirmationToken +  "/" + this.userId, {})
+        .post("http://localhost:8082/confirm_registration/", {
+          confirmation_token: this.confirmationToken,
+          user_id: this.userId,
+        })
         .then((res) => {
           console.log(res);
           this.message = "You have successfully verified your account! You can log in on system!"

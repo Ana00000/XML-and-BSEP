@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
+	"encoding/json"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 	_ "strconv"
@@ -17,11 +17,14 @@ type ConfirmationTokenHandler struct {
 }
 
 func (handler *ConfirmationTokenHandler) VerifyConfirmationToken(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	token := vars["confirmationToken"]
-	userId := vars["userId"]
-	userIdUUID := uuid.MustParse(userId)
-	tokenUUID:= uuid.MustParse(token)
+	var confirmationAccountDTO dto.ConfirmationAccountDTO
+	err := json.NewDecoder(r.Body).Decode(&confirmationAccountDTO)
+	if err!=nil{
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	userIdUUID := confirmationAccountDTO.UserId
+	tokenUUID:= confirmationAccountDTO.ConfirmationToken
 
 	var confirmationToken= handler.ConfirmationTokenService.FindByToken(tokenUUID)
 	if !confirmationToken.IsValid{
@@ -36,7 +39,7 @@ func (handler *ConfirmationTokenHandler) VerifyConfirmationToken(w http.Response
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	err := handler.ClassicUserService.UpdateClassicUserConfirmed(confirmationToken.UserId, true)
+	err = handler.ClassicUserService.UpdateClassicUserConfirmed(confirmationToken.UserId, true)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

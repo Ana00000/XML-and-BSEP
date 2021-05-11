@@ -302,10 +302,10 @@ export default {
       } else if (this.dateOfBirth.match(/[ ]/g)) {
         alert("Your date of birth shouldn't contain spaces!");
         return false;
-      } else if(!this.dateOfBirth.match(/[2][0-9]{3}-[0-1][0-9]-[0-3][0-9]/g)) {
+      } else if(!this.dateOfBirth.match(/[1-2][0-9]{3}-[0-1][0-9]-[0-3][0-9]/g)) {
           alert("Your date of birth is not set in right format.");
           return false;
-      } else if(this.dateOfBirth.match(/[2][0-9]{3}-[0-1][0-9]-[0-3][0-9][-]+/g)) {
+      } else if(this.dateOfBirth.match(/[1-2][0-9]{3}-[0-1][0-9]-[0-3][0-9][-]+/g)) {
           alert("Your date of birth can't contain - at end of input.");
           return false;
       }
