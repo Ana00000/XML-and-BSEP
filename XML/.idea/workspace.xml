@@ -1,21 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/babel-loader/8f935850e35f1d57e4d4f294251bda05.json" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/babel-loader/8f935850e35f1d57e4d4f294251bda05.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/vue-loader/3c98010856a6d78ee5fa9132b669b08c.json" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/vue-loader/3c98010856a6d78ee5fa9132b669b08c.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/vue-loader/418e732df688b3799313af088d073336.json" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/vue-loader/418e732df688b3799313af088d073336.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/vue-loader/88f52191fb5c01c1a92dbb0e07fe1317.json" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/vue-loader/88f52191fb5c01c1a92dbb0e07fe1317.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/vue-loader/89407725ab151c2d060e705cc6a68bbf.json" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/vue-loader/89407725ab151c2d060e705cc6a68bbf.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/vue-loader/a60faa5def146f4c76bca7f0bfd32e61.json" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/.cache/vue-loader/a60faa5def146f4c76bca7f0bfd32e61.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/Register.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/Register.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/model/RegisteredUserCategory.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/model/RegisteredUserCategory.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/model/RegisteredUserCategory.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/model/RegisteredUserCategory.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/RegisteredUserCategory.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/RegisteredUserCategory.go" afterDir="false" />
-    </list>
+    <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
