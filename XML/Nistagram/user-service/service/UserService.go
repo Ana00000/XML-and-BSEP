@@ -51,6 +51,10 @@ func (service *UserService) UpdateUserConfirmed(userId uuid.UUID, isConfirmed bo
 
 func (service *UserService) UpdateUserProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
 	err := service.Repo.UpdateUserProfileInfo(user)
+}
+
+func (service *UserService) UpdateUserPassword(userId uuid.UUID, password string) error {
+	err := service.Repo.UpdateUserPassword(userId,password)
 	if err != nil {
 		return err
 	}

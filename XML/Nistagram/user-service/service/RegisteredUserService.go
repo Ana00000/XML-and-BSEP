@@ -29,6 +29,10 @@ func (service *RegisteredUserService) UpdateRegisteredUserConfirmed(userId uuid.
 
 func (service *RegisteredUserService) UpdateRegisteredUserProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
 	err := service.Repo.UpdateRegisteredUserProfileInfo(user)
+}
+
+func (service *RegisteredUserService) UpdateRegisteredUserPassword(userId uuid.UUID, password string) error {
+	err := service.Repo.UpdateRegisteredUserPassword(userId,password)
 	if err != nil {
 		return err
 	}

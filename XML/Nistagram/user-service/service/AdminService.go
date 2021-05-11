@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 )
@@ -20,6 +21,9 @@ func (service * AdminService) CreateAdmin(admin *model.Admin) error {
 
 func (service *AdminService) UpdateAdminProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
 	err := service.Repo.UpdateAdminProfileInfo(user)
+}
+func (service *AdminService) UpdateAdminPassword(userId uuid.UUID, password string) error {
+	err := service.Repo.UpdateAdminPassword(userId,password)
 	if err != nil {
 		return err
 	}

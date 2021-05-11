@@ -22,6 +22,7 @@ type UserHandler struct {
 	ClassicUserService * service.ClassicUserService
 	AgentService * service.AgentService
 	RegisteredUserService * service.RegisteredUserService
+
 }
 
 func CheckPasswordHash(password, hash string) bool {
@@ -55,6 +56,73 @@ func CreateToken(userName string) (string, error) {
 		return "", err
 	}
 	return token, nil
+}
+
+func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
+	var userChangePasswordDTO dto.UserChangePasswordDTO
+
+	err := json.NewDecoder(r.Body).Decode(&userChangePasswordDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	//dodati ostale validacije - ova neophodna
+	if userChangePasswordDTO.Password!=userChangePasswordDTO.ConfirmedPassword {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var user = handler.UserService.FindByEmail(userChangePasswordDTO.Email)
+	if user==nil{
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	var sb strings.Builder
+	salt := user.Salt
+	sb.WriteString(userChangePasswordDTO.Password)
+	sb.WriteString(salt)
+	password := sb.String()
+	hash,_ := HashPassword(password)
+
+	err = handler.UserService.UpdateUserPassword(user.ID,hash)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	if user.UserType == model.ADMIN{
+		err = handler.AdminService.UpdateAdminPassword(user.ID,hash)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+	} else if user.UserType == model.AGENT {
+		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID,hash)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+		err = handler.AgentService.UpdateAgentPassword(user.ID,hash)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+	} else {
+		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID,hash)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+		err = handler.RegisteredUserService.UpdateRegisteredUserPassword(user.ID,hash)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+	}
+
+
+	w.WriteHeader(http.StatusAccepted)
+	w.Header().Set("Content-Type", "application/json")
 }
 
 func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
