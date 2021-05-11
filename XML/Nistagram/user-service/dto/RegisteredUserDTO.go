@@ -1,9 +1,5 @@
 package dto
 
-import (
-	"github.com/google/uuid"
-)
-
 type RegisteredUserDTO struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -15,7 +11,4 @@ type RegisteredUserDTO struct {
 	DateOfBirth string `json:"dateOfBirth"`
 	Website string `json:"website"`
 	Biography string `json:"biography"`
-	RegisteredUserCategory string `json:"registered_user_category"`
-	OfficialDocumentPath string `json:"official_document_path"`
-	SettingsId uuid.UUID `json:"settings_id"`
 }

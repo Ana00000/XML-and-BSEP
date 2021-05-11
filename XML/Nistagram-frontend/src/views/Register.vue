@@ -73,21 +73,6 @@
             v-model="biography"
             prepend-icon="mdi-address-circle"
           />
-          <v-select
-            class="userCategoryCombo"
-            v-model="selectedUserCategory"
-            hint="Choose your category."
-            :items="userCategories"
-            item-text="state"
-            :label="label2"
-            return-object
-            single-line
-          />
-          <v-text-field
-            label="Official document path"
-            v-model="officialDocumentPath"
-            prepend-icon="mdi-address-circle"
-          />
         </v-form>
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
@@ -115,18 +100,13 @@ export default {
     dateOfBirth: "",
     website: "",
     biography: "",
-    userCategories: ["INFLUENCER", "SPORTS", "NEW_MEDIA", "BUSINESS", "BRAND", "ORGANIZATION"],
-    selectedUserCategory: 0, 
-    label2: "User category",
-    officialDocumentPath: "",
     users: []
   }),
   methods: {
     register() {
       if (!this.validUsername() || !this.validEmail() || !this.validPassword() ||
           !this.validFirstName() || !this.validLastName() || !this.validPhoneNumber() 
-          || !this.validDateOfBirth() || !this.validWebsite() || !this.validBiography()
-          || !this.validOfficialDocumentPath())  
+          || !this.validDateOfBirth() || !this.validWebsite() || !this.validBiography())  
           return;
       
       console.log(this.username);
@@ -139,8 +119,6 @@ export default {
       console.log(this.dateOfBirth);
       console.log(this.website);
       console.log(this.biography);
-      console.log(this.selectedUserCategory);
-      console.log(this.officialDocumentPath);
       this.$http
         .post("http://localhost:8080/registered_user/", {
           username: this.username,
@@ -153,9 +131,7 @@ export default {
           dateOfBirth: this.dateOfBirth + "T11:45:26.371Z",
           website: this.website,
           biography: this.biography,
-          is_blocked: false,
-          registered_user_category: this.selectedUserCategory,
-          official_document_path : this.officialDocumentPath 
+          is_blocked: false
         })
         .then((response) => {
           console.log(response.data.firstName);
@@ -347,22 +323,6 @@ export default {
         return false;
       } else if (this.biography.length > 100) {
         alert("Your biography shouldn't contain more than 100 characters!");
-        return false;
-      }
-      return true;
-    },
-    validOfficialDocumentPath(){
-      if (this.officialDocumentPath.length < 3) {
-        alert("Your official document path should contain at least 3 characters!");
-        return false;
-      } else if (this.officialDocumentPath.length > 50) {
-        alert("Your official document path shouldn't contain more than 50 characters!");
-        return false;
-      } else if(this.officialDocumentPath.match(/[!@#$%^&*,'<>+"]/g)) { 
-          alert("Your official document path shouldn't contain special characters.");
-          return false;
-      } else if (this.officialDocumentPath.match(/[ ]/g)) {
-        alert("Your official document path shouldn't contain spaces!");
         return false;
       }
       return true;

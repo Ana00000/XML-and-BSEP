@@ -40,7 +40,7 @@ func SendConfirmationMail(user model.User, token uuid.UUID) {
 	m.SetHeader("Subject", "Confirmation mail")
 
 	// Set E-Mail body. You can set plain text or html with text/html
-	text:= "Dear "+user.FirstName+",\n\nPlease, click on link in below to confirm your registration on our social network!\n\nhttp://localhost:8082/confirm_registration/"+token.String()+"/"+user.ID.String()
+	text:= "Dear "+user.FirstName+",\n\nPlease, click on link in below to confirm your registration on our social network!\n\nhttp://localhost:8081/confirmRegistration/"+token.String()+"/"+user.ID.String()+"\n\n\nBest regards,\nTim25"
 	m.SetBody("text/plain", text)
 
 	// Settings for SMTP server
@@ -81,20 +81,6 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	case "FEMALE":
 		gender = model.FEMALE
 	}
-
-	userCategory := model.ORGANIZATION
-	switch registeredUserDTO.Gender {
-	case "INFLUENCER":
-		userCategory = model.INFLUENCER
-	case "SPORTS":
-		userCategory = model.SPORTS
-	case "NEW_MEDIA":
-		userCategory = model.NEW_MEDIA
-	case "BUSINESS":
-		userCategory = model.BUSINESS
-	case "BRAND":
-		userCategory = model.BRAND
-	}
 	fmt.Printf(registeredUserDTO.DateOfBirth)
 	userId := uuid.New()
 	layout := "2006-01-02T15:04:05.000Z"
@@ -119,8 +105,8 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 			},
 			IsDeleted: false,
 		},
-		RegisteredUserCategory:         userCategory,
-		OfficialDocumentPath: registeredUserDTO.OfficialDocumentPath,
+		RegisteredUserCategory:         model.NONE,
+		OfficialDocumentPath: "",
 
 	}
 

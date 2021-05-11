@@ -3,7 +3,8 @@ package model
 type RegisteredUserCategory int
 
 const(
-	INFLUENCER RegisteredUserCategory= iota
+	NONE RegisteredUserCategory= iota
+	INFLUENCER
 	SPORTS
 	NEW_MEDIA
 	BUSINESS
