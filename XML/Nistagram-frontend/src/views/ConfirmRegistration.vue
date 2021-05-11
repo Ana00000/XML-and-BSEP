@@ -22,7 +22,10 @@ export default {
       hrefPaths=  hrefPath.split('/');
       this.confirmationToken = hrefPaths[4];
       this.userId = hrefPaths[5];
+
+      localStorage.setItem("userId", this.userId);
       alert(this.confirmationToken+"/"+this.userId)
+      
       this.$http
         .post("http://localhost:8080/confirm_registration/", {
           confirmation_token: this.confirmationToken,

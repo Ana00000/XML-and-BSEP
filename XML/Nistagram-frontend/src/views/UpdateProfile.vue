@@ -104,7 +104,7 @@
 export default {
   name: "UpdateProfile",
   data: () => ({
-    id: null,
+    id: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -115,7 +115,7 @@ export default {
     username: "",
     website: "",
     biography: "",
-    password: "",
+    userType: "",
     user: [],
   }),
   mounted() {
@@ -123,11 +123,10 @@ export default {
   },
   methods: {
     init() {
-      this.password = localStorage.getItem("password");
+      this.id = localStorage.getItem("userId");
 
-      console.log(this.password);
       this.$http
-        .get("http://localhost:8080/users/findUserByPassword/", this.password)
+        .get("http://localhost:8080/find_user_by_id/", this.id)
         .then((resp) => {
           this.user = resp.data;
           this.setUserInfo(this.user);
@@ -144,6 +143,7 @@ export default {
       this.username = item.username
       this.website = item.website
       this.biography = item.biography
+      this.userType = item.user_type
     },
     updateProfile() {
       if (
@@ -159,7 +159,7 @@ export default {
         return;
 
       this.$http
-        .put("http://localhost:8081/users/update", {
+        .put("http://localhost:8080/update_user_profile_info/", {
           id: this.id,
           firstName: this.firstName,
           lastName: this.lastName,
@@ -170,6 +170,7 @@ export default {
           username: this.username,
           website: this.website,
           biography: this.biography,
+          user_type: this.userType
         })
         .then((resp) => {
           console.log(resp.data);

@@ -59,7 +59,6 @@ export default {
         .then((resp) => {
           console.log(resp.data);
           localStorage.setItem("username", this.user.username);
-          localStorage.setItem("password", this.user.password);
           localStorage.setItem("token", resp.data)
           window.location.href = "http://localhost:8081/";
         })
