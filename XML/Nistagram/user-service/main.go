@@ -197,6 +197,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	mux.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken)
 	mux.HandleFunc("/change_user_password/", userHandler.ChangeUserPassword)
 	mux.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo)
+	mux.HandleFunc("/find_user_by_id/", userHandler.FindByID)
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8080", handlerVar))
 }

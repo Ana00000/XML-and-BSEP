@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -212,6 +213,26 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 				w.WriteHeader(http.StatusExpectationFailed)
 			}
 		}
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
+
+	var userId string
+
+	err := json.NewDecoder(r.Body).Decode(&userId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var user = handler.UserService.FindByID(uuid.MustParse(userId))
+	if  user == nil {
+		fmt.Println("User not found")
+		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 	w.WriteHeader(http.StatusOK)
