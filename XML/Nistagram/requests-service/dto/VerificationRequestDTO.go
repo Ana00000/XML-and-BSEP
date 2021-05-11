@@ -1,6 +1,6 @@
 package dto
 
-import model "../model"
+import model "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
 
 type VerificationRequestDTO struct {
 	FirstName string `json:"first_name"`
