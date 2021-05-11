@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"../dto"
-	"../model"
-	"../service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/service"
 	"net/http"
 	_ "strconv"
 )

@@ -1,18 +1,18 @@
 package handler
 
 import (
-"../dto"
-"../model"
-"../service"
-"encoding/json"
-"fmt"
-"github.com/google/uuid"
-"net/http"
-_ "strconv"
+	"encoding/json"
+	"fmt"
+	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
+	"net/http"
+	_ "strconv"
 )
 
 type AdvertisementContentHandler struct {
-	Service * service.AdvertisementContentService
+	Service *service.AdvertisementContentService
 }
 
 func (handler *AdvertisementContentHandler) CreateAdvertisementContent(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +29,7 @@ func (handler *AdvertisementContentHandler) CreateAdvertisementContent(w http.Re
 			Path: advertisementContentDTO.Path,
 			Type: advertisementContentDTO.Type,
 		},
-		Link:    advertisementContentDTO.Link,
+		Link:            advertisementContentDTO.Link,
 		AdvertisementId: advertisementContentDTO.AdvertisementId,
 	}
 
