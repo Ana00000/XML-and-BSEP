@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"fmt"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"gorm.io/gorm"
 )
 
@@ -16,8 +17,8 @@ func (repo * PostRepository) CreatePost(post *model.Post) error {
 	return nil
 }
 
-func (repo * PostRepository) UpdatePost(post *model.Post) error {
-	result := repo.Database.Updates(post)
+func (repo * PostRepository) UpdatePost(post *dto.PostUpdateDTO) error {
+	result := repo.Database.Model(&model.Post{}).Where("id = ?", post.ID).Update("description", post.Description).Update("location_id", post.LocationID)
 	fmt.Print(result)
 	return nil
 }
