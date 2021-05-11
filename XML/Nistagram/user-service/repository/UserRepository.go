@@ -30,6 +30,18 @@ func (repo *UserRepository) FindByUserName(userName string) *model.User {
 	return user
 }
 
+func (repo *UserRepository) FindByEmail(email string) *model.User {
+	user := &model.User{}
+	repo.Database.First(&user, "email = ?", email)
+	return user
+}
+
+func (repo *UserRepository) FindByID(ID uuid.UUID) *model.User {
+	user := &model.User{}
+	repo.Database.First(&user, "id = ?", ID)
+	return user
+}
+
 func (repo *UserRepository) UpdateUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
 	result := repo.Database.Model(&model.User{}).Where("id = ?", userId).Update("is_confirmed", isConfirmed)
 	fmt.Println(result.RowsAffected)

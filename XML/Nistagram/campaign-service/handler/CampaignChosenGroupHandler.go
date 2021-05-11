@@ -26,7 +26,7 @@ func (handler *CampaignChosenGroupHandler) CreateCampaignChosenGroup(w http.Resp
 	campaignChosenGroup := model.CampaignChosenGroup{
 		ID:                uuid.UUID{},
 		CampaignId:        campaignChosenGroupDTO.CampaignId,
-		UserCategoryValue: campaignChosenGroupDTO.UserCategoryValue,
+		RegisteredUserCategory: campaignChosenGroupDTO.RegisteredUserCategory,
 	}
 
 	err = handler.Service.CreateCampaignChosenGroup(&campaignChosenGroup)

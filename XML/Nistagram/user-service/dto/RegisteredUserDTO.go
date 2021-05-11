@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type ClassicUserDTO struct {
+type RegisteredUserDTO struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Email string `json:"email"`
@@ -15,7 +15,7 @@ type ClassicUserDTO struct {
 	DateOfBirth string `json:"dateOfBirth"`
 	Website string `json:"website"`
 	Biography string `json:"biography"`
-	UserCategory string `json:"user_category"`
+	RegisteredUserCategory string `json:"registered_user_category"`
 	OfficialDocumentPath string `json:"official_document_path"`
 	SettingsId uuid.UUID `json:"settings_id"`
 }

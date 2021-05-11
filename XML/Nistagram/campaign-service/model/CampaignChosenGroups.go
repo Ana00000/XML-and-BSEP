@@ -8,7 +8,7 @@ import (
 type CampaignChosenGroup struct {
 	ID uuid.UUID `json:"id"`
 	CampaignId uuid.UUID `json:"campaign_id" gorm:"not null"`
-	UserCategoryValue UserCategory `json:"user_category_value" gorm:"not null"`
+	RegisteredUserCategory RegisteredUserCategory `json:"registered_user_category" gorm:"not null"`
 }
 
 func(campaignChosenGroup * CampaignChosenGroup) BeforeCreate(scope *gorm.DB) error {

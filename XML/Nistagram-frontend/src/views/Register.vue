@@ -142,7 +142,7 @@ export default {
       console.log(this.selectedUserCategory);
       console.log(this.officialDocumentPath);
       this.$http
-        .post("http://localhost:8082/classic_user/", {
+        .post("http://localhost:8080/registered_user/", {
           username: this.username,
           password: this.password,
           email : this.userEmail,
@@ -154,7 +154,7 @@ export default {
           website: this.website,
           biography: this.biography,
           is_blocked: false,
-          user_category: this.selectedUserCategory,
+          registered_user_category: this.selectedUserCategory,
           official_document_path : this.officialDocumentPath 
         })
         .then((response) => {

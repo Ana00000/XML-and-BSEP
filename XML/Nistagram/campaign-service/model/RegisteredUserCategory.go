@@ -1,9 +1,9 @@
 package model
 
-type UserCategory int
+type RegisteredUserCategory int
 
 const(
-	INFLUENCER UserCategory= iota
+	INFLUENCER RegisteredUserCategory= iota
 	SPORTS
 	NEW_MEDIA
 	BUSINESS

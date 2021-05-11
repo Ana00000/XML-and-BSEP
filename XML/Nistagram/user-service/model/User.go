@@ -19,4 +19,5 @@ type User struct {
 	Biography  string `json:"biography" gorm:"not null"`
 	Salt string `json:"salt" gorm:"not null"`
 	IsConfirmed bool `json:"is_confirmed" gorm:"not null"`
+	UserType UserType `json:"user_type" gorm:"not null"`
 }

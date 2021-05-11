@@ -24,7 +24,7 @@ export default {
       this.userId = hrefPaths[5];
       alert(this.confirmationToken+"/"+this.userId)
       this.$http
-        .post("http://localhost:8082/confirm_registration/", {
+        .post("http://localhost:8080/confirm_registration/", {
           confirmation_token: this.confirmationToken,
           user_id: this.userId,
         })

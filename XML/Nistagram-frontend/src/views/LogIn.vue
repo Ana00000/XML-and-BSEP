@@ -52,13 +52,14 @@ export default {
       console.log(this.username);
       console.log(this.password);
       this.$http
-        .post("http://localhost:8082/login/", {
+        .post("http://localhost:8080/login/", {
            username: this.username,
            password: this.password
         })
         .then((resp) => {
           console.log(resp.data);
           localStorage.setItem("username", this.user.username);
+          localStorage.setItem("token", resp.data)
           window.location.href = "http://localhost:8081/";
         })
         .catch((er) => {

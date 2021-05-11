@@ -26,7 +26,7 @@ func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request)
 	layout := "2006-01-02T15:04:05.000Z"
 	dateOfBirth,_ :=time.Parse(layout,agentDTO.DateOfBirth)
 	agent := model.Agent{
-		RegisteredUser:             model.RegisteredUser{
+		ClassicUser:             model.ClassicUser{
 			User:                        model.User{
 				ID:               uuid.UUID{},
 				Username:         agentDTO.Username,
@@ -40,7 +40,9 @@ func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request)
 				Website:          agentDTO.Website,
 				Biography:        agentDTO.Biography,
 				IsConfirmed: 	  false,
+				UserType: model.AGENT, //SET VALUE
 			},
+			IsDeleted: false,
 		},
 		AgentRegistrationRequestId: agentDTO.AgentRegistrationRequestId,
 	}
