@@ -25,3 +25,11 @@ func (service *ClassicUserService) UpdateClassicUserConfirmed(userId uuid.UUID, 
 	}
 	return nil
 }
+
+func (service *ClassicUserService) UpdateClassicUserPassword(userId uuid.UUID, password string) error {
+	err := service.Repo.UpdateClassicUserPassword(userId,password)
+	if err != nil {
+		return err
+	}
+	return nil
+}
