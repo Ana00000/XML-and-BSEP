@@ -1,8 +1,8 @@
 package service
 
 import (
-	"../model"
-	"../repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/repository"
 )
 
 type CampaignChosenGroupService struct {

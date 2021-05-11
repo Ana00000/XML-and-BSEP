@@ -1,8 +1,8 @@
 package service
 
 import (
-	"../model"
-	"../repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/repository"
 )
 
 type StoryService struct {

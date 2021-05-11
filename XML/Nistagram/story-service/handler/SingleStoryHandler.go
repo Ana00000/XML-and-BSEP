@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"../dto"
-	"../model"
-	"../service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
 	"net/http"
 	_ "strconv"
 	"time"
@@ -34,9 +34,7 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 		LocationId:      singleStoryDTO.LocationId,
 		IsDeleted:      singleStoryDTO.IsDeleted,
 		Type:      singleStoryDTO.Type,
-		//StoryICRs: nil,
 		},
-		//Content: singleStoryDTO.Content,
 	}
 
 	err = handler.Service.CreateSingleStory(&singleStory)

@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"../model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 )
 
 type ContentDTO struct {
