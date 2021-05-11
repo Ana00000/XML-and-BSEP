@@ -2,8 +2,8 @@ package repository
 
 import (
 	"fmt"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"gorm.io/gorm"
 	"time"
@@ -33,6 +33,7 @@ func (repo * AdminRepository) UpdateAdminProfileInfo(user *dto.UserUpdateProfile
 	result := repo.Database.Model(&model.Admin{}).Where("id = ?", user.ID).Update("username", user.Username).Update("phoneNumber", user.PhoneNumber).Update("firstName", user.FirstName).Update("lastName", user.LastName).Update("gender", gender).Update("dateOfBirth", dateOfBirth).Update("website", user.Website).Update("biography", user.Biography)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating admin profile info")
+	return nil
 }
 
 func (repo *AdminRepository) UpdateAdminPassword(userId uuid.UUID, password string) error {

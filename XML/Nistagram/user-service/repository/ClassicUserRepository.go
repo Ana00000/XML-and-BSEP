@@ -41,6 +41,7 @@ func (repo * ClassicUserRepository) UpdateClassicUserProfileInfo(user *dto.UserU
 	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ?", user.ID).Update("username", user.Username).Update("phoneNumber", user.PhoneNumber).Update("firstName", user.FirstName).Update("lastName", user.LastName).Update("gender", gender).Update("dateOfBirth", dateOfBirth).Update("website", user.Website).Update("biography", user.Biography)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating profile info")
+	return nil
 }
 
 func (repo *ClassicUserRepository) UpdateClassicUserPassword(userId uuid.UUID, password string) error {

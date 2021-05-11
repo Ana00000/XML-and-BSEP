@@ -2,11 +2,11 @@ package repository
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"gorm.io/gorm"
 	"time"
-	"github.com/google/uuid"
 )
 
 type AgentRepository struct {
@@ -33,6 +33,7 @@ func (repo * AgentRepository) UpdateAgentProfileInfo(user *dto.UserUpdateProfile
 	result := repo.Database.Model(&model.Agent{}).Where("id = ?", user.ID).Update("username", user.Username).Update("phoneNumber", user.PhoneNumber).Update("firstName", user.FirstName).Update("lastName", user.LastName).Update("gender", gender).Update("dateOfBirth", dateOfBirth).Update("website", user.Website).Update("biography", user.Biography)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating agent profile info")
+	return nil
 }
 
 func (repo *AgentRepository) UpdateAgentPassword(userId uuid.UUID, password string) error {

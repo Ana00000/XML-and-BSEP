@@ -29,6 +29,10 @@ func (service *ClassicUserService) UpdateClassicUserConfirmed(userId uuid.UUID, 
 
 func (service *ClassicUserService) UpdateClassicUserProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
 	err := service.Repo.UpdateClassicUserProfileInfo(user)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (service *ClassicUserService) UpdateClassicUserPassword(userId uuid.UUID, password string) error {

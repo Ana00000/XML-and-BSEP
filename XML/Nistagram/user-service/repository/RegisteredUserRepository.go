@@ -40,6 +40,7 @@ func (repo * RegisteredUserRepository) UpdateRegisteredUserProfileInfo(user *dto
 	result := repo.Database.Model(&model.RegisteredUser{}).Where("id = ?", user.ID).Update("username", user.Username).Update("phoneNumber", user.PhoneNumber).Update("firstName", user.FirstName).Update("lastName", user.LastName).Update("gender", gender).Update("dateOfBirth", dateOfBirth).Update("website", user.Website).Update("biography", user.Biography)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating profile info")
+	return nil
 }
 
 func (repo *RegisteredUserRepository) UpdateRegisteredUserPassword(userId uuid.UUID, password string) error {

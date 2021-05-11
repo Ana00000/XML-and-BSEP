@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 )
@@ -21,6 +21,10 @@ func (service * AgentService) CreateAgent(agent *model.Agent) error {
 
 func (service *AgentService) UpdateAgentProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
 	err := service.Repo.UpdateAgentProfileInfo(user)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (service *AgentService) UpdateAgentPassword(userId uuid.UUID, password string) error {
