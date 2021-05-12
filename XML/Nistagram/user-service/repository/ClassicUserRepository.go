@@ -63,3 +63,4 @@ func (repo *ClassicUserRepository) UpdateClassicUserPassword(userId uuid.UUID, p
 	fmt.Println("updating")
 	return nil
 }
+
