@@ -139,7 +139,7 @@ export default {
           window.location.href = "http://localhost:8081/logIn";
         })
         .catch((er) => {
-          alert("Email already exists.");
+          alert("Username and email must be unique.");
           console.log("Error while registering in");
           console.log(er.response.data);
         });

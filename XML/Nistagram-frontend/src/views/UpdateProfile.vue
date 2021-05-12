@@ -6,21 +6,21 @@
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="First name" v-model="firstName" color="indigo" />
+          <v-text-field label="First name" v-model="firstName" color="indigo" v-bind:readonly="isReadOnly"/>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="Last name" v-model="lastName" color="indigo" />
+          <v-text-field label="Last name" v-model="lastName" color="indigo" v-bind:readonly="isReadOnly"/>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="Email" v-model="email" color="indigo" />
+          <v-text-field label="Email" v-model="email" color="indigo" v-bind:readonly="isReadOnly"/>
         </v-col>
       </v-row>
 
@@ -31,6 +31,7 @@
             label="Phone number"
             v-model="phoneNumber"
             color="indigo"
+            v-bind:readonly="isReadOnly"
           />
         </v-col>
       </v-row>
@@ -47,6 +48,7 @@
             :label="label1"
             return-object
             single-line
+            v-bind:readonly="isReadOnly"
           />
         </v-col>
       </v-row>
@@ -58,6 +60,7 @@
             label="Date of birth"
             v-model="dateOfBirth"
             color="indigo"
+            v-bind:readonly="isReadOnly"
           />
         </v-col>
       </v-row>
@@ -65,36 +68,63 @@
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="Username" v-model="username" color="indigo" />
+          <v-text-field label="Username" v-model="username" color="indigo" v-bind:readonly="isReadOnly"/>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="Website" v-model="website" color="indigo" />
+          <v-text-field label="Website" v-model="website" color="indigo" v-bind:readonly="isReadOnly"/>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="Biography" v-model="biography" color="indigo" />
+          <v-text-field label="Biography" v-model="biography" color="indigo" v-bind:readonly="isReadOnly"/>
         </v-col>
       </v-row>
 
       <br /><br />
     </v-container>
 
+    <div class="changeButton">
+      <v-btn
+        v-if="!isHiddenChange"
+        v-on:click="isHiddenUpdate = false, isHiddenChange = true, isHiddenCancel = false, isReadOnly = false"
+        color="#aba7ff"
+        elevation="24"
+        x-large
+        raised
+        rounded
+        >Change</v-btn
+      >
+    </div>
+
     <div class="updateButton">
       <v-btn
+        v-if="!isHiddenUpdate"
         v-on:click="updateProfile"
         color="#aba7ff"
         elevation="24"
         x-large
         raised
         rounded
-        >Update info</v-btn
+        >Save</v-btn
+      >
+    </div>
+
+    <div class="cancelButton">
+      <v-btn
+        v-if="!isHiddenCancel"
+        v-on:click="cancelChanges"
+        color="#aba7ff"
+        elevation="24"
+        x-large
+        raised
+        rounded
+        >Cancel</v-btn
       >
     </div>
   </div>
@@ -116,6 +146,10 @@ export default {
     website: "",
     biography: "",
     userType: "",
+    isHiddenChange: false,
+    isHiddenUpdate: true,
+    isHiddenCancel: true,
+    isReadOnly: true,
     user: []
   }),
   mounted() {
@@ -149,7 +183,10 @@ export default {
       this.biography = item.biography
       this.userType = item.userType
     },
-    updateProfile() {/*
+    cancelChanges() {
+      window.location.href = "http://localhost:8081/updateProfile"
+    },
+    updateProfile() {
       if (
         !this.validFirstName() ||
         !this.validLastName() ||
@@ -160,7 +197,7 @@ export default {
         !this.validWebsite() ||
         !this.validBiography()
       )
-        return;*/
+        return;
 
       this.$http
         .post("http://localhost:8080/update_user_profile_info/", {
@@ -227,14 +264,10 @@ export default {
       return true;
     },
     validEmail() {
-      if (
-        !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-          this.userEmail
-        )
-      ) {
+      if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.email)) {
         alert("You have entered an invalid email address!");
         return false;
-      } else if (this.userEmail.length > 35) {
+      } else if (this.email.length > 35) {
         alert("Your email shouldn't contain more than 35 characters!");
         return false;
       }
@@ -262,15 +295,12 @@ export default {
       } else if (this.dateOfBirth.match(/\d/g).length < 6) {
         alert("Your date of birth should contain at least 6 numbers!");
         return false;
-      } else if (this.dateOfBirth.match(/\d/g).length > 8) {
-        alert("Your date of birth shouldn't contain more than 8 numbers!");
+      } else if (this.dateOfBirth.match(/\d/g).length > 30) {
+        alert("Your date of birth shouldn't contain more than 30 numbers!");
         return false;
-      } else if (this.dateOfBirth.match(/[a-zA-Z]/g)) {
-        alert("Your date of birth shouldn't contain letters.");
-        return false;
-      } else if (this.dateOfBirth.match(/[!@#$%^&*,:'/.<>+\\"]/g)) {
+      } else if (this.dateOfBirth.match(/[!@#$%^&*,'/<>\\"]/g)) {
         alert(
-          "Your date of birth shouldn't contain special character other than [-]."
+          "Your date of birth shouldn't contain special character other than [-,:,+ or .]."
         );
         return false;
       } else if (this.dateOfBirth.match(/[ ]/g)) {
@@ -347,9 +377,21 @@ export default {
 </script>
 
 <style scoped>
+.changeButton {
+  position: absolute;
+  right: 275px;
+  top: 100px;
+}
+
 .updateButton {
   position: absolute;
   right: 250px;
-  top: 600px;
+  top: 300px;
+}
+
+.cancelButton {
+  position: absolute;
+  right: 240px;
+  top: 500px;
 }
 </style>
