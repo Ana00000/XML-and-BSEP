@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/mikespook/gorbac"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -22,6 +23,8 @@ type UserHandler struct {
 	ClassicUserService * service.ClassicUserService
 	RegisteredUserService * service.RegisteredUserService
 	AgentService * service.AgentService
+	Rbac * gorbac.RBAC
+	PermissionFindAllUsers *gorbac.Permission
 }
 
 func CheckPasswordHash(password, hash string) bool {
@@ -30,6 +33,29 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 func (handler *UserHandler)FindAllUsers(w http.ResponseWriter, r *http.Request){
+	var userIdDTO dto.UserIdDTO
+	err := json.NewDecoder(r.Body).Decode(&userIdDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var loginUser = handler.UserService.FindByUserName(userIdDTO.Username)
+	if loginUser==nil{
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	userRole :=""
+	if loginUser.UserType ==model.ADMIN{
+		userRole = "role-admin"
+	} else if loginUser.UserType ==model.AGENT{
+		userRole = "role-agent"
+	} else{
+		userRole = "role-registered-user"
+	}
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionFindAllUsers , nil){
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 	var users []model.User
 	users = handler.UserService.FindAllUsers()
 	usersJson, _ := json.Marshal(users)
