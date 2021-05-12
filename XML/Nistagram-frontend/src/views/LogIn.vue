@@ -49,8 +49,6 @@ export default {
   },
   methods: {
     logIn() {
-      console.log(this.username);
-      console.log(this.password);
       this.$http
         .post("http://localhost:8080/login/", {
            username: this.username,
@@ -61,6 +59,10 @@ export default {
           localStorage.setItem("username", this.user.username);
           localStorage.setItem("token", resp.data.token)
           localStorage.setItem("userId", resp.data.id)
+
+
+          localStorage.setItem("userType", resp.data.userType)
+          console.log(localStorage.getItem("userType"))
           window.location.href = "http://localhost:8081/";
         })
         .catch((er) => {
@@ -69,8 +71,8 @@ export default {
           this.password = '';
           console.log(er.response.data);
         });
-    },
-  },
+    }
+  }
 };
 </script>
 

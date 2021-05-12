@@ -2,18 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/LogInResponseDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/ConfirmRegistration.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/ConfirmRegistration.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/components/NavigationBar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/components/NavigationBar.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/LogIn.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/LogIn.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateProfile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateProfile.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/Register.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/Register.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/LogInResponseDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/LogInResponseDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/AdminRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/AdminRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/AgentRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/AgentRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/UserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/UserRepository.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
