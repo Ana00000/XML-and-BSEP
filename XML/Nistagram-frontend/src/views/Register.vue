@@ -289,7 +289,7 @@ export default {
       var dOBSYear = dateOfBirthSplit[0];
       var dOBSMonth = dateOfBirthSplit[1];
       var dOBSDay = dateOfBirthSplit[2];
-      if (dOBSYear > 3000 || dOBSYear < 1900){
+      if (dOBSYear > 2021 || dOBSYear < 1900){
         alert("Year of date of birth isn't valid");
         return false;
       } else if (dOBSMonth > 12 || dOBSMonth < 0){
