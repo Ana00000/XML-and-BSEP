@@ -34,6 +34,11 @@ const routes = [
     path: '/changePasswordByToken/:token/:id',
     name: 'ChangePasswordByToken',
     component: () => import('../views/ChangePasswordByToken.vue')
+  },
+  {
+    path: '/updateProfile',
+    name: 'UpdateProfile',
+    component: () => import('../views/UpdateProfile.vue')
   }
 ]
 
