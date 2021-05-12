@@ -1,10 +1,10 @@
 package main
 
 import (
-	"./handler"
-	"./model"
-	"./repository"
-	"./service"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/handler"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/service"
 	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"

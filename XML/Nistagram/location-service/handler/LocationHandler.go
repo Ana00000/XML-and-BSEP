@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"../dto"
-	"../model"
-	"../service"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"

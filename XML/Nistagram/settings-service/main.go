@@ -1,10 +1,10 @@
 package main
 
 import (
-	"./handler"
-	"./model"
-	"./repository"
-	"./service"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/handler"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"

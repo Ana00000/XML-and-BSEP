@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"../dto"
-	"../model"
-	"../service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
 	"net/http"
 	_ "strconv"
 	"time"
@@ -33,7 +33,6 @@ func (handler *StoryHandler) CreateStory(w http.ResponseWriter, r *http.Request)
 		LocationId: storyDTO.LocationId,
 		IsDeleted:      storyDTO.IsDeleted,
 		Type:      storyDTO.Type,
-		//StoryICRs: nil,
 	}
 
 	err = handler.Service.CreateStory(&story)
