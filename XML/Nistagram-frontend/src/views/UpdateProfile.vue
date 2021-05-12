@@ -116,7 +116,7 @@ export default {
     website: "",
     biography: "",
     userType: "",
-    user: [],
+    user: []
   }),
   mounted() {
     this.init();
@@ -124,11 +124,15 @@ export default {
   methods: {
     init() {
       this.id = localStorage.getItem("userId");
+      this.token = localStorage.getItem("token");
 
+      console.log(this.id)
+      console.log(this.token)
       this.$http
-        .get("http://localhost:8080/find_user_by_id/", this.id)
+        .get("http://localhost:8080/find_user_by_id?id=" + this.id)
         .then((resp) => {
           this.user = resp.data;
+          console.log(resp.data)
           this.setUserInfo(this.user);
         })
         .catch(console.log);
@@ -143,9 +147,9 @@ export default {
       this.username = item.username
       this.website = item.website
       this.biography = item.biography
-      this.userType = item.user_type
+      this.userType = item.userType
     },
-    updateProfile() {
+    updateProfile() {/*
       if (
         !this.validFirstName() ||
         !this.validLastName() ||
@@ -156,10 +160,10 @@ export default {
         !this.validWebsite() ||
         !this.validBiography()
       )
-        return;
+        return;*/
 
       this.$http
-        .put("http://localhost:8080/update_user_profile_info/", {
+        .post("http://localhost:8080/update_user_profile_info/", {
           id: this.id,
           firstName: this.firstName,
           lastName: this.lastName,
@@ -170,7 +174,7 @@ export default {
           username: this.username,
           website: this.website,
           biography: this.biography,
-          user_type: this.userType
+          userType: this.userType
         })
         .then((resp) => {
           console.log(resp.data);

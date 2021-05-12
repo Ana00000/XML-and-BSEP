@@ -6,7 +6,6 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"gorm.io/gorm"
-	"time"
 )
 
 type UserRepository struct {
@@ -59,10 +58,24 @@ func (repo * UserRepository) UpdateUserProfileInfo(user *dto.UserUpdateProfileIn
 	case "FEMALE":
 		gender = model.FEMALE
 	}
-	layout := "2006-01-02T15:04:05.000Z"
-	dateOfBirth, _ := time.Parse(layout, user.DateOfBirth)
 
-	result := repo.Database.Model(&model.User{}).Where("id = ?", user.ID).Update("username", user.Username).Update("phoneNumber", user.PhoneNumber).Update("firstName", user.FirstName).Update("lastName", user.LastName).Update("gender", gender).Update("dateOfBirth", dateOfBirth).Update("website", user.Website).Update("biography", user.Biography)
+	result := repo.Database.Model(&model.User{}).Where("id = ?", user.ID)
+	result.Update("username", user.Username)
+
+	fmt.Println(result.RowsAffected)
+	result.Update("phone_number", user.PhoneNumber)
+	fmt.Println(result.RowsAffected)
+	result.Update("first_name", user.FirstName)
+	fmt.Println(result.RowsAffected)
+	result.Update("last_name", user.LastName)
+	fmt.Println(result.RowsAffected)
+	result.Update("gender", gender)
+	fmt.Println(result.RowsAffected)
+	result.Update("date_of_birth", user.DateOfBirth)
+	fmt.Println(result.RowsAffected)
+	result.Update("website", user.Website)
+	fmt.Println(result.RowsAffected)
+	result.Update("biography", user.Biography)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating profile info")
 	return nil
