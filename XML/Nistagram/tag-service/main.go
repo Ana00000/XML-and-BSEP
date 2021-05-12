@@ -1,15 +1,15 @@
 package main
 
 import (
-	"./handler"
-	"./model"
-	"./repository"
-	"./service"
 	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/handler"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"

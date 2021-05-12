@@ -1,12 +1,12 @@
 package main
 
 import (
-	"./handler"
-	"./model"
-	"./repository"
-	"./service"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/handler"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -117,6 +117,7 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/activity/", handlerActivity.CreateActivity).Methods("POST")
 	router.HandleFunc("/comment/", handlerComment.CreateComment).Methods("POST")
 	router.HandleFunc("/post/", handlerPost.CreatePost).Methods("POST")
+	router.HandleFunc("/update_post/", handlerPost.UpdatePost).Methods("PUT")
 	router.HandleFunc("/post_album/", handlerPostAlbum.CreatePostAlbum).Methods("POST")
 	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
 	router.HandleFunc("/single_post/", handlerSinglePost.CreateSinglePost).Methods("POST")
