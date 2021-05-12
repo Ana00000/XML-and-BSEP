@@ -27,7 +27,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.User{}, &model.ClassicUser{}, &model.RegisteredUser{}, &model.Admin{}, &model.Agent{},&model.ClassicUserFollowers{},&model.ClassicUserFollowings{}, &model.ClassicUserCampaigns{}, &model.ConfirmationToken{})
+	db.AutoMigrate(&model.User{}, &model.ClassicUser{}, &model.RegisteredUser{}, &model.Admin{}, &model.Agent{},&model.ClassicUserFollowers{},&model.ClassicUserFollowings{}, &model.ClassicUserCampaigns{}, &model.ConfirmationToken{}, &model.RecoveryPasswordToken{})
 	return db
 }
 
@@ -41,8 +41,14 @@ func initUserService(repo *repository.UserRepository) *service.UserService{
 	return &service.UserService { Repo: repo }
 }
 
-func initUserHandler(service *service.UserService) *handler.UserHandler{
-	return &handler.UserHandler { Service: service }
+func initUserHandler(UserService *service.UserService,AdminService *service.AdminService, ClassicUserService *service.ClassicUserService, RegisteredUserService *service.RegisteredUserService, AgentService *service.AgentService) *handler.UserHandler{
+	return &handler.UserHandler{
+		UserService:           UserService,
+		AdminService:          AdminService,
+		ClassicUserService:    ClassicUserService,
+		RegisteredUserService: RegisteredUserService,
+		AgentService:          AgentService,
+	}
 }
 
 //ADMIN
@@ -107,6 +113,10 @@ func initConfirmationTokenRepo(database *gorm.DB) *repository.ConfirmationTokenR
 	return &repository.ConfirmationTokenRepository { Database: database }
 }
 
+func initRecoveryPasswordTokenRepo(database *gorm.DB) *repository.RecoveryPasswordTokenRepository{
+	return &repository.RecoveryPasswordTokenRepository { Database: database }
+}
+
 func initAgentService(repo *repository.AgentRepository) *service.AgentService{
 	return &service.AgentService { Repo: repo }
 }
@@ -127,6 +137,10 @@ func initClassicUserFollowersService(repo *repository.ClassicUserFollowersReposi
 	return &service.ClassicUserFollowersService { Repo: repo }
 }
 
+func initRecoveryPasswordTokenService(repo *repository.RecoveryPasswordTokenRepository) *service.RecoveryPasswordTokenService{
+	return &service.RecoveryPasswordTokenService { Repo: repo }
+}
+
 func initAgentHandler(service *service.AgentService) *handler.AgentHandler{
 	return &handler.AgentHandler { Service: service }
 }
@@ -143,6 +157,13 @@ func initClassicUserFollowingsHandler(service *service.ClassicUserFollowingsServ
 	return &handler.ClassicUserFollowingsHandler { Service: service }
 }
 
+func initRecoveryPasswordTokenHandler(recoveryPasswordTokenService *service.RecoveryPasswordTokenService, classicUserService *service.ClassicUserService, registeredUserService *service.RegisteredUserService, userService *service.UserService) *handler.RecoveryPasswordTokenHandler{
+	return &handler.RecoveryPasswordTokenHandler{
+		RecoveryPasswordTokenService: recoveryPasswordTokenService,
+		UserService:                  userService,
+	}
+}
+
 func initConfirmationTokenHandler(confirmationTokenService *service.ConfirmationTokenService, userService *service.UserService, registeredUserService *service.RegisteredUserService, classicUserService *service.ClassicUserService) *handler.ConfirmationTokenHandler{
 	return &handler.ConfirmationTokenHandler{
 		ConfirmationTokenService: confirmationTokenService,
@@ -152,7 +173,7 @@ func initConfirmationTokenHandler(confirmationTokenService *service.Confirmation
 	}
 }
 
-func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler,classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler,classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler,classicUserFollowersHandler *handler.ClassicUserFollowersHandler){
+func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler,classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler,classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler,classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/login/", userHandler.LogIn).Methods("POST")
@@ -171,9 +192,13 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	mux := http.NewServeMux()
 	mux.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser)
 	mux.HandleFunc("/login/", userHandler.LogIn)
+	mux.HandleFunc("/recovery_password/", recoveryPasswordTokenHandler.GenerateRecoveryPasswordToken)
+	mux.HandleFunc("/verify_recovery_password_token/", recoveryPasswordTokenHandler.VerifyRecoveryPasswordToken)
 	mux.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken)
+	mux.HandleFunc("/change_user_password/", userHandler.ChangeUserPassword)
+	mux.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo)
+	mux.HandleFunc("/find_user_by_id/", userHandler.FindByID)
 	handlerVar := cors.Default().Handler(mux)
-	//go http.ListenAndServe(":8081", handlerVar(router))
 	log.Fatal(http.ListenAndServe(":8080", handlerVar))
 }
 
@@ -189,6 +214,7 @@ func main() {
 	registeredUserCampaignsRepo := initClassicUserCampaignsRepo(database)
 	registeredUserFollowersRepo := initClassicUserFollowersRepo(database)
 	registeredUserFollowingsRepo := initClassicUserFollowingsRepo(database)
+	recoveryPasswordTokenRepo := initRecoveryPasswordTokenRepo(database)
 
 	userService := initUserService(userRepo)
 	registeredUserService := initRegisteredUserService(registeredUserRepo)
@@ -199,9 +225,9 @@ func main() {
 	registeredUserCampaignsService := initClassicUserCampaignsService(registeredUserCampaignsRepo)
 	registeredUserFollowersService := initClassicUserFollowersService(registeredUserFollowersRepo)
 	registeredUserFollowingsService := initClassicUserFollowingsService(registeredUserFollowingsRepo)
+	recoveryPasswordTokenService := initRecoveryPasswordTokenService(recoveryPasswordTokenRepo)
 
-
-	userHandler := initUserHandler(userService)
+	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService)
 	adminHandler := initAdminHandler(adminService)
 	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService)
 	agentHandler := initAgentHandler(agentService)
@@ -209,5 +235,6 @@ func main() {
 	registeredUserCampaignsHandler := initClassicUserCampaignsHandler(registeredUserCampaignsService)
 	registeredUserFollowersHandler := initClassicUserFollowersHandler(registeredUserFollowersService)
 	registeredUserFollowingsHandler := initClassicUserFollowingsHandler(registeredUserFollowingsService)
-	handleFunc(userHandler, confirmationTokenHandler, adminHandler,agentHandler,registeredUserHandler,registeredUserCampaignsHandler,registeredUserFollowingsHandler,registeredUserFollowersHandler)
+	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(recoveryPasswordTokenService,classicUserService,registeredUserService,userService)
+	handleFunc(userHandler, confirmationTokenHandler, adminHandler,agentHandler,registeredUserHandler,registeredUserCampaignsHandler,registeredUserFollowingsHandler,registeredUserFollowersHandler,recoveryPasswordTokenHandler)
 }

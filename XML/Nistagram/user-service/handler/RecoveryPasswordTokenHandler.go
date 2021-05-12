@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -16,8 +15,6 @@ import (
 
 type RecoveryPasswordTokenHandler struct {
 	RecoveryPasswordTokenService * service.RecoveryPasswordTokenService
-	ClassicUserService * service.ClassicUserService
-	RegisteredUserService * service.RegisteredUserService
 	UserService * service.UserService
 }
 
@@ -34,7 +31,7 @@ func SendRecoveryPasswordMail(user *model.User, token uuid.UUID) {
 	m.SetHeader("Subject", "Recovery password email")
 
 	// Set E-Mail body. You can set plain text or html with text/html
-	text:= "Dear "+user.FirstName+",\n\nPlease, click on link in below to change your password on our social network!\n\nhttp://localhost:8082/change_password/"+token.String()+"/"+user.ID.String()
+	text:= "Dear "+user.FirstName+",\n\nPlease, click on link in below to change your password on our social network!\n\nhttp://localhost:8082//changePasswordByToken/"+token.String()+"/"+user.ID.String()+"\n\nBest regards,\nTim25"
 	m.SetBody("text/plain", text)
 
 	// Settings for SMTP server
@@ -82,11 +79,15 @@ func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w ht
 
 //Function that gets called when USER clicks on the link in the email
 func (handler *RecoveryPasswordTokenHandler) VerifyRecoveryPasswordToken(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	token := vars["recoveryPasswordToken"]
-	userId := vars["userId"]
-	userIdUUID := uuid.MustParse(userId)
-	tokenUUID:= uuid.MustParse(token)
+	var recoveryPasswordDTO dto.RecoveryPasswordDTO
+
+	err := json.NewDecoder(r.Body).Decode(&recoveryPasswordDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	userIdUUID := recoveryPasswordDTO.UserId
+	tokenUUID:= recoveryPasswordDTO.RecoveryPasswordToken
 
 	var recoveryPasswordToken= handler.RecoveryPasswordTokenService.FindByToken(tokenUUID)
 	if !recoveryPasswordToken.IsValid{
