@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
+	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -20,6 +22,7 @@ type RegisteredUserHandler struct {
 	UserService * service.UserService
 	ClassicUserService * service.ClassicUserService
 	ConfirmationTokenService * service.ConfirmationTokenService
+	ProfileSettingsService * settingsService.ProfileSettingsService
 }
 
 func HashPassword(password string) (string, error) {
@@ -150,6 +153,24 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 	SendConfirmationMail(registeredUser.ClassicUser.User, confirmationToken.ConfirmationToken)
+
+	profileSettings:= settingsModel.ProfileSettings{
+		ID:                uuid.New(),
+		UserId:            userId,
+		UserVisibility:       settingsModel.PUBLIC_VISIBILITY,
+		MessageApprovalType: settingsModel.PUBLIC,
+		IsPostTaggable: true,
+		IsStoryTaggable: true,
+		IsCommentTaggable: true,
+
+	}
+	err = handler.ProfileSettingsService.CreateProfileSettings(&profileSettings)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
