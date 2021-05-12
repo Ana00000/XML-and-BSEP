@@ -1,8 +1,12 @@
 package dto
 
-type UserDTO struct {
+import (
+	"github.com/google/uuid"
+)
+
+type UserUpdateProfileInfoDTO struct {
+	ID uuid.UUID `json:"id"`
 	Username string `json:"username"`
-	Password string `json:"password"`
 	Email string `json:"email"`
 	PhoneNumber string `json:"phoneNumber"`
 	FirstName string `json:"firstName"`
@@ -11,4 +15,5 @@ type UserDTO struct {
 	DateOfBirth string `json:"dateOfBirth"`
 	Website string `json:"website"`
 	Biography string `json:"biography"`
+	UserType string `json:"userType"`
 }

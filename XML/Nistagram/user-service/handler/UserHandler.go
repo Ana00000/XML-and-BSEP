@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/mikespook/gorbac"
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -21,10 +22,11 @@ type UserHandler struct {
 	UserService * service.UserService
 	AdminService * service.AdminService
 	ClassicUserService * service.ClassicUserService
-	RegisteredUserService * service.RegisteredUserService
 	AgentService * service.AgentService
 	Rbac * gorbac.RBAC
 	PermissionFindAllUsers *gorbac.Permission
+	RegisteredUserService * service.RegisteredUserService
+
 }
 
 func CheckPasswordHash(password, hash string) bool {
@@ -151,20 +153,14 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 }
 
 func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("USAO")
 	var logInUserDTO dto.LogInUserDTO
 	err := json.NewDecoder(r.Body).Decode(&logInUserDTO)
 	if err != nil {
-		fmt.Println("USAOLOSE")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	var user = handler.UserService.FindByUserName(logInUserDTO.Username)
 
-	if !user.IsConfirmed {
-		fmt.Println("GRESKA")
-	}
-	fmt.Println("PROSAO")
 	if user == nil || !user.IsConfirmed {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -187,10 +183,83 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenJson, _ := json.Marshal(token)
-	w.Write(tokenJson)
+	logInResponse := dto.LogInResponseDTO{
+		ID:      user.ID,
+		Token:   token,
+	}
+
+	logInResponseJson, _ := json.Marshal(logInResponse)
+	w.Write(logInResponseJson)
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
+}
+
+func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http.Request) {
+	var userDTO dto.UserUpdateProfileInfoDTO
+
+	err := json.NewDecoder(r.Body).Decode(&userDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = handler.UserService.UpdateUserProfileInfo(&userDTO)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+
+	if userDTO.UserType == "ADMIN" {
+		err = handler.AdminService.UpdateAdminProfileInfo(&userDTO)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+	} else if userDTO.UserType == "AGENT" {
+		err = handler.AgentService.UpdateAgentProfileInfo(&userDTO)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+		err = handler.ClassicUserService.UpdateClassicUserProfileInfo(&userDTO)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+	} else {
+		err = handler.RegisteredUserService.UpdateRegisteredUserProfileInfo(&userDTO)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+		err = handler.ClassicUserService.UpdateClassicUserProfileInfo(&userDTO)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("USAO  BACK found")
+	id := r.URL.Query().Get("id")
+
+	var user = handler.UserService.FindByID(uuid.MustParse(id))
+	if  user == nil {
+		fmt.Println("User not found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	userJson, _ := json.Marshal(user)
+	w.Write(userJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 }
