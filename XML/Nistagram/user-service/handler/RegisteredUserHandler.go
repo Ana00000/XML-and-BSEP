@@ -66,12 +66,14 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		return
 	}
 
-	if handler.UserService.FindByUserName(registeredUserDTO.Username) != nil {
-		w.WriteHeader(http.StatusExpectationFailed) //417
+
+	if handler.UserService.FindByUserName(registeredUserDTO.Username) !=  nil {
+		w.WriteHeader(http.StatusConflict) //409
 		return
 	}
+
 	if handler.UserService.FindByEmail(registeredUserDTO.Email) != nil {
-		w.WriteHeader(http.StatusConflict) //409
+		w.WriteHeader(http.StatusExpectationFailed) //417
 		return
 	}
 
