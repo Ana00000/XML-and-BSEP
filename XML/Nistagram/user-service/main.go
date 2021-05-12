@@ -6,6 +6,8 @@ import (
 	_ "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/mikespook/gorbac"
+	_ "github.com/mikespook/gorbac"
 	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
@@ -41,13 +43,16 @@ func initUserService(repo *repository.UserRepository) *service.UserService{
 	return &service.UserService { Repo: repo }
 }
 
-func initUserHandler(UserService *service.UserService,AdminService *service.AdminService, ClassicUserService *service.ClassicUserService, RegisteredUserService *service.RegisteredUserService, AgentService *service.AgentService) *handler.UserHandler{
+func initUserHandler(UserService *service.UserService,AdminService *service.AdminService, ClassicUserService *service.ClassicUserService, RegisteredUserService *service.RegisteredUserService, AgentService *service.AgentService, rbac *gorbac.RBAC, permissionFindAllUsers *gorbac.Permission, permissionUpdateUserInfo *gorbac.Permission ) *handler.UserHandler{
 	return &handler.UserHandler{
-		UserService:           UserService,
-		AdminService:          AdminService,
-		ClassicUserService:    ClassicUserService,
-		RegisteredUserService: RegisteredUserService,
-		AgentService:          AgentService,
+		UserService:            UserService,
+		AdminService:           AdminService,
+		ClassicUserService:     ClassicUserService,
+		RegisteredUserService:  RegisteredUserService,
+		AgentService:           AgentService,
+		Rbac:                   rbac,
+		PermissionFindAllUsers: permissionFindAllUsers,
+		PermissionUpdateUserInfo: permissionUpdateUserInfo,
 	}
 }
 
@@ -196,6 +201,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	mux.HandleFunc("/verify_recovery_password_token/", recoveryPasswordTokenHandler.VerifyRecoveryPasswordToken)
 	mux.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken)
 	mux.HandleFunc("/change_user_password/", userHandler.ChangeUserPassword)
+	mux.HandleFunc("/users/all",userHandler.FindAllUsers)
 	mux.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo)
 	mux.HandleFunc("/find_user_by_id", userHandler.FindByID)
 	handlerVar := cors.Default().Handler(mux)
@@ -204,6 +210,26 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 
 
 func main() {
+	rbac := gorbac.New()
+
+	roleRegisterdUser := gorbac.NewStdRole("role-registered-user")
+	roleAgent := gorbac.NewStdRole("role-agent")
+	roleAdmin := gorbac.NewStdRole("role-admin")
+
+	permissionFindAllUsers := gorbac.NewStdPermission("permission-find-all-users")
+	permissionUpdateUserInfo := gorbac.NewStdPermission("permission-update-user-info")
+
+	roleAdmin.Assign(permissionFindAllUsers)
+	roleAdmin.Assign(permissionUpdateUserInfo)
+
+	roleAgent.Assign(permissionUpdateUserInfo)
+
+	roleRegisterdUser.Assign(permissionUpdateUserInfo)
+
+	rbac.Add(roleAdmin)
+	rbac.Add(roleAgent)
+	rbac.Add(roleRegisterdUser)
+
 	database := initDB()
 	userRepo := initUserRepo(database)
 	registeredUserRepo := initRegisteredUserRepo(database)
@@ -227,7 +253,7 @@ func main() {
 	registeredUserFollowingsService := initClassicUserFollowingsService(registeredUserFollowingsRepo)
 	recoveryPasswordTokenService := initRecoveryPasswordTokenService(recoveryPasswordTokenRepo)
 
-	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService)
+	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo)
 	adminHandler := initAdminHandler(adminService)
 	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService)
 	agentHandler := initAgentHandler(agentService)

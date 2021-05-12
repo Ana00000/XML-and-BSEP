@@ -51,7 +51,7 @@ export default {
             appTitle: 'Nistagram system',
             drawer: false,
             isUserLogged:false,
-            role : null,
+            userType : null,
             items: [
                 { title: 'Home', path: '/' }
             ]
@@ -62,32 +62,31 @@ export default {
     },
     methods:{
     init(){
-        this.role =localStorage.getItem('role');
-        if (this.role == 'ADMIN'){
+        this.userType =localStorage.getItem('userType');
+        if (this.userType == 0){   // ADMIN
             this.items = [
-                { title: 'Home', path: '/' }
+                { title: 'Home', path: '/' },
+                { title: 'Update Profile', path: '/updateProfile' }
             ]
-        } else if (this.role == 'AGENT') {
-             [
-                { title: 'Home', path: '/' }
+        } else if (this.userType == 1) {   // REGISTERED_USER
+            this.items = [
+                { title: 'Home', path: '/' },
+                { title: 'Update Profile', path: '/updateProfile' }
             ]
-        } else if (this.role == 'REGISTERED_USER') {
-             [
-                { title: 'Home', path: '/' }
+        } else if (this.userType == 2) {   // AGENT
+            this.items = [
+                { title: 'Home', path: '/' },
+                { title: 'Update Profile', path: '/updateProfile' }
             ]
-        } else if (this.role == 'CLASSIC_USER') {
-             [
-                { title: 'Home', path: '/' }
-            ]
-        } else {
+        } else {   // NOT YET REGISTERED
             this.items = [
                 { title: 'Home', path: '/' }
             ]
         }
     },
       logOff() {
-        localStorage.setItem("token","");
-        localStorage.setItem("role","NONE");
+        localStorage.setItem("token", "");
+        localStorage.setItem("userType", null);
         window.location.href = "http://localhost:8081/";
       }
     }
