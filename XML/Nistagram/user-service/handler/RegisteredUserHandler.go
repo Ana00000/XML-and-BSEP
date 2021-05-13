@@ -62,10 +62,20 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 
 	err := json.NewDecoder(r.Body).Decode(&registeredUserDTO)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 
+
+	if handler.UserService.FindByUserName(registeredUserDTO.Username) !=  nil {
+		w.WriteHeader(http.StatusConflict) //409
+		return
+	}
+
+	if handler.UserService.FindByEmail(registeredUserDTO.Email) != nil {
+		w.WriteHeader(http.StatusExpectationFailed) //417
+		return
+	}
 
 	var sb strings.Builder
 	salt := uuid.New().String()

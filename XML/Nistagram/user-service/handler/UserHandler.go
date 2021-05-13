@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
+	"github.com/mikespook/gorbac"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -22,8 +23,10 @@ type UserHandler struct {
 	AdminService * service.AdminService
 	ClassicUserService * service.ClassicUserService
 	AgentService * service.AgentService
+	Rbac * gorbac.RBAC
+	PermissionFindAllUsers *gorbac.Permission
 	RegisteredUserService * service.RegisteredUserService
-
+	PermissionUpdateUserInfo * gorbac.Permission
 }
 
 func CheckPasswordHash(password, hash string) bool {
@@ -31,7 +34,65 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
+func ExtractToken(r *http.Request) string {
+	bearToken := r.Header.Get("Authorization")
+	//normally Authorization the_token_xxx
+	strArr := strings.Split(bearToken, " ")
+	if len(strArr) == 2 {
+		return strArr[1]
+	}
+	return ""
+}
+
+func VerifyToken(r *http.Request) (*jwt.Token, error) {
+	tokenString := ExtractToken(r)
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		//Make sure that the token method conform to "SigningMethodHMAC"
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(os.Getenv("ACCESS_SECRET")), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+func TokenValid(r *http.Request) error {
+	token, err := VerifyToken(r)
+	if err != nil {
+		return err
+	}
+	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
+		return err
+	}
+	return nil
+}
+
 func (handler *UserHandler)FindAllUsers(w http.ResponseWriter, r *http.Request){
+
+	err:= TokenValid(r)
+	if err!=nil{
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	id := r.URL.Query().Get("id")
+	var loginUser = handler.UserService.FindByID(uuid.MustParse(id))
+
+	userRole :=""
+	if loginUser.UserType ==model.ADMIN{
+		userRole = "role-admin"
+	} else if loginUser.UserType ==model.AGENT{
+		userRole = "role-agent"
+	} else{
+		userRole = "role-registered-user"
+	}
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionFindAllUsers , nil){
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 	var users []model.User
 	users = handler.UserService.FindAllUsers()
 	usersJson, _ := json.Marshal(users)
@@ -172,13 +233,37 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http.Request) {
-	var userDTO dto.UserUpdateProfileInfoDTO
+	err:= TokenValid(r)
+	if err!=nil{
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 
-	err := json.NewDecoder(r.Body).Decode(&userDTO)
+	var userDTO dto.UserUpdateProfileInfoDTO
+	err = json.NewDecoder(r.Body).Decode(&userDTO)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	var loginUser = handler.UserService.FindByID(userDTO.ID)
+	userRole :=""
+	if loginUser.UserType ==model.ADMIN{
+		userRole = "role-admin"
+	} else if loginUser.UserType ==model.AGENT{
+		userRole = "role-agent"
+	} else{
+		userRole = "role-registered-user"
+	}
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo , nil) &&
+		!handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo , nil) &&
+		!handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo , nil){
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+
+
 
 	err = handler.UserService.UpdateUserProfileInfo(&userDTO)
 	if err != nil {

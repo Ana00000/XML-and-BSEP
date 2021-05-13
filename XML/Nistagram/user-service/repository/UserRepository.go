@@ -27,19 +27,27 @@ func (repo * UserRepository) FindAllUsers() []model.User{
 
 func (repo *UserRepository) FindByUserName(userName string) *model.User {
 	user := &model.User{}
-	repo.Database.First(&user, "username = ?", userName)
+	if repo.Database.First(&user, "username = ?", userName).RowsAffected == 0{
+
+		return nil
+
+	}
 	return user
 }
 
 func (repo *UserRepository) FindByEmail(email string) *model.User {
 	user := &model.User{}
-	repo.Database.First(&user, "email = ?", email)
+	if repo.Database.First(&user, "email = ?", email).RowsAffected == 0{
+		return nil
+	}
 	return user
 }
 
 func (repo *UserRepository) FindByID(ID uuid.UUID) *model.User {
 	user := &model.User{}
-	repo.Database.First(&user, "id = ?", ID)
+	if repo.Database.First(&user, "id = ?", ID).RowsAffected == 0{
+		return nil
+	}
 	return user
 }
 

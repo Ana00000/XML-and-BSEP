@@ -103,9 +103,9 @@
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <method v="2" />
     </configuration>
     <recent_temporary>

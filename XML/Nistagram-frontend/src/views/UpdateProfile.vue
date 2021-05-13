@@ -210,7 +210,13 @@ export default {
           website: this.website,
           biography: this.biography,
           userType: this.userType
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        
+        )
         .then((resp) => {
           console.log(resp.data);
           alert("Successfully updated profile informations!");

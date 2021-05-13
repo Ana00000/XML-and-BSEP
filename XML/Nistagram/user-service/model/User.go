@@ -7,9 +7,9 @@ import (
 
 type User struct {
 	ID uuid.UUID `json:"id"`
-	Username     string `json:"username" gorm:"not null"`
+	Username     string `json:"username" gorm:"unique;not null"`
 	Password     string `json:"password" gorm:"not null"`
-	Email        string `json:"email" gorm:"not null"`
+	Email        string `json:"email" gorm:"unique;not null"`
 	PhoneNumber  string `json:"phoneNumber" gorm:"not null"`
 	FirstName    string `json:"firstName" gorm:"not null"`
 	LastName     string `json:"lastName" gorm:"not null"`
