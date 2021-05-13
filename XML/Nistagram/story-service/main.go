@@ -1,15 +1,14 @@
 package main
 
 import (
+	_ "fmt"
+	_ "github.com/antchfx/xpath"
+	_ "github.com/lib/pq"
+	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/repository"
-	"./service"
-	"fmt"
-	_ "fmt"
-	_ "github.com/antchfx/xpath"
-	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -78,8 +77,8 @@ func initStoryAlbumHandler(service *service.StoryAlbumService) *handler.StoryAlb
 	return &handler.StoryAlbumHandler { Service: service }
 }
 
-func initSingleStoryHandler(service *service.SingleStoryService) *handler.SingleStoryHandler{
-	return &handler.SingleStoryHandler { Service: service }
+func initSingleStoryHandler(service *service.SingleStoryService, storyService *service.StoryService) *handler.SingleStoryHandler{
+	return &handler.SingleStoryHandler { Service: service, StoryService: storyService}
 }
 
 func initStoryHighlightHandler(service *service.StoryHighlightService) *handler.StoryHighlightHandler{
@@ -92,14 +91,16 @@ func initSingleStoryStoryHighlightsHandler(service *service.SingleStoryStoryHigh
 
 func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.StoryAlbumHandler, handlerStoryHighlight *handler.StoryHighlightHandler,
 	handlerSingleStoryStoryHighlights *handler.SingleStoryStoryHighlightsHandler,handlerSingleStory *handler.SingleStoryHandler){
-	router := mux.NewRouter().StrictSlash(true)
+	mux := http.NewServeMux()
 
-	router.HandleFunc("/story/", handlerStory.CreateStory).Methods("POST")
-	router.HandleFunc("/story_album/", handlerStoryAlbum.CreateStoryAlbum).Methods("POST")
-	router.HandleFunc("/story_highlight/", handlerStoryHighlight.CreateStoryHighlight).Methods("POST")
-	router.HandleFunc("/single_story_story_highlights/", handlerSingleStoryStoryHighlights.CreateSingleStoryStoryHighlights).Methods("POST")
-	router.HandleFunc("/single_story/", handlerSingleStory.CreateSingleStory).Methods("POST")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
+	mux.HandleFunc("/story/", handlerStory.CreateStory)
+	mux.HandleFunc("/story_album/", handlerStoryAlbum.CreateStoryAlbum)
+	mux.HandleFunc("/story_highlight/", handlerStoryHighlight.CreateStoryHighlight)
+	mux.HandleFunc("/single_story_story_highlights/", handlerSingleStoryStoryHighlights.CreateSingleStoryStoryHighlights)
+	mux.HandleFunc("/single_story/", handlerSingleStory.CreateSingleStory)
+
+	handlerVar := cors.Default().Handler(mux)
+	log.Fatal(http.ListenAndServe(":8086", handlerVar))
 }
 
 func main() {
@@ -115,7 +116,7 @@ func main() {
 
 	repoSingleStory := initSingleStoryRepo(database)
 	serviceSingleStory := initSingleStoryServices(repoSingleStory)
-	handlerSingleStory := initSingleStoryHandler(serviceSingleStory)
+	handlerSingleStory := initSingleStoryHandler(serviceSingleStory, serviceStory)
 
 	repoStoryHighlight := initStoryHighlightRepo(database)
 	serviceStoryHighlight := initStoryHighlightServices(repoStoryHighlight)

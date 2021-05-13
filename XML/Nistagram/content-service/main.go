@@ -86,8 +86,8 @@ func initSingleStoryContentService(repo *repository.SingleStoryContentRepository
 	return &service.SingleStoryContentService { Repo: repo }
 }
 
-func initSingleStoryContentHandler(service *service.SingleStoryContentService) *handler.SingleStoryContentHandler{
-	return &handler.SingleStoryContentHandler { Service: service }
+func initSingleStoryContentHandler(service *service.SingleStoryContentService, contentService *service.ContentService) *handler.SingleStoryContentHandler{
+	return &handler.SingleStoryContentHandler { Service: service, ContentService: contentService }
 }
 
 func initSinglePostContentRepo(database *gorm.DB) *repository.SinglePostContentRepository{
@@ -132,18 +132,16 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 	handlerCommentContent *handler.CommentContentHandler, handlerMessageContent *handler.MessageContentHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
-	router.HandleFunc("/content/", handlerContent.CreateContent).Methods("POST")
 	router.HandleFunc("/advertisement_content/", handlerAdvertisementContent.CreateAdvertisementContent).Methods("POST")
 	router.HandleFunc("/post_album_content/", handlerPostAlbumContent.CreatePostAlbumContent).Methods("POST")
-	router.HandleFunc("/single_post_content/", handlerSinglePostContent.CreateSinglePostContent).Methods("POST")
 	router.HandleFunc("/story_album_content/", handlerStoryAlbumContent.CreateStoryAlbumContent).Methods("POST")
-	router.HandleFunc("/single_story_content/", handlerSingleStoryContent.CreateSingleStoryContent).Methods("POST")
 	router.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent).Methods("POST")
 	router.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent).Methods("POST")
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/content/", handlerContent.CreateContent)
 	mux.HandleFunc("/single_post_content/", handlerSinglePostContent.CreateSinglePostContent)
+	mux.HandleFunc("/single_story_content/", handlerSingleStoryContent.CreateSingleStoryContent)
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8085", handlerVar))
 }
@@ -172,7 +170,7 @@ func main() {
 
 	repoSingleStoryContent := initSingleStoryContentRepo(database)
 	serviceSingleStoryContent := initSingleStoryContentService(repoSingleStoryContent)
-	handlerSingleStoryContent := initSingleStoryContentHandler(serviceSingleStoryContent)
+	handlerSingleStoryContent := initSingleStoryContentHandler(serviceSingleStoryContent, serviceContent)
 
 	repoCommentContent := initCommentContentRepo(database)
 	serviceCommentContent := initCommentContentService(repoCommentContent)

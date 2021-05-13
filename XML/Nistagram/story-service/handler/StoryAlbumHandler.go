@@ -24,17 +24,23 @@ func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *htt
 		return
 	}
 
-	layout := "2006-01-02T15:04:05.000Z"
-	creationDate,_ :=time.Parse(layout,storyAlbumDTO.CreationDate)
+	storyAlbumType := model.CLOSE_FRIENDS
+	switch storyAlbumDTO.Type {
+	case "ALL_FRIENDS":
+		storyAlbumType = model.ALL_FRIENDS
+	case "PUBLIC":
+		storyAlbumType = model.PUBLIC
+	}
+
+	id := uuid.New()
 	storyAlbum := model.StoryAlbum{
 		Story : model.Story{
-			ID:          uuid.UUID{},
-			CreationDate: creationDate,
-			UserId:      storyAlbumDTO.UserId,
-			LocationId:      storyAlbumDTO.LocationId,
-			IsDeleted:      storyAlbumDTO.IsDeleted,
-			Type:      storyAlbumDTO.Type,
-			//StoryICRs: nil,
+			ID:          	id,
+			CreationDate: 	time.Now(),
+			UserId:      	storyAlbumDTO.UserId,
+			LocationId:     storyAlbumDTO.LocationId,
+			IsDeleted:      false,
+			Type:      		storyAlbumType,
 		},
 	}
 

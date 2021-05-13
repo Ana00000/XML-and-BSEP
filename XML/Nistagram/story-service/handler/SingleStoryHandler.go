@@ -14,6 +14,7 @@ import (
 
 type SingleStoryHandler struct {
 	Service * service.SingleStoryService
+	StoryService * service.StoryService
 }
 
 func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *http.Request) {
@@ -24,16 +25,23 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 		return
 	}
 
-	layout := "2006-01-02T15:04:05.000Z"
-	creationDate,_ :=time.Parse(layout,singleStoryDTO.CreationDate)
+	singleStoryType := model.CLOSE_FRIENDS
+	switch singleStoryDTO.Type {
+	case "ALL_FRIENDS":
+		singleStoryType = model.ALL_FRIENDS
+	case "PUBLIC":
+		singleStoryType = model.PUBLIC
+	}
+
+	id := uuid.New()
 	singleStory := model.SingleStory{
-		Story : model.Story{
-		ID:          uuid.UUID{},
-		CreationDate: creationDate,
-		UserId:      singleStoryDTO.UserId,
-		LocationId:      singleStoryDTO.LocationId,
-		IsDeleted:      singleStoryDTO.IsDeleted,
-		Type:      singleStoryDTO.Type,
+		Story : 		model.Story{
+		ID:          	id,
+		CreationDate: 	time.Now(),
+		UserId:      	singleStoryDTO.UserId,
+		LocationId:     singleStoryDTO.LocationId,
+		IsDeleted:      false,
+		Type:      		singleStoryType,
 		},
 	}
 
@@ -42,6 +50,16 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	err = handler.StoryService.CreateStory(&singleStory.Story)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	singleStoryIDJson, _ := json.Marshal(singleStory.ID)
+	w.Write(singleStoryIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
