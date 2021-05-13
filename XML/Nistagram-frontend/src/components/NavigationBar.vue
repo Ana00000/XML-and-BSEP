@@ -71,14 +71,14 @@ export default {
         } else if (this.userType == 1) {   // REGISTERED_USER
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Update Profile', path: '/updateProfile' }
-                { title: 'Followers', path: '/followers' }
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Search users', path: '/searchUsers' }
             ]
         } else if (this.userType == 2) {   // AGENT
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Update Profile', path: '/updateProfile' }
-                { title: 'Followers', path: '/followers' }
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Search users', path: '/searchUsers' }
             ]
         } else {   // NOT YET REGISTERED
             this.items = [
