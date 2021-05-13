@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
@@ -93,8 +93,8 @@ func initPostCollectionHandler(service *service.PostCollectionService) *handler.
 	return &handler.PostCollectionHandler{ Service: service }
 }
 
-func initSinglePostHandler(service *service.SinglePostService) *handler.SinglePostHandler{
-	return &handler.SinglePostHandler{ Service: service }
+func initSinglePostHandler(service *service.SinglePostService, postService *service.PostService) *handler.SinglePostHandler{
+	return &handler.SinglePostHandler{ Service: service, PostService: postService }
 }
 
 func initPostCollectionPostsRepo(database *gorm.DB) *repository.PostCollectionPostsRepository{
@@ -122,7 +122,13 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
 	router.HandleFunc("/single_post/", handlerSinglePost.CreateSinglePost).Methods("POST")
 	router.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts).Methods("POST")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/post/", handlerPost.CreatePost)
+	mux.HandleFunc("/post_album/", handlerPostAlbum.CreatePostAlbum)
+	mux.HandleFunc("/single_post/", handlerSinglePost.CreateSinglePost)
+	handlerVar := cors.Default().Handler(mux)
+	log.Fatal(http.ListenAndServe(":8084", handlerVar))
 }
 
 func main() {
@@ -130,23 +136,27 @@ func main() {
 	repoPostCollectionPosts := initPostCollectionPostsRepo(database)
 	servicePostCollectionPosts := initPostCollectionPostsServices(repoPostCollectionPosts)
 	handlerPostCollectionPosts := initPostCollectionPostsHandler(servicePostCollectionPosts)
+
 	repoActivity := initActivityRepo(database)
 	repoComment := initCommentRepo(database)
 	repoPost := initPostRepo(database)
 	repoPostAlbum := initPostAlbumRepo(database)
 	repoPostCollection := initPostCollectionRepo(database)
 	repoSinglePost := initSinglePostRepo(database)
+
 	serviceActivity := initActivityService(repoActivity)
 	serviceComment := initCommentService(repoComment)
 	servicePost := initPostService(repoPost)
 	servicePostAlbum := initPostAlbumService(repoPostAlbum)
 	servicePostCollection := initPostCollectionService(repoPostCollection)
 	serviceSinglePost := initSinglePostService(repoSinglePost)
+
 	handlerActivity := initActivityHandler(serviceActivity)
 	handlerComment := initCommentHandler(serviceComment)
 	handlerPost := initPostHandler(servicePost)
 	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
-	handlerSinglePost := initSinglePostHandler(serviceSinglePost)
+	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost)
+
 	handleFunc(handlerActivity, handlerComment, handlerPost, handlerPostAlbum, handlerPostCollection, handlerSinglePost, handlerPostCollectionPosts)
 }

@@ -23,11 +23,17 @@ func (handler *AdvertisementContentHandler) CreateAdvertisementContent(w http.Re
 		return
 	}
 
+	contentType := model.PICTURE
+	switch advertisementContentDTO.Type {
+	case "VIDEO":
+		contentType = model.VIDEO
+	}
+
 	advertisementContent := model.AdvertisementContent{
 		Content: model.Content{
 			ID:   uuid.UUID{},
 			Path: advertisementContentDTO.Path,
-			Type: advertisementContentDTO.Type,
+			Type: contentType,
 		},
 		Link:            advertisementContentDTO.Link,
 		AdvertisementId: advertisementContentDTO.AdvertisementId,

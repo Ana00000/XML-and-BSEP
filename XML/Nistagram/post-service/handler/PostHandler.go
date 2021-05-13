@@ -24,16 +24,13 @@ func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	layout := "2006-01-02T15:04:05.000Z"
-	creationDate, _ := time.Parse(layout, postDTO.CreationDate)
-
 	post := model.Post{
 		ID:           uuid.UUID{},
 		Description:  postDTO.Description,
-		CreationDate: creationDate,
+		CreationDate: time.Now(),
 		UserID:       postDTO.UserID,
-		LocationId: postDTO.LocationID,
-		IsDeleted: postDTO.IsDeleted,
+		LocationId:   postDTO.LocationID,
+		IsDeleted:    false,
 	}
 
 	err = handler.Service.CreatePost(&post)

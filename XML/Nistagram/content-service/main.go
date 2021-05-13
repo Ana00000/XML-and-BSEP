@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/handler"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/repository"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
-	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/handler"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -29,8 +29,6 @@ func initDB() *gorm.DB{
 	db.AutoMigrate(&model.Content{}, &model.AdvertisementContent{},&model.CommentContent{},&model.PostAlbumContent{},&model.SinglePostContent{},&model.SingleStoryContent{},&model.MessageContent{},&model.StoryAlbumContent{})
 	return db
 }
-
-
 
 func initAdvertisementContentRepo(database *gorm.DB) *repository.AdvertisementContentRepository{
 	return &repository.AdvertisementContentRepository { Database: database }
@@ -100,8 +98,8 @@ func initSinglePostContentService(repo *repository.SinglePostContentRepository) 
 	return &service.SinglePostContentService { Repo: repo }
 }
 
-func initSinglePostContentHandler(service *service.SinglePostContentService) *handler.SinglePostContentHandler{
-	return &handler.SinglePostContentHandler { Service: service }
+func initSinglePostContentHandler(service *service.SinglePostContentService, contentService *service.ContentService) *handler.SinglePostContentHandler{
+	return &handler.SinglePostContentHandler { Service: service, ContentService: contentService }
 }
 
 func initCommentContentRepo(database *gorm.DB) *repository.CommentContentRepository{
@@ -128,8 +126,6 @@ func initMessageContentHandler(service *service.MessageContentService) *handler.
 	return &handler.MessageContentHandler { Service: service }
 }
 
-
-
 func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementContent *handler.AdvertisementContentHandler,
 	handlerPostAlbumContent *handler.PostAlbumContentHandler, handlerSinglePostContent *handler.SinglePostContentHandler,
 	handlerStoryAlbumContent *handler.StoryAlbumContentHandler, handlerSingleStoryContent *handler.SingleStoryContentHandler,
@@ -144,7 +140,12 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 	router.HandleFunc("/single_story_content/", handlerSingleStoryContent.CreateSingleStoryContent).Methods("POST")
 	router.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent).Methods("POST")
 	router.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent).Methods("POST")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/content/", handlerContent.CreateContent)
+	mux.HandleFunc("/single_post_content/", handlerSinglePostContent.CreateSinglePostContent)
+	handlerVar := cors.Default().Handler(mux)
+	log.Fatal(http.ListenAndServe(":8085", handlerVar))
 }
 
 func main() {
@@ -163,7 +164,7 @@ func main() {
 
 	repoSinglePostContent := initSinglePostContentRepo(database)
 	serviceSinglePostContent := initSinglePostContentService(repoSinglePostContent)
-	handlerSinglePostContent := initSinglePostContentHandler(serviceSinglePostContent)
+	handlerSinglePostContent := initSinglePostContentHandler(serviceSinglePostContent, serviceContent)
 
 	repoStoryAlbumContent := initStoryAlbumContentRepo(database)
 	serviceStoryAlbumContent := initStoryAlbumContentService(repoStoryAlbumContent)
