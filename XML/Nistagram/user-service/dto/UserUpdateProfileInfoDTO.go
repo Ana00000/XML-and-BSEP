@@ -1,8 +1,6 @@
 package dto
 
-import (
-	"github.com/google/uuid"
-)
+import "github.com/google/uuid"
 
 type UserUpdateProfileInfoDTO struct {
 	ID uuid.UUID `json:"id" validate:"required"`

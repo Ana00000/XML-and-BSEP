@@ -1,9 +1,8 @@
 package dto
 
-
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 )
 
 type AgentDTO struct {
