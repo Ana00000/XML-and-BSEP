@@ -38,7 +38,27 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	locationIDJson, _ := json.Marshal(location.ID)
+	w.Write(locationIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
 
+func (handler *LocationHandler) FindByID(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id")
+
+	var location = handler.Service.FindByID(uuid.MustParse(id))
+	if  location == nil {
+		fmt.Println("Location not found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	locationJson, _ := json.Marshal(location)
+	w.Write(locationJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}

@@ -13,6 +13,7 @@ import (
 
 type PostTagHandler struct {
 	Service * service.PostTagService
+	TagService * service.TagService
 }
 
 func (handler *PostTagHandler) CreatePostTag(w http.ResponseWriter, r *http.Request) {
@@ -23,9 +24,10 @@ func (handler *PostTagHandler) CreatePostTag(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	id := uuid.New()
 	postTag := model.PostTag{
 		Tag: model.Tag{
-			ID:   uuid.UUID{},
+			ID:   id,
 			Name: postTagDTO.Name,
 		},
 	}
@@ -35,6 +37,13 @@ func (handler *PostTagHandler) CreatePostTag(w http.ResponseWriter, r *http.Requ
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	err = handler.TagService.CreateTag(&postTag.Tag)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

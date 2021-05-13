@@ -10,6 +10,6 @@ type Post struct {
 	Description string `json:"description"`
 	CreationDate time.Time `json:"creationDate" gorm:"not null"`
 	UserID uuid.UUID `json:"userID" gorm:"not null"`
-	LocationId uuid.UUID `json:"locationID" gorm:"not null"`
+	LocationId uuid.UUID `json:"locationID"`
 	IsDeleted bool `json:"isDeleted" gorm:"not null"`
 }

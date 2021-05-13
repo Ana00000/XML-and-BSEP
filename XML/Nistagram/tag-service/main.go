@@ -90,8 +90,8 @@ func initTagHandler(service *service.TagService) *handler.TagHandler{
 	return &handler.TagHandler { Service: service }
 }
 
-func initPostTagHandler(service *service.PostTagService) *handler.PostTagHandler{
-	return &handler.PostTagHandler { Service: service }
+func initPostTagHandler(service *service.PostTagService, tagService * service.TagService) *handler.PostTagHandler{
+	return &handler.PostTagHandler { Service: service, TagService: tagService }
 }
 
 func initStoryTagHandler(service *service.StoryTagService) *handler.StoryTagHandler{
@@ -141,7 +141,7 @@ func main() {
 
 	repoPostTag := initPostTagRepo(database)
 	servicePostTag := initPostTagServices(repoPostTag)
-	handlerPostTag := initPostTagHandler(servicePostTag)
+	handlerPostTag := initPostTagHandler(servicePostTag, serviceTag)
 
 	repoStoryTag := initStoryTagRepo(database)
 	serviceStoryTag := initStoryTagServices(repoStoryTag)
