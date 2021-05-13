@@ -57,8 +57,27 @@
           />
         </v-form>
       </v-card-text>
+      <v-card-text>
+        <v-form class="mx-auto ml-5 mr-5">
+          <v-text-field
+            label="Path"
+            v-model="path"
+            prepend-icon="mdi-address-circle"
+          />
+          <v-select
+            class="typeCombo"
+            v-model="selectedType"
+            hint="Choose your type."
+            :items="types"
+            item-text="state"
+            :label="label1"
+            return-object
+            single-line
+          />
+        </v-form>
+      </v-card-text>
       <v-card-actions class="justify-center mb-5">
-        <v-btn color="info mb-5" v-on:click="create"> Create </v-btn>
+        <v-btn color="info mb-5" v-on:click="createPost"> Create </v-btn>
       </v-card-actions>
     </v-card>
   </div>
@@ -77,28 +96,16 @@ export default {
     tagName: null,
     postDescription: "",
     locationId: null,
+    path: "",
+    types: ["PICTURE", "VIDEO"],
+    selectedType: "PICTURE",
+    label1: "Type",
+    postId: null,
   }),
   methods: {
-    create() {
+    createPost() {
       this.createTag();
-      this.createLocation();
-    },
-    createTag() {
-      if (this.tagName == null) return;
-      if (!this.validTag()) return;
 
-      this.$http
-        .post("http://localhost:8082/post_tag/", {
-          name: this.tagName,
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
-    },
-    createLocation() {
       if (
         this.longitude == "" &&
         this.latitude == "" &&
@@ -131,13 +138,28 @@ export default {
         })
         .then((response) => {
           this.locationId = response.data;
-          this.createPost();
+          this.createPostWithLocation();
         })
         .catch((er) => {
           console.log(er.response.data);
         });
     },
-    createPost() {
+    createTag() {
+      if (this.tagName == null) return;
+      if (!this.validTag()) return;
+
+      this.$http
+        .post("http://localhost:8082/post_tag/", {
+          name: this.tagName,
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    createPostWithLocation() {
       if (!this.validPostDescription()) return;
       this.$http
         .post("http://localhost:8084/single_post/", {
@@ -147,8 +169,8 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
-          alert("Successful creation.");
-          window.location.href = "http://localhost:8081/";
+          this.postId = response.data;
+          this.createPostContent();
         })
         .catch((er) => {
           console.log(er.response.data);
@@ -160,6 +182,26 @@ export default {
         .post("http://localhost:8084/single_post/", {
           description: this.postDescription,
           userID: localStorage.getItem("userId"),
+        })
+        .then((response) => {
+          console.log(response.data);
+          this.postId = response.data;
+          this.createPostContent();
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    createPostContent() {
+      if (!this.validPath()) return;
+
+      setTimeout(5000);
+
+      this.$http
+        .post("http://localhost:8085/single_post_content/", {
+          path: this.path,
+          type: 0,
+          single_post_id: this.postId
         })
         .then((response) => {
           console.log(response.data);
@@ -276,6 +318,19 @@ export default {
       }
       return true;
     },
+    validPath() {
+      if (this.path.length < 3) {
+        alert("Your path should contain at least 3 characters!");
+        return false;
+      } else if (this.path.length > 50) {
+        alert("Your path shouldn't contain more than 50 characters!");
+        return false;
+      } else if (this.path.match(/[!@#$%^&*'<>+"]/g)) {
+        alert("Your path shouldn't contain those special characters.");
+        return false;
+      }
+      return true;
+    },
   },
 };
 </script>
@@ -283,5 +338,10 @@ export default {
 <style scoped>
 .spacing {
   height: 100px;
+}
+
+.typeCombo {
+  width: 90%;
+  margin-left: 10%;
 }
 </style>

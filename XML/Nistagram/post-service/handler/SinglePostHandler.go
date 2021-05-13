@@ -48,6 +48,9 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
+	singlePostIDJson, _ := json.Marshal(singlePost.ID)
+	w.Write(singlePostIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

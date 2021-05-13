@@ -13,6 +13,7 @@ import (
 
 type SinglePostContentHandler struct {
 	Service * service.SinglePostContentService
+	ContentService * service.ContentService
 }
 
 func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.ResponseWriter, r *http.Request) {
@@ -23,9 +24,10 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 		return
 	}
 
+	id := uuid.New()
 	singlePostContent := model.SinglePostContent{
 		Content: model.Content{
-			ID:   uuid.UUID{},
+			ID:   id,
 			Path: singlePostContentDTO.Path,
 			Type: singlePostContentDTO.Type,
 		},
@@ -37,6 +39,13 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	err = handler.ContentService.CreateContent(&singlePostContent.Content)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
