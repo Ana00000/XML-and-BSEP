@@ -18,8 +18,8 @@ func (service * ClassicUserFollowersService) CreateClassicUserFollowers(classicU
 	return nil
 }
 
-func (service * ClassicUserFollowersService) FindAllFollowersInfoForUser(userId uuid.UUID) []model.User{
-	users := service.Repo.FindAllFollowersInfoForUser(userId)
+func (service * ClassicUserFollowersService) FindAllFollowersForUser(userId uuid.UUID) []model.ClassicUserFollowers{
+	users := service.Repo.FindAllFollowersForUser(userId)
 	if users != nil {
 		return users
 	}

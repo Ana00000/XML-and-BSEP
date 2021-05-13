@@ -31,19 +31,4 @@ func (repo * ClassicUserFollowersRepository) FindAllFollowersForUser(userId uuid
 	return followers
 }
 
-func (repo * ClassicUserFollowersRepository) FindAllFollowersInfoForUser(userId uuid.UUID) []model.User{
-	var followers = repo.FindAllFollowersForUser(userId)
-	var users []model.User
-	repo.Database.Select("*").Find(&users)
-	var followerUser []model.User
-	
-	for i := 0; i < len(users); i++{
-		for j :=0; j<len(followers); j++{
-			if users[i].ID == followers[j].ClassicUserId{
-				followerUser = append(followerUser, users[i])
-			}
 
-		}
-	}
-	return followerUser
-}

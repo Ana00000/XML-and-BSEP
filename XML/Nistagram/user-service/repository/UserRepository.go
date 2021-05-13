@@ -95,3 +95,16 @@ func (repo *UserRepository) UpdateUserPassword(userId uuid.UUID, password string
 	fmt.Println("updating")
 	return nil
 }
+
+func (repo * UserRepository) FindAllFollowersInfoForUser(followers []model.ClassicUserFollowers) []model.User{
+
+	var followerUsers []model.User
+
+	for i := 0; i < len(followers); i++{
+		var users model.User
+		repo.Database.Select("*").Where("id=?", followers[i].FollowerUserId).Find(&users)
+		followerUsers = append(followerUsers, users)
+	}
+
+	return followerUsers
+}

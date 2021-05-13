@@ -46,13 +46,19 @@ func (handler *ClassicUserFollowersHandler)FindAllFollowersInfoForUser(w http.Re
 
 	//AUTHORIZATION
 
+	var classicUserFollowers []model.ClassicUserFollowers
+	classicUserFollowers = handler.ClassicUserFollowersService.FindAllFollowersForUser(loginUser.ID)
+
+
 	var users []model.User
-	users = handler.ClassicUserFollowersService.FindAllFollowersInfoForUser(loginUser.ID)
+	users = handler.UserService.FindAllFollowersInfoForUser(classicUserFollowers)
+
 	usersJson, _ := json.Marshal(users)
 	if usersJson != nil {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(usersJson)
 	}
+
 	w.WriteHeader(http.StatusBadRequest)
 }
