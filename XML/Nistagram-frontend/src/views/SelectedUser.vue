@@ -1,7 +1,7 @@
 <template>
   <div>
     <br />
-    
+    <v-container fluid class="container">
       <v-row aria-rowspan="2">
         <v-col cols="5" />
         <v-col cols="3">
@@ -37,13 +37,7 @@
           />
         </v-col>
       </v-row>
-
-      
-
-     
-
-      
-      
+    
     </v-container>
   </div>
 </template>
@@ -70,9 +64,7 @@ export default {
     getUser() {
       console.log(this.selectedUser);
       this.$http
-        .get(
-          "https://localhost:8080/find_selected_user?id=" + this.selectedUser
-        })
+        .get("http://localhost:8080/find_user_by_username?username=" + this.selectedUser)
         .then((resp) => {
           this.setUserInfo(resp.data);
           console.log(resp.data);

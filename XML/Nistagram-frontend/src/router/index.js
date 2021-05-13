@@ -45,6 +45,11 @@ const routes = [
     name: 'SearchUsers',
     component: () => import('../views/SearchUsers.vue')
   },
+  {
+    path: '/selectedUser',
+    name: 'SelectedUser',
+    component: () => import('../views/SelectedUser.vue')
+  },
 ]
 
 const router = new VueRouter({

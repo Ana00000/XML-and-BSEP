@@ -22,10 +22,8 @@
                         />
                     </v-toolbar>
                     <v-list two-line>
-                    <v-list-item-group
-                        active-class="indigo--text"
-                        multiple>
-                        <template v-for="user in users" >
+                    <v-list-item-group active-class="indigo--text" v-model="selectedUser" single>
+                        <template v-for="(user,id) in users" >
                         <v-list-item :key="user.id" :value="user" v-on:click="redirectToSelectedUser" >
                             <template >  
                             <v-list-item-content>
@@ -36,6 +34,10 @@
                             </v-list-item-content>
                             </template>
                         </v-list-item>
+                       <v-divider
+                v-if="`A-${id}` < users.length - 1"
+                :key="`A-${id}`"
+              />
                         
                         </template>
                     </v-list-item-group>
@@ -73,7 +75,7 @@ export default {
       console.log(this.id)
       console.log(this.token)
       this.$http
-        .get("http://localhost:8080//find_all_users_but_logged_in?id=" + this.id)
+        .get("http://localhost:8080/find_all_users_but_logged_in?id=" + this.id)
         .then((resp) => {
           console.log("USAO")
           this.users = resp.data
@@ -91,12 +93,16 @@ export default {
                 resultOfSearch.push(this.usersCopy[i])
         }
         this.users = resultOfSearch;
-      }
     },
+    
     redirectToSelectedUser() {
-        localStorage.setItem("selectedUser",this.selectedUser.id);
+    console.log("OK");
+     console.log("usao ovde i id je: "+ this.selectedUser.id);
+        localStorage.setItem("selectedUser",this.selectedUser.username);
+        
         window.location.href = "http://localhost:8081/selectedUser";
       
+    }
     }
   }
 </script>

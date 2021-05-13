@@ -358,3 +358,21 @@ func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Re
 
 	w.WriteHeader(http.StatusBadRequest)
 }
+
+func (handler *UserHandler) FindByUserName(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("USAO  BACK found")
+	username := r.URL.Query().Get("username")
+
+	var user = handler.UserService.FindByUserName(username)
+	if  user == nil {
+		fmt.Println("User not found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	userJson, _ := json.Marshal(user)
+	w.Write(userJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
