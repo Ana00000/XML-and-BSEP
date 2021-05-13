@@ -3,11 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/AdminDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/AdminDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/AgentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/AgentDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/UserDTO.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/UserUpdateProfileInfoDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/UserUpdateProfileInfoDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/EmailDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/EmailDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

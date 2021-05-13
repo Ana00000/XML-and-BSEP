@@ -170,10 +170,11 @@ func initClassicUserFollowingsHandler(service *service.ClassicUserFollowingsServ
 	return &handler.ClassicUserFollowingsHandler { Service: service }
 }
 
-func initRecoveryPasswordTokenHandler(recoveryPasswordTokenService *service.RecoveryPasswordTokenService, classicUserService *service.ClassicUserService, registeredUserService *service.RegisteredUserService, userService *service.UserService) *handler.RecoveryPasswordTokenHandler{
+func initRecoveryPasswordTokenHandler(recoveryPasswordTokenService *service.RecoveryPasswordTokenService, classicUserService *service.ClassicUserService, registeredUserService *service.RegisteredUserService, userService *service.UserService, validator *validator.Validate) *handler.RecoveryPasswordTokenHandler{
 	return &handler.RecoveryPasswordTokenHandler{
 		RecoveryPasswordTokenService: recoveryPasswordTokenService,
 		UserService:                  userService,
+		Validator: validator,
 	}
 }
 
@@ -270,6 +271,6 @@ func main() {
 	registeredUserCampaignsHandler := initClassicUserCampaignsHandler(registeredUserCampaignsService)
 	registeredUserFollowersHandler := initClassicUserFollowersHandler(registeredUserFollowersService)
 	registeredUserFollowingsHandler := initClassicUserFollowingsHandler(registeredUserFollowingsService)
-	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(recoveryPasswordTokenService,classicUserService,registeredUserService,userService)
+	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(recoveryPasswordTokenService,classicUserService,registeredUserService,userService, validator)
 	handleFunc(userHandler, confirmationTokenHandler, adminHandler,agentHandler,registeredUserHandler,registeredUserCampaignsHandler,registeredUserFollowingsHandler,registeredUserFollowersHandler,recoveryPasswordTokenHandler)
 }
