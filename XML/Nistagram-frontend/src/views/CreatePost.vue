@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="spacing" />
-    <v-card width="400" class="mx-auto mt-5" color="white">
+    <v-card width="600" class="mx-auto mt-5" color="white">
       <v-card-title class="justify-center">
-        <h1 class="display-1">Location creation</h1>
+        <h1 class="display-1">Post creation</h1>
       </v-card-title>
       <v-card-text>
         <v-form class="mx-auto ml-5 mr-5">
@@ -11,54 +11,50 @@
             label="Longitude"
             v-model="longitude"
             prepend-icon="mdi-address-circle"
+            v-if="!isHiddenLocation"
           />
           <v-text-field
             label="Latitude"
             v-model="latitude"
             prepend-icon="mdi-address-circle"
+            v-if="!isHiddenLocation"
           />
           <v-text-field
             label="Country"
             v-model="country"
             prepend-icon="mdi-address-circle"
+            v-if="!isHiddenLocation"
           />
           <v-text-field
             label="City"
             v-model="city"
             prepend-icon="mdi-address-circle"
+            v-if="!isHiddenLocation"
           />
           <v-text-field
             label="Street name"
             v-model="streetName"
             prepend-icon="mdi-address-circle"
+            v-if="!isHiddenLocation"
           />
           <v-text-field
             label="Street number"
             v-model="streetNumber"
             prepend-icon="mdi-address-circle"
+            v-if="!isHiddenLocation"
           />
-        </v-form>
-      </v-card-text>
-      <v-card-text>
-        <v-form class="mx-auto ml-5 mr-5">
           <v-text-field
             label="Tag name"
             v-model="tagName"
             prepend-icon="mdi-address-circle"
+            v-if="!isHiddenTag"
           />
-        </v-form>
-      </v-card-text>
-      <v-card-text>
-        <v-form class="mx-auto ml-5 mr-5">
           <v-text-field
             label="Description"
             v-model="postDescription"
             prepend-icon="mdi-address-circle"
+            v-if="!isHiddenDescription"
           />
-        </v-form>
-      </v-card-text>
-      <v-card-text>
-        <v-form class="mx-auto ml-5 mr-5">
           <v-text-field
             label="Path"
             v-model="path"
@@ -77,9 +73,15 @@
         </v-form>
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
+        <v-btn color="info mb-5" v-on:click="isHiddenLocation=false"> Add location  </v-btn>
+        <v-btn color="info mb-5" v-on:click="isHiddenTag=false"> Add tag </v-btn>
+        <v-btn color="info mb-5" v-on:click="isHiddenDescription=false"> Add description </v-btn>
+      </v-card-actions>
+      <v-card-actions class="justify-center mb-5">
         <v-btn color="info mb-5" v-on:click="createPost"> Create </v-btn>
       </v-card-actions>
     </v-card>
+    <div class="spacing" />
   </div>
 </template>
 
@@ -101,6 +103,9 @@ export default {
     selectedType: "PICTURE",
     label1: "Type",
     postId: null,
+    isHiddenLocation: true,
+    isHiddenTag: true,
+    isHiddenDescription: true
   }),
   methods: {
     createPost() {
@@ -201,7 +206,7 @@ export default {
         .post("http://localhost:8085/single_post_content/", {
           path: this.path,
           type: this.selectedType,
-          single_post_id: this.postId
+          single_post_id: this.postId,
         })
         .then((response) => {
           console.log(response.data);
@@ -341,7 +346,7 @@ export default {
 }
 
 .typeCombo {
-  width: 90%;
-  margin-left: 10%;
+  width: 94%;
+  margin-left: 6%;
 }
 </style>
