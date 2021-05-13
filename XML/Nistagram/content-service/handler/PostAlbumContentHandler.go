@@ -23,11 +23,17 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 		return
 	}
 
+	contentType := model.PICTURE
+	switch postAlbumContentDTO.Type {
+	case "VIDEO":
+		contentType = model.VIDEO
+	}
+
 	postAlbumContent := model.PostAlbumContent{
 		Content: model.Content{
 			ID:   uuid.UUID{},
 			Path: postAlbumContentDTO.Path,
-			Type: postAlbumContentDTO.Type,
+			Type: contentType,
 		},
 		PostAlbumId: postAlbumContentDTO.PostAlbumId,
 	}

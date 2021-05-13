@@ -308,7 +308,6 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 
 func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("USAO  BACK found")
 	id := r.URL.Query().Get("id")
 
 	var user = handler.UserService.FindByID(uuid.MustParse(id))

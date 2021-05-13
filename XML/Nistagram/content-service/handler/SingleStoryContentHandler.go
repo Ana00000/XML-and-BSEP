@@ -23,11 +23,17 @@ func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.Respon
 		return
 	}
 
+	contentType := model.PICTURE
+	switch singleStoryContentDTO.Type {
+	case "VIDEO":
+		contentType = model.VIDEO
+	}
+
 	singleStoryContent := model.SingleStoryContent{
 		Content: model.Content{
 			ID:   uuid.UUID{},
 			Path: singleStoryContentDTO.Path,
-			Type: singleStoryContentDTO.Type,
+			Type: contentType,
 		},
 		SingleStoryId: singleStoryContentDTO.SingleStoryId,
 	}

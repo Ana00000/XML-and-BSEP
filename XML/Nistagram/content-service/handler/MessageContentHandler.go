@@ -23,11 +23,17 @@ func (handler *MessageContentHandler) CreateMessageContent(w http.ResponseWriter
 		return
 	}
 
+	contentType := model.PICTURE
+	switch messageContentDTO.Type {
+	case "VIDEO":
+		contentType = model.VIDEO
+	}
+
 	messageContent := model.MessageContent{
 		Content: model.Content{
 			ID:   uuid.UUID{},
 			Path: messageContentDTO.Path,
-			Type: messageContentDTO.Type,
+			Type: contentType,
 		},
 		MessageSubstanceId: messageContentDTO.MessageSubstanceId,
 	}

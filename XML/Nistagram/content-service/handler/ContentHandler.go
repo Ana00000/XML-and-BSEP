@@ -23,10 +23,16 @@ func (handler *ContentHandler) CreateContent(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	contentType := model.PICTURE
+	switch contentDTO.Type {
+	case "VIDEO":
+		contentType = model.VIDEO
+	}
+
 	content := model.Content{
 		ID:   uuid.UUID{},
 		Path: contentDTO.Path,
-		Type: contentDTO.Type,
+		Type: contentType,
 	}
 
 	err = handler.Service.CreateContent(&content)
