@@ -13,6 +13,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
+	"gopkg.in/go-playground/validator.v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -90,8 +91,8 @@ func initRegisteredUserRepo(database *gorm.DB) *repository.RegisteredUserReposit
 func initRegisteredUserService(repo *repository.RegisteredUserRepository) *service.RegisteredUserService{
 	return &service.RegisteredUserService { Repo: repo }
 }
-func initRegisteredUserHandler(registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService) *handler.RegisteredUserHandler{
-	return &handler.RegisteredUserHandler { registeredUserService, userService, classicUserService , confirmationTokenService}
+func initRegisteredUserHandler(registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService, validator *validator.Validate) *handler.RegisteredUserHandler{
+	return &handler.RegisteredUserHandler { registeredUserService, userService, classicUserService , confirmationTokenService, validator}
 }
 
 
@@ -211,6 +212,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 
 func main() {
 	rbac := gorbac.New()
+	validator := validator.New()
 
 	roleRegisterdUser := gorbac.NewStdRole("role-registered-user")
 	roleAgent := gorbac.NewStdRole("role-agent")
@@ -255,7 +257,7 @@ func main() {
 
 	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo)
 	adminHandler := initAdminHandler(adminService)
-	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService)
+	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService,validator)
 	agentHandler := initAgentHandler(agentService)
 	confirmationTokenHandler := initConfirmationTokenHandler(confirmationTokenService,userService,registeredUserService,classicUserService)
 	registeredUserCampaignsHandler := initClassicUserCampaignsHandler(registeredUserCampaignsService)

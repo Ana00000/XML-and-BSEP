@@ -10,6 +10,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"os"
 	_ "strconv"
@@ -27,6 +28,7 @@ type UserHandler struct {
 	PermissionFindAllUsers *gorbac.Permission
 	RegisteredUserService * service.RegisteredUserService
 	PermissionUpdateUserInfo * gorbac.Permission
+	Validate *validator.Validate
 }
 
 func CheckPasswordHash(password, hash string) bool {

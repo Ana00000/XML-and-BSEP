@@ -8,6 +8,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/go-playground/validator.v9"
 	gomail "gopkg.in/mail.v2"
 	"net/http"
 	_ "strconv"
@@ -20,6 +21,7 @@ type RegisteredUserHandler struct {
 	UserService * service.UserService
 	ClassicUserService * service.ClassicUserService
 	ConfirmationTokenService * service.ConfirmationTokenService
+	Validator *validator.Validate
 }
 
 func HashPassword(password string) (string, error) {
@@ -66,6 +68,10 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		return
 	}
 
+	if err := handler.Validator.Struct(&registeredUserDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
 
 	if handler.UserService.FindByUserName(registeredUserDTO.Username) !=  nil {
 		w.WriteHeader(http.StatusConflict) //409
