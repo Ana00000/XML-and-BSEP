@@ -4,13 +4,22 @@
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/dto/AdvertisementContentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/dto/AdvertisementContentDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/content-service/dto/CommentContentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/dto/CommentContentDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/content-service/dto/ContentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/dto/ContentDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/dto/MessageContentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/dto/MessageContentDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/dto/PostAlbumContentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/dto/PostAlbumContentDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/content-service/dto/SinglePostContentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/dto/SinglePostContentDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/dto/SingleStoryContentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/dto/SingleStoryContentDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/dto/StoryAlbumContentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/dto/StoryAlbumContentDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/AdvertisementContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/AdvertisementContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/CommentContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/CommentContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/ContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/ContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/MessageContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/MessageContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/PostAlbumContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/PostAlbumContentHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/SinglePostContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/SinglePostContentHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/model/Content.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/model/Content.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/SingleStoryContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/SingleStoryContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/StoryAlbumContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/StoryAlbumContentHandler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +62,7 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
   </component>
-  <component name="RunManager" selected="Go Build.go build main.go (4)">
+  <component name="RunManager" selected="Go Build.go build main.go">
     <configuration name="go build main.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
@@ -101,11 +110,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build main.go (4)" />
-        <item itemvalue="Go Build.go build main.go (2)" />
-        <item itemvalue="Go Build.go build main.go (1)" />
-        <item itemvalue="Go Build.go build main.go (3)" />
         <item itemvalue="Go Build.go build main.go" />
+        <item itemvalue="Go Build.go build main.go (3)" />
+        <item itemvalue="Go Build.go build main.go (1)" />
+        <item itemvalue="Go Build.go build main.go (2)" />
+        <item itemvalue="Go Build.go build main.go (4)" />
       </list>
     </recent_temporary>
   </component>

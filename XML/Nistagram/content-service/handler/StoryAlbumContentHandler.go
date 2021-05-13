@@ -23,11 +23,18 @@ func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.Response
 		return
 	}
 
+	contentType := model.PICTURE
+	switch storyAlbumContentDTO.Type {
+	case "VIDEO":
+		contentType = model.VIDEO
+	}
+
+
 	storyAlbumContent := model.StoryAlbumContent{
 		Content: model.Content{
 			ID:   uuid.UUID{},
 			Path: storyAlbumContentDTO.Path,
-			Type: storyAlbumContentDTO.Type,
+			Type: contentType,
 		},
 		StoryAlbumId: storyAlbumContentDTO.StoryAlbumId,
 	}

@@ -24,12 +24,18 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 		return
 	}
 
+	contentType := model.PICTURE
+	switch singlePostContentDTO.Type {
+	case "VIDEO":
+		contentType = model.VIDEO
+	}
+
 	id := uuid.New()
 	singlePostContent := model.SinglePostContent{
 		Content: model.Content{
 			ID:   id,
 			Path: singlePostContentDTO.Path,
-			Type: singlePostContentDTO.Type,
+			Type: contentType,
 		},
 		SinglePostId: singlePostContentDTO.SinglePostId,
 	}

@@ -95,7 +95,7 @@ export default {
     firstName: "",
     lastName: "",
     genders: ["FEMALE", "MALE", "OTHER"],
-    selectedGender: 0,
+    selectedGender: "FEMALE",
     label1: "Gender",
     dateOfBirth: "",
     website: "",

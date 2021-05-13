@@ -200,7 +200,7 @@ export default {
       this.$http
         .post("http://localhost:8085/single_post_content/", {
           path: this.path,
-          type: 0,
+          type: this.selectedType,
           single_post_id: this.postId
         })
         .then((response) => {
