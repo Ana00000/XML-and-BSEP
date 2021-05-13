@@ -4,7 +4,7 @@
             <div>
                 <h1 class="display-2">You can find users here!</h1>
             </div>
-            <div class="welcoming">For search enter username</div>
+            <div class="welcoming"> Search users by username</div>
             <br/>
 
             <v-container>
@@ -72,7 +72,7 @@ export default {
       console.log(this.id)
       console.log(this.token)
       this.$http
-        .get("http://localhost:8080/find_all_followers_for_user?id=" + this.id)
+        .get("http://localhost:8080//find_all_users_but_logged_in?id=" + this.id)
         .then((resp) => {
           console.log("USAO")
           this.users = resp.data
@@ -125,11 +125,6 @@ export default {
   font-size: 20px;
   
 }
-.contentClass{
-  background: yellow;
-}
-.emptyContentClass{
-  background: green;
-}
+
 
 </style>

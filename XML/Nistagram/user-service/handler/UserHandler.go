@@ -323,3 +323,19 @@ func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+func (handler *UserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id")
+
+	var user = handler.UserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+	if  user == nil {
+		fmt.Println("No user found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	userJson, _ := json.Marshal(user)
+	w.Write(userJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}

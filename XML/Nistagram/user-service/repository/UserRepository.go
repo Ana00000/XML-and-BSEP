@@ -108,3 +108,10 @@ func (repo * UserRepository) FindAllFollowersInfoForUser(followers []model.Class
 
 	return followerUsers
 }
+
+func (repo * UserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []model.User{
+
+	var users []model.User
+	repo.Database.Select("*").Where("id != ?", userId).Find(&users)
+	return users
+}

@@ -213,6 +213,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	mux.HandleFunc("/create_follower/",classicUserFollowersHandler.CreateClassicUserFollowers)
 	mux.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo)
 	mux.HandleFunc("/find_user_by_id", userHandler.FindByID)
+	mux.HandleFunc("/find_all_users_but_logged_in", userHandler.FindAllUsersButLoggedIn)
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8080", handlerVar))
 }

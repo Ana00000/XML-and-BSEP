@@ -72,3 +72,11 @@ func (service * UserService) FindAllFollowersInfoForUser(followers []model.Class
 	}
 	return nil
 }
+
+func (service * UserService) FindAllUsersButLoggedIn(userId uuid.UUID) []model.User{
+	users := service.Repo.FindAllUsersButLoggedIn(userId)
+	if users != nil {
+		return users
+	}
+	return nil
+}
