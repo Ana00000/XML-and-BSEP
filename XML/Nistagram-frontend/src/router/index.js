@@ -39,7 +39,12 @@ const routes = [
     path: '/updateProfile',
     name: 'UpdateProfile',
     component: () => import('../views/UpdateProfile.vue')
-  }
+  },
+  {
+    path: '/followers',
+    name: 'Followers',
+    component: () => import('../views/Followers.vue')
+  },
 ]
 
 const router = new VueRouter({

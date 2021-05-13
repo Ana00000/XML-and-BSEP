@@ -9,6 +9,8 @@ import (
 	"github.com/mikespook/gorbac"
 	_ "github.com/mikespook/gorbac"
 	"github.com/rs/cors"
+	settingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
+	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
@@ -55,6 +57,15 @@ func initUserHandler(UserService *service.UserService,AdminService *service.Admi
 		PermissionUpdateUserInfo: permissionUpdateUserInfo,
 	}
 }
+//SETTINGS
+func initSettingsRepo(database *gorm.DB) *settingsRepository.ProfileSettingsRepository{
+	return &settingsRepository.ProfileSettingsRepository { Database: database }
+}
+
+func initSettingsService(repo *settingsRepository.ProfileSettingsRepository) *settingsService.ProfileSettingsService{
+	return &settingsService.ProfileSettingsService { Repo: repo }
+}
+
 
 //ADMIN
 func initAdminRepo(database *gorm.DB) *repository.AdminRepository{
@@ -90,13 +101,9 @@ func initRegisteredUserRepo(database *gorm.DB) *repository.RegisteredUserReposit
 func initRegisteredUserService(repo *repository.RegisteredUserRepository) *service.RegisteredUserService{
 	return &service.RegisteredUserService { Repo: repo }
 }
-func initRegisteredUserHandler(registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService) *handler.RegisteredUserHandler{
-	return &handler.RegisteredUserHandler { registeredUserService, userService, classicUserService , confirmationTokenService}
+func initRegisteredUserHandler(registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService, settingsService *settingsService.ProfileSettingsService) *handler.RegisteredUserHandler{
+	return &handler.RegisteredUserHandler { RegisteredUserService: registeredUserService, UserService: userService, ClassicUserService: classicUserService , ConfirmationTokenService: confirmationTokenService, ProfileSettingsService: settingsService}
 }
-
-
-
-
 
 func initAgentRepo(database *gorm.DB) *repository.AgentRepository{
 	return &repository.AgentRepository { Database: database }
@@ -154,8 +161,8 @@ func initClassicUserCampaignsHandler(service *service.ClassicUserCampaignsServic
 	return &handler.ClassicUserCampaignsHandler { Service: service }
 }
 
-func initClassicUserFollowersHandler(service *service.ClassicUserFollowersService) *handler.ClassicUserFollowersHandler{
-	return &handler.ClassicUserFollowersHandler { Service: service }
+func initClassicUserFollowersHandler(service *service.ClassicUserFollowersService, userService *service.UserService) *handler.ClassicUserFollowersHandler{
+	return &handler.ClassicUserFollowersHandler { ClassicUserFollowersService: service, UserService: userService}
 }
 
 func initClassicUserFollowingsHandler(service *service.ClassicUserFollowingsService) *handler.ClassicUserFollowingsHandler{
@@ -202,6 +209,8 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	mux.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken)
 	mux.HandleFunc("/change_user_password/", userHandler.ChangeUserPassword)
 	mux.HandleFunc("/users/all",userHandler.FindAllUsers)
+	mux.HandleFunc("/find_all_followers_for_user",classicUserFollowersHandler.FindAllFollowersInfoForUser)
+	mux.HandleFunc("/create_follower/",classicUserFollowersHandler.CreateClassicUserFollowers)
 	mux.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo)
 	mux.HandleFunc("/find_user_by_id", userHandler.FindByID)
 	handlerVar := cors.Default().Handler(mux)
@@ -241,6 +250,7 @@ func main() {
 	registeredUserFollowersRepo := initClassicUserFollowersRepo(database)
 	registeredUserFollowingsRepo := initClassicUserFollowingsRepo(database)
 	recoveryPasswordTokenRepo := initRecoveryPasswordTokenRepo(database)
+	settingsRepo := initSettingsRepo(database)
 
 	userService := initUserService(userRepo)
 	registeredUserService := initRegisteredUserService(registeredUserRepo)
@@ -252,14 +262,15 @@ func main() {
 	registeredUserFollowersService := initClassicUserFollowersService(registeredUserFollowersRepo)
 	registeredUserFollowingsService := initClassicUserFollowingsService(registeredUserFollowingsRepo)
 	recoveryPasswordTokenService := initRecoveryPasswordTokenService(recoveryPasswordTokenRepo)
+	settingsService := initSettingsService(settingsRepo)
 
 	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo)
 	adminHandler := initAdminHandler(adminService)
-	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService)
+	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService, settingsService)
 	agentHandler := initAgentHandler(agentService)
 	confirmationTokenHandler := initConfirmationTokenHandler(confirmationTokenService,userService,registeredUserService,classicUserService)
 	registeredUserCampaignsHandler := initClassicUserCampaignsHandler(registeredUserCampaignsService)
-	registeredUserFollowersHandler := initClassicUserFollowersHandler(registeredUserFollowersService)
+	registeredUserFollowersHandler := initClassicUserFollowersHandler(registeredUserFollowersService, userService)
 	registeredUserFollowingsHandler := initClassicUserFollowingsHandler(registeredUserFollowingsService)
 	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(recoveryPasswordTokenService,classicUserService,registeredUserService,userService)
 	handleFunc(userHandler, confirmationTokenHandler, adminHandler,agentHandler,registeredUserHandler,registeredUserCampaignsHandler,registeredUserFollowingsHandler,registeredUserFollowersHandler,recoveryPasswordTokenHandler)

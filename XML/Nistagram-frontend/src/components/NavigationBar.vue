@@ -72,11 +72,13 @@ export default {
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Followers', path: '/followers' }
             ]
         } else if (this.userType == 2) {   // AGENT
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Followers', path: '/followers' }
             ]
         } else {   // NOT YET REGISTERED
             this.items = [

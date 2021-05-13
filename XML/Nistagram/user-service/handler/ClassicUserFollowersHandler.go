@@ -1,18 +1,19 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 	_ "strconv"
 )
 
 type ClassicUserFollowersHandler struct {
-	Service * service.ClassicUserFollowersService
+	ClassicUserFollowersService * service.ClassicUserFollowersService
+	UserService * service.UserService
 }
 
 func (handler *ClassicUserFollowersHandler) CreateClassicUserFollowers(w http.ResponseWriter, r *http.Request) {
@@ -29,11 +30,29 @@ func (handler *ClassicUserFollowersHandler) CreateClassicUserFollowers(w http.Re
 		FollowerUserId:   classicUserFollowersDTO.FollowerUserId,
 	}
 
-	err = handler.Service.CreateClassicUserFollowers(&classicUserFollowers)
+	err = handler.ClassicUserFollowersService.CreateClassicUserFollowers(&classicUserFollowers)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *ClassicUserFollowersHandler)FindAllFollowersInfoForUser(w http.ResponseWriter, r *http.Request){
+
+	id := r.URL.Query().Get("id")
+	var loginUser = handler.UserService.FindByID(uuid.MustParse(id))
+
+	//AUTHORIZATION
+
+	var users []model.User
+	users = handler.ClassicUserFollowersService.FindAllFollowersInfoForUser(loginUser.ID)
+	usersJson, _ := json.Marshal(users)
+	if usersJson != nil {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(usersJson)
+	}
+	w.WriteHeader(http.StatusBadRequest)
 }
