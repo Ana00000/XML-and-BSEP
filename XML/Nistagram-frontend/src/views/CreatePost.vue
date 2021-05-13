@@ -75,15 +75,16 @@ export default {
     streetName: "",
     streetNumber: "",
     tagName: "",
-    postDescription: ""
+    postDescription: "",
+    locationId: "",
   }),
   methods: {
     create() {
       //this.createLocation();
       //this.createTag();
-      //this.createPost();
+      this.createPost();
     },
-    createLocation() {/*
+    createLocation() {
       if (
         !this.validLongitude() ||
         !this.validLatitude() ||
@@ -92,7 +93,7 @@ export default {
         !this.validStreetName() ||
         !this.validStreetNumber()
       )
-        return;*/
+        return;
 
       this.$http
         .post("http://localhost:8083/", {
@@ -111,7 +112,7 @@ export default {
         });
     },
     createTag() {
-      //if (!this.validTag()) return;
+      if (!this.validTag()) return;
       this.$http
         .post("http://localhost:8082/post_tag/", {
           name: this.tagName,
@@ -124,11 +125,13 @@ export default {
         });
     },
     createPost() {
+      if (!this.validPostDescription()) return;
+
       this.$http
         .post("http://localhost:8084/single_post/", {
           description: this.postDescription,
           userID: localStorage.getItem("userId"),
-          locationId: "8ac6f1b4-4b59-4798-a420-a154e6ce40d6"
+          locationId: this.locationId, //"8ac6f1b4-4b59-4798-a420-a154e6ce40d6",
         })
         .then((response) => {
           console.log(response.data);
@@ -138,7 +141,116 @@ export default {
         .catch((er) => {
           console.log(er.response.data);
         });
-    }
+    },
+    validLongitude() {
+      if (this.longitude.length < 2) {
+        alert("Your longitude should contain at least 2 characters!");
+        return false;
+      } else if (this.longitude.length > 30) {
+        alert("Your longitude shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.longitude.match(/[!@#$%^&*:'<>+-/\\"]/g)) {
+        alert("Your longitude shouldn't contain those special characters.");
+        return false;
+      }
+      return true;
+    },
+    validLatitude() {
+      if (this.latitude.length < 2) {
+        alert("Your latitude should contain at least 2 characters!");
+        return false;
+      } else if (this.latitude.length > 30) {
+        alert("Your latitude shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.latitude.match(/[!@#$%^&*:'<>+-/\\"]/g)) {
+        alert("Your latitude shouldn't contain those special characters.");
+        return false;
+      }
+      return true;
+    },
+    validCountry() {
+      if (this.country.length < 2) {
+        alert("Your country should contain at least 2 characters!");
+        return false;
+      } else if (this.country.length > 30) {
+        alert("Your country shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.country.match(/[!@#$%^&*:'<>+-/\\"]/g)) {
+        alert("Your country shouldn't contain those special characters.");
+        return false;
+      }
+      return true;
+    },
+    validCity() {
+      if (this.city.length < 2) {
+        alert("Your city should contain at least 2 characters!");
+        return false;
+      } else if (this.city.length > 30) {
+        alert("Your city shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.city.match(/[!@#$%^&*:'<>+-/\\"]/g)) {
+        alert("Your city shouldn't contain those special characters.");
+        return false;
+      }
+      return true;
+    },
+    validStreetName() {
+      if (this.streetName.length < 2) {
+        alert("Your street name should contain at least 2 characters!");
+        return false;
+      } else if (this.streetName.length > 30) {
+        alert("Your street name shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.streetName.match(/[!@#$%^&*:'<>+-/\\"]/g)) {
+        alert("Your street name shouldn't contain those special characters.");
+        return false;
+      } else if (this.streetName.match(/\d/g)) {
+        alert("Your street name shouldn't contain numbers!");
+        return false;
+      }
+      return true;
+    },
+    validStreetNumber() {
+      if (this.streetNumber.length < 1) {
+        alert("Your street number should contain at least 1 character!");
+        return false;
+      } else if (this.streetNumber.length > 10) {
+        alert("Your street number shouldn't contain more than 10 characters!");
+        return false;
+      } else if (this.streetNumber.match(/[!@#$%^&*:'<>+-/\\"]/g)) {
+        alert("Your street number shouldn't contain those special characters.");
+        return false;
+      } else if (this.streetNumber.match(/\d/g) == null) {
+        alert("Your street number should contain at least 1 number!");
+        return false;
+      }
+      return true;
+    },
+    validTag() {
+      if (this.tagName.length < 1) {
+        alert("Your tag name should contain at least 1 character!");
+        return false;
+      } else if (this.tagName.length > 30) {
+        alert("Your tag name shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.tagName.match(/[!#$%^&*:'<>+/\\"]/g)) {
+        alert("Your tag name shouldn't contain those special characters.");
+        return false;
+      } else if (this.tagName.match(/\d/g)) {
+        alert("Your tag name shouldn't contain numbers!");
+        return false;
+      }
+      return true;
+    },
+    validPostDescription() {
+      if (this.postDescription.length > 50) {
+        alert(
+          "Your post description shouldn't contain more than 50 characters!"
+        );
+        return false;
+      }
+      return true;
+    },
   },
 };
 </script>

@@ -160,8 +160,6 @@ export default {
       this.id = localStorage.getItem("userId");
       this.token = localStorage.getItem("token");
 
-      console.log(this.id)
-      console.log(this.token)
       this.$http
         .get("http://localhost:8080/find_user_by_id?id=" + this.id)
         .then((resp) => {
