@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/location-service/handler/LocationHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/handler/LocationHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/location-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/location-service/repository/LocationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/repository/LocationRepository.go" afterDir="false" />

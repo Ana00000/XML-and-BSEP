@@ -74,17 +74,42 @@ export default {
     city: "",
     streetName: "",
     streetNumber: "",
-    tagName: "",
+    tagName: null,
     postDescription: "",
-    locationId: "",
+    locationId: null,
   }),
   methods: {
     create() {
-      //this.createLocation();
-      //this.createTag();
-      this.createPost();
+      this.createTag();
+      this.createLocation();
+    },
+    createTag() {
+      if (this.tagName == null) return;
+      if (!this.validTag()) return;
+
+      this.$http
+        .post("http://localhost:8082/post_tag/", {
+          name: this.tagName,
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
     },
     createLocation() {
+      if (
+        this.longitude == "" &&
+        this.latitude == "" &&
+        this.country == "" &&
+        this.city == "" &&
+        this.streetName == "" &&
+        this.streetNumber == ""
+      ) {
+        this.createPostWithoutLocation();
+        return;
+      }
       if (
         !this.validLongitude() ||
         !this.validLatitude() ||
@@ -105,20 +130,8 @@ export default {
           streetNumber: this.streetNumber,
         })
         .then((response) => {
-          console.log(response.data);
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
-    },
-    createTag() {
-      if (!this.validTag()) return;
-      this.$http
-        .post("http://localhost:8082/post_tag/", {
-          name: this.tagName,
-        })
-        .then((response) => {
-          console.log(response.data);
+          this.locationId = response.data;
+          this.createPost();
         })
         .catch((er) => {
           console.log(er.response.data);
@@ -126,21 +139,49 @@ export default {
     },
     createPost() {
       if (!this.validPostDescription()) return;
-
       this.$http
         .post("http://localhost:8084/single_post/", {
           description: this.postDescription,
           userID: localStorage.getItem("userId"),
-          locationId: this.locationId, //"8ac6f1b4-4b59-4798-a420-a154e6ce40d6",
+          locationId: this.locationId,
         })
         .then((response) => {
           console.log(response.data);
-          //alert("Successful creation.");
-          //window.location.href = "http://localhost:8081/";
+          alert("Successful creation.");
+          window.location.href = "http://localhost:8081/";
         })
         .catch((er) => {
           console.log(er.response.data);
         });
+    },
+    createPostWithoutLocation() {
+      if (!this.validPostDescription()) return;
+      this.$http
+        .post("http://localhost:8084/single_post/", {
+          description: this.postDescription,
+          userID: localStorage.getItem("userId"),
+        })
+        .then((response) => {
+          console.log(response.data);
+          alert("Successful creation.");
+          window.location.href = "http://localhost:8081/";
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    validTag() {
+      if (this.tagName.length > 30) {
+        alert("Your tag name shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.tagName.match(/[!#$%^&*:'<>+/\\"]/g)) {
+        alert("Your tag name shouldn't contain those special characters.");
+        return false;
+      } else if (this.tagName.match(/\d/g)) {
+        alert("Your tag name shouldn't contain numbers!");
+        return false;
+      }
+      return true;
     },
     validLongitude() {
       if (this.longitude.length < 2) {
@@ -222,22 +263,6 @@ export default {
         return false;
       } else if (this.streetNumber.match(/\d/g) == null) {
         alert("Your street number should contain at least 1 number!");
-        return false;
-      }
-      return true;
-    },
-    validTag() {
-      if (this.tagName.length < 1) {
-        alert("Your tag name should contain at least 1 character!");
-        return false;
-      } else if (this.tagName.length > 30) {
-        alert("Your tag name shouldn't contain more than 30 characters!");
-        return false;
-      } else if (this.tagName.match(/[!#$%^&*:'<>+/\\"]/g)) {
-        alert("Your tag name shouldn't contain those special characters.");
-        return false;
-      } else if (this.tagName.match(/\d/g)) {
-        alert("Your tag name shouldn't contain numbers!");
         return false;
       }
       return true;
