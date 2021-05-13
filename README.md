@@ -19,14 +19,19 @@
 
     [XML/BSEP/General] + "-" + [feat/refactor/test/fix/decore] + ": " + [commit_description]
     
-    ex. "General-decore: added badges in readme" 
+    ex. "General-decore: Added badges in readme" 
 - Branch name:
 
     [XML/BSEP] + "-feature/" + [branch_description]
     
-    ex. "XML-feature/log-file" 
+    ex. "XML-feature/Log-file" 
     
 ## Diagram
 - Link to diagrams.net:
   https://drive.google.com/file/d/1cseOuqoEHwYQY5XYXwmMCub3QdjlVqY1/view?usp=sharing
+  
+  
+## Project setup
+- Project clone local location:
+  go/src/github.com/xml
     
