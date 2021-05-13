@@ -80,3 +80,11 @@ func (service * UserService) FindAllUsersButLoggedIn(userId uuid.UUID) []model.U
 	}
 	return nil
 }
+
+func (service * UserService) FindAllPublicUsers(publicUsers []uuid.UUID) []model.User{
+	users := service.Repo.FindAllPublicUsers(publicUsers)
+	if users != nil {
+		return users
+	}
+	return nil
+}

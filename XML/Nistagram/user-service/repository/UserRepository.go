@@ -115,3 +115,18 @@ func (repo * UserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []model.U
 	repo.Database.Select("*").Where("id != ?", userId).Find(&users)
 	return users
 }
+
+func (repo * UserRepository) FindAllPublicUsers(publicUsers []uuid.UUID) []model.User{
+
+	var users []model.User
+	for i := 0; i < len(publicUsers); i++ {
+		var user model.User
+		repo.Database.Select("*").Where("id != ?", publicUsers[i]).Find(&user)
+		users = append(users, user)
+	}
+
+
+
+
+	return users
+}

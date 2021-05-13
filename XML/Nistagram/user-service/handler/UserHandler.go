@@ -6,6 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/mikespook/gorbac"
+	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -23,6 +24,7 @@ type UserHandler struct {
 	AdminService * service.AdminService
 	ClassicUserService * service.ClassicUserService
 	AgentService * service.AgentService
+	ProfileSettingsService * settingsService.ProfileSettingsService
 	Rbac * gorbac.RBAC
 	PermissionFindAllUsers *gorbac.Permission
 	RegisteredUserService * service.RegisteredUserService
@@ -338,4 +340,21 @@ func (handler *UserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *ht
 	w.Write(userJson)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Request) {
+
+	var profileSettings = handler.ProfileSettingsService.FindAllProfileSettingsForPublicUsers()
+	var users []model.User
+	users = handler.UserService.FindAllPublicUsers(profileSettings)
+
+
+	usersJson, _ := json.Marshal(users)
+	if usersJson != nil {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(usersJson)
+	}
+
+	w.WriteHeader(http.StatusBadRequest)
 }
