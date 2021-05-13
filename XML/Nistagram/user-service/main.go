@@ -44,7 +44,7 @@ func initUserService(repo *repository.UserRepository) *service.UserService{
 	return &service.UserService { Repo: repo }
 }
 
-func initUserHandler(UserService *service.UserService,AdminService *service.AdminService, ClassicUserService *service.ClassicUserService, RegisteredUserService *service.RegisteredUserService, AgentService *service.AgentService, rbac *gorbac.RBAC, permissionFindAllUsers *gorbac.Permission, permissionUpdateUserInfo *gorbac.Permission ) *handler.UserHandler{
+func initUserHandler(UserService *service.UserService,AdminService *service.AdminService, ClassicUserService *service.ClassicUserService, RegisteredUserService *service.RegisteredUserService, AgentService *service.AgentService, rbac *gorbac.RBAC, permissionFindAllUsers *gorbac.Permission, permissionUpdateUserInfo *gorbac.Permission, validator *validator.Validate ) *handler.UserHandler{
 	return &handler.UserHandler{
 		UserService:            UserService,
 		AdminService:           AdminService,
@@ -54,6 +54,7 @@ func initUserHandler(UserService *service.UserService,AdminService *service.Admi
 		Rbac:                   rbac,
 		PermissionFindAllUsers: permissionFindAllUsers,
 		PermissionUpdateUserInfo: permissionUpdateUserInfo,
+		Validator: validator,
 	}
 }
 
@@ -92,7 +93,13 @@ func initRegisteredUserService(repo *repository.RegisteredUserRepository) *servi
 	return &service.RegisteredUserService { Repo: repo }
 }
 func initRegisteredUserHandler(registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService, validator *validator.Validate) *handler.RegisteredUserHandler{
-	return &handler.RegisteredUserHandler { registeredUserService, userService, classicUserService , confirmationTokenService, validator}
+	return &handler.RegisteredUserHandler{
+		registeredUserService,
+		userService,
+		classicUserService ,
+		confirmationTokenService,
+		validator,
+	}
 }
 
 
@@ -255,7 +262,7 @@ func main() {
 	registeredUserFollowingsService := initClassicUserFollowingsService(registeredUserFollowingsRepo)
 	recoveryPasswordTokenService := initRecoveryPasswordTokenService(recoveryPasswordTokenRepo)
 
-	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo)
+	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo, validator)
 	adminHandler := initAdminHandler(adminService)
 	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService,validator)
 	agentHandler := initAgentHandler(agentService)

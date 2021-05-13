@@ -4,7 +4,7 @@
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/UserUpdateProfileInfoDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/UserUpdateProfileInfoDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/User.go" afterDir="false" />
@@ -48,7 +48,7 @@
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RunManager">
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
