@@ -125,8 +125,5 @@ func (repo * UserRepository) FindAllPublicUsers(publicUsers []uuid.UUID) []model
 		users = append(users, user)
 	}
 
-
-
-
 	return users
 }

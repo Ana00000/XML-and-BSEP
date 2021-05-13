@@ -26,7 +26,7 @@
                         active-class="indigo--text"
                         multiple>
                         <template v-for="user in users" >
-                        <v-list-item :key="user.id" :value="user" >
+                        <v-list-item :key="user.id" :value="user" v-on:click="redirectToSelectedUser" >
                             <template >  
                             <v-list-item-content>
                               <v-list-item-subtitle v-text="'USERNAME: ' + user.username" class="containerDiv"></v-list-item-subtitle>
@@ -59,6 +59,7 @@ export default {
       searchInput: "",
       users: [],
       usersCopy : [],
+      selectedUser: null,
     }),
     mounted() {
         this.init();
@@ -91,6 +92,11 @@ export default {
         }
         this.users = resultOfSearch;
       }
+    },
+    redirectToSelectedUser() {
+        localStorage.setItem("selectedUser",this.selectedUser.id);
+        window.location.href = "http://localhost:8081/selectedUser";
+      
     }
   }
 </script>
