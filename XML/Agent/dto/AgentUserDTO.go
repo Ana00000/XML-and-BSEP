@@ -1,9 +1,5 @@
 package dto
 
-import (
-	"github.com/xml/XML-and-BSEP/XML/Agent/model"
-)
-
 type AgentUserDTO struct {
 	Username string `json:"username" validate:"required,min=2,max=30"`
 	Password string `json:"password" validate:"required,min=10,max=30"`
@@ -11,7 +7,7 @@ type AgentUserDTO struct {
 	PhoneNumber string `json:"phoneNumber" validate:"required"`
 	FirstName string `json:"firstName" validate:"required,alpha,min=2,max=20"`
 	LastName string `json:"lastName" validate:"required,alpha,min=2,max=35"`
-	Gender model.Gender `json:"gender" validate:"oneof=MALE FEMALE OTHER"`
+	Gender string `json:"gender" validate:"oneof=MALE FEMALE OTHER"`
 	DateOfBirth string `json:"dateOfBirth" validate:"required"`
 	Website string `json:"website" validate:"required"`
 	Biography string `json:"biography" validate:"required"`

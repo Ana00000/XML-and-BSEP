@@ -2,13 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Agent/util/AgentPasswordUtil.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Agent/dto/AgentUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/dto/AgentUserDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Agent/handler/AgentUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/handler/AgentUserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Agent/handler/ProductHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/handler/ProductHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Agent/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Agent/model/AgentUser.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/model/AgentUser.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Agent/repository/AgentUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/repository/AgentUserRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Agent/repository/ProductRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/repository/ProductRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Agent/service/AgentUserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/service/AgentUserService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Agent/service/ProductService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Agent/service/ProductService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +53,16 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Build.go build main.go (1)">
+    <configuration name="go build main.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="XML" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="github.com/xml/XML-and-BSEP/XML" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Agent/main.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
@@ -63,6 +74,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build main.go (1)" />
         <item itemvalue="Go Build.go build main.go" />
       </list>
     </recent_temporary>
