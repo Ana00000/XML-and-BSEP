@@ -7,6 +7,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
+	"gopkg.in/go-playground/validator.v9"
 	gomail "gopkg.in/mail.v2"
 	"net/http"
 	_ "strconv"
@@ -16,6 +17,7 @@ import (
 type RecoveryPasswordTokenHandler struct {
 	RecoveryPasswordTokenService * service.RecoveryPasswordTokenService
 	UserService * service.UserService
+	Validator   *validator.Validate
 }
 
 func SendRecoveryPasswordMail(user *model.User, token uuid.UUID) {
@@ -51,9 +53,13 @@ func SendRecoveryPasswordMail(user *model.User, token uuid.UUID) {
 //Function when user clicks -> FORGOT PASSWORD -> enters email -> clicks RECOVER to get email
 func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w http.ResponseWriter, r *http.Request) {
 	var emailDTO dto.EmailDTO
-	err := json.NewDecoder(r.Body).Decode(&emailDTO)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&emailDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := handler.Validator.Struct(&emailDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 
@@ -66,15 +72,16 @@ func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w ht
 		ExpirationTime:        time.Now().Add(time.Minute * 5),
 		IsValid:               true,
 	}
-	err = handler.RecoveryPasswordTokenService.CreateRecoveryPasswordToken(&recoveryPasswordToken)
+
+	err := handler.RecoveryPasswordTokenService.CreateRecoveryPasswordToken(&recoveryPasswordToken)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
 	SendRecoveryPasswordMail(user, recoveryPasswordToken.RecoveryPasswordToken)
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
-
 }
 
 //Function that gets called when USER clicks on the link in the email
