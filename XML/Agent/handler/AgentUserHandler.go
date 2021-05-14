@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"../dto"
-	"../model"
-	"../service"
+	"github.com/xml/XML-and-BSEP/XML/Agent/dto"
+	"github.com/xml/XML-and-BSEP/XML/Agent/model"
+	"github.com/xml/XML-and-BSEP/XML/Agent/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
