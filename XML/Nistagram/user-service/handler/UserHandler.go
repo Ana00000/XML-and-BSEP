@@ -9,7 +9,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/util"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"os"
@@ -27,12 +27,8 @@ type UserHandler struct {
 	PermissionFindAllUsers   *gorbac.Permission
 	RegisteredUserService    *service.RegisteredUserService
 	PermissionUpdateUserInfo *gorbac.Permission
-	Validator                 *validator.Validate
-}
-
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
+	Validator                *validator.Validate
+	PasswordUtil			 *util.PasswordUtil
 }
 
 func ExtractToken(r *http.Request) string {
@@ -145,7 +141,7 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 	sb.WriteString(userChangePasswordDTO.Password)
 	sb.WriteString(salt)
 	password := sb.String()
-	hash, _ := HashPassword(password)
+	hash, _ := handler.PasswordUtil.HashPassword(password)
 
 	err = handler.UserService.UpdateUserPassword(user.ID, hash)
 	if err != nil {
@@ -191,9 +187,15 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 	var logInUserDTO dto.LogInUserDTO
 	err := json.NewDecoder(r.Body).Decode(&logInUserDTO)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
+
+	if err := handler.Validator.Struct(&logInUserDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
+
 	var user = handler.UserService.FindByUserName(logInUserDTO.Username)
 
 	if user == nil || !user.IsConfirmed {
@@ -207,7 +209,7 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString(salt)
 	password := sb.String()
 
-	if !CheckPasswordHash(password, user.Password) {
+	if !handler.PasswordUtil.CheckPasswordHash(password, user.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}

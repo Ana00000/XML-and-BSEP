@@ -2,10 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/util/PasswordUtil.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/EmailDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/EmailDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/AdminDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/AdminDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/LogInUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/LogInUserDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/AdminHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/AdminHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

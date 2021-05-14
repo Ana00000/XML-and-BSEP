@@ -13,6 +13,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/util"
 	"gopkg.in/go-playground/validator.v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -34,8 +35,12 @@ func initDB() *gorm.DB{
 	return db
 }
 
-//USER
+func initPasswordUtil() *util.PasswordUtil{
+	return &util.PasswordUtil { }
+}
 
+
+//USER
 func initUserRepo(database *gorm.DB) *repository.UserRepository{
 	return &repository.UserRepository { Database: database }
 }
@@ -44,7 +49,7 @@ func initUserService(repo *repository.UserRepository) *service.UserService{
 	return &service.UserService { Repo: repo }
 }
 
-func initUserHandler(UserService *service.UserService,AdminService *service.AdminService, ClassicUserService *service.ClassicUserService, RegisteredUserService *service.RegisteredUserService, AgentService *service.AgentService, rbac *gorbac.RBAC, permissionFindAllUsers *gorbac.Permission, permissionUpdateUserInfo *gorbac.Permission, validator *validator.Validate ) *handler.UserHandler{
+func initUserHandler(UserService *service.UserService,AdminService *service.AdminService, ClassicUserService *service.ClassicUserService, RegisteredUserService *service.RegisteredUserService, AgentService *service.AgentService, rbac *gorbac.RBAC, permissionFindAllUsers *gorbac.Permission, permissionUpdateUserInfo *gorbac.Permission, validator *validator.Validate, passwordUtil *util.PasswordUtil ) *handler.UserHandler{
 	return &handler.UserHandler{
 		UserService:            UserService,
 		AdminService:           AdminService,
@@ -55,6 +60,7 @@ func initUserHandler(UserService *service.UserService,AdminService *service.Admi
 		PermissionFindAllUsers: permissionFindAllUsers,
 		PermissionUpdateUserInfo: permissionUpdateUserInfo,
 		Validator: validator,
+		PasswordUtil: passwordUtil,
 	}
 }
 
@@ -67,8 +73,12 @@ func initAdminService(repo *repository.AdminRepository) *service.AdminService{
 	return &service.AdminService { Repo: repo }
 }
 
-func initAdminHandler(service *service.AdminService) *handler.AdminHandler{
-	return &handler.AdminHandler { Service: service }
+func initAdminHandler(service *service.AdminService, validator *validator.Validate, passwordUtil *util.PasswordUtil) *handler.AdminHandler{
+	return &handler.AdminHandler {
+		Service: service,
+		Validator: validator,
+		PasswordUtil: passwordUtil,
+	}
 }
 
 //CLASSIC USER
@@ -84,27 +94,25 @@ func initClassicUserHandler(service *service.ClassicUserService) *handler.Classi
 	return &handler.ClassicUserHandler { Service: service }
 }
 
-
 //REGISTERED USER
 func initRegisteredUserRepo(database *gorm.DB) *repository.RegisteredUserRepository{
 	return &repository.RegisteredUserRepository { Database: database }
 }
+
 func initRegisteredUserService(repo *repository.RegisteredUserRepository) *service.RegisteredUserService{
 	return &service.RegisteredUserService { Repo: repo }
 }
-func initRegisteredUserHandler(registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService, validator *validator.Validate) *handler.RegisteredUserHandler{
+
+func initRegisteredUserHandler(registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService, validator *validator.Validate, passwordUtil *util.PasswordUtil) *handler.RegisteredUserHandler{
 	return &handler.RegisteredUserHandler{
 		registeredUserService,
 		userService,
 		classicUserService ,
 		confirmationTokenService,
 		validator,
+		passwordUtil,
 	}
 }
-
-
-
-
 
 func initAgentRepo(database *gorm.DB) *repository.AgentRepository{
 	return &repository.AgentRepository { Database: database }
@@ -195,7 +203,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	//router.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser).Methods("POST")
 
 	router.HandleFunc("/users/", userHandler.FindAllUsers).Methods("GET")
-	router.HandleFunc("/admin/", adminHandler.CreateAdmin).Methods("POST")
+	router.HandleFunc("/registered_admin/", adminHandler.CreateAdmin).Methods("POST")
 	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
 	router.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser).Methods("POST")
 	router.HandleFunc("/classic_user_campaigns/", classicUserCampaignsHandler.CreateClassicUserCampaigns).Methods("POST")
@@ -204,6 +212,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 
 
 	mux := http.NewServeMux()
+	mux.HandleFunc("/registered_admin/", adminHandler.CreateAdmin)
 	mux.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser)
 	mux.HandleFunc("/login/", userHandler.LogIn)
 	mux.HandleFunc("/recovery_password/", recoveryPasswordTokenHandler.GenerateRecoveryPasswordToken)
@@ -263,9 +272,11 @@ func main() {
 	registeredUserFollowingsService := initClassicUserFollowingsService(registeredUserFollowingsRepo)
 	recoveryPasswordTokenService := initRecoveryPasswordTokenService(recoveryPasswordTokenRepo)
 
-	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo, validator)
-	adminHandler := initAdminHandler(adminService)
-	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService,validator)
+	passwordUtil := initPasswordUtil()
+
+	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo, validator, passwordUtil)
+	adminHandler := initAdminHandler(adminService,validator, passwordUtil)
+	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService,validator, passwordUtil)
 	agentHandler := initAgentHandler(agentService)
 	confirmationTokenHandler := initConfirmationTokenHandler(confirmationTokenService,userService,registeredUserService,classicUserService)
 	registeredUserCampaignsHandler := initClassicUserCampaignsHandler(registeredUserCampaignsService)
