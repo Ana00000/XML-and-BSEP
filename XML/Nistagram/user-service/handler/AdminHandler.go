@@ -15,7 +15,8 @@ import (
 )
 
 type AdminHandler struct {
-	Service * service.AdminService
+	AdminService * service.AdminService
+	UserService *service.UserService
 	Validator *validator.Validate
 	PasswordUtil *util.PasswordUtil
 }
@@ -32,6 +33,16 @@ func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	if handler.UserService.FindByUserName(adminDTO.Username) != nil {
+		w.WriteHeader(http.StatusConflict) //409
+		return
+	}
+
+	if handler.UserService.FindByEmail(adminDTO.Email) != nil {
+		w.WriteHeader(http.StatusExpectationFailed) //417
+		return
+	}
+
 	salt,password := handler.PasswordUtil.GeneratePasswordWithSalt(adminDTO.Password)
 
 	gender := model.OTHER
@@ -42,12 +53,12 @@ func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request)
 		gender = model.FEMALE
 	}
 
-	fmt.Printf(adminDTO.DateOfBirth)
+	adminId := uuid.New()
 	layout := "2006-01-02T15:04:05.000Z"
 	dateOfBirth,_ :=time.Parse(layout,adminDTO.DateOfBirth)
 	admin := model.Admin{
 		User : model.User{
-			ID:          uuid.UUID{},
+			ID:          adminId,
 			Username:    adminDTO.Username,
 			Password:    password,
 			Email:       adminDTO.Email,
@@ -64,7 +75,7 @@ func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request)
 		},
 	}
 
-	err := handler.Service.CreateAdmin(&admin)
+	err := handler.AdminService.CreateAdmin(&admin)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
