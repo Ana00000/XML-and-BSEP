@@ -4,7 +4,6 @@ import (
 	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
-	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/xml/XML-and-BSEP/XML/Agent/handler"
@@ -12,6 +11,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Agent/repository"
 	"github.com/xml/XML-and-BSEP/XML/Agent/service"
 	"github.com/xml/XML-and-BSEP/XML/Agent/util"
+	"gopkg.in/go-playground/validator.v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -60,8 +60,11 @@ func initProductServices(repo *repository.ProductRepository) *service.ProductSer
 	return &service.ProductService{Repo: repo}
 }
 
-func initProductHandler(service *service.ProductService) *handler.ProductHandler {
-	return &handler.ProductHandler{Service: service}
+func initProductHandler(productService *service.ProductService, validator *validator.Validate) *handler.ProductHandler {
+	return &handler.ProductHandler{
+		ProductService: productService,
+		Validator: validator,
+	}
 }
 
 func handleFunc(handlerAgentUser *handler.AgentUserHandler, handlerProduct *handler.ProductHandler) {
@@ -84,7 +87,7 @@ func main() {
 
 	repoProduct := initProductRepo(database)
 	serviceProduct := initProductServices(repoProduct)
-	handlerProduct := initProductHandler(serviceProduct)
+	handlerProduct := initProductHandler(serviceProduct, validator)
 
 	handleFunc(handlerAgentUser, handlerProduct)
 }

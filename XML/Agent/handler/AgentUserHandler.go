@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-playground/validator"
+	"gopkg.in/go-playground/validator.v9"
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Agent/dto"
 	"github.com/xml/XML-and-BSEP/XML/Agent/model"
