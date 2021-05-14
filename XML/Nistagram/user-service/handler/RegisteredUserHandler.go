@@ -9,25 +9,29 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/util"
+	"gopkg.in/go-playground/validator.v9"
 	gomail "gopkg.in/mail.v2"
 	"net/http"
 	_ "strconv"
-	"strings"
 	"time"
 )
 
 type RegisteredUserHandler struct {
+
 	RegisteredUserService * service. RegisteredUserService
 	UserService * service.UserService
 	ClassicUserService * service.ClassicUserService
 	ConfirmationTokenService * service.ConfirmationTokenService
 	ProfileSettingsService * settingsService.ProfileSettingsService
+	Validator                *validator.Validate
+	PasswordUtil             *util.PasswordUtil
 }
 
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	return string(bytes), err
+
 }
 
 func SendConfirmationMail(user model.User, token uuid.UUID) {
@@ -43,7 +47,7 @@ func SendConfirmationMail(user model.User, token uuid.UUID) {
 	m.SetHeader("Subject", "Confirmation mail")
 
 	// Set E-Mail body. You can set plain text or html with text/html
-	text:= "Dear "+user.FirstName+",\n\nPlease, click on link in below to confirm your registration on our social network!\n\nhttp://localhost:8081/confirmRegistration/"+token.String()+"/"+user.ID.String()+"\n\n\nBest regards,\nTim25"
+	text := "Dear " + user.FirstName + ",\n\nPlease, click on link in below to confirm your registration on our social network!\n\nhttp://localhost:8081/confirmRegistration/" + token.String() + "/" + user.ID.String() + "\n\n\nBest regards,\nTim25"
 	m.SetBody("text/plain", text)
 
 	// Settings for SMTP server
@@ -62,15 +66,17 @@ func SendConfirmationMail(user model.User, token uuid.UUID) {
 
 func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter, r *http.Request) {
 	var registeredUserDTO dto.RegisteredUserDTO
-
-	err := json.NewDecoder(r.Body).Decode(&registeredUserDTO)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&registeredUserDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 
+	if err := handler.Validator.Struct(&registeredUserDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
 
-	if handler.UserService.FindByUserName(registeredUserDTO.Username) !=  nil {
+	if handler.UserService.FindByUserName(registeredUserDTO.Username) != nil {
 		w.WriteHeader(http.StatusConflict) //409
 		return
 	}
@@ -80,12 +86,7 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		return
 	}
 
-	var sb strings.Builder
-	salt := uuid.New().String()
-	sb.WriteString(registeredUserDTO.Password)
-	sb.WriteString(salt)
-	password := sb.String()
-	hash,_ := HashPassword(password)
+	salt, password := handler.PasswordUtil.GeneratePasswordWithSalt(registeredUserDTO.Password)
 
 	gender := model.OTHER
 	switch registeredUserDTO.Gender {
@@ -94,16 +95,16 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	case "FEMALE":
 		gender = model.FEMALE
 	}
-	fmt.Printf(registeredUserDTO.DateOfBirth)
+
 	userId := uuid.New()
 	layout := "2006-01-02T15:04:05.000Z"
 	dateOfBirth, _ := time.Parse(layout, registeredUserDTO.DateOfBirth)
 	registeredUser := model.RegisteredUser{
-		ClassicUser:       model.ClassicUser{
-			User:                        model.User{
+		ClassicUser: model.ClassicUser{
+			User: model.User{
 				ID:          userId,
 				Username:    registeredUserDTO.Username,
-				Password:    hash,
+				Password:    password,
 				Email:       registeredUserDTO.Email,
 				PhoneNumber: registeredUserDTO.PhoneNumber,
 				FirstName:   registeredUserDTO.FirstName,
@@ -118,28 +119,27 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 			},
 			IsDeleted: false,
 		},
-		RegisteredUserCategory:         model.NONE,
-		OfficialDocumentPath: "",
-
+		RegisteredUserCategory: model.NONE,
+		OfficialDocumentPath:   "",
 	}
 
-	err = handler.RegisteredUserService.CreateRegisteredUser(&registeredUser)
-	if err != nil {
+	if err := handler.RegisteredUserService.CreateRegisteredUser(&registeredUser); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
-	err = handler.ClassicUserService.CreateClassicUser(&registeredUser.ClassicUser)
-	if err != nil {
+
+	if err := handler.ClassicUserService.CreateClassicUser(&registeredUser.ClassicUser); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
-	err = handler.UserService.CreateUser(&registeredUser.ClassicUser.User)
-	if err != nil {
+
+	if err := handler.UserService.CreateUser(&registeredUser.ClassicUser.User); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
 	fmt.Println(registeredUser.ClassicUser.User.ID)
-	confirmationToken:= model.ConfirmationToken{
+	confirmationToken := model.ConfirmationToken{
 		ID:                uuid.New(),
 		ConfirmationToken: uuid.New(),
 		UserId:            userId,
@@ -147,11 +147,12 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		ExpiredTime:       time.Now().Add(time.Hour * 120),
 		IsValid:           true,
 	}
-	err = handler.ConfirmationTokenService.CreateConfirmationToken(&confirmationToken)
-	if err != nil {
+
+	if err := handler.ConfirmationTokenService.CreateConfirmationToken(&confirmationToken); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
 	SendConfirmationMail(registeredUser.ClassicUser.User, confirmationToken.ConfirmationToken)
 
 	profileSettings:= settingsModel.ProfileSettings{
@@ -174,5 +175,3 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-
-

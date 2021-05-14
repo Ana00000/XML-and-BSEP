@@ -10,7 +10,8 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/util"
+	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"os"
 	_ "strconv"
@@ -18,8 +19,8 @@ import (
 	"time"
 )
 
-
 type UserHandler struct {
+
 	UserService * service.UserService
 	AdminService * service.AdminService
 	ClassicUserService * service.ClassicUserService
@@ -29,11 +30,14 @@ type UserHandler struct {
 	PermissionFindAllUsers *gorbac.Permission
 	RegisteredUserService * service.RegisteredUserService
 	PermissionUpdateUserInfo * gorbac.Permission
+	Validator                *validator.Validate
+	PasswordUtil			 *util.PasswordUtil
 }
 
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+
 }
 
 func ExtractToken(r *http.Request) string {
@@ -73,25 +77,25 @@ func TokenValid(r *http.Request) error {
 	return nil
 }
 
-func (handler *UserHandler)FindAllUsers(w http.ResponseWriter, r *http.Request){
+func (handler *UserHandler) FindAllUsers(w http.ResponseWriter, r *http.Request) {
 
-	err:= TokenValid(r)
-	if err!=nil{
+	err := TokenValid(r)
+	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 	id := r.URL.Query().Get("id")
 	var loginUser = handler.UserService.FindByID(uuid.MustParse(id))
 
-	userRole :=""
-	if loginUser.UserType ==model.ADMIN{
+	userRole := ""
+	if loginUser.UserType == model.ADMIN {
 		userRole = "role-admin"
-	} else if loginUser.UserType ==model.AGENT{
+	} else if loginUser.UserType == model.AGENT {
 		userRole = "role-agent"
-	} else{
+	} else {
 		userRole = "role-registered-user"
 	}
-	if !handler.Rbac.IsGranted(userRole, *handler.PermissionFindAllUsers , nil){
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionFindAllUsers, nil) {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
@@ -131,12 +135,12 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 		return
 	}
 	//dodati ostale validacije - ova neophodna
-	if userChangePasswordDTO.Password!=userChangePasswordDTO.ConfirmedPassword {
+	if userChangePasswordDTO.Password != userChangePasswordDTO.ConfirmedPassword {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	var user = handler.UserService.FindByEmail(userChangePasswordDTO.Email)
-	if user==nil{
+	if user == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -146,44 +150,43 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 	sb.WriteString(userChangePasswordDTO.Password)
 	sb.WriteString(salt)
 	password := sb.String()
-	hash,_ := HashPassword(password)
+	hash, _ := handler.PasswordUtil.HashPassword(password)
 
-	err = handler.UserService.UpdateUserPassword(user.ID,hash)
+	err = handler.UserService.UpdateUserPassword(user.ID, hash)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
-	if user.UserType == model.ADMIN{
-		err = handler.AdminService.UpdateAdminPassword(user.ID,hash)
+	if user.UserType == model.ADMIN {
+		err = handler.AdminService.UpdateAdminPassword(user.ID, hash)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
 		}
 	} else if user.UserType == model.AGENT {
-		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID,hash)
+		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID, hash)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
 		}
-		err = handler.AgentService.UpdateAgentPassword(user.ID,hash)
+		err = handler.AgentService.UpdateAgentPassword(user.ID, hash)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
 		}
 	} else {
-		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID,hash)
+		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID, hash)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
 		}
-		err = handler.RegisteredUserService.UpdateRegisteredUserPassword(user.ID,hash)
+		err = handler.RegisteredUserService.UpdateRegisteredUserPassword(user.ID, hash)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
 		}
 	}
-
 
 	w.WriteHeader(http.StatusAccepted)
 	w.Header().Set("Content-Type", "application/json")
@@ -193,9 +196,15 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 	var logInUserDTO dto.LogInUserDTO
 	err := json.NewDecoder(r.Body).Decode(&logInUserDTO)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
+
+	if err := handler.Validator.Struct(&logInUserDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
+
 	var user = handler.UserService.FindByUserName(logInUserDTO.Username)
 
 	if user == nil || !user.IsConfirmed {
@@ -209,7 +218,7 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString(salt)
 	password := sb.String()
 
-	if !CheckPasswordHash(password, user.Password) {
+	if !handler.PasswordUtil.CheckPasswordHash(password, user.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -221,9 +230,9 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	logInResponse := dto.LogInResponseDTO{
-		ID:      user.ID,
-		Token:   token,
-		UserType:   user.UserType,
+		ID:       user.ID,
+		Token:    token,
+		UserType: user.UserType,
 	}
 
 	logInResponseJson, _ := json.Marshal(logInResponse)
@@ -235,36 +244,42 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http.Request) {
-	err:= TokenValid(r)
-	if err!=nil{
+
+	if err := TokenValid(r); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
 	var userDTO dto.UserUpdateProfileInfoDTO
-	err = json.NewDecoder(r.Body).Decode(&userDTO)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+
+	if err := json.NewDecoder(r.Body).Decode(&userDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) // 400
+		return
+	}
+
+	if err := handler.Validator.Struct(&userDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) // 400
 		return
 	}
 
 	var loginUser = handler.UserService.FindByID(userDTO.ID)
-	userRole :=""
-	if loginUser.UserType ==model.ADMIN{
+	userRole := ""
+	if loginUser.UserType == model.ADMIN {
 		userRole = "role-admin"
-	} else if loginUser.UserType ==model.AGENT{
+	} else if loginUser.UserType == model.AGENT {
 		userRole = "role-agent"
-	} else{
+	} else {
 		userRole = "role-registered-user"
 	}
-	if !handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo , nil) &&
-		!handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo , nil) &&
-		!handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo , nil){
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo, nil) &&
+		!handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo, nil) &&
+		!handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo, nil) {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 
-	err = handler.UserService.UpdateUserProfileInfo(&userDTO)
+
+	err := handler.UserService.UpdateUserProfileInfo(&userDTO)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
@@ -305,11 +320,10 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 }
 
 func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
-
 	id := r.URL.Query().Get("id")
 
 	var user = handler.UserService.FindByID(uuid.MustParse(id))
-	if  user == nil {
+	if user == nil {
 		fmt.Println("User not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
@@ -371,4 +385,5 @@ func (handler *UserHandler) FindByUserName(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+
 
