@@ -6,7 +6,7 @@ type SelectedUserDTO struct {
 	LastName string `json:"lastName"`
 	Website string `json:"website"`
 	Biography string `json:"biography"`
-	ProfileVisibility string `json:"profileVisibility"`
-	//public or private profile
+	ProfileVisibility string `json:"profileVisibility"` //public or private profile
+	FollowingCheck bool `json:"followingCheck"` //returns true if logged in user already follows selected user
 	//posts
 }

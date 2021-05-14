@@ -24,8 +24,19 @@ func (repo *ClassicUserFollowingsRepository) FindById(id string) *model.ClassicU
 	return following
 }
 
-func (repo * ClassicUserFollowingsRepository) FindAllFollowersForUser(userId uuid.UUID) []model.ClassicUserFollowings{
+func (repo * ClassicUserFollowingsRepository) FindAllFollowingsForUser(userId uuid.UUID) []model.ClassicUserFollowings{
 	var followings []model.ClassicUserFollowings
-	repo.Database.Select("id = ?", userId).Find(&followings)
+	repo.Database.Select("*").Where("classic_user_id = ?", userId).Find(&followings)
 	return followings
+}
+
+func (repo * ClassicUserFollowingsRepository) CheckIfFollowingUser(classicUserId uuid.UUID, followingUserId uuid.UUID) bool{
+	var allFollowingForUser = repo.FindAllFollowingsForUser(classicUserId)
+
+	for i := 0; i < len(allFollowingForUser); i++{
+		if allFollowingForUser[i].FollowingUserId == followingUserId{
+			return true
+		}
+	}
+	return false
 }

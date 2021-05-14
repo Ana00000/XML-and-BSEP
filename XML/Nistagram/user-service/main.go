@@ -35,6 +35,7 @@ func initDB() *gorm.DB{
 	return db
 }
 
+
 //USER
 
 func initUserRepo(database *gorm.DB) *repository.UserRepository{
@@ -89,8 +90,8 @@ func initClassicUserService(repo *repository.ClassicUserRepository) *service.Cla
 	return &service.ClassicUserService { Repo: repo }
 }
 
-func initClassicUserHandler(service *service.ClassicUserService) *handler.ClassicUserHandler{
-	return &handler.ClassicUserHandler { ClassicUserService: service }
+func initClassicUserHandler(classicUserService *service.ClassicUserService, profileSettingsService *settingsService.ProfileSettingsService, classicUserFollowingsService *service.ClassicUserFollowingsService) *handler.ClassicUserHandler{
+	return &handler.ClassicUserHandler { ClassicUserService: classicUserService, ProfileSettingsService: profileSettingsService, ClassicUserFollowingsService: classicUserFollowingsService}
 }
 
 
@@ -210,6 +211,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	mux.HandleFunc("/users/all",userHandler.FindAllUsers)
 	mux.HandleFunc("/find_all_followers_for_user",classicUserFollowersHandler.FindAllFollowersInfoForUser)
 	mux.HandleFunc("/create_follower/",classicUserFollowersHandler.CreateClassicUserFollowers)
+	mux.HandleFunc("/create_following/",classicUserFollowingsHandler.CreateClassicUserFollowings)
 	mux.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo)
 	mux.HandleFunc("/find_user_by_id", userHandler.FindByID)
 	mux.HandleFunc("/find_user_by_username", userHandler.FindByUserName)
@@ -275,6 +277,6 @@ func main() {
 	classicUserFollowersHandler := initClassicUserFollowersHandler(classicUserFollowersService, userService)
 	classicUserFollowingsHandler := initClassicUserFollowingsHandler(classicUserFollowingsService)
 	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(recoveryPasswordTokenService,classicUserService,registeredUserService,userService)
-	classicUserHandler := initClassicUserHandler(classicUserService)
+	classicUserHandler := initClassicUserHandler(classicUserService, settingsService, classicUserFollowingsService)
 	handleFunc(userHandler, confirmationTokenHandler, adminHandler,classicUserHandler, agentHandler,registeredUserHandler,classicUserCampaignsHandler,classicUserFollowingsHandler,classicUserFollowersHandler,recoveryPasswordTokenHandler)
 }

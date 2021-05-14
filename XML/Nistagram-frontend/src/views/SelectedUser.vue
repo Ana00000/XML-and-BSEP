@@ -54,6 +54,7 @@ export default {
   mounted() {
     this.selectedUser = localStorage.getItem("selectedUserId");
     this.token = localStorage.getItem("token");
+    this.logId= localStorage.getItem("userId");
     console.log(this.selectedUser);
     this.init();
   },
@@ -64,19 +65,26 @@ export default {
     getUser() {
       console.log(this.selectedUser);
       this.$http
-        .get("http://localhost:8080/find_selected_user_by_id?id=" + this.selectedUser)
+        .get("http://localhost:8080/find_selected_user_by_id?id=" + this.selectedUser+"&logId=" + this.logId)
         .then((resp) => {
           this.setUserInfo(resp.data);
           console.log(resp.data);
           console.log(resp.data.profileVisibility);
+          console.log(resp.data.followingCheck);
 
           if(resp.data.profileVisibility == "PUBLIC")
             console.log("PUBLIC JE");
-          else if(resp.data.profileVisibility == "PRIVATE"
+          else if(resp.data.profileVisibility == "PRIVATE")
             console.log("PRIVATE JE");
           else
             console.log("NISTA JE");
           
+          if(resp.data.followingCheck == true)
+            console.log("TRUE JE");
+          else if(resp.data.followingCheck == false)
+            console.log("FALSE JE");
+          else
+            console.log("OPET NISTA JE");
         
         })
         .catch(console.log("Didn't set user info!"));

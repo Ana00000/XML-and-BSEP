@@ -2,19 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/SelectedUserDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchUsers.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchUsers.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/SelectedUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/SelectedUserDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/UserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/UserRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/UserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/UserService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowingsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowingsRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserFollowingsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserFollowingsService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +60,16 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Build.go build main.go">
+    <configuration name="go build main.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="XML" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="github.com/xml/XML-and-BSEP/XML" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
@@ -78,6 +82,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Go Build.go build main.go" />
+        <item itemvalue="Go Build.go build main.go (1)" />
       </list>
     </recent_temporary>
   </component>

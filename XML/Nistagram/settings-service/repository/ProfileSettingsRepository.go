@@ -42,7 +42,7 @@ func (repo * ProfileSettingsRepository) FindProfileSettingByUserId(userId uuid.U
 
 	profileSetting := &model.ProfileSettings{}
 
-	if repo.Database.First(&profileSetting, "userId = ?", userId).RowsAffected == 0{
+	if repo.Database.First(&profileSetting, "user_id = ?", userId).RowsAffected == 0{
 		return nil
 	}
 
