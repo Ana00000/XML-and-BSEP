@@ -23,11 +23,17 @@ func (handler *CommentContentHandler) CreateCommentContent(w http.ResponseWriter
 		return
 	}
 
+	contentType := model.PICTURE
+	switch commentContentDTO.Type {
+	case "VIDEO":
+		contentType = model.VIDEO
+	}
+
 	commentContent := model.CommentContent{
 		Content: model.Content{
 			ID:   uuid.UUID{},
 			Path: commentContentDTO.Path,
-			Type: commentContentDTO.Type,
+			Type: contentType,
 		},
 		CommentId: commentContentDTO.CommentId,
 	}

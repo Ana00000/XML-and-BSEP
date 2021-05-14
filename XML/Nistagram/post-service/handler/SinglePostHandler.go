@@ -13,6 +13,7 @@ import (
 
 type SinglePostHandler struct {
 	Service * service.SinglePostService
+	PostService * service.PostService
 }
 
 func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *http.Request) {
@@ -24,25 +25,32 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 		return
 	}
 
-	layout := "2006-01-02T15:04:05.000Z"
-	creationDate, _ := time.Parse(layout, singlePostDTO.CreationDate)
-
 	singlePost := model.SinglePost{
 		Post : model.Post{
-			ID: uuid.UUID{},
+			ID: uuid.New(),
 			Description: singlePostDTO.Description,
-			CreationDate: creationDate,
+			CreationDate: time.Now(),
 			UserID: singlePostDTO.UserID,
 			LocationId: singlePostDTO.LocationID,
-			IsDeleted: singlePostDTO.IsDeleted,
+			IsDeleted: false,
 		},
-		// Content
 	}
+
 	err = handler.Service.CreateSinglePost(&singlePost)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	err = handler.PostService.CreatePost(&singlePost.Post)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	singlePostIDJson, _ := json.Marshal(singlePost.ID)
+	w.Write(singlePostIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

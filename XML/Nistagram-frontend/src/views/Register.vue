@@ -95,7 +95,7 @@ export default {
     firstName: "",
     lastName: "",
     genders: ["FEMALE", "MALE", "OTHER"],
-    selectedGender: 0,
+    selectedGender: "FEMALE",
     label1: "Gender",
     dateOfBirth: "",
     website: "",
@@ -109,16 +109,6 @@ export default {
           || !this.validDateOfBirth() || !this.validWebsite() || !this.validBiography())  
           return;
       
-      console.log(this.username);
-      console.log(this.userEmail);
-      console.log(this.lastName);
-      console.log(this.password);
-      console.log(this.firstName);
-      console.log(this.phoneNumber);
-      console.log(this.selectedGender);
-      console.log(this.dateOfBirth);
-      console.log(this.website);
-      console.log(this.biography);
       this.$http
         .post("http://localhost:8080/registered_user/", {
           username: this.username,

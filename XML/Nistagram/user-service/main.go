@@ -215,8 +215,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	router.HandleFunc("/classic_user_campaigns/", classicUserCampaignsHandler.CreateClassicUserCampaigns).Methods("POST")
 	router.HandleFunc("/classic_user_followings/", classicUserFollowingsHandler.CreateClassicUserFollowings).Methods("POST")
 	router.HandleFunc("/classic_user_followers/", classicUserFollowersHandler.CreateClassicUserFollowers).Methods("POST")
-
-
+	
 	mux := http.NewServeMux()
 	mux.HandleFunc("/registered_admin/", adminHandler.CreateAdmin)
 	mux.HandleFunc("/agent/", agentHandler.CreateAgent)
@@ -232,7 +231,6 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8080", handlerVar))
 }
-
 
 func main() {
 	rbac := gorbac.New()

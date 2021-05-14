@@ -1,15 +1,14 @@
 package main
 
 import (
-	"./handler"
-	"./model"
-	"./repository"
-	"./service"
-	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
-	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/handler"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -43,11 +42,11 @@ func initHandler(service *service.LocationService) *handler.LocationHandler{
 }
 
 func handleFunc(handler *handler.LocationHandler){
-	router := mux.NewRouter().StrictSlash(true)
-
-	router.HandleFunc("/", handler.CreateLocation).Methods("POST")
-
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", handler.CreateLocation)
+	mux.HandleFunc("/find_location_by_id", handler.FindByID)
+	handlerVar := cors.Default().Handler(mux)
+	log.Fatal(http.ListenAndServe(":8083", handlerVar))
 }
 
 func main() {

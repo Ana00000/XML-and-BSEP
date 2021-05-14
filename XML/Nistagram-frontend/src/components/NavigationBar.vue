@@ -71,12 +71,14 @@ export default {
         } else if (this.userType == 1) {   // REGISTERED_USER
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Create Post', path: '/createPost' }
             ]
         } else if (this.userType == 2) {   // AGENT
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Create Post', path: '/createPost' }
             ]
         } else {   // NOT YET REGISTERED
             this.items = [
