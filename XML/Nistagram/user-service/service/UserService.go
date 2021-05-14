@@ -88,3 +88,5 @@ func (service * UserService) FindAllPublicUsers(publicUsers []uuid.UUID) []model
 	}
 	return nil
 }
+
+

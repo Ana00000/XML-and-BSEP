@@ -127,3 +127,4 @@ func (repo * UserRepository) FindAllPublicUsers(publicUsers []uuid.UUID) []model
 
 	return users
 }
+

@@ -264,15 +264,11 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 		return
 	}
 
-
-
-
 	err = handler.UserService.UpdateUserProfileInfo(&userDTO)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
-
 
 	if userDTO.UserType == "ADMIN" {
 		err = handler.AdminService.UpdateAdminProfileInfo(&userDTO)
@@ -375,3 +371,4 @@ func (handler *UserHandler) FindByUserName(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+

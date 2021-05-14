@@ -90,7 +90,7 @@ func initClassicUserService(repo *repository.ClassicUserRepository) *service.Cla
 }
 
 func initClassicUserHandler(service *service.ClassicUserService) *handler.ClassicUserHandler{
-	return &handler.ClassicUserHandler { Service: service }
+	return &handler.ClassicUserHandler { ClassicUserService: service }
 }
 
 
@@ -185,7 +185,7 @@ func initConfirmationTokenHandler(confirmationTokenService *service.Confirmation
 	}
 }
 
-func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler,classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler,classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler,classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler){
+func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, classicUserHandler *handler.ClassicUserHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler,classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler,classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler,classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler){
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/login/", userHandler.LogIn).Methods("POST")
@@ -214,6 +214,8 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	mux.HandleFunc("/find_user_by_id", userHandler.FindByID)
 	mux.HandleFunc("/find_user_by_username", userHandler.FindByUserName)
 	mux.HandleFunc("/find_all_users_but_logged_in", userHandler.FindAllUsersButLoggedIn)
+	mux.HandleFunc("/find_selected_user_by_id", classicUserHandler.FindSelectedUserById)
+
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8080", handlerVar))
 }
@@ -221,7 +223,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 func main() {
 	rbac := gorbac.New()
 
-	roleRegisterdUser := gorbac.NewStdRole("role-registered-user")
+	roleRegisteredUser := gorbac.NewStdRole("role-registered-user")
 	roleAgent := gorbac.NewStdRole("role-agent")
 	roleAdmin := gorbac.NewStdRole("role-admin")
 
@@ -233,11 +235,11 @@ func main() {
 
 	roleAgent.Assign(permissionUpdateUserInfo)
 
-	roleRegisterdUser.Assign(permissionUpdateUserInfo)
+	roleRegisteredUser.Assign(permissionUpdateUserInfo)
 
 	rbac.Add(roleAdmin)
 	rbac.Add(roleAgent)
-	rbac.Add(roleRegisterdUser)
+	rbac.Add(roleRegisteredUser)
 
 	database := initDB()
 	userRepo := initUserRepo(database)
@@ -246,9 +248,9 @@ func main() {
 	classicUserRepo := initClassicUserRepo(database)
 	agentRepo := initAgentRepo(database)
 	confirmationTokenRepo := initConfirmationTokenRepo(database)
-	registeredUserCampaignsRepo := initClassicUserCampaignsRepo(database)
-	registeredUserFollowersRepo := initClassicUserFollowersRepo(database)
-	registeredUserFollowingsRepo := initClassicUserFollowingsRepo(database)
+	classicUserCampaignsRepo := initClassicUserCampaignsRepo(database)
+	classicUserFollowersRepo := initClassicUserFollowersRepo(database)
+	classicUserFollowingsRepo := initClassicUserFollowingsRepo(database)
 	recoveryPasswordTokenRepo := initRecoveryPasswordTokenRepo(database)
 	settingsRepo := initSettingsRepo(database)
 
@@ -258,9 +260,9 @@ func main() {
 	adminService := initAdminService(adminRepo)
 	classicUserService := initClassicUserService(classicUserRepo)
 	agentService := initAgentService(agentRepo)
-	registeredUserCampaignsService := initClassicUserCampaignsService(registeredUserCampaignsRepo)
-	registeredUserFollowersService := initClassicUserFollowersService(registeredUserFollowersRepo)
-	registeredUserFollowingsService := initClassicUserFollowingsService(registeredUserFollowingsRepo)
+	classicUserCampaignsService := initClassicUserCampaignsService(classicUserCampaignsRepo)
+	classicUserFollowersService := initClassicUserFollowersService(classicUserFollowersRepo)
+	classicUserFollowingsService := initClassicUserFollowingsService(classicUserFollowingsRepo)
 	recoveryPasswordTokenService := initRecoveryPasswordTokenService(recoveryPasswordTokenRepo)
 	settingsService := initSettingsService(settingsRepo)
 
@@ -269,9 +271,10 @@ func main() {
 	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService, settingsService)
 	agentHandler := initAgentHandler(agentService)
 	confirmationTokenHandler := initConfirmationTokenHandler(confirmationTokenService,userService,registeredUserService,classicUserService)
-	registeredUserCampaignsHandler := initClassicUserCampaignsHandler(registeredUserCampaignsService)
-	registeredUserFollowersHandler := initClassicUserFollowersHandler(registeredUserFollowersService, userService)
-	registeredUserFollowingsHandler := initClassicUserFollowingsHandler(registeredUserFollowingsService)
+	classicUserCampaignsHandler := initClassicUserCampaignsHandler(classicUserCampaignsService)
+	classicUserFollowersHandler := initClassicUserFollowersHandler(classicUserFollowersService, userService)
+	classicUserFollowingsHandler := initClassicUserFollowingsHandler(classicUserFollowingsService)
 	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(recoveryPasswordTokenService,classicUserService,registeredUserService,userService)
-	handleFunc(userHandler, confirmationTokenHandler, adminHandler,agentHandler,registeredUserHandler,registeredUserCampaignsHandler,registeredUserFollowingsHandler,registeredUserFollowersHandler,recoveryPasswordTokenHandler)
+	classicUserHandler := initClassicUserHandler(classicUserService)
+	handleFunc(userHandler, confirmationTokenHandler, adminHandler,classicUserHandler, agentHandler,registeredUserHandler,classicUserCampaignsHandler,classicUserFollowingsHandler,classicUserFollowersHandler,recoveryPasswordTokenHandler)
 }

@@ -33,3 +33,8 @@ func (service * ProfileSettingsService) FindAllProfileSettingsForPublicUsers() [
 	}
 	return nil
 }
+
+func (service *ProfileSettingsService) FindProfileSettingByUserId(id uuid.UUID) *model.ProfileSettings {
+	user := service.Repo.FindProfileSettingByUserId(id)
+	return user
+}

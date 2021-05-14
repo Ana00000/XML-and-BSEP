@@ -98,8 +98,8 @@ export default {
     redirectToSelectedUser() {
     console.log("OK");
      console.log("usao ovde i id je: "+ this.selectedUser.id);
-        localStorage.setItem("selectedUser",this.selectedUser.username);
-        
+        localStorage.setItem("selectedUserUsername",this.selectedUser.username);
+        localStorage.setItem("selectedUserId",this.selectedUser.id);
         window.location.href = "http://localhost:8081/selectedUser";
       
     }

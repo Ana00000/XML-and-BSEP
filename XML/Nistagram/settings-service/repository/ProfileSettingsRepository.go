@@ -38,3 +38,16 @@ func (repo * ProfileSettingsRepository) FindAllProfileSettingsForPublicUsers() [
 
 }
 
+func (repo * ProfileSettingsRepository) FindProfileSettingByUserId(userId uuid.UUID) *model.ProfileSettings {
+
+	profileSetting := &model.ProfileSettings{}
+
+	if repo.Database.First(&profileSetting, "userId = ?", userId).RowsAffected == 0{
+		return nil
+	}
+
+	return profileSetting
+}
+
+
+
