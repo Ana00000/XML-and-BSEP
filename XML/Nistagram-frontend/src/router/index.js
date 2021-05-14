@@ -41,6 +41,16 @@ const routes = [
     component: () => import('../views/UpdateProfile.vue')
   },
   {
+    path: '/searchUsers',
+    name: 'SearchUsers',
+    component: () => import('../views/SearchUsers.vue')
+  },
+  {
+    path: '/selectedUser',
+    name: 'SelectedUser',
+    component: () => import('../views/SelectedUser.vue')
+  },
+  {
     path: '/createPost',
     name: 'CreatePost',
     component: () => import('../views/CreatePost.vue')

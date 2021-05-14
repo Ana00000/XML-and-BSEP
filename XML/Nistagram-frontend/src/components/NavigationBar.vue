@@ -72,12 +72,14 @@ export default {
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Search users', path: '/searchUsers' },
                 { title: 'Create Post', path: '/createPost' }
             ]
         } else if (this.userType == 2) {   // AGENT
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Search users', path: '/searchUsers' },
                 { title: 'Create Post', path: '/createPost' }
             ]
         } else {   // NOT YET REGISTERED

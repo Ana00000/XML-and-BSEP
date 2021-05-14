@@ -95,3 +95,36 @@ func (repo *UserRepository) UpdateUserPassword(userId uuid.UUID, password string
 	fmt.Println("updating")
 	return nil
 }
+
+func (repo * UserRepository) FindAllFollowersInfoForUser(followers []model.ClassicUserFollowers) []model.User{
+
+	var followerUsers []model.User
+
+	for i := 0; i < len(followers); i++{
+		var users model.User
+		repo.Database.Select("*").Where("id=?", followers[i].FollowerUserId).Find(&users)
+		followerUsers = append(followerUsers, users)
+	}
+
+	return followerUsers
+}
+
+func (repo * UserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []model.User{
+
+	var users []model.User
+	repo.Database.Select("*").Where("id != ?", userId).Find(&users)
+	return users
+}
+
+func (repo * UserRepository) FindAllPublicUsers(publicUsers []uuid.UUID) []model.User{
+
+	var users []model.User
+	for i := 0; i < len(publicUsers); i++ {
+		var user model.User
+		repo.Database.Select("*").Where("id != ?", publicUsers[i]).Find(&user)
+		users = append(users, user)
+	}
+
+	return users
+}
+

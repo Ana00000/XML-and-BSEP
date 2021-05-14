@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"net/http"
 	_ "strconv"
 )
@@ -28,10 +28,9 @@ func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWrit
 		UserId: profileSettingsDTO.UserId,
 		UserVisibility:      profileSettingsDTO.UserVisibility,
 		MessageApprovalType:       profileSettingsDTO.MessageApprovalType,
-		//MutedProfiles: nil,
-		//BlockedProfiles: nil,
-		//ApprovedMessageProfiles: nil,
-		//RejectedMessageProfiles: nil,
+		IsPostTaggable: true,
+		IsStoryTaggable: true,
+		IsCommentTaggable: true,
 	}
 
 	err = handler.Service.CreateProfileSettings(&profileSettings)

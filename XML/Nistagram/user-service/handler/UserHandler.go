@@ -6,10 +6,12 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/mikespook/gorbac"
+	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/util"
+	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"os"
@@ -19,16 +21,24 @@ import (
 )
 
 type UserHandler struct {
-	UserService              *service.UserService
-	AdminService             *service.AdminService
-	ClassicUserService       *service.ClassicUserService
-	AgentService             *service.AgentService
-	Rbac                     *gorbac.RBAC
-	PermissionFindAllUsers   *gorbac.Permission
-	RegisteredUserService    *service.RegisteredUserService
-	PermissionUpdateUserInfo *gorbac.Permission
+
+	UserService * service.UserService
+	AdminService * service.AdminService
+	ClassicUserService * service.ClassicUserService
+	AgentService * service.AgentService
+	ProfileSettingsService * settingsService.ProfileSettingsService
+	Rbac * gorbac.RBAC
+	PermissionFindAllUsers *gorbac.Permission
+	RegisteredUserService * service.RegisteredUserService
+	PermissionUpdateUserInfo * gorbac.Permission
 	Validator                *validator.Validate
 	PasswordUtil			 *util.PasswordUtil
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+
 }
 
 func ExtractToken(r *http.Request) string {
@@ -269,6 +279,7 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 		return
 	}
 
+
 	err := handler.UserService.UpdateUserProfileInfo(&userDTO)
 	if err != nil {
 		fmt.Println(err)
@@ -324,3 +335,56 @@ func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+func (handler *UserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id")
+
+	var user = handler.UserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+	if  user == nil {
+		fmt.Println("No user found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	userJson, _ := json.Marshal(user)
+	w.Write(userJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Request) {
+
+	var profileSettings = handler.ProfileSettingsService.FindAllProfileSettingsForPublicUsers()
+	var users []model.User
+	users = handler.UserService.FindAllPublicUsers(profileSettings)
+
+
+	usersJson, _ := json.Marshal(users)
+	if usersJson != nil {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(usersJson)
+	}
+
+	w.WriteHeader(http.StatusBadRequest)
+}
+
+func (handler *UserHandler) FindByUserName(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("USAO  BACK found")
+	username := r.URL.Query().Get("username")
+
+	var user = handler.UserService.FindByUserName(username)
+	if  user == nil {
+		fmt.Println("User not found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	userJson, _ := json.Marshal(user)
+	w.Write(userJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+

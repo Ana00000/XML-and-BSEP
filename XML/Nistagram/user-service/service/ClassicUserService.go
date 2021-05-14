@@ -42,3 +42,8 @@ func (service *ClassicUserService) UpdateClassicUserPassword(userId uuid.UUID, p
 	}
 	return nil
 }
+
+func (service *ClassicUserService) FindSelectedUserById(id uuid.UUID) *dto.SelectedUserDTO {
+	user := service.Repo.FindSelectedUserById(id)
+	return user
+}

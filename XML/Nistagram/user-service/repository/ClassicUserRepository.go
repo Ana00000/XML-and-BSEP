@@ -63,3 +63,26 @@ func (repo *ClassicUserRepository) UpdateClassicUserPassword(userId uuid.UUID, p
 	fmt.Println("updating")
 	return nil
 }
+
+//SELECTED USER
+
+func (repo *ClassicUserRepository) FindSelectedUserById(id uuid.UUID) *dto.SelectedUserDTO {
+	user := &model.ClassicUser{}
+
+	if repo.Database.First(&user, "id = ?", id).RowsAffected == 0{
+		return nil
+	}
+
+	return repo.ConvertFromUserToSelectedUserDTO(user)
+}
+
+func (repo *ClassicUserRepository) ConvertFromUserToSelectedUserDTO(user *model.ClassicUser) *dto.SelectedUserDTO {
+	userDTO := &dto.SelectedUserDTO{}
+	userDTO.Username = user.Username
+	userDTO.FirstName = user.FirstName
+	userDTO.LastName = user.LastName
+	userDTO.Biography = user.Biography
+	userDTO.Website = user.Website
+	return userDTO
+}
+

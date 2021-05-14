@@ -64,3 +64,29 @@ func (service *UserService) UpdateUserPassword(userId uuid.UUID, password string
 	}
 	return nil
 }
+
+func (service * UserService) FindAllFollowersInfoForUser(followers []model.ClassicUserFollowers) []model.User{
+	users := service.Repo.FindAllFollowersInfoForUser(followers)
+	if users != nil {
+		return users
+	}
+	return nil
+}
+
+func (service * UserService) FindAllUsersButLoggedIn(userId uuid.UUID) []model.User{
+	users := service.Repo.FindAllUsersButLoggedIn(userId)
+	if users != nil {
+		return users
+	}
+	return nil
+}
+
+func (service * UserService) FindAllPublicUsers(publicUsers []uuid.UUID) []model.User{
+	users := service.Repo.FindAllPublicUsers(publicUsers)
+	if users != nil {
+		return users
+	}
+	return nil
+}
+
+
