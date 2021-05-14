@@ -39,7 +39,43 @@
       </v-row>
     
     </v-container>
-  </div>
+ 
+  <div class="FollowButton">
+      <v-btn
+        v-if="!isHiddenFollow"
+        v-on:click="followProfile"
+        color="#aba7ff"
+        elevation="24"
+        x-large
+        raised
+        rounded
+        >Follow</v-btn
+      >
+    </div>
+    <div class="FollowingButton">
+      <v-btn
+        v-if="!isHiddenFollowing"
+        color="#aba7ff"
+        elevation="24"
+        x-large
+        raised
+        rounded
+        >Following</v-btn
+      >
+    </div>
+    <div class="SendFollowRequestButton">
+      <v-btn
+        v-if="!isHiddenSendFollowRequest"
+        v-on:click="isHiddenFollow = true, isHiddenFollowing = true, isHiddenSendFollowRequest = true, isReadOnly = true"
+        color="#aba7ff"
+        elevation="24"
+        x-large
+        raised
+        rounded
+        >Send Follow Request</v-btn
+      >
+    </div>
+     </div>
 </template>
 
 <script>
@@ -49,7 +85,10 @@ export default {
     username: null,
     firstName: null,
     lastName: null,
-    token: null
+    token: null,
+    isHiddenFollow: true,
+    isHiddenFollowing: true,
+    isHiddenSendFollowRequest: true,
   }),
   mounted() {
     this.selectedUser = localStorage.getItem("selectedUserId");
@@ -79,11 +118,18 @@ export default {
           else
             console.log("NISTA JE");
           
-          if(resp.data.followingCheck == true)
+          if(resp.data.followingCheck == true){
+            this.isHiddenFollowing  = false
+            this.isHiddenFollow = true
+            this.isHiddenSendFollowRequest = true
             console.log("TRUE JE");
-          else if(resp.data.followingCheck == false)
+          }
+          else if(resp.data.followingCheck == false){
+            this.isHiddenFollowing  = true
+            this.isHiddenFollow = false
+            this.isHiddenSendFollowRequest = true
             console.log("FALSE JE");
-          else
+          }else
             console.log("OPET NISTA JE");
         
         })
@@ -93,6 +139,25 @@ export default {
       this.username = item.username;
       this.firstName = item.firstName;
       this.lastName = item.lastName;
+      
+    },
+    followProfile() {
+      this.isHiddenFollow = true;
+      this.isHiddenFollowing = false;
+      this.isHiddenSendFollowRequest = true;
+      
+     this.$http
+        .post("http://localhost:8080/create_following/", {
+          classic_user_id: this.logId,
+          following_user_id: this.selectedUser,
+      
+        })
+        .then((resp) => {
+          console.log(resp.data);
+          alert("Successfully followed profile!");
+          window.location.reload();
+        })
+        .catch((err) => console.log(err));
       
     },
     

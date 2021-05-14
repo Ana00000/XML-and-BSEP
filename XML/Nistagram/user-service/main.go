@@ -120,8 +120,8 @@ func initRegisteredUserHandler(registeredUserService *service.RegisteredUserServ
 		registeredUserService,
 		userService,
 		classicUserService ,
-		settingsService,
 		confirmationTokenService,
+		settingsService,
 		validator,
 		passwordUtil,
 	}

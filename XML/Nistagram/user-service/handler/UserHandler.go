@@ -11,6 +11,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/util"
+	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"os"
