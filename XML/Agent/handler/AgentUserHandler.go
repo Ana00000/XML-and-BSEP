@@ -3,12 +3,12 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"gopkg.in/go-playground/validator.v9"
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Agent/dto"
 	"github.com/xml/XML-and-BSEP/XML/Agent/model"
 	"github.com/xml/XML-and-BSEP/XML/Agent/service"
 	"github.com/xml/XML-and-BSEP/XML/Agent/util"
+	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	_ "strconv"
 	"time"
@@ -42,7 +42,16 @@ func (handler *AgentUserHandler) CreateAgentUser(w http.ResponseWriter, r *http.
 		return
 	}
 
-	salt, password := handler.AgentPasswordUtil.GeneratePasswordWithSalt(agentUserDTO.Password)
+	salt := ""
+	password := ""
+
+	validPassword := handler.AgentPasswordUtil.IsValidPassword(agentUserDTO.Password)
+	if validPassword {
+		salt, password = handler.AgentPasswordUtil.GeneratePasswordWithSalt(agentUserDTO.Password)
+	}else {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
 
 	gender := model.OTHER
 	switch agentUserDTO.Gender {
@@ -55,6 +64,7 @@ func (handler *AgentUserHandler) CreateAgentUser(w http.ResponseWriter, r *http.
 	agentUserId := uuid.New()
 	layout := "2006-01-02T15:04:05.000Z"
 	dateOfBirth, _ := time.Parse(layout, agentUserDTO.DateOfBirth)
+
 	agentUser := model.AgentUser{
 		ID:          agentUserId,
 		Username:    agentUserDTO.Username,
