@@ -192,8 +192,7 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 
 func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 	var logInUserDTO dto.LogInUserDTO
-	err := json.NewDecoder(r.Body).Decode(&logInUserDTO)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&logInUserDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
@@ -206,17 +205,25 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 	var user = handler.UserService.FindByUserName(logInUserDTO.Username)
 
 	if user == nil || !user.IsConfirmed {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 
-	var sb strings.Builder
-	salt := user.Salt
-	sb.WriteString(logInUserDTO.Password)
-	sb.WriteString(salt)
-	password := sb.String()
+	validPassword := handler.PasswordUtil.IsValidPassword(logInUserDTO.Password)
+	plainPassword := ""
 
-	if !handler.PasswordUtil.CheckPasswordHash(password, user.Password) {
+	if validPassword {
+		var sb strings.Builder
+		salt := user.Salt
+		sb.WriteString(logInUserDTO.Password)
+		sb.WriteString(salt)
+		plainPassword = sb.String()
+	}else {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
+
+	if !handler.PasswordUtil.CheckPasswordHash(plainPassword, user.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}

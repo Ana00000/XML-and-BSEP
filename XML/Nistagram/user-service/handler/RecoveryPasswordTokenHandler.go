@@ -64,6 +64,11 @@ func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w ht
 	}
 
 	var user = handler.UserService.FindByEmail(emailDTO.Email)
+	if user == nil {
+		w.WriteHeader(http.StatusNotFound) //404
+		return
+	}
+
 	recoveryPasswordToken := model.RecoveryPasswordToken{
 		ID:                    uuid.New(),
 		RecoveryPasswordToken: uuid.New(),
