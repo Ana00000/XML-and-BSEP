@@ -66,7 +66,18 @@
     <div class="SendFollowRequestButton">
       <v-btn
         v-if="!isHiddenSendFollowRequest"
-        v-on:click="isHiddenFollow = true, isHiddenFollowing = true, isHiddenSendFollowRequest = true, isReadOnly = true"
+        v-on:click="sendFollowRequest"
+        color="#aba7ff"
+        elevation="24"
+        x-large
+        raised
+        rounded
+        >Send Follow Request</v-btn
+      >
+    </div>
+    <div class="FollowRequestSentButton">
+      <v-btn
+        v-if="!isHiddenFollowRequestSentButton"
         color="#aba7ff"
         elevation="24"
         x-large
@@ -89,6 +100,7 @@ export default {
     isHiddenFollow: true,
     isHiddenFollowing: true,
     isHiddenSendFollowRequest: true,
+    isHiddenFollowRequestSent: true,
   }),
   mounted() {
     this.selectedUser = localStorage.getItem("selectedUserId");
@@ -122,12 +134,19 @@ export default {
             this.isHiddenFollowing  = false
             this.isHiddenFollow = true
             this.isHiddenSendFollowRequest = true
+            this.isHiddenFollowRequestSent = true;
             console.log("TRUE JE");
-          }
-          else if(resp.data.followingCheck == false){
+          }else if(resp.data.followingCheck == false && resp.data.profileVisibility == "PRIVATE"){
+             this.isHiddenFollowing  = true
+            this.isHiddenFollow = true
+            this.isHiddenSendFollowRequest = false
+            this.isHiddenFollowRequestSent = true;
+            console.log("FALSE JE I PRIVATE JE");
+          }else if(resp.data.followingCheck == false && resp.data.profileVisibility == "PUBLIC"){
             this.isHiddenFollowing  = true
             this.isHiddenFollow = false
             this.isHiddenSendFollowRequest = true
+            this.isHiddenFollowRequestSent = true;
             console.log("FALSE JE");
           }else
             console.log("OPET NISTA JE");
@@ -145,6 +164,7 @@ export default {
       this.isHiddenFollow = true;
       this.isHiddenFollowing = false;
       this.isHiddenSendFollowRequest = true;
+      this.isHiddenFollowRequestSent = true;
       
      this.$http
         .post("http://localhost:8080/create_following/", {
@@ -160,6 +180,12 @@ export default {
         .catch((err) => console.log(err));
       
     },
+    sendFollowRequest(){
+       this.isHiddenFollow = true; 
+       this.isHiddenFollowing = true; 
+       this.isHiddenSendFollowRequest = true;
+       this.isHiddenFollowRequestSent = false;
+    }
     
   }
 };
