@@ -9,16 +9,16 @@ import (
 )
 
 type AgentRepository struct {
-	Database * gorm.DB
+	Database *gorm.DB
 }
 
-func (repo * AgentRepository) CreateAgent(agent *model.Agent) error {
+func (repo *AgentRepository) CreateAgent(agent *model.Agent) error {
 	result := repo.Database.Create(agent)
 	fmt.Print(result)
 	return nil
 }
 
-func (repo * AgentRepository) UpdateAgentProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
+func (repo *AgentRepository) UpdateAgentProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
 	gender := model.OTHER
 	switch user.Gender {
 	case "MALE":
@@ -49,8 +49,8 @@ func (repo * AgentRepository) UpdateAgentProfileInfo(user *dto.UserUpdateProfile
 	return nil
 }
 
-func (repo *AgentRepository) UpdateAgentPassword(userId uuid.UUID, password string) error {
-	result := repo.Database.Model(&model.Agent{}).Where("id = ?", userId).Update("password", password)
+func (repo *AgentRepository) UpdateAgentPassword(userId uuid.UUID, salt string, password string) error {
+	result := repo.Database.Model(&model.Agent{}).Where("id = ?", userId).Update("salt", salt).Update("password", password)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating")
 	return nil

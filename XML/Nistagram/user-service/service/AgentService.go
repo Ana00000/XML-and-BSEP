@@ -8,10 +8,10 @@ import (
 )
 
 type AgentService struct {
-	Repo * repository.AgentRepository
+	Repo *repository.AgentRepository
 }
 
-func (service * AgentService) CreateAgent(agent *model.Agent) error {
+func (service *AgentService) CreateAgent(agent *model.Agent) error {
 	err := service.Repo.CreateAgent(agent)
 	if err != nil {
 		return err
@@ -27,8 +27,8 @@ func (service *AgentService) UpdateAgentProfileInfo(user *dto.UserUpdateProfileI
 	return nil
 }
 
-func (service *AgentService) UpdateAgentPassword(userId uuid.UUID, password string) error {
-	err := service.Repo.UpdateAgentPassword(userId,password)
+func (service *AgentService) UpdateAgentPassword(userId uuid.UUID, salt string, password string) error {
+	err := service.Repo.UpdateAgentPassword(userId, salt, password)
 	if err != nil {
 		return err
 	}

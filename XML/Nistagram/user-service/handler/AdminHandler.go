@@ -43,7 +43,16 @@ func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	salt,password := handler.PasswordUtil.GeneratePasswordWithSalt(adminDTO.Password)
+	salt := ""
+	password := ""
+	validPassword := handler.PasswordUtil.IsValidPassword(adminDTO.Password)
+
+	if validPassword {
+		salt, password = handler.PasswordUtil.GeneratePasswordWithSalt(adminDTO.Password)
+	}else {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
 
 	gender := model.OTHER
 	switch adminDTO.Gender {

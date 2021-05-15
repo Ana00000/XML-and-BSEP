@@ -9,15 +9,14 @@ import (
 )
 
 type ClassicUserRepository struct {
-	Database * gorm.DB
+	Database *gorm.DB
 }
 
-func (repo * ClassicUserRepository) CreateClassicUser(classicUser *model.ClassicUser) error {
+func (repo *ClassicUserRepository) CreateClassicUser(classicUser *model.ClassicUser) error {
 	result := repo.Database.Create(classicUser)
 	fmt.Print(result)
 	return nil
 }
-
 
 func (repo *ClassicUserRepository) UpdateClassicUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
 	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ?", userId).Update("is_confirmed", isConfirmed)
@@ -26,7 +25,7 @@ func (repo *ClassicUserRepository) UpdateClassicUserConfirmed(userId uuid.UUID, 
 	return nil
 }
 
-func (repo * ClassicUserRepository) UpdateClassicUserProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
+func (repo *ClassicUserRepository) UpdateClassicUserProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
 	gender := model.OTHER
 	switch user.Gender {
 	case "MALE":
@@ -57,8 +56,8 @@ func (repo * ClassicUserRepository) UpdateClassicUserProfileInfo(user *dto.UserU
 	return nil
 }
 
-func (repo *ClassicUserRepository) UpdateClassicUserPassword(userId uuid.UUID, password string) error {
-	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ?", userId).Update("password", password)
+func (repo *ClassicUserRepository) UpdateClassicUserPassword(userId uuid.UUID, salt string, password string) error {
+	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ?", userId).Update("salt", salt).Update("password", password)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating")
 	return nil
@@ -69,7 +68,7 @@ func (repo *ClassicUserRepository) UpdateClassicUserPassword(userId uuid.UUID, p
 func (repo *ClassicUserRepository) FindSelectedUserById(id uuid.UUID) *dto.SelectedUserDTO {
 	user := &model.ClassicUser{}
 
-	if repo.Database.First(&user, "id = ?", id).RowsAffected == 0{
+	if repo.Database.First(&user, "id = ?", id).RowsAffected == 0 {
 		return nil
 	}
 
@@ -85,4 +84,3 @@ func (repo *ClassicUserRepository) ConvertFromUserToSelectedUserDTO(user *model.
 	userDTO.Website = user.Website
 	return userDTO
 }
-

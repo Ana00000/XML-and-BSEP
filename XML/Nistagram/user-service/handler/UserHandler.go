@@ -11,7 +11,6 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/util"
-	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"os"
@@ -35,15 +34,8 @@ type UserHandler struct {
 	PasswordUtil			 *util.PasswordUtil
 }
 
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
-
-}
-
 func ExtractToken(r *http.Request) string {
 	bearToken := r.Header.Get("Authorization")
-	//normally Authorization the_token_xxx
 	strArr := strings.Split(bearToken, " ")
 	if len(strArr) == 2 {
 		return strArr[1]
@@ -135,54 +127,59 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	//dodati ostale validacije - ova neophodna
+
 	if userChangePasswordDTO.Password != userChangePasswordDTO.ConfirmedPassword {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	var user = handler.UserService.FindByEmail(userChangePasswordDTO.Email)
 	if user == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	var sb strings.Builder
-	salt := user.Salt
-	sb.WriteString(userChangePasswordDTO.Password)
-	sb.WriteString(salt)
-	password := sb.String()
-	hash, _ := handler.PasswordUtil.HashPassword(password)
+	salt := ""
+	password := ""
+	validPassword := handler.PasswordUtil.IsValidPassword(userChangePasswordDTO.Password)
 
-	err = handler.UserService.UpdateUserPassword(user.ID, hash)
+	if validPassword {
+		salt, password = handler.PasswordUtil.GeneratePasswordWithSalt(userChangePasswordDTO.Password)
+	}else {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
+
+	err = handler.UserService.UpdateUserPassword(user.ID, salt, password)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 	if user.UserType == model.ADMIN {
-		err = handler.AdminService.UpdateAdminPassword(user.ID, hash)
+		err = handler.AdminService.UpdateAdminPassword(user.ID, salt, password)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
 		}
 	} else if user.UserType == model.AGENT {
-		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID, hash)
+		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID, salt, password)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
 		}
-		err = handler.AgentService.UpdateAgentPassword(user.ID, hash)
+		err = handler.AgentService.UpdateAgentPassword(user.ID, salt, password)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
 		}
 	} else {
-		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID, hash)
+		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID, salt, password)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
 		}
-		err = handler.RegisteredUserService.UpdateRegisteredUserPassword(user.ID, hash)
+		err = handler.RegisteredUserService.UpdateRegisteredUserPassword(user.ID, salt, password)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
@@ -371,7 +368,6 @@ func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Re
 
 func (handler *UserHandler) FindByUserName(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("USAO  BACK found")
 	username := r.URL.Query().Get("username")
 
 	var user = handler.UserService.FindByUserName(username)

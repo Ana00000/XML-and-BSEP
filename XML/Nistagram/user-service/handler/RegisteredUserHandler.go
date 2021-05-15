@@ -10,7 +10,6 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/util"
-	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/go-playground/validator.v9"
 	gomail "gopkg.in/mail.v2"
 	"net/http"
@@ -27,12 +26,6 @@ type RegisteredUserHandler struct {
 	ProfileSettingsService * settingsService.ProfileSettingsService
 	Validator                *validator.Validate
 	PasswordUtil             *util.PasswordUtil
-}
-
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 12)
-	return string(bytes), err
-
 }
 
 func SendConfirmationMail(user model.User, token uuid.UUID) {
@@ -87,7 +80,16 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		return
 	}
 
-	salt, password := handler.PasswordUtil.GeneratePasswordWithSalt(registeredUserDTO.Password)
+	salt := ""
+	password := ""
+	validPassword := handler.PasswordUtil.IsValidPassword(registeredUserDTO.Password)
+
+	if validPassword {
+		salt, password = handler.PasswordUtil.GeneratePasswordWithSalt(registeredUserDTO.Password)
+	}else {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
 
 	gender := model.OTHER
 	switch registeredUserDTO.Gender {

@@ -43,7 +43,16 @@ func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	salt, password := handler.PasswordUtil.GeneratePasswordWithSalt(agentDTO.Password)
+	salt := ""
+	password := ""
+	validPassword := handler.PasswordUtil.IsValidPassword(agentDTO.Password)
+
+	if validPassword {
+		salt, password = handler.PasswordUtil.GeneratePasswordWithSalt(agentDTO.Password)
+	}else {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
 
 	gender := model.OTHER
 	switch agentDTO.Gender {

@@ -8,7 +8,7 @@ import (
 )
 
 type RegisteredUserService struct {
-	Repo * repository.RegisteredUserRepository
+	Repo *repository.RegisteredUserRepository
 }
 
 func (service *RegisteredUserService) CreateRegisteredUser(registeredUser *model.RegisteredUser) error {
@@ -20,7 +20,7 @@ func (service *RegisteredUserService) CreateRegisteredUser(registeredUser *model
 }
 
 func (service *RegisteredUserService) UpdateRegisteredUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
-	err := service.Repo.UpdateRegisteredUserConfirmed(userId,isConfirmed)
+	err := service.Repo.UpdateRegisteredUserConfirmed(userId, isConfirmed)
 	if err != nil {
 		return err
 	}
@@ -35,8 +35,8 @@ func (service *RegisteredUserService) UpdateRegisteredUserProfileInfo(user *dto.
 	return nil
 }
 
-func (service *RegisteredUserService) UpdateRegisteredUserPassword(userId uuid.UUID, password string) error {
-	err := service.Repo.UpdateRegisteredUserPassword(userId,password)
+func (service *RegisteredUserService) UpdateRegisteredUserPassword(userId uuid.UUID, salt string, password string) error {
+	err := service.Repo.UpdateRegisteredUserPassword(userId, salt, password)
 	if err != nil {
 		return err
 	}

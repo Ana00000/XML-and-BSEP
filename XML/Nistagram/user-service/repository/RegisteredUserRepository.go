@@ -57,8 +57,8 @@ func (repo * RegisteredUserRepository) UpdateRegisteredUserProfileInfo(user *dto
 	return nil
 }
 
-func (repo *RegisteredUserRepository) UpdateRegisteredUserPassword(userId uuid.UUID, password string) error {
-	result := repo.Database.Model(&model.RegisteredUser{}).Where("id = ?", userId).Update("password", password)
+func (repo *RegisteredUserRepository) UpdateRegisteredUserPassword(userId uuid.UUID, salt string, password string) error {
+	result := repo.Database.Model(&model.RegisteredUser{}).Where("id = ?", userId).Update("salt", salt).Update("password", password)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating")
 	return nil

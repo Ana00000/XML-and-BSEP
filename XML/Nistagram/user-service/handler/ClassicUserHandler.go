@@ -19,7 +19,6 @@ type ClassicUserHandler struct {
 
 func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("USAO  BACK 2 found")
 	id := r.URL.Query().Get("id")
 	logId := r.URL.Query().Get("logId")
 

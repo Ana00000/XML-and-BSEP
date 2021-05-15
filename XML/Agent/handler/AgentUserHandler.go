@@ -44,8 +44,8 @@ func (handler *AgentUserHandler) CreateAgentUser(w http.ResponseWriter, r *http.
 
 	salt := ""
 	password := ""
-
 	validPassword := handler.AgentPasswordUtil.IsValidPassword(agentUserDTO.Password)
+
 	if validPassword {
 		salt, password = handler.AgentPasswordUtil.GeneratePasswordWithSalt(agentUserDTO.Password)
 	}else {

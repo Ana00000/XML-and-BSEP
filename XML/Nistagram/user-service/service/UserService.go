@@ -8,10 +8,10 @@ import (
 )
 
 type UserService struct {
-	Repo * repository.UserRepository
+	Repo *repository.UserRepository
 }
 
-func (service * UserService) CreateUser(user *model.User) error {
+func (service *UserService) CreateUser(user *model.User) error {
 	err := service.Repo.CreateUser(user)
 	if err != nil {
 		return err
@@ -19,7 +19,7 @@ func (service * UserService) CreateUser(user *model.User) error {
 	return nil
 }
 
-func (service * UserService) FindAllUsers() []model.User{
+func (service *UserService) FindAllUsers() []model.User {
 	users := service.Repo.FindAllUsers()
 	if users != nil {
 		return users
@@ -42,7 +42,7 @@ func (service *UserService) FindByID(ID uuid.UUID) *model.User {
 	return user
 }
 func (service *UserService) UpdateUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
-	err := service.Repo.UpdateUserConfirmed(userId,isConfirmed)
+	err := service.Repo.UpdateUserConfirmed(userId, isConfirmed)
 	if err != nil {
 		return err
 	}
@@ -57,15 +57,15 @@ func (service *UserService) UpdateUserProfileInfo(user *dto.UserUpdateProfileInf
 	return nil
 }
 
-func (service *UserService) UpdateUserPassword(userId uuid.UUID, password string) error {
-	err := service.Repo.UpdateUserPassword(userId,password)
+func (service *UserService) UpdateUserPassword(userId uuid.UUID, salt string, password string) error {
+	err := service.Repo.UpdateUserPassword(userId, salt, password)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (service * UserService) FindAllFollowersInfoForUser(followers []model.ClassicUserFollowers) []model.User{
+func (service *UserService) FindAllFollowersInfoForUser(followers []model.ClassicUserFollowers) []model.User {
 	users := service.Repo.FindAllFollowersInfoForUser(followers)
 	if users != nil {
 		return users
@@ -73,7 +73,7 @@ func (service * UserService) FindAllFollowersInfoForUser(followers []model.Class
 	return nil
 }
 
-func (service * UserService) FindAllUsersButLoggedIn(userId uuid.UUID) []model.User{
+func (service *UserService) FindAllUsersButLoggedIn(userId uuid.UUID) []model.User {
 	users := service.Repo.FindAllUsersButLoggedIn(userId)
 	if users != nil {
 		return users
@@ -81,12 +81,10 @@ func (service * UserService) FindAllUsersButLoggedIn(userId uuid.UUID) []model.U
 	return nil
 }
 
-func (service * UserService) FindAllPublicUsers(publicUsers []uuid.UUID) []model.User{
+func (service *UserService) FindAllPublicUsers(publicUsers []uuid.UUID) []model.User {
 	users := service.Repo.FindAllPublicUsers(publicUsers)
 	if users != nil {
 		return users
 	}
 	return nil
 }
-
-
