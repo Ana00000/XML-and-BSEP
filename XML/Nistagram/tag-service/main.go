@@ -3,7 +3,6 @@ package main
 import (
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
-	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/handler"
@@ -117,17 +116,17 @@ func initPostTagPostsHandler(service *service.PostTagPostsService) *handler.Post
 func handleFunc(handlerTag *handler.TagHandler,handlerPostTag *handler.PostTagHandler,handlerStoryTag *handler.StoryTagHandler,
 	handlerCommentTag *handler.CommentTagHandler, handlerCommentTagComments *handler.CommentTagCommentsHandler,handlerPostTagPosts *handler.PostTagPostsHandler,
 	handlerStoryTagStories *handler.StoryTagStoriesHandler){
-	router := mux.NewRouter().StrictSlash(true)
-
-	router.HandleFunc("/comment_tag/", handlerCommentTag.CreateCommentTag).Methods("POST")
-	router.HandleFunc("/comment_tag_comments/", handlerCommentTagComments.CreateCommentTagComments).Methods("POST")
-	router.HandleFunc("/post_tag_posts/", handlerPostTagPosts.CreatePostTagPosts).Methods("POST")
-	router.HandleFunc("/story_tag_stories/", handlerStoryTagStories.CreateStoryTagStories).Methods("POST")
 
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/tag/", handlerTag.CreateTag)
 	mux.HandleFunc("/post_tag/", handlerPostTag.CreatePostTag)
 	mux.HandleFunc("/story_tag/", handlerStoryTag.CreateStoryTag)
+	mux.HandleFunc("/comment_tag/", handlerCommentTag.CreateCommentTag)
+	mux.HandleFunc("/comment_tag_comments/", handlerCommentTagComments.CreateCommentTagComments)
+	mux.HandleFunc("/post_tag_posts/", handlerPostTagPosts.CreatePostTagPosts)
+	mux.HandleFunc("/story_tag_stories/", handlerStoryTagStories.CreateStoryTagStories)
+
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8082", handlerVar))
 }
