@@ -44,14 +44,8 @@
             v-if="!isHiddenLocation"
           />
           <v-text-field
-            label="Tag name"
-            v-model="tagName"
-            prepend-icon="mdi-address-circle"
-            v-if="!isHiddenTag"
-          />
-          <v-text-field
             label="Description"
-            v-model="postDescription"
+            v-model="postAlbumDescription"
             prepend-icon="mdi-address-circle"
             v-if="!isHiddenDescription"
           />
@@ -59,10 +53,12 @@
             label="Path"
             v-model="path"
             prepend-icon="mdi-address-circle"
+            v-if="!isHiddenContent"
           />
           <v-select
             class="typeCombo"
             v-model="selectedType"
+            v-if="!isHiddenContent"
             hint="Choose your type."
             :items="types"
             item-text="state"
@@ -71,14 +67,65 @@
             single-line
           />
         </v-form>
+        <v-text-field
+          label="Tag name"
+          v-model="tagName"
+          prepend-icon="mdi-address-circle"
+          v-if="!isHiddenTag"
+        />
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
-        <v-btn color="info mb-5" v-on:click="isHiddenLocation=false"> Add location  </v-btn>
-        <v-btn color="info mb-5" v-on:click="isHiddenTag=false"> Add tag </v-btn>
-        <v-btn color="info mb-5" v-on:click="isHiddenDescription=false"> Add description </v-btn>
-      </v-card-actions>
-      <v-card-actions class="justify-center mb-5">
-        <v-btn color="info mb-5" v-on:click="createPostAlbum"> Create </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-on:click="
+            (isHiddenLocation = true),
+              (isHiddenDescription = false),
+              (isHiddenDescriptionButton = false),
+              (isHiddenLocationButton = true)
+          "
+          v-if="!isHiddenLocationButton"
+        >
+          Skip location
+        </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-on:click="addLocation"
+          v-if="!isHiddenLocationButton"
+        >
+          Add location
+        </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-on:click="
+            (isHiddenDescriptionButton = true),
+              (isHiddenDescription = true),
+              (isHiddenContentButton = false),
+              (isHiddenContent = false)
+          "
+          v-if="!isHiddenDescriptionButton"
+        >
+          Skip description
+        </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-on:click="addDescription"
+          v-if="!isHiddenDescriptionButton"
+        >
+          Add description
+        </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-if="!isHiddenContentButton"
+          v-on:click="addContent"
+        >
+          Add content
+        </v-btn>
+        <v-btn color="info mb-5" v-if="!isHiddenTagButton" v-on:click="addTag">
+          Add tag
+        </v-btn>
+        <v-btn color="info mb-5" v-if="!isHiddenTagButton" v-on:click="finish">
+          Finish
+        </v-btn>
       </v-card-actions>
     </v-card>
     <div class="spacing" />
@@ -103,28 +150,20 @@ export default {
     selectedType: "PICTURE",
     label1: "Type",
     postAlbumId: null,
-    postAlbumTagId: null,
-    isHiddenLocation: true,
+    isHiddenLocationButton: false,
+    isHiddenLocation: false,
+    isHiddenDescriptionButton: true,
+    isHiddenDescription: true,
+    isHiddenContentButton: true,
+    isHiddenContent: true,
+    isHiddenTagButton: true,
     isHiddenTag: true,
-    isHiddenDescription: true
+    isValidLocation: false,
+    isValidPostAlbumDescription: false,
+    postAlbumTagId: null
   }),
   methods: {
-    createPostAlbum() {
-      if (!this.validPath() || !this.validPostAlbumDescription()) return;
-
-      this.createTag();
-
-      if (
-        this.longitude == "" &&
-        this.latitude == "" &&
-        this.country == "" &&
-        this.city == "" &&
-        this.streetName == "" &&
-        this.streetNumber == ""
-      ) {
-        this.createPostAlbumWithoutLocation();
-        return;
-      }
+    addLocation() {
       if (
         !this.validLongitude() ||
         !this.validLatitude() ||
@@ -135,88 +174,82 @@ export default {
       )
         return;
 
-      this.$http
-        .post("http://localhost:8083/", {
-          longitude: this.longitude,
-          latitude: this.latitude,
-          country: this.country,
-          city: this.city,
-          streetName: this.streetName,
-          streetNumber: this.streetNumber,
-        })
-        .then((response) => {
-          this.locationId = response.data;
-          this.createPostAlbumWithLocation();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+      this.isValidLocation = true;
+      this.isHiddenLocationButton = true;
+      this.isHiddenLocation = true;
+      this.isHiddenDescriptionButton = false;
+      this.isHiddenDescription = false;
     },
-    createTag() {
-      if (this.tagName == null) return;
-      if (!this.validTag()) return;
+    addDescription() {
+      if (!this.validPostAlbumDescription()) return;
 
-      this.$http
-        .post("http://localhost:8082/post_album_tag/", {
-          name: this.tagName,
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.postAlbumTagId = response.data;
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+      this.isValidPostAlbumDescription = true;
+      this.isHiddenDescriptionButton = true;
+      this.isHiddenDescription = true;
+      this.isHiddenContentButton = false;
+      this.isHiddenContent = false;
     },
-    createPostAlbumWithLocation() {
-      this.$http
-        .post("http://localhost:8084/post_album/", {
-          description: this.postAlbumDescription,
-          userID: localStorage.getItem("userId"),
-          locationId: this.locationId,
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.postAlbumId = response.data;
-          this.CreatePostAlbumTagPostAlbums();
-          this.createPostAlbumContent();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+    addContent() {
+      if (!this.validPath()) return;
+
+      this.isHiddenContentButton = true;
+      this.isHiddenContent = true;
+      this.isHiddenTagButton = false;
+      this.isHiddenTag = false;
+
+      if (this.isValidLocation) {
+        this.$http
+          .post("http://localhost:8083/", {
+            longitude: this.longitude,
+            latitude: this.latitude,
+            country: this.country,
+            city: this.city,
+            streetName: this.streetName,
+            streetNumber: this.streetNumber,
+          })
+          .then((response) => {
+            this.locationId = response.data;
+            this.createPostAlbumDescription();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      } else {
+        this.createPostAlbumDescription();
+      }
     },
-    createPostAlbumWithoutLocation() {
-      this.$http
-        .post("http://localhost:8084/post_album/", {
-          description: this.postAlbumDescription,
-          userID: localStorage.getItem("userId"),
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.postAlbumId = response.data;
-          this.CreatePostAlbumTagPostAlbums();
-          this.createPostAlbumContent();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+    createPostAlbumDescription() {
+      if (this.isValidPostAlbumDescription) {
+        this.$http
+          .post("http://localhost:8084/post_album/", {
+            description: this.postAlbumDescription,
+            userID: localStorage.getItem("userId"),
+            locationId: this.locationId,
+          })
+          .then((response) => {
+            this.postAlbumId = response.data;
+            this.createContent();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      } else {
+        this.$http
+          .post("http://localhost:8084/post_album/", {
+            description: "",
+            userID: localStorage.getItem("userId"),
+            locationId: this.locationId,
+          })
+          .then((response) => {
+            this.postAlbumId = response.data;
+            this.createContent();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      }
     },
-    CreatePostAlbumTagPostAlbums(){
-      this.$http
-        .post("http://localhost:8082/post_album_tag_post_albums/", {
-          postAlbumTagId: this.postAlbumTagId,
-          postAlbumId: this.postAlbumId
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
-    },
-    createPostAlbumContent() {
-      setTimeout(5000);
-      
+    createContent() {
       this.$http
         .post("http://localhost:8085/post_album_content/", {
           path: this.path,
@@ -225,25 +258,43 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
-          alert("Successful creation.");
-          window.location.href = "http://localhost:8081/";
         })
         .catch((er) => {
           console.log(er.response.data);
         });
     },
-    validTag() {
-      if (this.tagName.length > 30) {
-        alert("Your tag name shouldn't contain more than 30 characters!");
-        return false;
-      } else if (this.tagName.match(/[!#$%^&*:'<>+/\\"]/g)) {
-        alert("Your tag name shouldn't contain those special characters.");
-        return false;
-      } else if (this.tagName.match(/\d/g)) {
-        alert("Your tag name shouldn't contain numbers!");
-        return false;
-      }
-      return true;
+    finish() {
+      alert("Successful creation.");
+      window.location.href = "http://localhost:8081/";
+    },
+    addTag() {
+      if (!this.validTag()) return;
+
+      this.$http
+        .post("http://localhost:8082/post_album_tag/", {
+          name: this.tagName,
+        })
+        .then((response) => {
+          this.postAlbumTagId = response.data;
+          this.CreatePostAlbumTagPostAlbums();
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    CreatePostAlbumTagPostAlbums() {
+      this.$http
+        .post("http://localhost:8082/post_album_tag_post_albums/", {
+          postAlbumTagId: this.postAlbumTagId,
+          postAlbumId: this.postAlbumId,
+        })
+        .then((response) => {
+          console.log(response.data);
+          alert("Tag is created! Add more tags or finish creation.");
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
     },
     validLongitude() {
       if (this.longitude.length < 2) {
@@ -330,7 +381,10 @@ export default {
       return true;
     },
     validPostAlbumDescription() {
-      if (this.postAlbumDescription.length > 50) {
+      if (this.postAlbumDescription.length < 1) {
+        alert("Your post album description should contain at least 1 character!");
+        return;
+      } else if (this.postAlbumDescription.length > 50) {
         alert(
           "Your post album description shouldn't contain more than 50 characters!"
         );
@@ -347,6 +401,22 @@ export default {
         return false;
       } else if (this.path.match(/[!@#$%^&*'<>+"]/g)) {
         alert("Your path shouldn't contain those special characters.");
+        return false;
+      }
+      return true;
+    },
+    validTag() {
+      if (this.tagName == null) {
+        alert("Your tag name should contain at least 1 character!");
+        return;
+      } else if (this.tagName.length > 30) {
+        alert("Your tag name shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.tagName.match(/[!#$%^&*:'<>+/\\"]/g)) {
+        alert("Your tag name shouldn't contain those special characters.");
+        return false;
+      } else if (this.tagName.match(/\d/g)) {
+        alert("Your tag name shouldn't contain numbers!");
         return false;
       }
       return true;
