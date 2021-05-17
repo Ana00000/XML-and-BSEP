@@ -62,3 +62,19 @@ func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r
 	w.Header().Set("Content-Type", "application/json")
 }
 
+func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id")
+
+	var user = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+	if  user == nil {
+		fmt.Println("No user found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	userJson, _ := json.Marshal(user)
+	w.Write(userJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+

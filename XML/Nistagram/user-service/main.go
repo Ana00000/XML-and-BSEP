@@ -245,7 +245,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	mux.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo)
 	mux.HandleFunc("/find_user_by_id", userHandler.FindByID)
 	mux.HandleFunc("/find_user_by_username", userHandler.FindByUserName)
-	mux.HandleFunc("/find_all_users_but_logged_in", userHandler.FindAllUsersButLoggedIn)
+	mux.HandleFunc("/find_all_classic_users_but_logged_in", classicUserHandler.FindAllUsersButLoggedIn)
 	mux.HandleFunc("/find_selected_user_by_id", classicUserHandler.FindSelectedUserById)
 	mux.HandleFunc("/accept_follow_request/", classicUserFollowingsHandler.AcceptFollowerRequest)
 

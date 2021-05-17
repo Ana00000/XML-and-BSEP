@@ -92,3 +92,10 @@ func (repo *ClassicUserRepository) FindClassicUserByUserName(userName string) *m
 	}
 	return user
 }
+
+func (repo *ClassicUserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []model.User {
+
+	var users []model.User
+	repo.Database.Select("*").Where("id != ?", userId).Find(&users)
+	return users
+}
