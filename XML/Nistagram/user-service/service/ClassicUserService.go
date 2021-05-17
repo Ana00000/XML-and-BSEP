@@ -47,3 +47,8 @@ func (service *ClassicUserService) FindSelectedUserById(id uuid.UUID) *dto.Selec
 	user := service.Repo.FindSelectedUserById(id)
 	return user
 }
+
+func (service *ClassicUserService) FindClassicUserByUserName(userName string) *model.ClassicUser {
+	user := service.Repo.FindClassicUserByUserName(userName)
+	return user
+}

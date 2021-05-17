@@ -204,9 +204,17 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 
 	var user = handler.UserService.FindByUserName(logInUserDTO.Username)
 
-	if user == nil || !user.IsConfirmed {
-		w.WriteHeader(http.StatusBadRequest) //400
-		return
+	if user.UserType == model.ADMIN {
+		if user == nil || !user.IsConfirmed {
+			w.WriteHeader(http.StatusBadRequest) //400
+			return
+		}
+	} else {
+		var classicUser = handler.ClassicUserService.FindClassicUserByUserName(logInUserDTO.Username)
+		if user == nil || !classicUser.IsConfirmed || classicUser.IsDeleted {
+			w.WriteHeader(http.StatusBadRequest) //400
+			return
+		}
 	}
 
 	validPassword := handler.PasswordUtil.IsValidPassword(logInUserDTO.Password)
