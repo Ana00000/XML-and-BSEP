@@ -42,3 +42,19 @@ func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWrit
 	w.Header().Set("Content-Type", "application/json")
 }
 
+func (handler *ProfileSettingsHandler) FindProfileSettingByUserId(w http.ResponseWriter, r *http.Request) {
+	userId := r.URL.Query().Get("id")
+
+	var user = handler.Service.FindProfileSettingByUserId(uuid.MustParse(userId))
+	if user == nil {
+		fmt.Println("User not found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	userJson, _ := json.Marshal(user)
+	w.Write(userJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+

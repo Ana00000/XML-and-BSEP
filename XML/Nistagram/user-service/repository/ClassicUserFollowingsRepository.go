@@ -39,7 +39,7 @@ func (repo * ClassicUserFollowingsRepository) CheckFollowingStatus(classicUserId
 		return following
 	}
 
-	pending, donePending := repo.checkIfPending(followRequests, followingUserId)
+	pending, donePending := repo.CheckIfPending(followRequests, followingUserId)
 	if donePending {
 		return pending
 	}
@@ -47,7 +47,7 @@ func (repo * ClassicUserFollowingsRepository) CheckFollowingStatus(classicUserId
 	return "NOT FOLLOWING"
 }
 
-func (repo *ClassicUserFollowingsRepository) checkIfPending(followRequests []requestModel.FollowRequest, followingUserId uuid.UUID) (string, bool) {
+func (repo *ClassicUserFollowingsRepository) CheckIfPending(followRequests []requestModel.FollowRequest, followingUserId uuid.UUID) (string, bool) {
 	for i := 0; i < len(followRequests); i++ {
 		if followRequests[i].FollowerUserId == followingUserId && followRequests[i].FollowRequestStatus == requestModel.PENDING {
 			return "PENDING", true

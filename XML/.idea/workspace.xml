@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/FollowRequests.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/router/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/LogIn.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/LogIn.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowingsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowingsRepository.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

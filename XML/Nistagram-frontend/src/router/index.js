@@ -79,6 +79,11 @@ const routes = [
     path: '/reactedPosts',
     name: 'ReactedPosts',
     component: () => import('../views/ReactedPosts.vue')
+  },
+  {
+    path: '/followRequests',
+    name: 'FollowRequests',
+    component: () => import('../views/FollowRequests.vue')
   }
 ]
 

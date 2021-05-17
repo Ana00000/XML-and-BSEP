@@ -62,6 +62,22 @@ export default {
 
 
           localStorage.setItem("userType", resp.data.userType)
+
+
+          this.$http
+          .get("http://localhost:8080/find_profile_settings_by_user_id?id="+resp.data.id)
+          .then((resp) => {
+          console.log("FOUND PROFILE SETTINGS")
+          console.log("USER PRIVACY")
+          console.log(resp.data.userVisibility)
+
+          if (resp.data.userVisibility == 0){
+             localStorage.setItem("userPrivacy", "PRIVATE")
+          }else if (resp.data.userVisibility == 1){
+             localStorage.setItem("userPrivacy", "PUBLIC")
+          }
+         }).catch(console.log);
+
           console.log(localStorage.getItem("userType"))
           window.location.href = "http://localhost:8081/";
         })
