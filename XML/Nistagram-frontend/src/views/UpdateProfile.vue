@@ -1,8 +1,6 @@
 <template>
   <div>
-    <br /><br />
-
-    <v-container fluid class="container">
+    <v-container fluid class="container mt-6">
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
@@ -86,47 +84,45 @@
         </v-col>
       </v-row>
 
-      <br /><br />
-    </v-container>
+      <div class="changeButton">
+        <v-btn
+          v-if="!isHiddenChange"
+          v-on:click="isHiddenUpdate = false, isHiddenChange = true, isHiddenCancel = false, isReadOnly = false"
+          color="#aba7ff"
+          elevation="24"
+          x-large
+          raised
+          rounded
+          >Change</v-btn
+        >
+      </div>
 
-    <div class="changeButton">
-      <v-btn
-        v-if="!isHiddenChange"
-        v-on:click="isHiddenUpdate = false, isHiddenChange = true, isHiddenCancel = false, isReadOnly = false"
-        color="#aba7ff"
-        elevation="24"
-        x-large
-        raised
-        rounded
-        >Change</v-btn
-      >
-    </div>
+      <div class="updateButton">
+        <v-btn
+          v-if="!isHiddenUpdate"
+          v-on:click="changeProfileInfo"
+          color="#aba7ff"
+          elevation="24"
+          x-large
+          raised
+          rounded
+          >Save</v-btn
+        >
+      </div>
 
-    <div class="updateButton">
-      <v-btn
-        v-if="!isHiddenUpdate"
-        v-on:click="updateProfile"
-        color="#aba7ff"
-        elevation="24"
-        x-large
-        raised
-        rounded
-        >Save</v-btn
-      >
-    </div>
-
-    <div class="cancelButton">
-      <v-btn
-        v-if="!isHiddenCancel"
-        v-on:click="cancelChanges"
-        color="#aba7ff"
-        elevation="24"
-        x-large
-        raised
-        rounded
-        >Cancel</v-btn
-      >
-    </div>
+      <div class="cancelButton">
+        <v-btn
+          v-if="!isHiddenCancel"
+          v-on:click="cancelChanges"
+          color="#aba7ff"
+          elevation="24"
+          x-large
+          raised
+          rounded
+          >Cancel</v-btn
+        >
+      </div>
+      </v-container>
   </div>
 </template>
 
@@ -162,9 +158,8 @@ export default {
 
       this.$http
         .get("http://localhost:8080/find_user_by_id?id=" + this.id)
-        .then((resp) => {
-          this.user = resp.data;
-          console.log(resp.data)
+        .then((response) => {
+          this.user = response.data;
           this.setUserInfo(this.user);
         })
         .catch(console.log);
@@ -176,23 +171,27 @@ export default {
       this.phoneNumber = item.phoneNumber
       if (this.user.gender == 0) {
         this.selectedGender = "MALE"
-      }
-      else if (this.user.gender == 1){
+      } else if (this.user.gender == 1){
         this.selectedGender = "FEMALE"
-      }
-      else {
+      } else {
         this.selectedGender = "OTHER"
       }
       this.dateOfBirth = item.dateOfBirth
       this.username = item.username
       this.website = item.website
       this.biography = item.biography
-      this.userType = item.userType
+      if (this.user.userType == 0) {
+        this.userType = "ADMIN" 
+      } else if (this.user.userType == 1) {
+        this.userType = "REGISTERED_USER"
+      } else {
+        this.userType = "AGENT"
+      }
     },
     cancelChanges() {
       window.location.href = "http://localhost:8081/updateProfile"
     },
-    updateProfile() {
+    changeProfileInfo() {
       if (
         !this.validFirstName() ||
         !this.validLastName() ||
@@ -202,11 +201,20 @@ export default {
         !this.validUsername() ||
         !this.validWebsite() ||
         !this.validBiography()
-      )
-        return;
-
+      ) return;
+      /*
+      console.log(this.id)
+      console.log(this.username)
+      console.log(this.email)
+      console.log(this.phoneNumber)
+      console.log(this.selectedGender)
+      console.log(this.dateOfBirth)
+      console.log(this.website)
+      console.log(this.biography)
+      console.log(this.userType)
+      */
       this.$http
-        .post("http://localhost:8080/update_user_profile_info/", {
+        .post("http://localhost:8080/update_user_profile_info", {
           id: this.id,
           firstName: this.firstName,
           lastName: this.lastName,
@@ -222,14 +230,15 @@ export default {
             headers: {
               Authorization: "Bearer " + this.token,
             },
-          }
-        
-        )
-        .then((resp) => {
-          console.log(resp.data);
-          alert("Successfully updated profile informations!");
         })
-        .catch((err) => console.log(err));
+        .then((response) => {
+          console.log(response.data)
+          alert("Successfully updated profile informations!");
+          window.location.href = "http://localhost:8081/updateProfile"
+        })
+        .catch((err) => {
+          console.log(err)
+        });
     },
     validFirstName() {
       if (this.firstName.length < 2) {
