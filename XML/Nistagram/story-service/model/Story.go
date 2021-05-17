@@ -7,6 +7,7 @@ import (
 
 type Story struct {
 	ID uuid.UUID `json:"id"`
+	Description string `json:"description"`
 	CreationDate time.Time `json:"creationDate" gorm:"not null"`
 	UserId uuid.UUID `json:"userId" gorm:"not null"`
 	LocationId uuid.UUID `json:"locationId"`

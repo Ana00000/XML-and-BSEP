@@ -36,6 +36,7 @@ func (handler *StoryHandler) CreateStory(w http.ResponseWriter, r *http.Request)
 	story := model.Story{
 		ID:          	id,
 		CreationDate: 	time.Now(),
+		Description:    storyDTO.Description,
 		UserId:      	storyDTO.UserId,
 		LocationId: 	storyDTO.LocationId,
 		IsDeleted:      false,

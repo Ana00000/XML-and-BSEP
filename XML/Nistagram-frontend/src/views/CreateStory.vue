@@ -71,7 +71,7 @@
             single-line
           />
            <v-select
-            class="typeCombo"
+            class="typeComboSecond"
             v-model="selectedStoryType"
             hint="Choose your publicity story type."
             :items="storyTypes"
@@ -128,6 +128,8 @@ export default {
   }),
   methods: {
     createStory() {
+      if (!this.validPath() || !this.validStoryDescription()) return;
+      
       this.createTag();
 
       if (
@@ -184,13 +186,12 @@ export default {
         });
     },
     createStoryWithLocation() {
-      //if (!this.validStoryDescription()) return;
       this.$http
         .post("http://localhost:8086/single_story/", {
-          //description: this.storyDescription, ADD DESCRIPTION IN STORY MODEL!
+          description: this.storyDescription,
           userID: localStorage.getItem("userId"),
           locationId: this.locationId,
-          type: this.selectedStoryType
+          storyType: this.selectedStoryType
         })
         .then((response) => {
           console.log(response.data);
@@ -202,12 +203,11 @@ export default {
         });
     },
     createStoryWithoutLocation() {
-      //if (!this.validStoryDescription()) return;
       this.$http
         .post("http://localhost:8086/single_story/", {
-          //description: this.storyDescription, ADD DESCRIPTION IN STORY MODEL!
+          description: this.storyDescription,
           userID: localStorage.getItem("userId"),
-          type: this.selectedStoryType
+          storyType: this.selectedStoryType
         })
         .then((response) => {
           console.log(response.data);
@@ -219,8 +219,6 @@ export default {
         });
     },
     createStoryContent() {
-      if (!this.validPath()) return;
-
       setTimeout(5000);
       this.$http
         .post("http://localhost:8085/single_story_content/", {
@@ -366,6 +364,11 @@ export default {
 }
 
 .typeCombo {
+  width: 94%;
+  margin-left: 6%;
+}
+
+.typeComboSecond {
   width: 94%;
   margin-left: 6%;
 }

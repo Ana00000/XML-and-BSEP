@@ -37,6 +37,7 @@ func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *htt
 		Story : model.Story{
 			ID:          	id,
 			CreationDate: 	time.Now(),
+			Description:    storyAlbumDTO.Description,
 			UserId:      	storyAlbumDTO.UserId,
 			LocationId:     storyAlbumDTO.LocationId,
 			IsDeleted:      false,

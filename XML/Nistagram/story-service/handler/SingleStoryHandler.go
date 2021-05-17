@@ -35,13 +35,14 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 
 	id := uuid.New()
 	singleStory := model.SingleStory{
-		Story : 		model.Story{
-		ID:          	id,
-		CreationDate: 	time.Now(),
-		UserId:      	singleStoryDTO.UserId,
-		LocationId:     singleStoryDTO.LocationId,
-		IsDeleted:      false,
-		Type:      		singleStoryType,
+		Story: model.Story{
+			ID:           id,
+			CreationDate: time.Now(),
+			Description:  singleStoryDTO.Description,
+			UserId:       singleStoryDTO.UserId,
+			LocationId:   singleStoryDTO.LocationId,
+			IsDeleted:    false,
+			Type:         singleStoryType,
 		},
 	}
 
@@ -63,4 +64,3 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-

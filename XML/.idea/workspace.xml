@@ -2,25 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/components/NavigationBar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/components/NavigationBar.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/router/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/ContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/ContentHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/SingleStoryContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/SingleStoryContentHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/story-service/dto/SingleStoryDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/dto/SingleStoryDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/story-service/dto/StoryAlbumDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/dto/StoryAlbumDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/story-service/dto/StoryDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/dto/StoryDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/story-service/handler/SingleStoryHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/handler/SingleStoryHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/story-service/handler/StoryAlbumHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/handler/StoryAlbumHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/story-service/handler/StoryHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/handler/StoryHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/story-service/model/Story.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/model/Story.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryTagHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryTagHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,21 +55,21 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
   </component>
-  <component name="RunManager" selected="Go Build.go build main.go (4)">
+  <component name="RunManager" selected="Go Build.go build main.go">
+    <configuration name="go build main.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="XML" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/Nistagram/post-service/main.go" />
+      <package value="github.com/xml/XML-and-BSEP/XML" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build main.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
       <filePath value="$PROJECT_DIR$/Nistagram/location-service/main.go" />
-      <package value="github.com/xml/XML-and-BSEP/XML" />
-      <directory value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build main.go (3)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="XML" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Nistagram/tag-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
       <method v="2" />
@@ -111,11 +103,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build main.go (4)" />
-        <item itemvalue="Go Build.go build main.go (5)" />
-        <item itemvalue="Go Build.go build main.go (3)" />
-        <item itemvalue="Go Build.go build main.go (2)" />
         <item itemvalue="Go Build.go build main.go" />
+        <item itemvalue="Go Build.go build main.go (4)" />
+        <item itemvalue="Go Build.go build main.go (2)" />
+        <item itemvalue="Go Build.go build main.go (1)" />
+        <item itemvalue="Go Build.go build main.go (5)" />
       </list>
     </recent_temporary>
   </component>

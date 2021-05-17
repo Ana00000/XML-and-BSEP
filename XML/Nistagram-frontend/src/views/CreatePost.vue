@@ -109,6 +109,8 @@ export default {
   }),
   methods: {
     createPost() {
+      if (!this.validPath() || !this.validPostDescription()) return;
+
       this.createTag();
 
       if (
@@ -165,7 +167,6 @@ export default {
         });
     },
     createPostWithLocation() {
-      if (!this.validPostDescription()) return;
       this.$http
         .post("http://localhost:8084/single_post/", {
           description: this.postDescription,
@@ -182,7 +183,6 @@ export default {
         });
     },
     createPostWithoutLocation() {
-      if (!this.validPostDescription()) return;
       this.$http
         .post("http://localhost:8084/single_post/", {
           description: this.postDescription,
@@ -198,10 +198,7 @@ export default {
         });
     },
     createPostContent() {
-      if (!this.validPath()) return;
-
       setTimeout(5000);
-
       this.$http
         .post("http://localhost:8085/single_post_content/", {
           path: this.path,
