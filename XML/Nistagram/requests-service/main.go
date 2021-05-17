@@ -1,6 +1,7 @@
 package main
 
 import (
+
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
 	_ "github.com/lib/pq"
@@ -117,20 +118,9 @@ func initFollowRequestHandler(service *service.FollowRequestService) *handler.Fo
 func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContentRequestHandler, postICRHandler *handler.PostICRHandler,
 	storyICRHandler *handler.StoryICRHandler, commentICRHandler *handler.CommentICRHandler, verificationRequestHandler *handler.VerificationRequestHandler,
 	agentRegistrationRequestHandler *handler.AgentRegistrationRequestHandler, followRequestHandler *handler.FollowRequestHandler){
-	/*router := mux.NewRouter().StrictSlash(true)
-
-	router.HandleFunc("/inappropriateContentRequest", inappropriateContentRequestHandler.CreateInappropriateContentRequest).Methods("POST")
-	router.HandleFunc("/postICR", postICRHandler.CreatePostICR).Methods("POST")
-	router.HandleFunc("/storyICR", storyICRHandler.CreateStoryICR).Methods("POST")
-	router.HandleFunc("/commentICR", commentICRHandler.CreateCommentICR).Methods("POST")
-	router.HandleFunc("/verificationRequest", verificationRequestHandler.CreateVerificationRequest).Methods("POST")
-	router.HandleFunc("/agentRegistrationRequestHandler", agentRegistrationRequestHandler.CreateAgentRegistrationRequest).Methods("POST")
-
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))*/
-
+	
 	mux := http.NewServeMux()
 	mux.HandleFunc("/create_follow_request/", followRequestHandler.CreateFollowRequest)
-
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8087", handlerVar))
 }

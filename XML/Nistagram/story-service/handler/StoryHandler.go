@@ -24,15 +24,23 @@ func (handler *StoryHandler) CreateStory(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	layout := "2006-01-02T15:04:05.000Z"
-	creationDate,_ :=time.Parse(layout,storyDTO.CreationDate)
+	storyType := model.CLOSE_FRIENDS
+	switch storyDTO.Type {
+	case "ALL_FRIENDS":
+		storyType = model.ALL_FRIENDS
+	case "PUBLIC":
+		storyType = model.PUBLIC
+	}
+
+	id := uuid.New()
 	story := model.Story{
-		ID:          uuid.UUID{},
-		CreationDate: creationDate,
-		UserId:      storyDTO.UserId,
-		LocationId: storyDTO.LocationId,
-		IsDeleted:      storyDTO.IsDeleted,
-		Type:      storyDTO.Type,
+		ID:          	id,
+		CreationDate: 	time.Now(),
+		Description:    storyDTO.Description,
+		UserId:      	storyDTO.UserId,
+		LocationId: 	storyDTO.LocationId,
+		IsDeleted:      false,
+		Type:      		storyType,
 	}
 
 	err = handler.Service.CreateStory(&story)
