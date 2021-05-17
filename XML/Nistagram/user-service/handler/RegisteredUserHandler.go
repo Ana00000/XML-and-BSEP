@@ -18,7 +18,6 @@ import (
 )
 
 type RegisteredUserHandler struct {
-
 	RegisteredUserService * service. RegisteredUserService
 	UserService * service.UserService
 	ClassicUserService * service.ClassicUserService

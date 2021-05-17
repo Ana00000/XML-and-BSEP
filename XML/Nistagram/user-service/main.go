@@ -134,10 +134,11 @@ func initAgentService(repo *repository.AgentRepository) *service.AgentService{
 	return &service.AgentService { Repo: repo }
 }
 
-func initAgentHandler(agentService *service.AgentService, userService *service.UserService, validator *validator.Validate, passwordUtil *util.PasswordUtil) *handler.AgentHandler{
+func initAgentHandler(agentService *service.AgentService, userService *service.UserService, classicUserService *service.ClassicUserService, validator *validator.Validate, passwordUtil *util.PasswordUtil) *handler.AgentHandler{
 	return &handler.AgentHandler{
 		AgentService: agentService,
 		UserService: userService,
+		ClassicUserService: classicUserService,
 		Validator: validator,
 		PasswordUtil: passwordUtil,
 	}
@@ -289,7 +290,7 @@ func main() {
 	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo, validator, passwordUtil)
 	adminHandler := initAdminHandler(adminService, userService, validator, passwordUtil)
 	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService,settingsService,validator, passwordUtil)
-	agentHandler := initAgentHandler(agentService, userService, validator, passwordUtil)
+	agentHandler := initAgentHandler(agentService, userService, classicUserService, validator, passwordUtil)
 	confirmationTokenHandler := initConfirmationTokenHandler(confirmationTokenService,userService,registeredUserService,classicUserService)
 	classicUserCampaignsHandler := initClassicUserCampaignsHandler(classicUserCampaignsService)
 	classicUserFollowersHandler := initClassicUserFollowersHandler(classicUserFollowersService, userService)
