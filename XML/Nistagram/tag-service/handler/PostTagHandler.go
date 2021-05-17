@@ -44,6 +44,9 @@ func (handler *PostTagHandler) CreatePostTag(w http.ResponseWriter, r *http.Requ
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
+	postTagIDJson, _ := json.Marshal(postTag.ID)
+	w.Write(postTagIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

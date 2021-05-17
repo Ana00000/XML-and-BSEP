@@ -18,6 +18,7 @@ type PostTagPostsHandler struct {
 func (handler *PostTagPostsHandler) CreatePostTagPosts(w http.ResponseWriter, r *http.Request) {
 	var postTagPostsDTO dto.PostTagPostsDTO
 	err := json.NewDecoder(r.Body).Decode(&postTagPostsDTO)
+	
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -34,6 +35,7 @@ func (handler *PostTagPostsHandler) CreatePostTagPosts(w http.ResponseWriter, r 
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+	
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
