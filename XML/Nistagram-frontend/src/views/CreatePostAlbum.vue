@@ -66,6 +66,23 @@
             return-object
             single-line
           />
+          <v-text-field
+            label="Path"
+            v-model="path"
+            prepend-icon="mdi-address-circle"
+            v-if="!isHiddenAdditionalContent"
+          />
+          <v-select
+            class="typeCombo"
+            v-model="selectedType"
+            v-if="!isHiddenAdditionalContent"
+            hint="Choose your type."
+            :items="types"
+            item-text="state"
+            :label="label1"
+            return-object
+            single-line
+          />
         </v-form>
         <v-text-field
           label="Tag name"
@@ -120,6 +137,20 @@
         >
           Add content
         </v-btn>
+         <v-btn
+          color="info mb-5"
+          v-if="!isHiddenAdditionalContentButton"
+          v-on:click="createAdditionalContent"
+        >
+          Add more content
+        </v-btn>
+         <v-btn
+          color="info mb-5"
+          v-if="!isHiddenAdditionalContentButton"
+          v-on:click="continueCreation"
+        >
+          Continue
+        </v-btn>
         <v-btn color="info mb-5" v-if="!isHiddenTagButton" v-on:click="addTag">
           Add tag
         </v-btn>
@@ -160,7 +191,9 @@ export default {
     isHiddenTag: true,
     isValidLocation: false,
     isValidPostAlbumDescription: false,
-    postAlbumTagId: null
+    postAlbumTagId: null,
+    isHiddenAdditionalContentButton: true,
+    isHiddenAdditionalContent: true
   }),
   methods: {
     addLocation() {
@@ -194,8 +227,8 @@ export default {
 
       this.isHiddenContentButton = true;
       this.isHiddenContent = true;
-      this.isHiddenTagButton = false;
-      this.isHiddenTag = false;
+      this.isHiddenAdditionalContentButton = false;
+      this.isHiddenAdditionalContent = false;
 
       if (this.isValidLocation) {
         this.$http
@@ -250,6 +283,28 @@ export default {
       }
     },
     createContent() {
+      this.$http
+        .post("http://localhost:8085/post_album_content/", {
+          path: this.path,
+          type: this.selectedType,
+          post_album_id: this.postAlbumId,
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    continueCreation() {
+      this.isHiddenAdditionalContentButton = true;
+      this.isHiddenAdditionalContent = true;
+      this.isHiddenTagButton = false;
+      this.isHiddenTag = false;
+    },
+    createAdditionalContent() {
+      if (!this.validPath()) return;
+
       this.$http
         .post("http://localhost:8085/post_album_content/", {
           path: this.path,
@@ -382,7 +437,9 @@ export default {
     },
     validPostAlbumDescription() {
       if (this.postAlbumDescription.length < 1) {
-        alert("Your post album description should contain at least 1 character!");
+        alert(
+          "Your post album description should contain at least 1 character!"
+        );
         return;
       } else if (this.postAlbumDescription.length > 50) {
         alert(
