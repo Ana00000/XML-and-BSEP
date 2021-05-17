@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
@@ -112,18 +111,18 @@ func initPostCollectionPostsHandler(service *service.PostCollectionPostsService)
 func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handler.CommentHandler, handlerPost *handler.PostHandler,
 	handlerPostAlbum *handler.PostAlbumHandler, handlerPostCollection *handler.PostCollectionHandler,
 	handlerSinglePost *handler.SinglePostHandler, handlerPostCollectionPosts *handler.PostCollectionPostsHandler){
-	router := mux.NewRouter().StrictSlash(true)
-
-	router.HandleFunc("/activity/", handlerActivity.CreateActivity).Methods("POST")
-	router.HandleFunc("/comment/", handlerComment.CreateComment).Methods("POST")
-	router.HandleFunc("/update_post/", handlerPost.UpdatePost).Methods("PUT")
-	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
-	router.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts).Methods("POST")
 
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/post/", handlerPost.CreatePost)
 	mux.HandleFunc("/post_album/", handlerPostAlbum.CreatePostAlbum)
 	mux.HandleFunc("/single_post/", handlerSinglePost.CreateSinglePost)
+	mux.HandleFunc("/activity/", handlerActivity.CreateActivity)
+	mux.HandleFunc("/comment/", handlerComment.CreateComment)
+	mux.HandleFunc("/update_post/", handlerPost.UpdatePost)
+	mux.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection)
+	mux.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts)
+
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8084", handlerVar))
 }

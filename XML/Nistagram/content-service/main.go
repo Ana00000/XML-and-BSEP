@@ -3,7 +3,6 @@ package main
 import (
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
-	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/handler"
@@ -130,18 +129,18 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 	handlerPostAlbumContent *handler.PostAlbumContentHandler, handlerSinglePostContent *handler.SinglePostContentHandler,
 	handlerStoryAlbumContent *handler.StoryAlbumContentHandler, handlerSingleStoryContent *handler.SingleStoryContentHandler,
 	handlerCommentContent *handler.CommentContentHandler, handlerMessageContent *handler.MessageContentHandler){
-	router := mux.NewRouter().StrictSlash(true)
-
-	router.HandleFunc("/advertisement_content/", handlerAdvertisementContent.CreateAdvertisementContent).Methods("POST")
-	router.HandleFunc("/post_album_content/", handlerPostAlbumContent.CreatePostAlbumContent).Methods("POST")
-	router.HandleFunc("/story_album_content/", handlerStoryAlbumContent.CreateStoryAlbumContent).Methods("POST")
-	router.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent).Methods("POST")
-	router.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent).Methods("POST")
 
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/content/", handlerContent.CreateContent)
 	mux.HandleFunc("/single_post_content/", handlerSinglePostContent.CreateSinglePostContent)
 	mux.HandleFunc("/single_story_content/", handlerSingleStoryContent.CreateSingleStoryContent)
+	mux.HandleFunc("/advertisement_content/", handlerAdvertisementContent.CreateAdvertisementContent)
+	mux.HandleFunc("/post_album_content/", handlerPostAlbumContent.CreatePostAlbumContent)
+	mux.HandleFunc("/story_album_content/", handlerStoryAlbumContent.CreateStoryAlbumContent)
+	mux.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent)
+	mux.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent)
+
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8085", handlerVar))
 }
