@@ -34,6 +34,14 @@ func (service * FollowRequestService) FindAllFollowerRequestsForUser(userId uuid
 	return nil
 }
 
+func (service * FollowRequestService) FindAllPendingFollowerRequestsForUser(userId uuid.UUID) []model.FollowRequest{
+	requests := service.Repo.FindAllPendingFollowRequestsForUser(userId)
+	if requests != nil {
+		return requests
+	}
+	return nil
+}
+
 func (service * FollowRequestService) FindFollowRequest(classicUserId uuid.UUID, followerUserId uuid.UUID) *model.FollowRequest{
 	request := service.Repo.FindFollowRequest(classicUserId, followerUserId)
 	if request != nil {

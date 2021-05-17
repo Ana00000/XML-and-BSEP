@@ -59,13 +59,10 @@ export default {
           localStorage.setItem("username", this.user.username);
           localStorage.setItem("token", resp.data.token)
           localStorage.setItem("userId", resp.data.id)
-
-
           localStorage.setItem("userType", resp.data.userType)
-
-
+         
           this.$http
-          .get("http://localhost:8080/find_profile_settings_by_user_id?id="+resp.data.id)
+          .get("http://localhost:8087/find_profile_settings_by_user_id?id="+resp.data.id)
           .then((resp) => {
           console.log("FOUND PROFILE SETTINGS")
           console.log("USER PRIVACY")
@@ -76,10 +73,11 @@ export default {
           }else if (resp.data.userVisibility == 1){
              localStorage.setItem("userPrivacy", "PUBLIC")
           }
-         }).catch(console.log);
 
-          console.log(localStorage.getItem("userType"))
           window.location.href = "http://localhost:8081/";
+
+         }).catch(console.log);
+         
         })
         .catch((er) => {
           alert("Invalid username and/or password! Please, try again!");

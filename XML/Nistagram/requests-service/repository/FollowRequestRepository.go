@@ -33,6 +33,22 @@ func (repo * FollowRequestRepository) FindAllFollowRequestsForUser(userId uuid.U
 	return requests
 }
 
+
+func (repo * FollowRequestRepository) FindAllPendingFollowRequestsForUser(userId uuid.UUID) []model.FollowRequest{
+	var allRequests = repo.FindAllFollowRequestsForUser(userId)
+	var pendingRequests []model.FollowRequest
+
+	for i := 0; i < len(allRequests); i++{
+		if allRequests[i].FollowRequestStatus == model.PENDING{
+			pendingRequests = append(pendingRequests, allRequests[i])
+		}
+	}
+
+	return pendingRequests
+}
+
+
+
 func (repo * FollowRequestRepository) FindFollowRequest(classicUserId uuid.UUID, followerUserId uuid.UUID ) *model.FollowRequest{
 	request := &model.FollowRequest{}
 

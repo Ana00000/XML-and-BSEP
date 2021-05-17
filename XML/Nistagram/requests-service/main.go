@@ -121,6 +121,9 @@ func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContent
 	
 	mux := http.NewServeMux()
 	mux.HandleFunc("/create_follow_request/", followRequestHandler.CreateFollowRequest)
+	mux.HandleFunc("/find_all_pending_requests_for_user", followRequestHandler.FindAllPendingFollowerRequestsForUser)
+	mux.HandleFunc("/find_request_by_id", followRequestHandler.FindRequestById)
+	mux.HandleFunc("/reject_follow_request", followRequestHandler.RejectFollowRequest)
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8087", handlerVar))
 }

@@ -247,6 +247,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	mux.HandleFunc("/find_user_by_username", userHandler.FindByUserName)
 	mux.HandleFunc("/find_all_users_but_logged_in", userHandler.FindAllUsersButLoggedIn)
 	mux.HandleFunc("/find_selected_user_by_id", classicUserHandler.FindSelectedUserById)
+	mux.HandleFunc("/accept_follow_request/", classicUserFollowingsHandler.AcceptFollowerRequest)
 
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8080", handlerVar))

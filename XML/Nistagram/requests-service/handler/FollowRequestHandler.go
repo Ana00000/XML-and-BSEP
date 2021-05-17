@@ -68,3 +68,34 @@ func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, 
 	w.Header().Set("Content-Type", "application/json")
 }
 
+func (handler *FollowRequestHandler) FindAllPendingFollowerRequestsForUser(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var requests = handler.Service.FindAllPendingFollowerRequestsForUser(uuid.MustParse(id))
+	if  requests == nil {
+		fmt.Println("No user found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	requestsJson, _ := json.Marshal(requests)
+	w.Write(requestsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}
+
+func (handler *FollowRequestHandler) FindRequestById(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var request = handler.Service.FindById(uuid.MustParse(id))
+	if  request == nil {
+		fmt.Println("No user found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	requestJson, _ := json.Marshal(request)
+	w.Write(requestJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}
