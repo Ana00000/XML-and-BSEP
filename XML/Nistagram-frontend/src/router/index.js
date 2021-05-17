@@ -54,6 +54,31 @@ const routes = [
     path: '/createPost',
     name: 'CreatePost',
     component: () => import('../views/CreatePost.vue')
+  },
+  {
+    path: '/createStory',
+    name: 'CreateStory',
+    component: () => import('../views/CreateStory.vue')
+  },
+  {
+    path: '/posts',
+    name: 'Posts',
+    component: () => import('../views/Posts.vue')
+  },
+  {
+    path: '/stories',
+    name: 'Stories',
+    component: () => import('../views/Stories.vue')
+  },
+  {
+    path: '/highlightedStories',
+    name: 'HighlightedStories',
+    component: () => import('../views/HighlightedStories.vue')
+  },
+  {
+    path: '/reactedPosts',
+    name: 'ReactedPosts',
+    component: () => import('../views/ReactedPosts.vue')
   }
 ]
 

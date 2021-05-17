@@ -13,6 +13,7 @@ import (
 
 type SingleStoryContentHandler struct {
 	Service * service.SingleStoryContentService
+	ContentService * service.ContentService
 }
 
 func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.ResponseWriter, r *http.Request) {
@@ -29,9 +30,10 @@ func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.Respon
 		contentType = model.VIDEO
 	}
 
+	id := uuid.New()
 	singleStoryContent := model.SingleStoryContent{
 		Content: model.Content{
-			ID:   uuid.UUID{},
+			ID:   id,
 			Path: singleStoryContentDTO.Path,
 			Type: contentType,
 		},
@@ -43,6 +45,13 @@ func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.Respon
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	err = handler.ContentService.CreateContent(&singleStoryContent.Content)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

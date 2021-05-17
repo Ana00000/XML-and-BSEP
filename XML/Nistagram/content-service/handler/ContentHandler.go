@@ -29,8 +29,9 @@ func (handler *ContentHandler) CreateContent(w http.ResponseWriter, r *http.Requ
 		contentType = model.VIDEO
 	}
 
+	id := uuid.New()
 	content := model.Content{
-		ID:   uuid.UUID{},
+		ID:   id,
 		Path: contentDTO.Path,
 		Type: contentType,
 	}

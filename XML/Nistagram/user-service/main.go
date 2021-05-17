@@ -4,10 +4,8 @@ import (
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
 	_ "github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/mikespook/gorbac"
-	_ "github.com/mikespook/gorbac"
 	"github.com/rs/cors"
 	settingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
@@ -216,21 +214,8 @@ func initConfirmationTokenHandler(confirmationTokenService *service.Confirmation
 }
 
 func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, classicUserHandler *handler.ClassicUserHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler,classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler,classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler,classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler){
-	router := mux.NewRouter().StrictSlash(true)
-
-	router.HandleFunc("/login/", userHandler.LogIn).Methods("POST")
-	router.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken).Methods("POST")
-	//router.HandleFunc("/classic_user/", classicUserHandler.CreateClassicUser).Methods("POST")
-
-	router.HandleFunc("/users/", userHandler.FindAllUsers).Methods("GET")
-	router.HandleFunc("/registered_admin/", adminHandler.CreateAdmin).Methods("POST")
-	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
-	router.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser).Methods("POST")
-	router.HandleFunc("/classic_user_campaigns/", classicUserCampaignsHandler.CreateClassicUserCampaigns).Methods("POST")
-	router.HandleFunc("/classic_user_followings/", classicUserFollowingsHandler.CreateClassicUserFollowings).Methods("POST")
-	router.HandleFunc("/classic_user_followers/", classicUserFollowersHandler.CreateClassicUserFollowers).Methods("POST")
-	
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/registered_admin/", adminHandler.CreateAdmin)
 	mux.HandleFunc("/agent/", agentHandler.CreateAgent)
 	mux.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser)
