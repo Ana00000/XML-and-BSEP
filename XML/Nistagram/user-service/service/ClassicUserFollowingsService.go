@@ -20,6 +20,6 @@ func (service * ClassicUserFollowingsService) CreateClassicUserFollowings(classi
 }
 
 
-func (service * ClassicUserFollowingsService)  CheckIfFollowingUser(classicUserId uuid.UUID, followingUserId uuid.UUID, followRequests []requestModel.FollowRequest) string {
-	return service.Repo.CheckIfFollowingUser(classicUserId, followingUserId, followRequests)
+func (service * ClassicUserFollowingsService)  CheckFollowingStatus(classicUserId uuid.UUID, followingUserId uuid.UUID, followRequests []requestModel.FollowRequest) string {
+	return service.Repo.CheckFollowingStatus(classicUserId, followingUserId, followRequests)
 }

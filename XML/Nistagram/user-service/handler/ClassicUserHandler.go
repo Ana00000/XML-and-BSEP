@@ -46,7 +46,14 @@ func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r
 
 	var allFollowRequestsForUser = handler.FollowRequestService.FindAllFollowerRequestsForUser(uuid.MustParse(logId))
 
-	user.FollowingStatus = handler.ClassicUserFollowingsService.CheckIfFollowingUser(uuid.MustParse(logId),uuid.MustParse(id),allFollowRequestsForUser)
+	var checkFollowingStatus = handler.ClassicUserFollowingsService.CheckFollowingStatus(uuid.MustParse(logId),uuid.MustParse(id),allFollowRequestsForUser)
+	if (checkFollowingStatus == "FOLLOWING") || (checkFollowingStatus == "NOT FOLLOWING") || (checkFollowingStatus == "PENDING"){
+		user.FollowingStatus = checkFollowingStatus
+	}else{
+		fmt.Println("Check if following failed")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
 
 	userJson, _ := json.Marshal(user)
 	w.Write(userJson)
