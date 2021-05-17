@@ -72,15 +72,17 @@ export default {
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Update Profile', path: '/updateProfile' },
-                { title: 'Search users', path: '/searchUsers' },
-                { title: 'Create Post', path: '/createPost' }
+                { title: 'Create Post', path: '/createPost' },
+                { title: 'Create Story', path: '/createStory' },
+                { title: 'Search users', path: '/searchUsers' }
             ]
         } else if (this.userType == 2) {   // AGENT
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Update Profile', path: '/updateProfile' },
-                { title: 'Search users', path: '/searchUsers' },
-                { title: 'Create Post', path: '/createPost' }
+                { title: 'Create Post', path: '/createPost' },
+                { title: 'Create Story', path: '/createStory' },
+                { title: 'Search users', path: '/searchUsers' }
             ]
         } else {   // NOT YET REGISTERED
             this.items = [

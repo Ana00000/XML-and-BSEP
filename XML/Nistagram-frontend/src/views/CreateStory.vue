@@ -3,7 +3,7 @@
     <div class="spacing" />
     <v-card width="600" class="mx-auto mt-5" color="white">
       <v-card-title class="justify-center">
-        <h1 class="display-1">Post creation</h1>
+        <h1 class="display-1">Story creation</h1>
       </v-card-title>
       <v-card-text>
         <v-form class="mx-auto ml-5 mr-5">
@@ -51,10 +51,10 @@
           />
           <v-text-field
             label="Description"
-            v-model="postDescription"
+            v-model="storyDescription"
             prepend-icon="mdi-address-circle"
             v-if="!isHiddenDescription"
-          />
+          /> 
           <v-text-field
             label="Path"
             v-model="path"
@@ -70,15 +70,31 @@
             return-object
             single-line
           />
+           <v-select
+            class="typeComboSecond"
+            v-model="selectedStoryType"
+            hint="Choose your publicity story type."
+            :items="storyTypes"
+            item-text="state"
+            :label="label2"
+            return-object
+            single-line
+          />
         </v-form>
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
-        <v-btn color="info mb-5" v-on:click="isHiddenLocation=false"> Add location  </v-btn>
-        <v-btn color="info mb-5" v-on:click="isHiddenTag=false"> Add tag </v-btn>
-        <v-btn color="info mb-5" v-on:click="isHiddenDescription=false"> Add description </v-btn>
+        <v-btn color="info mb-5" v-on:click="isHiddenLocation = false">
+          Add location
+        </v-btn>
+        <v-btn color="info mb-5" v-on:click="isHiddenTag = false">
+          Add tag
+        </v-btn>
+        <v-btn color="info mb-5" v-on:click="isHiddenDescription = false">
+          Add description
+        </v-btn>
       </v-card-actions>
       <v-card-actions class="justify-center mb-5">
-        <v-btn color="info mb-5" v-on:click="createPost"> Create </v-btn>
+        <v-btn color="info mb-5" v-on:click="createStory"> Create </v-btn>
       </v-card-actions>
     </v-card>
     <div class="spacing" />
@@ -87,7 +103,7 @@
 
 <script>
 export default {
-  name: "CreatePost",
+  name: "CreateStory",
   data: () => ({
     longitude: "",
     latitude: "",
@@ -96,21 +112,24 @@ export default {
     streetName: "",
     streetNumber: "",
     tagName: null,
-    postDescription: "",
+    storyDescription: "",
     locationId: null,
     path: "",
     types: ["PICTURE", "VIDEO"],
     selectedType: "PICTURE",
     label1: "Type",
-    postId: null,
+    storyId: null,
     isHiddenLocation: true,
     isHiddenTag: true,
-    isHiddenDescription: true
+    isHiddenDescription: true,
+    storyTypes: ["CLOSE_FRIENDS", "ALL_FRIENDS", "PUBLIC"],
+    selectedStoryType: "CLOSE_FRIENDS",
+    label2: "Story publicity type"
   }),
   methods: {
-    createPost() {
-      if (!this.validPath() || !this.validPostDescription()) return;
-
+    createStory() {
+      if (!this.validPath() || !this.validStoryDescription()) return;
+      
       this.createTag();
 
       if (
@@ -121,7 +140,7 @@ export default {
         this.streetName == "" &&
         this.streetNumber == ""
       ) {
-        this.createPostWithoutLocation();
+        this.createStoryWithoutLocation();
         return;
       }
       if (
@@ -145,7 +164,7 @@ export default {
         })
         .then((response) => {
           this.locationId = response.data;
-          this.createPostWithLocation();
+          this.createStoryWithLocation();
         })
         .catch((er) => {
           console.log(er.response.data);
@@ -156,7 +175,7 @@ export default {
       if (!this.validTag()) return;
 
       this.$http
-        .post("http://localhost:8082/post_tag/", {
+        .post("http://localhost:8082/story_tag/", {
           name: this.tagName,
         })
         .then((response) => {
@@ -166,44 +185,46 @@ export default {
           console.log(er.response.data);
         });
     },
-    createPostWithLocation() {
+    createStoryWithLocation() {
       this.$http
-        .post("http://localhost:8084/single_post/", {
-          description: this.postDescription,
+        .post("http://localhost:8086/single_story/", {
+          description: this.storyDescription,
           userID: localStorage.getItem("userId"),
           locationId: this.locationId,
+          storyType: this.selectedStoryType
         })
         .then((response) => {
           console.log(response.data);
-          this.postId = response.data;
-          this.createPostContent();
+          this.storyId = response.data;
+          this.createStoryContent();
         })
         .catch((er) => {
           console.log(er.response.data);
         });
     },
-    createPostWithoutLocation() {
+    createStoryWithoutLocation() {
       this.$http
-        .post("http://localhost:8084/single_post/", {
-          description: this.postDescription,
+        .post("http://localhost:8086/single_story/", {
+          description: this.storyDescription,
           userID: localStorage.getItem("userId"),
+          storyType: this.selectedStoryType
         })
         .then((response) => {
           console.log(response.data);
-          this.postId = response.data;
-          this.createPostContent();
+          this.storyId = response.data;
+          this.createStoryContent();
         })
         .catch((er) => {
           console.log(er.response.data);
         });
     },
-    createPostContent() {
+    createStoryContent() {
       setTimeout(5000);
       this.$http
-        .post("http://localhost:8085/single_post_content/", {
+        .post("http://localhost:8085/single_story_content/", {
           path: this.path,
           type: this.selectedType,
-          single_post_id: this.postId,
+          single_story_id: this.storyId,
         })
         .then((response) => {
           console.log(response.data);
@@ -311,10 +332,10 @@ export default {
       }
       return true;
     },
-    validPostDescription() {
-      if (this.postDescription.length > 50) {
+    validStoryDescription() {
+      if (this.storyDescription.length > 50) {
         alert(
-          "Your post description shouldn't contain more than 50 characters!"
+          "Your story description shouldn't contain more than 50 characters!"
         );
         return false;
       }
@@ -343,6 +364,11 @@ export default {
 }
 
 .typeCombo {
+  width: 94%;
+  margin-left: 6%;
+}
+
+.typeComboSecond {
   width: 94%;
   margin-left: 6%;
 }

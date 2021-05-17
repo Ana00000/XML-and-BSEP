@@ -115,7 +115,7 @@ func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContent
 	router.HandleFunc("/verificationRequest", verificationRequestHandler.CreateVerificationRequest).Methods("POST")
 	router.HandleFunc("/agentRegistrationRequestHandler", agentRegistrationRequestHandler.CreateAgentRegistrationRequest).Methods("POST")
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8087"), router))
 }
 
 func main() {
