@@ -19,9 +19,9 @@ func (service * FollowRequestService) CreateFollowRequest(followRequest *model.F
 }
 
 func (service * FollowRequestService) FindById(id uuid.UUID) *model.FollowRequest{
-	requests := service.Repo.FindById(id)
-	if requests != nil {
-		return requests
+	request := service.Repo.FindById(id)
+	if request != nil {
+		return request
 	}
 	return nil
 }
@@ -33,3 +33,37 @@ func (service * FollowRequestService) FindAllFollowerRequestsForUser(userId uuid
 	}
 	return nil
 }
+
+func (service * FollowRequestService) FindFollowRequest(classicUserId uuid.UUID, followerUserId uuid.UUID) *model.FollowRequest{
+	request := service.Repo.FindFollowRequest(classicUserId, followerUserId)
+	if request != nil {
+		return request
+	}
+	return nil
+}
+
+func (service * FollowRequestService) UpdateFollowRequestPending(followRequestId uuid.UUID) error {
+	err := service.Repo.UpdateFollowRequestPending(followRequestId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (service * FollowRequestService) UpdateFollowRequestAccepted(followRequestId uuid.UUID) error {
+	err := service.Repo.UpdateFollowRequestAccepted(followRequestId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (service * FollowRequestService) UpdateFollowRequestRejected(followRequestId uuid.UUID) error {
+	err := service.Repo.UpdateFollowRequestRejected(followRequestId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+

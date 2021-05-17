@@ -23,18 +23,47 @@ func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, 
 		return
 	}
 
-	followRequest := model.FollowRequest{
-		ID:          			   uuid.UUID{},
-		ClassicUserId:   			   followRequestDTO.ClassicUserId,
-		FollowerUserId:     			   followRequestDTO.FollowerUserId,
-		FollowRequestStatus:         model.PENDING,
+	// CHECK IF ALREADY EXISTS - IF YES THEN UPDATE TO PENDING IF NOT CREATE NEW PENDING
+	var checkIfExists = handler.Service.FindFollowRequest(followRequestDTO.ClassicUserId, followRequestDTO.FollowerUserId)
+	if checkIfExists == nil{
+		followRequest := model.FollowRequest{
+			ID:          			   uuid.UUID{},
+			ClassicUserId:   		   followRequestDTO.ClassicUserId,
+			FollowerUserId:     	   followRequestDTO.FollowerUserId,
+			FollowRequestStatus:       model.PENDING,
+		}
+
+		err = handler.Service.CreateFollowRequest(&followRequest)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+
+	}else{
+
+		err = handler.Service.UpdateFollowRequestPending(checkIfExists.ID)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+
 	}
 
-	err = handler.Service.CreateFollowRequest(&followRequest)
-	if err != nil {
-		fmt.Println(err)
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+
+}
+
+func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var request = handler.Service.FindById(uuid.MustParse(id))
+	if request == nil{
+		fmt.Println("Request not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	handler.Service.UpdateFollowRequestRejected(uuid.MustParse(id))
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

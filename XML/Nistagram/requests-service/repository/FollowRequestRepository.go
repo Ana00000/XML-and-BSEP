@@ -27,6 +27,39 @@ func (repo *FollowRequestRepository) FindById(id uuid.UUID) *model.FollowRequest
 
 func (repo * FollowRequestRepository) FindAllFollowRequestsForUser(userId uuid.UUID) []model.FollowRequest{
 	var requests []model.FollowRequest
+
+
 	repo.Database.Select("*").Where("classic_user_id = ?", userId).Find(&requests)
 	return requests
+}
+
+func (repo * FollowRequestRepository) FindFollowRequest(classicUserId uuid.UUID, followerUserId uuid.UUID ) *model.FollowRequest{
+	request := &model.FollowRequest{}
+
+	if repo.Database.First(&request, "classic_user_id = ? and follower_user_id = ?", classicUserId, followerUserId).RowsAffected == 0{
+		return nil
+	}
+	return request
+
+}
+
+func (repo *FollowRequestRepository) UpdateFollowRequestPending(followRequestId uuid.UUID) error {
+	result := repo.Database.Model(&model.FollowRequest{}).Where("id = ?", followRequestId).Update("follow_request_status", model.PENDING)
+	fmt.Println(result.RowsAffected)
+	fmt.Println("updating")
+	return nil
+}
+
+func (repo *FollowRequestRepository) UpdateFollowRequestAccepted(followRequestId uuid.UUID) error {
+	result := repo.Database.Model(&model.FollowRequest{}).Where("id = ?", followRequestId).Update("follow_request_status", model.ACCEPTED)
+	fmt.Println(result.RowsAffected)
+	fmt.Println("updating")
+	return nil
+}
+
+func (repo *FollowRequestRepository) UpdateFollowRequestRejected(followRequestId uuid.UUID) error {
+	result := repo.Database.Model(&model.FollowRequest{}).Where("id = ?", followRequestId).Update("follow_request_status", model.REJECT)
+	fmt.Println(result.RowsAffected)
+	fmt.Println("updating")
+	return nil
 }
