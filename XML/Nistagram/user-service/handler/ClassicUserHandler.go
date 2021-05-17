@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	requestsService "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
 	settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -15,6 +16,7 @@ type ClassicUserHandler struct {
 	ClassicUserService * service.ClassicUserService
 	ProfileSettingsService * settingsService.ProfileSettingsService
 	ClassicUserFollowingsService * service.ClassicUserFollowingsService
+	FollowRequestService * requestsService.FollowRequestService
 }
 
 func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r *http.Request) {
@@ -42,14 +44,9 @@ func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r
 		fmt.Println("PUBLIC")
 	}
 
-	var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingUser(uuid.MustParse(logId),uuid.MustParse(id))
-	if checkIfFollowing == false {
-		user.FollowingCheck = false
-		fmt.Println("FALSE")
-	} else {
-		user.FollowingCheck = true
-		fmt.Println("TRUE")
-	}
+	var allFollowRequestsForUser = handler.FollowRequestService.FindAllFollowerRequestsForUser(uuid.MustParse(logId))
+
+	user.FollowingStatus = handler.ClassicUserFollowingsService.CheckIfFollowingUser(uuid.MustParse(logId),uuid.MustParse(id),allFollowRequestsForUser)
 
 	userJson, _ := json.Marshal(user)
 	w.Write(userJson)
