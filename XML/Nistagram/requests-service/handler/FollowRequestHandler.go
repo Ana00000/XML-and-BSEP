@@ -72,10 +72,7 @@ func (handler *FollowRequestHandler) FindAllPendingFollowerRequestsForUser(w htt
 	id := r.URL.Query().Get("id")
 
 	var requests = handler.Service.FindAllPendingFollowerRequestsForUser(uuid.MustParse(id))
-	if  requests == nil {
-		fmt.Println("No user found")
-		w.WriteHeader(http.StatusExpectationFailed)
-	}
+
 
 	requestsJson, _ := json.Marshal(requests)
 	w.Write(requestsJson)

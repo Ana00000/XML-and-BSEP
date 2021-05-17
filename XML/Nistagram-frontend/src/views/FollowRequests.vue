@@ -20,7 +20,7 @@
                         <v-list-item :key="request.id" :value="request" v-on:click="redirectToSelectedRequest" >
                             <template >  
                             <v-list-item-content>
-                              <v-list-item-subtitle v-text="'FOLLOWER: ' + request.followerUserId" class="containerDiv"></v-list-item-subtitle>
+                              <v-list-item-subtitle v-text="'FOLLOWER: ' + request.follower_user_id" class="containerDiv"></v-list-item-subtitle>
                               <v-list-item-subtitle v-text="'REQUEST ID: ' + request.id" class="containerDiv"></v-list-item-subtitle>
                               <v-list-item-subtitle v-text="' '" class="emptyContentClass"></v-list-item-subtitle>
                             </v-list-item-content>
@@ -78,7 +78,7 @@ export default {
     console.log("OK");
      console.log("usao ovde i id je: "+ this.selectedRequest.id);
         localStorage.setItem("selectedRequestId",this.selectedRequest.id);
-        window.location.href = "http://localhost:8081/selectedRequest";
+        window.location.href = "http://localhost:8081/selectedFollowRequest";
       
     }
     }

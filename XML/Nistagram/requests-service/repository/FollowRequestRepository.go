@@ -33,9 +33,17 @@ func (repo * FollowRequestRepository) FindAllFollowRequestsForUser(userId uuid.U
 	return requests
 }
 
+func (repo * FollowRequestRepository) FindAllFollowRequestsForFollower(userId uuid.UUID) []model.FollowRequest{
+	var requests []model.FollowRequest
+
+
+	repo.Database.Select("*").Where("follower_user_id = ?", userId).Find(&requests)
+	return requests
+}
+
 
 func (repo * FollowRequestRepository) FindAllPendingFollowRequestsForUser(userId uuid.UUID) []model.FollowRequest{
-	var allRequests = repo.FindAllFollowRequestsForUser(userId)
+	var allRequests = repo.FindAllFollowRequestsForFollower(userId)
 	var pendingRequests []model.FollowRequest
 
 	for i := 0; i < len(allRequests); i++{

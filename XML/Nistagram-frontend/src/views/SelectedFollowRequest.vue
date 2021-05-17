@@ -56,7 +56,7 @@
 
 <script>
 export default {
-  name: "SelectedRequest",
+  name: "SelectedFollowRequest",
   data: () => ({
     id: null,
     followerId: null,
@@ -78,10 +78,10 @@ export default {
     getRequest() {
       console.log(this.selectedRequestId);
       this.$http
-        .get("http://localhost:80807/find_request_by_id?id=" + this.selectedRequestId)
+        .get("http://localhost:8087/find_request_by_id?id=" + this.selectedRequestId)
         .then((resp) => {
           this.setRequestInfo(resp.data);
-          this.requestFollower = resp.data.followerUserId
+          this.requestFollower = resp.data.follower_user_id
           console.log(resp.data);
           
         })
@@ -89,7 +89,7 @@ export default {
     },
     setRequestInfo(item) {
       this.id = item.id;
-      this.followerUserId = item.followerUserId;
+      this.followerUserId = item.follower_user_id;
       
     },
     acceptRequest() {
@@ -103,18 +103,18 @@ export default {
         .then((resp) => {
           console.log(resp.data);
           alert("Accepted follow!");
-          window.location.reload();
+           window.location.href = "http://localhost:8081/followRequests";
         })
         .catch((err) => console.log(err));
       
     },
     rejectRequest(){
        this.$http
-        .post("http://localhost:8087/reject_follow_request?id=?"+this.selectedRequestId, {})
+        .post("http://localhost:8087/reject_follow_request?id="+this.selectedRequestId, {})
         .then((resp) => {
           console.log(resp.data);
           alert("Rejected  follow!");
-          window.location.reload();
+           window.location.href = "http://localhost:8081/followRequests";
         })
         .catch((err) => console.log(err));
     }

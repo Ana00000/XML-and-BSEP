@@ -84,6 +84,11 @@ const routes = [
     path: '/followRequests',
     name: 'FollowRequests',
     component: () => import('../views/FollowRequests.vue')
+  },
+  {
+    path: '/selectedFollowRequest',
+    name: 'SelectedFollowRequest',
+    component: () => import('../views/SelectedFollowRequest.vue')
   }
 ]
 

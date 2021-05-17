@@ -62,15 +62,17 @@ export default {
           localStorage.setItem("userType", resp.data.userType)
          
           this.$http
-          .get("http://localhost:8087/find_profile_settings_by_user_id?id="+resp.data.id)
+          .get("http://localhost:8088/find_profile_settings_by_user_id?id="+resp.data.id)
           .then((resp) => {
           console.log("FOUND PROFILE SETTINGS")
           console.log("USER PRIVACY")
-          console.log(resp.data.userVisibility)
+          console.log(resp.data.user_visibility)
 
-          if (resp.data.userVisibility == 0){
+          if (resp.data.user_visibility == 0){
+            console.log("u 0")
              localStorage.setItem("userPrivacy", "PRIVATE")
-          }else if (resp.data.userVisibility == 1){
+          }else if (resp.data.user_visibility == 1){
+            console.log("u 1")
              localStorage.setItem("userPrivacy", "PUBLIC")
           }
 

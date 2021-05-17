@@ -77,13 +77,13 @@
     </div>
     <div class="FollowRequestSentButton">
       <v-btn
-        v-if="!isHiddenFollowRequestSentButton"
+        v-if="!isHiddenFollowRequestSent"
         color="#aba7ff"
         elevation="24"
         x-large
         raised
         rounded
-        >Send Follow Request</v-btn
+        >Follow Request Sent</v-btn
       >
     </div>
      </div>
@@ -175,7 +175,7 @@ export default {
      this.$http
         .post("http://localhost:8080/create_following/", {
           classic_user_id: this.logId,
-          follower_user_id: this.selectedUser,
+          following_user_id: this.selectedUser,
       
         })
         .then((resp) => {
@@ -195,12 +195,12 @@ export default {
        this.$http
         .post("http://localhost:8087/create_follow_request/", {
           classic_user_id: this.logId,
-          following_user_id: this.selectedUser,
+          follower_user_id: this.selectedUser,
       
         })
         .then((resp) => {
           console.log(resp.data);
-          alert("Successfully followed profile!");
+          alert("Successfully sent follow request!");
           window.location.reload();
         })
         .catch((err) => console.log(err));

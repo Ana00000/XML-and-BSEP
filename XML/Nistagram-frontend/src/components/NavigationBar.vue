@@ -64,14 +64,16 @@ export default {
     init(){
         this.userType =localStorage.getItem('userType');
         this.userPrivacy = localStorage.getItem('userPrivacy')
+        
+        console.log(this.userPrivacy)
         if (this.userType == 0){   // ADMIN
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Update Profile', path: '/updateProfile' }
             ]
         } else if (this.userType == 1) {   // REGISTERED_USER
-
-            if this.userPrivacy == "PRIVATE"{
+            console.log("NESTO")
+            if (this.userPrivacy == "PRIVATE"){
                 this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Posts', path: '/posts' },
@@ -97,6 +99,7 @@ export default {
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' }
             ]
+            }
         } else if (this.userType == 2) {   // AGENT
             this.items = [
                 { title: 'Home', path: '/' },
@@ -109,7 +112,7 @@ export default {
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' }
             ]
-            }
+            
            
         } else {   // NOT YET REGISTERED
             this.items = [

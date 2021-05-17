@@ -34,7 +34,9 @@ func (repo * ClassicUserFollowingsRepository) FindAllFollowingsForUser(userId uu
 func (repo * ClassicUserFollowingsRepository) CheckFollowingStatus(classicUserId uuid.UUID, followingUserId uuid.UUID, followRequests []requestModel.FollowRequest) string{
 	var allFollowingForUser = repo.FindAllFollowingsForUser(classicUserId)
 
-	following, doneFollowing := repo.checkIfFollowing(allFollowingForUser, followingUserId)
+	fmt.Println("DUZINA")
+	fmt.Println(len(followRequests))
+	following, doneFollowing := repo.CheckIfFollowing(allFollowingForUser, followingUserId)
 	if doneFollowing {
 		return following
 	}
@@ -44,21 +46,24 @@ func (repo * ClassicUserFollowingsRepository) CheckFollowingStatus(classicUserId
 		return pending
 	}
 
+	fmt.Println("NISTA")
 	return "NOT FOLLOWING"
 }
 
 func (repo *ClassicUserFollowingsRepository) CheckIfPending(followRequests []requestModel.FollowRequest, followingUserId uuid.UUID) (string, bool) {
 	for i := 0; i < len(followRequests); i++ {
 		if followRequests[i].FollowerUserId == followingUserId && followRequests[i].FollowRequestStatus == requestModel.PENDING {
+			fmt.Println("PENDING JE")
 			return "PENDING", true
 		}
 	}
 	return "", false
 }
 
-func (repo *ClassicUserFollowingsRepository) checkIfFollowing(allFollowingForUser []model.ClassicUserFollowings, followingUserId uuid.UUID) (string, bool) {
+func (repo *ClassicUserFollowingsRepository) CheckIfFollowing(allFollowingForUser []model.ClassicUserFollowings, followingUserId uuid.UUID) (string, bool) {
 	for i := 0; i < len(allFollowingForUser); i++ {
 		if allFollowingForUser[i].FollowingUserId == followingUserId {
+			fmt.Println("FOLLOWING JE")
 			return "FOLLOWING", true
 		}
 	}
