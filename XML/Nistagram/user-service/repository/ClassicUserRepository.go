@@ -84,3 +84,11 @@ func (repo *ClassicUserRepository) ConvertFromUserToSelectedUserDTO(user *model.
 	userDTO.Website = user.Website
 	return userDTO
 }
+
+func (repo *ClassicUserRepository) FindClassicUserByUserName(userName string) *model.ClassicUser {
+	user := &model.ClassicUser{}
+	if repo.Database.First(&user, "username = ?", userName).RowsAffected == 0 {
+		return nil
+	}
+	return user
+}
