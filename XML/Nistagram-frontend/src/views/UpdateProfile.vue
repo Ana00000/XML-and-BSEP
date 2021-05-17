@@ -93,7 +93,7 @@
       <v-btn
         v-if="!isHiddenChange"
         v-on:click="isHiddenUpdate = false, isHiddenChange = true, isHiddenCancel = false, isReadOnly = false"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
@@ -106,7 +106,7 @@
       <v-btn
         v-if="!isHiddenUpdate"
         v-on:click="updateProfile"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
@@ -119,7 +119,7 @@
       <v-btn
         v-if="!isHiddenCancel"
         v-on:click="cancelChanges"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
