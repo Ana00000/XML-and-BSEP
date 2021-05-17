@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
 	_ "github.com/lib/pq"
@@ -13,12 +14,13 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"net/http"
+	"os"
 	_ "os"
 	_ "strconv"
 )
 
 func initDB() *gorm.DB{
-	dsn := "host=localhost user=postgres password=root dbname=nistagram-db port=5432 sslmode=disable"
+	dsn := initDSN()
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -27,6 +29,25 @@ func initDB() *gorm.DB{
 
 	db.AutoMigrate(&model.Location{})
 	return db
+}
+
+func initDSN() string {
+	host := "localhost"
+	user := "postgres"
+	password := "root"
+	dbname := "nistagram-db"
+	dbport := "5432"
+	if os.Getenv("DBHOST") != "" && os.Getenv("USER") != "" && os.Getenv("PASSWORD") != "" &&
+		os.Getenv("DBNAME") != "" && os.Getenv("DBPORT") != "" {
+		host = os.Getenv("DBHOST")
+		user = os.Getenv("USER")
+		password = os.Getenv("PASSWORD")
+		dbname = os.Getenv("DBNAME")
+		dbport = os.Getenv("DBPORT")
+	}
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", host, user, password, dbname, dbport)
+
+	return dsn
 }
 
 func initRepo(database *gorm.DB) *repository.LocationRepository{

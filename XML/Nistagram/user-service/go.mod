@@ -1,8 +1,9 @@
 module user-service
 
-replace github.com/xml/XML-and-BSEP/XML/Nistagram/user-service => ./
-
-replace github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service => ../settings-service
+replace (
+	github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service => ../settings-service
+	github.com/xml/XML-and-BSEP/XML/Nistagram/user-service => ./
+)
 
 go 1.16
 

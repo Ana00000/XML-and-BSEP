@@ -1,20 +1,21 @@
 package main
 
 import (
+	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/repository"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/service"
-	"fmt"
-	"github.com/gorilla/mux"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
+	"os"
 )
 
 func initDB() *gorm.DB{
-	dsn := "host=localhost user=postgres password=root dbname=nistagram-db port=5432 sslmode=disable"
+	dsn := initDSN()
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -23,6 +24,25 @@ func initDB() *gorm.DB{
 
 	db.AutoMigrate(&model.MessageSubstance{}, &model.Message{}, &model.StoryMessageSubstance{}, &model.PostMessageSubstance{})
 	return db
+}
+
+func initDSN() string {
+	host := "localhost"
+	user := "postgres"
+	password := "root"
+	dbname := "nistagram-db"
+	dbport := "5432"
+	if os.Getenv("DBHOST") != "" && os.Getenv("USER") != "" && os.Getenv("PASSWORD") != "" &&
+		os.Getenv("DBNAME") != "" && os.Getenv("DBPORT") != "" {
+		host = os.Getenv("DBHOST")
+		user = os.Getenv("USER")
+		password = os.Getenv("PASSWORD")
+		dbname = os.Getenv("DBNAME")
+		dbport = os.Getenv("DBPORT")
+	}
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", host, user, password, dbname, dbport)
+
+	return dsn
 }
 
 func initMessageRepo(database *gorm.DB) *repository.MessageRepository{

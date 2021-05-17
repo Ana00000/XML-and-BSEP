@@ -1,0 +1,15 @@
+FROM golang:1.15-alpine3.13
+
+RUN mkdir /go/settings-service
+COPY ./settings-service /go/settings-service
+
+WORKDIR app
+RUN apk update \
+    && apk add socat \
+    && apk add build-base
+COPY ./user-service/go.* .
+RUN go mod download
+COPY ./user-service .
+RUN go build -o /app/user-service
+EXPOSE 8091
+CMD ["/app/user-service"]
