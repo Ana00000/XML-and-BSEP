@@ -71,18 +71,26 @@ export default {
         } else if (this.userType == 1) {   // REGISTERED_USER
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Posts', path: '/posts' },
+                { title: 'Stories', path: '/stories' },
+                { title: 'Highlighted Stories', path: '/highlightedStories' },
+                { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
                 { title: 'Create Story', path: '/createStory' },
-                { title: 'Search users', path: '/searchUsers' }
+                { title: 'Search users', path: '/searchUsers' },
+                { title: 'Update Profile', path: '/updateProfile' }
             ]
         } else if (this.userType == 2) {   // AGENT
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Posts', path: '/posts' },
+                { title: 'Stories', path: '/stories' },
+                { title: 'HighlightedStories', path: '/highlightedStories' },
+                { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
                 { title: 'Create Story', path: '/createStory' },
-                { title: 'Search users', path: '/searchUsers' }
+                { title: 'Search users', path: '/searchUsers' },
+                { title: 'Update Profile', path: '/updateProfile' }
             ]
         } else {   // NOT YET REGISTERED
             this.items = [
