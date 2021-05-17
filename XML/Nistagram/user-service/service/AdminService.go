@@ -26,8 +26,8 @@ func (service *AdminService) UpdateAdminProfileInfo(user *dto.UserUpdateProfileI
 	}
 	return nil
 }
-func (service *AdminService) UpdateAdminPassword(userId uuid.UUID, password string) error {
-	err := service.Repo.UpdateAdminPassword(userId,password)
+func (service *AdminService) UpdateAdminPassword(userId uuid.UUID, salt string, password string) error {
+	err := service.Repo.UpdateAdminPassword(userId, salt, password)
 	if err != nil {
 		return err
 	}

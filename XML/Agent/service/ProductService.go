@@ -1,8 +1,8 @@
 package service
 
 import (
-	"../model"
-	"../repository"
+	"github.com/xml/XML-and-BSEP/XML/Agent/model"
+	"github.com/xml/XML-and-BSEP/XML/Agent/repository"
 )
 
 type ProductService struct {

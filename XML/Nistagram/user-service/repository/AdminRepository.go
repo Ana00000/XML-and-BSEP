@@ -9,16 +9,16 @@ import (
 )
 
 type AdminRepository struct {
-	Database * gorm.DB
+	Database *gorm.DB
 }
 
-func (repo * AdminRepository) CreateAdmin(admin *model.Admin) error {
+func (repo *AdminRepository) CreateAdmin(admin *model.Admin) error {
 	result := repo.Database.Create(admin)
 	fmt.Print(result)
 	return nil
 }
 
-func (repo * AdminRepository) UpdateAdminProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
+func (repo *AdminRepository) UpdateAdminProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
 	gender := model.OTHER
 	switch user.Gender {
 	case "MALE":
@@ -50,8 +50,8 @@ func (repo * AdminRepository) UpdateAdminProfileInfo(user *dto.UserUpdateProfile
 	return nil
 }
 
-func (repo *AdminRepository) UpdateAdminPassword(userId uuid.UUID, password string) error {
-	result := repo.Database.Model(&model.Admin{}).Where("id = ?", userId).Update("password", password)
+func (repo *AdminRepository) UpdateAdminPassword(userId uuid.UUID, salt string, password string) error {
+	result := repo.Database.Model(&model.Admin{}).Where("id = ?", userId).Update("salt", salt).Update("password", password)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating")
 	return nil

@@ -9,17 +9,16 @@ import (
 )
 
 type UserRepository struct {
-	Database * gorm.DB
+	Database *gorm.DB
 }
 
-func (repo * UserRepository) CreateUser(user *model.User) error {
+func (repo *UserRepository) CreateUser(user *model.User) error {
 	result := repo.Database.Create(user)
 	fmt.Print(result)
 	return nil
 }
 
-
-func (repo * UserRepository) FindAllUsers() []model.User{
+func (repo *UserRepository) FindAllUsers() []model.User {
 	var users []model.User
 	repo.Database.Select("*").Find(&users)
 	return users
@@ -27,7 +26,7 @@ func (repo * UserRepository) FindAllUsers() []model.User{
 
 func (repo *UserRepository) FindByUserName(userName string) *model.User {
 	user := &model.User{}
-	if repo.Database.First(&user, "username = ?", userName).RowsAffected == 0{
+	if repo.Database.First(&user, "username = ?", userName).RowsAffected == 0 {
 
 		return nil
 
@@ -37,7 +36,7 @@ func (repo *UserRepository) FindByUserName(userName string) *model.User {
 
 func (repo *UserRepository) FindByEmail(email string) *model.User {
 	user := &model.User{}
-	if repo.Database.First(&user, "email = ?", email).RowsAffected == 0{
+	if repo.Database.First(&user, "email = ?", email).RowsAffected == 0 {
 		return nil
 	}
 	return user
@@ -45,7 +44,7 @@ func (repo *UserRepository) FindByEmail(email string) *model.User {
 
 func (repo *UserRepository) FindByID(ID uuid.UUID) *model.User {
 	user := &model.User{}
-	if repo.Database.First(&user, "id = ?", ID).RowsAffected == 0{
+	if repo.Database.First(&user, "id = ?", ID).RowsAffected == 0 {
 		return nil
 	}
 	return user
@@ -58,7 +57,7 @@ func (repo *UserRepository) UpdateUserConfirmed(userId uuid.UUID, isConfirmed bo
 	return nil
 }
 
-func (repo * UserRepository) UpdateUserProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
+func (repo *UserRepository) UpdateUserProfileInfo(user *dto.UserUpdateProfileInfoDTO) error {
 	gender := model.OTHER
 	switch user.Gender {
 	case "MALE":
@@ -89,9 +88,41 @@ func (repo * UserRepository) UpdateUserProfileInfo(user *dto.UserUpdateProfileIn
 	return nil
 }
 
-func (repo *UserRepository) UpdateUserPassword(userId uuid.UUID, password string) error {
-	result := repo.Database.Model(&model.User{}).Where("id = ?", userId).Update("password", password)
+func (repo *UserRepository) UpdateUserPassword(userId uuid.UUID, salt string, password string) error {
+	result := repo.Database.Model(&model.User{}).Where("id = ?", userId).Update("salt", salt).Update("password", password)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating")
 	return nil
+}
+
+func (repo *UserRepository) FindAllFollowersInfoForUser(followers []model.ClassicUserFollowers) []model.User {
+
+	var followerUsers []model.User
+
+	for i := 0; i < len(followers); i++ {
+		var users model.User
+		repo.Database.Select("*").Where("id=?", followers[i].FollowerUserId).Find(&users)
+		followerUsers = append(followerUsers, users)
+	}
+
+	return followerUsers
+}
+
+func (repo *UserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []model.User {
+
+	var users []model.User
+	repo.Database.Select("*").Where("id != ?", userId).Find(&users)
+	return users
+}
+
+func (repo *UserRepository) FindAllPublicUsers(publicUsers []uuid.UUID) []model.User {
+
+	var users []model.User
+	for i := 0; i < len(publicUsers); i++ {
+		var user model.User
+		repo.Database.Select("*").Where("id != ?", publicUsers[i]).Find(&user)
+		users = append(users, user)
+	}
+
+	return users
 }

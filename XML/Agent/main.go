@@ -1,15 +1,17 @@
 package main
 
 import (
-	"./handler"
-	"./model"
-	"./repository"
-	"./service"
 	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/xml/XML-and-BSEP/XML/Agent/handler"
+	"github.com/xml/XML-and-BSEP/XML/Agent/model"
+	"github.com/xml/XML-and-BSEP/XML/Agent/repository"
+	"github.com/xml/XML-and-BSEP/XML/Agent/service"
+	"github.com/xml/XML-and-BSEP/XML/Agent/util"
+	"gopkg.in/go-playground/validator.v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -18,7 +20,7 @@ import (
 	_ "strconv"
 )
 
-func initDB() *gorm.DB{
+func initDB() *gorm.DB {
 	dsn := "host=localhost user=postgres password=root dbname=nistagram-db port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
@@ -30,32 +32,42 @@ func initDB() *gorm.DB{
 	return db
 }
 
-func initAgentUserRepo(database *gorm.DB) *repository.AgentUserRepository{
-	return &repository.AgentUserRepository { Database: database }
+func initAgentPasswordUtil() *util.AgentPasswordUtil{
+	return &util.AgentPasswordUtil { }
 }
 
-func initAgentUserServices(repo *repository.AgentUserRepository) *service.AgentUserService{
-	return &service.AgentUserService { Repo: repo }
+func initAgentUserRepo(database *gorm.DB) *repository.AgentUserRepository {
+	return &repository.AgentUserRepository{Database: database}
 }
 
-func initAgentUserHandler(service *service.AgentUserService) *handler.AgentUserHandler{
-	return &handler.AgentUserHandler { Service: service }
+func initAgentUserServices(repo *repository.AgentUserRepository) *service.AgentUserService {
+	return &service.AgentUserService{Repo: repo}
 }
 
-func initProductRepo(database *gorm.DB) *repository.ProductRepository{
-	return &repository.ProductRepository { Database: database }
+func initAgentUserHandler(agentUserService *service.AgentUserService,validator *validator.Validate, agentPasswordUtil *util.AgentPasswordUtil) *handler.AgentUserHandler {
+	return &handler.AgentUserHandler{
+		AgentUserService: agentUserService,
+		Validator: validator,
+		AgentPasswordUtil: agentPasswordUtil,
+	}
 }
 
-func initProductServices(repo *repository.ProductRepository) *service.ProductService{
-	return &service.ProductService { Repo: repo }
+func initProductRepo(database *gorm.DB) *repository.ProductRepository {
+	return &repository.ProductRepository{Database: database}
 }
 
-func initProductHandler(service *service.ProductService) *handler.ProductHandler{
-	return &handler.ProductHandler { Service: service }
+func initProductServices(repo *repository.ProductRepository) *service.ProductService {
+	return &service.ProductService{Repo: repo}
 }
 
+func initProductHandler(productService *service.ProductService, validator *validator.Validate) *handler.ProductHandler {
+	return &handler.ProductHandler{
+		ProductService: productService,
+		Validator: validator,
+	}
+}
 
-func handleFunc(handlerAgentUser *handler.AgentUserHandler, handlerProduct *handler.ProductHandler){
+func handleFunc(handlerAgentUser *handler.AgentUserHandler, handlerProduct *handler.ProductHandler) {
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/agent_user/", handlerAgentUser.CreateAgentUser).Methods("POST")
@@ -65,15 +77,17 @@ func handleFunc(handlerAgentUser *handler.AgentUserHandler, handlerProduct *hand
 }
 
 func main() {
+	validator := validator.New()
 	database := initDB()
 
-	repoAgentUser:= initAgentUserRepo(database)
+	agentPasswordUtil := initAgentPasswordUtil()
+	repoAgentUser := initAgentUserRepo(database)
 	serviceAgentUser := initAgentUserServices(repoAgentUser)
-	handlerAgentUser := initAgentUserHandler(serviceAgentUser)
+	handlerAgentUser := initAgentUserHandler(serviceAgentUser, validator, agentPasswordUtil)
 
 	repoProduct := initProductRepo(database)
 	serviceProduct := initProductServices(repoProduct)
-	handlerProduct := initProductHandler(serviceProduct)
+	handlerProduct := initProductHandler(serviceProduct, validator)
 
 	handleFunc(handlerAgentUser, handlerProduct)
 }

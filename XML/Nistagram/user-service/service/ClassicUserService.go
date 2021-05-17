@@ -8,10 +8,10 @@ import (
 )
 
 type ClassicUserService struct {
-	Repo * repository.ClassicUserRepository
+	Repo *repository.ClassicUserRepository
 }
 
-func (service * ClassicUserService) CreateClassicUser(classicUser *model.ClassicUser) error {
+func (service *ClassicUserService) CreateClassicUser(classicUser *model.ClassicUser) error {
 	err := service.Repo.CreateClassicUser(classicUser)
 	if err != nil {
 		return err
@@ -20,7 +20,7 @@ func (service * ClassicUserService) CreateClassicUser(classicUser *model.Classic
 }
 
 func (service *ClassicUserService) UpdateClassicUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
-	err := service.Repo.UpdateClassicUserConfirmed(userId,isConfirmed)
+	err := service.Repo.UpdateClassicUserConfirmed(userId, isConfirmed)
 	if err != nil {
 		return err
 	}
@@ -35,10 +35,20 @@ func (service *ClassicUserService) UpdateClassicUserProfileInfo(user *dto.UserUp
 	return nil
 }
 
-func (service *ClassicUserService) UpdateClassicUserPassword(userId uuid.UUID, password string) error {
-	err := service.Repo.UpdateClassicUserPassword(userId,password)
+func (service *ClassicUserService) UpdateClassicUserPassword(userId uuid.UUID, salt string, password string) error {
+	err := service.Repo.UpdateClassicUserPassword(userId, salt, password)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (service *ClassicUserService) FindSelectedUserById(id uuid.UUID) *dto.SelectedUserDTO {
+	user := service.Repo.FindSelectedUserById(id)
+	return user
+}
+
+func (service *ClassicUserService) FindClassicUserByUserName(userName string) *model.ClassicUser {
+	user := service.Repo.FindClassicUserByUserName(userName)
+	return user
 }

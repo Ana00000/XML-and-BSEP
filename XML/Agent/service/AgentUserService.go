@@ -1,8 +1,9 @@
 package service
 
 import (
-	"../model"
-	"../repository"
+	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Agent/model"
+	"github.com/xml/XML-and-BSEP/XML/Agent/repository"
 )
 
 type AgentUserService struct {
@@ -15,4 +16,19 @@ func (service * AgentUserService) CreateAgentUser(user *model.AgentUser) error {
 		return err
 	}
 	return nil
+}
+
+func (service * AgentUserService) FindAgentByUserName(userName string) *model.AgentUser {
+	agent := service.Repo.FindAgentByUserName(userName)
+	return agent
+}
+
+func (service * AgentUserService) FindAgentByEmail(email string) *model.AgentUser {
+	agent := service.Repo.FindAgentByEmail(email)
+	return agent
+}
+
+func (service * AgentUserService) FindAgentByID(ID uuid.UUID) *model.AgentUser {
+	agent := service.Repo.FindAgentByID(ID)
+	return agent
 }
