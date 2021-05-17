@@ -61,8 +61,8 @@ func initPostAlbumContentService(repo *repository.PostAlbumContentRepository) *s
 	return &service.PostAlbumContentService { Repo: repo }
 }
 
-func initPostAlbumContentHandler(service *service.PostAlbumContentService) *handler.PostAlbumContentHandler{
-	return &handler.PostAlbumContentHandler { Service: service }
+func initPostAlbumContentHandler(service *service.PostAlbumContentService, contentService *service.ContentService) *handler.PostAlbumContentHandler{
+	return &handler.PostAlbumContentHandler { Service: service, ContentService: contentService  }
 }
 
 func initStoryAlbumContentRepo(database *gorm.DB) *repository.StoryAlbumContentRepository{
@@ -74,7 +74,7 @@ func initStoryAlbumContentService(repo *repository.StoryAlbumContentRepository) 
 }
 
 func initStoryAlbumContentHandler(service *service.StoryAlbumContentService) *handler.StoryAlbumContentHandler{
-	return &handler.StoryAlbumContentHandler { Service: service }
+	return &handler.StoryAlbumContentHandler { Service: service}
 }
 
 func initSingleStoryContentRepo(database *gorm.DB) *repository.SingleStoryContentRepository{
@@ -157,7 +157,7 @@ func main() {
 
 	repoPostAlbumContent := initPostAlbumContentRepo(database)
 	servicePostAlbumContent := initPostAlbumContentService(repoPostAlbumContent)
-	handlerPostAlbumContent := initPostAlbumContentHandler(servicePostAlbumContent)
+	handlerPostAlbumContent := initPostAlbumContentHandler(servicePostAlbumContent, serviceContent)
 
 	repoSinglePostContent := initSinglePostContentRepo(database)
 	serviceSinglePostContent := initSinglePostContentService(repoSinglePostContent)

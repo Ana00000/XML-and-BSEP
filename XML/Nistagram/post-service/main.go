@@ -84,8 +84,8 @@ func initPostHandler(service *service.PostService) *handler.PostHandler{
 	return &handler.PostHandler{ Service: service }
 }
 
-func initPostAlbumHandler(service *service.PostAlbumService) *handler.PostAlbumHandler{
-	return &handler.PostAlbumHandler{ Service: service }
+func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
+	return &handler.PostAlbumHandler{ Service: service, PostService: postService}
 }
 
 func initPostCollectionHandler(service *service.PostCollectionService) *handler.PostCollectionHandler{
@@ -150,7 +150,7 @@ func main() {
 	handlerActivity := initActivityHandler(serviceActivity)
 	handlerComment := initCommentHandler(serviceComment)
 	handlerPost := initPostHandler(servicePost)
-	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum)
+	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
 	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost)
 

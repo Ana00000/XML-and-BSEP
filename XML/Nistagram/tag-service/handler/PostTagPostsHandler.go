@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"net/http"
 	_ "strconv"
 )

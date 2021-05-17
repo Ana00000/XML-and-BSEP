@@ -11,38 +11,41 @@ import (
 	_ "strconv"
 )
 
-type PostTagHandler struct {
-	Service * service.PostTagService
+type PostAlbumTagHandler struct {
+	Service * service.PostAlbumTagService
 	TagService * service.TagService
 }
 
-func (handler *PostTagHandler) CreatePostTag(w http.ResponseWriter, r *http.Request) {
-	var postTagDTO dto.PostTagDTO
-	err := json.NewDecoder(r.Body).Decode(&postTagDTO)
+func (handler *PostAlbumTagHandler) CreatePostAlbumTag(w http.ResponseWriter, r *http.Request) {
+	var postAlbumTagDTO dto.PostAlbumTagDTO
+	err := json.NewDecoder(r.Body).Decode(&postAlbumTagDTO)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	id := uuid.New()
-	postTag := model.PostTag{
+	postAlbumTag := model.PostAlbumTag{
 		Tag: model.Tag{
 			ID:   id,
-			Name: postTagDTO.Name,
+			Name: postAlbumTagDTO.Name,
 		},
 	}
 
-	err = handler.Service.CreatePostTag(&postTag)
+	err = handler.Service.CreatePostAlbumTag(&postAlbumTag)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
-	err = handler.TagService.CreateTag(&postTag.Tag)
+	err = handler.TagService.CreateTag(&postAlbumTag.Tag)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	postAlbumTagIDJson, _ := json.Marshal(postAlbumTag.ID)
+	w.Write(postAlbumTagIDJson)
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
