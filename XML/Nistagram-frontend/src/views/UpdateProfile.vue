@@ -140,7 +140,7 @@ export default {
     email: "",
     phoneNumber: "",
     genders: ["FEMALE", "MALE", "OTHER"],
-    selectedGender: "FEMALE",
+    selectedGender: "",
     dateOfBirth: "",
     username: "",
     website: "",
@@ -174,7 +174,15 @@ export default {
       this.lastName = item.lastName
       this.email = item.email
       this.phoneNumber = item.phoneNumber
-      this.gender = item.gender
+      if (this.user.gender == 0) {
+        this.selectedGender = "MALE"
+      }
+      else if (this.user.gender == 1){
+        this.selectedGender = "FEMALE"
+      }
+      else {
+        this.selectedGender = "OTHER"
+      }
       this.dateOfBirth = item.dateOfBirth
       this.username = item.username
       this.website = item.website
