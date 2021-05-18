@@ -13,5 +13,5 @@ type UserUpdateProfileInfoDTO struct {
 	DateOfBirth string `json:"dateOfBirth" validate:"required"`
 	Website string `json:"website" validate:"required"`
 	Biography string `json:"biography" validate:"required"`
-	UserType string `json:"userType" validate:"required"`
+	UserType string `json:"userType" validate:"oneof=ADMIN REGISTERED_USER AGENT"`
 }

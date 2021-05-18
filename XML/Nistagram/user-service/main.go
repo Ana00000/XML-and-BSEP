@@ -3,10 +3,11 @@ package main
 import (
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
+	"github.com/gorilla/handlers"
 	_ "github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/mikespook/gorbac"
-	"github.com/rs/cors"
 	settingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
@@ -214,28 +215,36 @@ func initConfirmationTokenHandler(confirmationTokenService *service.Confirmation
 }
 
 func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, classicUserHandler *handler.ClassicUserHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler,classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler,classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler,classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler){
-	mux := http.NewServeMux()
 
-	mux.HandleFunc("/registered_admin/", adminHandler.CreateAdmin)
-	mux.HandleFunc("/agent/", agentHandler.CreateAgent)
-	mux.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser)
-	mux.HandleFunc("/login/", userHandler.LogIn)
-	mux.HandleFunc("/recovery_password/", recoveryPasswordTokenHandler.GenerateRecoveryPasswordToken)
-	mux.HandleFunc("/verify_recovery_password_token/", recoveryPasswordTokenHandler.VerifyRecoveryPasswordToken)
-	mux.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken)
-	mux.HandleFunc("/change_user_password/", userHandler.ChangeUserPassword)
-	mux.HandleFunc("/users/all",userHandler.FindAllUsers)
-	mux.HandleFunc("/find_all_followers_for_user",classicUserFollowersHandler.FindAllFollowersInfoForUser)
-	mux.HandleFunc("/create_follower/",classicUserFollowersHandler.CreateClassicUserFollowers)
-	mux.HandleFunc("/create_following/",classicUserFollowingsHandler.CreateClassicUserFollowings)
-	mux.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo)
-	mux.HandleFunc("/find_user_by_id", userHandler.FindByID)
-	mux.HandleFunc("/find_user_by_username", userHandler.FindByUserName)
-	mux.HandleFunc("/find_all_users_but_logged_in", userHandler.FindAllUsersButLoggedIn)
-	mux.HandleFunc("/find_selected_user_by_id", classicUserHandler.FindSelectedUserById)
+	router := mux.NewRouter().StrictSlash(true)
 
-	handlerVar := cors.Default().Handler(mux)
-	log.Fatal(http.ListenAndServe(":8080", handlerVar))
+	cors := handlers.CORS(
+		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowCredentials(),
+	)
+
+	router.HandleFunc("/login/", userHandler.LogIn).Methods("POST")
+	router.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo).Methods("POST")
+	router.HandleFunc("/find_user_by_id", userHandler.FindByID).Methods("GET")
+	router.HandleFunc("/registered_admin/", adminHandler.CreateAdmin).Methods("POST")
+	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
+	router.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser).Methods("POST")
+	router.HandleFunc("/recovery_password/", recoveryPasswordTokenHandler.GenerateRecoveryPasswordToken).Methods("POST")
+	router.HandleFunc("/verify_recovery_password_token/", recoveryPasswordTokenHandler.VerifyRecoveryPasswordToken).Methods("POST")
+	router.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken).Methods("POST")
+	router.HandleFunc("/change_user_password/", userHandler.ChangeUserPassword).Methods("POST")
+	router.HandleFunc("/users/all",userHandler.FindAllUsers).Methods("GET")
+	router.HandleFunc("/find_all_followers_for_user",classicUserFollowersHandler.FindAllFollowersInfoForUser).Methods("GET")
+	router.HandleFunc("/create_follower/",classicUserFollowersHandler.CreateClassicUserFollowers).Methods("POST")
+	router.HandleFunc("/create_following/",classicUserFollowingsHandler.CreateClassicUserFollowings).Methods("POST")
+	router.HandleFunc("/find_user_by_username", userHandler.FindByUserName).Methods("GET")
+	router.HandleFunc("/find_all_users_but_logged_in", userHandler.FindAllUsersButLoggedIn).Methods("GET")
+	router.HandleFunc("/find_selected_user_by_id", classicUserHandler.FindSelectedUserById).Methods("GET")
+
+
+	log.Fatal(http.ListenAndServe(":8080", cors(router)))
 }
 
 func main() {
