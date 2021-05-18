@@ -66,15 +66,12 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	}
 
 	// UPDATE REQUEST - ACCEPTED
-	id := r.URL.Query().Get("id")
-
-	var request = handler.FollowRequestService.FindById(uuid.MustParse(id))
+	var request = handler.FollowRequestService.FindFollowRequest(followRequestDTO.ClassicUserId, followRequestDTO.FollowerUserId)
 	if request == nil{
 		fmt.Println("Request not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
-
-	handler.FollowRequestService.UpdateFollowRequestAccepted(uuid.MustParse(id))
+	handler.FollowRequestService.UpdateFollowRequestAccepted(request.ID)
 
 	// CREATE FOLLOWER
 	classicUserFollowers := model.ClassicUserFollowers{

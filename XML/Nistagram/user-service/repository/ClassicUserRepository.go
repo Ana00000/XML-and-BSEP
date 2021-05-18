@@ -19,7 +19,7 @@ func (repo *ClassicUserRepository) CreateClassicUser(classicUser *model.ClassicU
 }
 
 func (repo *ClassicUserRepository) UpdateClassicUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
-	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ?", userId).Update("is_confirmed", isConfirmed)
+	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ? and is_deleted = ?", userId, false).Update("is_confirmed", isConfirmed)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating")
 	return nil
@@ -34,7 +34,7 @@ func (repo *ClassicUserRepository) UpdateClassicUserProfileInfo(user *dto.UserUp
 		gender = model.FEMALE
 	}
 
-	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ?", user.ID)
+	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ? and is_confirmed = ? and is_deleted = ?", user.ID, true, false)
 	result.Update("username", user.Username)
 
 	fmt.Println(result.RowsAffected)
@@ -57,18 +57,18 @@ func (repo *ClassicUserRepository) UpdateClassicUserProfileInfo(user *dto.UserUp
 }
 
 func (repo *ClassicUserRepository) UpdateClassicUserPassword(userId uuid.UUID, salt string, password string) error {
-	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ?", userId).Update("salt", salt).Update("password", password)
+	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ? and is_confirmed = ? and is_deleted = ?", userId, true, false).Update("salt", salt).Update("password", password)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating")
 	return nil
 }
 
-//SELECTED USER
+//SELECTED USER FOR CLASSIC USER VIEW (IF ADMIN IT SHOUD BE ABLE TO SEE DELETED USERS?)
 
 func (repo *ClassicUserRepository) FindSelectedUserById(id uuid.UUID) *dto.SelectedUserDTO {
 	user := &model.ClassicUser{}
 
-	if repo.Database.First(&user, "id = ?", id).RowsAffected == 0 {
+	if repo.Database.First(&user, "id = ? and is_confirmed = ? and is_deleted = ?", id, true, false).RowsAffected == 0 {
 		return nil
 	}
 
@@ -87,15 +87,15 @@ func (repo *ClassicUserRepository) ConvertFromUserToSelectedUserDTO(user *model.
 
 func (repo *ClassicUserRepository) FindClassicUserByUserName(userName string) *model.ClassicUser {
 	user := &model.ClassicUser{}
-	if repo.Database.First(&user, "username = ?", userName).RowsAffected == 0 {
+	if repo.Database.First(&user, "username = ? and is_confirmed = ? and is_deleted = ? ", userName, true, false).RowsAffected == 0 {
 		return nil
 	}
 	return user
 }
 
-func (repo *ClassicUserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []model.User {
+func (repo *ClassicUserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []model.ClassicUser {
 
-	var users []model.User
-	repo.Database.Select("*").Where("id != ?", userId).Find(&users)
+	var users []model.ClassicUser
+	repo.Database.Select("*").Where("id != ? and is_confirmed = ? and is_deleted = ? ", userId, true, false).Find(&users)
 	return users
 }

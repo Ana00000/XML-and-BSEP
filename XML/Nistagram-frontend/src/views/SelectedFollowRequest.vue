@@ -81,8 +81,9 @@ export default {
         .get("http://localhost:8087/find_request_by_id?id=" + this.selectedRequestId)
         .then((resp) => {
           this.setRequestInfo(resp.data);
-          this.requestFollower = resp.data.follower_user_id
+          this.requestFollower = resp.data.classic_user_id
           console.log(resp.data);
+          console.log(resp.data.classic_user_id);
           
         })
         .catch(console.log("Didn't set user info!"));
@@ -93,11 +94,13 @@ export default {
       
     },
     acceptRequest() {
+      console.log(this.logId)
+      console.log(this.requestFollower)
       
      this.$http
         .post("http://localhost:8080/accept_follow_request/", {
-          classic_user_id: this.logId,
-          follower_user_id: this.requestFollower,
+          classic_user_id: this.requestFollower,
+          follower_user_id: this.logId,
       
         })
         .then((resp) => {

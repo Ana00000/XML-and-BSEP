@@ -48,7 +48,7 @@ func (service *ClassicUserService) FindSelectedUserById(id uuid.UUID) *dto.Selec
 	return user
 }
 
-func (service *ClassicUserService) FindAllUsersButLoggedIn(userId uuid.UUID) []model.User {
+func (service *ClassicUserService) FindAllUsersButLoggedIn(userId uuid.UUID) []model.ClassicUser {
 	users := service.Repo.FindAllUsersButLoggedIn(userId)
 	if users != nil {
 		return users
