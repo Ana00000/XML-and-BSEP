@@ -44,6 +44,9 @@ func (handler *StoryTagHandler) CreateStoryTag(w http.ResponseWriter, r *http.Re
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
+	storyTagIDJson, _ := json.Marshal(storyTag.ID)
+	w.Write(storyTagIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

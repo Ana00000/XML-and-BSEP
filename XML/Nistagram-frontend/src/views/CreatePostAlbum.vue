@@ -3,7 +3,7 @@
     <div class="spacing" />
     <v-card width="600" class="mx-auto mt-5" color="white">
       <v-card-title class="justify-center">
-        <h1 class="display-1">Post creation</h1>
+        <h1 class="display-1">Post album creation</h1>
       </v-card-title>
       <v-card-text>
         <v-form class="mx-auto ml-5 mr-5">
@@ -45,7 +45,7 @@
           />
           <v-text-field
             label="Description"
-            v-model="postDescription"
+            v-model="postAlbumDescription"
             prepend-icon="mdi-address-circle"
             v-if="!isHiddenDescription"
           />
@@ -59,6 +59,23 @@
             class="typeCombo"
             v-model="selectedType"
             v-if="!isHiddenContent"
+            hint="Choose your type."
+            :items="types"
+            item-text="state"
+            :label="label1"
+            return-object
+            single-line
+          />
+          <v-text-field
+            label="Path"
+            v-model="path"
+            prepend-icon="mdi-address-circle"
+            v-if="!isHiddenAdditionalContent"
+          />
+          <v-select
+            class="typeCombo"
+            v-model="selectedType"
+            v-if="!isHiddenAdditionalContent"
             hint="Choose your type."
             :items="types"
             item-text="state"
@@ -120,6 +137,20 @@
         >
           Add content
         </v-btn>
+         <v-btn
+          color="info mb-5"
+          v-if="!isHiddenAdditionalContentButton"
+          v-on:click="createAdditionalContent"
+        >
+          Add more content
+        </v-btn>
+         <v-btn
+          color="info mb-5"
+          v-if="!isHiddenAdditionalContentButton"
+          v-on:click="continueCreation"
+        >
+          Continue
+        </v-btn>
         <v-btn color="info mb-5" v-if="!isHiddenTagButton" v-on:click="addTag">
           Add tag
         </v-btn>
@@ -134,7 +165,7 @@
 
 <script>
 export default {
-  name: "CreatePost",
+  name: "CreatePostAlbum",
   data: () => ({
     longitude: "",
     latitude: "",
@@ -143,13 +174,13 @@ export default {
     streetName: "",
     streetNumber: "",
     tagName: null,
-    postDescription: "",
+    postAlbumDescription: "",
     locationId: null,
     path: "",
     types: ["PICTURE", "VIDEO"],
     selectedType: "PICTURE",
     label1: "Type",
-    postId: null,
+    postAlbumId: null,
     isHiddenLocationButton: false,
     isHiddenLocation: false,
     isHiddenDescriptionButton: true,
@@ -159,8 +190,10 @@ export default {
     isHiddenTagButton: true,
     isHiddenTag: true,
     isValidLocation: false,
-    isValidPostDescription: false,
-    postTagId: null
+    isValidPostAlbumDescription: false,
+    postAlbumTagId: null,
+    isHiddenAdditionalContentButton: true,
+    isHiddenAdditionalContent: true
   }),
   methods: {
     addLocation() {
@@ -181,9 +214,9 @@ export default {
       this.isHiddenDescription = false;
     },
     addDescription() {
-      if (!this.validPostDescription()) return;
+      if (!this.validPostAlbumDescription()) return;
 
-      this.isValidPostDescription = true;
+      this.isValidPostAlbumDescription = true;
       this.isHiddenDescriptionButton = true;
       this.isHiddenDescription = true;
       this.isHiddenContentButton = false;
@@ -194,8 +227,8 @@ export default {
 
       this.isHiddenContentButton = true;
       this.isHiddenContent = true;
-      this.isHiddenTagButton = false;
-      this.isHiddenTag = false;
+      this.isHiddenAdditionalContentButton = false;
+      this.isHiddenAdditionalContent = false;
 
       if (this.isValidLocation) {
         this.$http
@@ -209,25 +242,25 @@ export default {
           })
           .then((response) => {
             this.locationId = response.data;
-            this.createPostDescription();
+            this.createPostAlbumDescription();
           })
           .catch((er) => {
             console.log(er.response.data);
           });
       } else {
-        this.createPostDescription();
+        this.createPostAlbumDescription();
       }
     },
-    createPostDescription() {
-      if (this.isValidPostDescription) {
+    createPostAlbumDescription() {
+      if (this.isValidPostAlbumDescription) {
         this.$http
-          .post("http://localhost:8084/single_post/", {
-            description: this.postDescription,
+          .post("http://localhost:8084/post_album/", {
+            description: this.postAlbumDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
           })
           .then((response) => {
-            this.postId = response.data;
+            this.postAlbumId = response.data;
             this.createContent();
           })
           .catch((er) => {
@@ -235,13 +268,13 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:8084/single_post/", {
+          .post("http://localhost:8084/post_album/", {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
           })
           .then((response) => {
-            this.postId = response.data;
+            this.postAlbumId = response.data;
             this.createContent();
           })
           .catch((er) => {
@@ -251,10 +284,10 @@ export default {
     },
     createContent() {
       this.$http
-        .post("http://localhost:8085/single_post_content/", {
+        .post("http://localhost:8085/post_album_content/", {
           path: this.path,
           type: this.selectedType,
-          single_post_id: this.postId,
+          post_album_id: this.postAlbumId,
         })
         .then((response) => {
           console.log(response.data);
@@ -262,6 +295,30 @@ export default {
         .catch((er) => {
           console.log(er.response.data);
         });
+    },
+    continueCreation() {
+      this.isHiddenAdditionalContentButton = true;
+      this.isHiddenAdditionalContent = true;
+      this.isHiddenTagButton = false;
+      this.isHiddenTag = false;
+    },
+    createAdditionalContent() {
+      if (!this.validPath()) return;
+
+      this.$http
+        .post("http://localhost:8085/post_album_content/", {
+          path: this.path,
+          type: this.selectedType,
+          post_album_id: this.postAlbumId,
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+        
+        alert("Content is added! Add more content or continue creation.");
     },
     finish() {
       alert("Successful creation.");
@@ -271,22 +328,22 @@ export default {
       if (!this.validTag()) return;
 
       this.$http
-        .post("http://localhost:8082/post_tag/", {
+        .post("http://localhost:8082/post_album_tag/", {
           name: this.tagName,
         })
         .then((response) => {
-          this.postTagId = response.data;
-          this.createPostTagPosts();
+          this.postAlbumTagId = response.data;
+          this.CreatePostAlbumTagPostAlbums();
         })
         .catch((er) => {
           console.log(er.response.data);
         });
     },
-    createPostTagPosts() {
+    CreatePostAlbumTagPostAlbums() {
       this.$http
-        .post("http://localhost:8082/post_tag_posts/", {
-          post_tag_id: this.postTagId,
-          post_id: this.postId,
+        .post("http://localhost:8082/post_album_tag_post_albums/", {
+          postAlbumTagId: this.postAlbumTagId,
+          postAlbumId: this.postAlbumId,
         })
         .then((response) => {
           console.log(response.data);
@@ -380,13 +437,15 @@ export default {
       }
       return true;
     },
-    validPostDescription() {
-      if (this.postDescription.length < 1) {
-        alert("Your post description should contain at least 1 character!");
-        return;
-      } else if (this.postDescription.length > 50) {
+    validPostAlbumDescription() {
+      if (this.postAlbumDescription.length < 1) {
         alert(
-          "Your post description shouldn't contain more than 50 characters!"
+          "Your post album description should contain at least 1 character!"
+        );
+        return;
+      } else if (this.postAlbumDescription.length > 50) {
+        alert(
+          "Your post album description shouldn't contain more than 50 characters!"
         );
         return false;
       }

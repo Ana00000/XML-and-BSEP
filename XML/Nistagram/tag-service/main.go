@@ -25,7 +25,9 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Tag{},&model.StoryTag{},&model.StoryTagStories{},&model.CommentTag{},&model.CommentTagComments{},&model.PostTag{},&model.PostTagPosts{})
+	db.AutoMigrate(&model.Tag{}, &model.StoryTag{}, &model.StoryTagStories{}, &model.CommentTag{},
+				   &model.CommentTagComments{}, &model.PostTag{}, &model.PostTagPosts{}, &model.PostAlbumTag{},
+				   &model.PostAlbumTagPostAlbums{}, &model.StoryAlbumTag{}, &model.StoryAlbumTagStoryAlbums{})
 	return db
 }
 
@@ -51,6 +53,22 @@ func initStoryTagStoriesRepo(database *gorm.DB) *repository.StoryTagStoriesRepos
 
 func initCommentTagCommentsRepo(database *gorm.DB) *repository.CommentTagCommentsRepository{
 	return &repository.CommentTagCommentsRepository { Database: database }
+}
+
+func initPostAlbumTagRepo(database *gorm.DB) *repository.PostAlbumTagRepository{
+	return &repository.PostAlbumTagRepository { Database: database }
+}
+
+func initPostAlbumTagPostAlbumsRepo(database *gorm.DB) *repository.PostAlbumTagPostAlbumsRepository{
+	return &repository.PostAlbumTagPostAlbumsRepository { Database: database }
+}
+
+func initStoryAlbumTagRepo(database *gorm.DB) *repository.StoryAlbumTagRepository{
+	return &repository.StoryAlbumTagRepository { Database: database }
+}
+
+func initStoryAlbumTagStoryAlbumsRepo(database *gorm.DB) *repository.StoryAlbumTagStoryAlbumsRepository{
+	return &repository.StoryAlbumTagStoryAlbumsRepository { Database: database }
 }
 
 func initTagRepo(database *gorm.DB) *repository.TagRepository{
@@ -85,6 +103,22 @@ func initStoryTagStoriesServices(repo *repository.StoryTagStoriesRepository) *se
 	return &service.StoryTagStoriesService { Repo: repo }
 }
 
+func initPostAlbumTagServices(repo *repository.PostAlbumTagRepository) *service.PostAlbumTagService{
+	return &service.PostAlbumTagService { Repo: repo }
+}
+
+func initPostAlbumTagPostAlbumsServices(repo *repository.PostAlbumTagPostAlbumsRepository) *service.PostAlbumTagPostAlbumsService{
+	return &service.PostAlbumTagPostAlbumsService { Repo: repo }
+}
+
+func initStoryAlbumTagServices(repo *repository.StoryAlbumTagRepository) *service.StoryAlbumTagService{
+	return &service.StoryAlbumTagService { Repo: repo }
+}
+
+func initStoryAlbumTagStoryAlbumsServices(repo *repository.StoryAlbumTagStoryAlbumsRepository) *service.StoryAlbumTagStoryAlbumsService{
+	return &service.StoryAlbumTagStoryAlbumsService { Repo: repo }
+}
+
 func initTagHandler(service *service.TagService) *handler.TagHandler{
 	return &handler.TagHandler { Service: service }
 }
@@ -113,9 +147,27 @@ func initPostTagPostsHandler(service *service.PostTagPostsService) *handler.Post
 	return &handler.PostTagPostsHandler { Service: service }
 }
 
-func handleFunc(handlerTag *handler.TagHandler,handlerPostTag *handler.PostTagHandler,handlerStoryTag *handler.StoryTagHandler,
-	handlerCommentTag *handler.CommentTagHandler, handlerCommentTagComments *handler.CommentTagCommentsHandler,handlerPostTagPosts *handler.PostTagPostsHandler,
-	handlerStoryTagStories *handler.StoryTagStoriesHandler){
+func initPostAlbumTagHandler(service *service.PostAlbumTagService, tagService *service.TagService) *handler.PostAlbumTagHandler{
+	return &handler.PostAlbumTagHandler { Service: service, TagService : tagService }
+}
+
+func initPostAlbumTagPostAlbumsHandler(service *service.PostAlbumTagPostAlbumsService) *handler.PostAlbumTagPostAlbumsHandler{
+	return &handler.PostAlbumTagPostAlbumsHandler { Service: service }
+}
+
+func initStoryAlbumTagHandler(service *service.StoryAlbumTagService, tagService *service.TagService) *handler.StoryAlbumTagHandler{
+	return &handler.StoryAlbumTagHandler { Service: service, TagService : tagService }
+}
+
+func initStoryAlbumTagStoryAlbumsHandler(service *service.StoryAlbumTagStoryAlbumsService) *handler.StoryAlbumTagStoryAlbumsHandler{
+	return &handler.StoryAlbumTagStoryAlbumsHandler { Service: service }
+}
+
+func handleFunc(handlerTag *handler.TagHandler, handlerPostTag *handler.PostTagHandler, handlerStoryTag *handler.StoryTagHandler,
+	handlerCommentTag *handler.CommentTagHandler, handlerCommentTagComments *handler.CommentTagCommentsHandler,
+	handlerPostTagPosts *handler.PostTagPostsHandler, handlerStoryTagStories *handler.StoryTagStoriesHandler,
+	handlerPostAlbumTag *handler.PostAlbumTagHandler, handlerPostAlbumTagPostAlbums *handler.PostAlbumTagPostAlbumsHandler,
+	handlerStoryAlbumTag *handler.StoryAlbumTagHandler, handlerStoryAlbumTagStoryAlbums *handler.StoryAlbumTagStoryAlbumsHandler){
 
 	mux := http.NewServeMux()
 
@@ -126,6 +178,10 @@ func handleFunc(handlerTag *handler.TagHandler,handlerPostTag *handler.PostTagHa
 	mux.HandleFunc("/comment_tag_comments/", handlerCommentTagComments.CreateCommentTagComments)
 	mux.HandleFunc("/post_tag_posts/", handlerPostTagPosts.CreatePostTagPosts)
 	mux.HandleFunc("/story_tag_stories/", handlerStoryTagStories.CreateStoryTagStories)
+	mux.HandleFunc("/post_album_tag/", handlerPostAlbumTag.CreatePostAlbumTag)
+	mux.HandleFunc("/post_album_tag_post_albums/", handlerPostAlbumTagPostAlbums.CreatePostAlbumTagPostAlbums)
+	mux.HandleFunc("/story_album_tag/", handlerStoryAlbumTag.CreateStoryAlbumTag)
+	mux.HandleFunc("/story_album_tag_story_albums/", handlerStoryAlbumTagStoryAlbums.CreateStoryAlbumTagStoryAlbums)
 
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8082", handlerVar))
@@ -133,6 +189,7 @@ func handleFunc(handlerTag *handler.TagHandler,handlerPostTag *handler.PostTagHa
 
 func main() {
 	database := initDB()
+
 	repoTag := initTagRepo(database)
 	serviceTag := initTagServices(repoTag)
 	handlerTag := initTagHandler(serviceTag)
@@ -160,5 +217,24 @@ func main() {
 	repoCommentTagComments := initCommentTagCommentsRepo(database)
 	serviceCommentTagComments := initCommentTagCommentsServices(repoCommentTagComments)
 	handlerCommentTagComments := initCommentTagCommentsHandler(serviceCommentTagComments)
-	handleFunc(handlerTag,handlerPostTag,handlerStoryTag,handlerCommentTag,handlerCommentTagComments,handlerPostTagPosts,handlerStoryTagStories)
+
+	repoPostAlbumTag := initPostAlbumTagRepo(database)
+	servicePostAlbumTag := initPostAlbumTagServices(repoPostAlbumTag)
+	handlerPostAlbumTag := initPostAlbumTagHandler(servicePostAlbumTag, serviceTag)
+
+	repoPostAlbumTagPostAlbums := initPostAlbumTagPostAlbumsRepo(database)
+	servicePostAlbumTagPostAlbums := initPostAlbumTagPostAlbumsServices(repoPostAlbumTagPostAlbums)
+	handlerPostAlbumTagPostAlbums := initPostAlbumTagPostAlbumsHandler(servicePostAlbumTagPostAlbums)
+
+	repoStoryAlbumTag := initStoryAlbumTagRepo(database)
+	serviceStoryAlbumTag := initStoryAlbumTagServices(repoStoryAlbumTag)
+	handlerStoryAlbumTag := initStoryAlbumTagHandler(serviceStoryAlbumTag, serviceTag)
+
+	repoStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsRepo(database)
+	serviceStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsServices(repoStoryAlbumTagStoryAlbums)
+	handlerStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsHandler(serviceStoryAlbumTagStoryAlbums)
+
+	handleFunc(handlerTag, handlerPostTag, handlerStoryTag, handlerCommentTag, handlerCommentTagComments,
+		       handlerPostTagPosts, handlerStoryTagStories, handlerPostAlbumTag, handlerPostAlbumTagPostAlbums,
+		       handlerStoryAlbumTag, handlerStoryAlbumTagStoryAlbums)
 }

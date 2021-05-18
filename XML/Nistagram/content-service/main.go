@@ -61,8 +61,8 @@ func initPostAlbumContentService(repo *repository.PostAlbumContentRepository) *s
 	return &service.PostAlbumContentService { Repo: repo }
 }
 
-func initPostAlbumContentHandler(service *service.PostAlbumContentService) *handler.PostAlbumContentHandler{
-	return &handler.PostAlbumContentHandler { Service: service }
+func initPostAlbumContentHandler(service *service.PostAlbumContentService, contentService *service.ContentService) *handler.PostAlbumContentHandler{
+	return &handler.PostAlbumContentHandler { Service: service, ContentService: contentService  }
 }
 
 func initStoryAlbumContentRepo(database *gorm.DB) *repository.StoryAlbumContentRepository{
@@ -73,8 +73,8 @@ func initStoryAlbumContentService(repo *repository.StoryAlbumContentRepository) 
 	return &service.StoryAlbumContentService { Repo: repo }
 }
 
-func initStoryAlbumContentHandler(service *service.StoryAlbumContentService) *handler.StoryAlbumContentHandler{
-	return &handler.StoryAlbumContentHandler { Service: service }
+func initStoryAlbumContentHandler(service *service.StoryAlbumContentService, contentService * service.ContentService) *handler.StoryAlbumContentHandler{
+	return &handler.StoryAlbumContentHandler { Service: service, ContentService: contentService}
 }
 
 func initSingleStoryContentRepo(database *gorm.DB) *repository.SingleStoryContentRepository{
@@ -157,7 +157,7 @@ func main() {
 
 	repoPostAlbumContent := initPostAlbumContentRepo(database)
 	servicePostAlbumContent := initPostAlbumContentService(repoPostAlbumContent)
-	handlerPostAlbumContent := initPostAlbumContentHandler(servicePostAlbumContent)
+	handlerPostAlbumContent := initPostAlbumContentHandler(servicePostAlbumContent, serviceContent)
 
 	repoSinglePostContent := initSinglePostContentRepo(database)
 	serviceSinglePostContent := initSinglePostContentService(repoSinglePostContent)
@@ -165,7 +165,7 @@ func main() {
 
 	repoStoryAlbumContent := initStoryAlbumContentRepo(database)
 	serviceStoryAlbumContent := initStoryAlbumContentService(repoStoryAlbumContent)
-	handlerStoryAlbumContent := initStoryAlbumContentHandler(serviceStoryAlbumContent)
+	handlerStoryAlbumContent := initStoryAlbumContentHandler(serviceStoryAlbumContent, serviceContent)
 
 	repoSingleStoryContent := initSingleStoryContentRepo(database)
 	serviceSingleStoryContent := initSingleStoryContentService(repoSingleStoryContent)

@@ -13,6 +13,7 @@ import (
 
 type StoryAlbumContentHandler struct {
 	Service * service.StoryAlbumContentService
+	ContentService * service.ContentService
 }
 
 func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.ResponseWriter, r *http.Request) {
@@ -29,10 +30,10 @@ func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.Response
 		contentType = model.VIDEO
 	}
 
-
+	id := uuid.New()
 	storyAlbumContent := model.StoryAlbumContent{
 		Content: model.Content{
-			ID:   uuid.UUID{},
+			ID:   id,
 			Path: storyAlbumContentDTO.Path,
 			Type: contentType,
 		},
@@ -44,6 +45,13 @@ func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.Response
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	err = handler.ContentService.CreateContent(&storyAlbumContent.Content)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
