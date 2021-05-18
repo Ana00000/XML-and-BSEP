@@ -228,22 +228,20 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	router.HandleFunc("/login/", userHandler.LogIn).Methods("POST")
 	router.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo).Methods("POST")
 	router.HandleFunc("/find_user_by_id", userHandler.FindByID).Methods("GET")
-
-	/*
-	router.HandleFunc("/registered_admin/", adminHandler.CreateAdmin)
-	router.HandleFunc("/agent/", agentHandler.CreateAgent)
-	router.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser)
-	router.HandleFunc("/recovery_password/", recoveryPasswordTokenHandler.GenerateRecoveryPasswordToken)
-	router.HandleFunc("/verify_recovery_password_token/", recoveryPasswordTokenHandler.VerifyRecoveryPasswordToken)
-	router.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken)
-	router.HandleFunc("/change_user_password/", userHandler.ChangeUserPassword)
-	router.HandleFunc("/users/all",userHandler.FindAllUsers)
-	router.HandleFunc("/find_all_followers_for_user",classicUserFollowersHandler.FindAllFollowersInfoForUser)
-	router.HandleFunc("/create_follower/",classicUserFollowersHandler.CreateClassicUserFollowers)
-	router.HandleFunc("/create_following/",classicUserFollowingsHandler.CreateClassicUserFollowings)/*
-	router.HandleFunc("/find_user_by_username", userHandler.FindByUserName)
-	router.HandleFunc("/find_all_users_but_logged_in", userHandler.FindAllUsersButLoggedIn)
-	router.HandleFunc("/find_selected_user_by_id", classicUserHandler.FindSelectedUserById)*/
+	router.HandleFunc("/registered_admin/", adminHandler.CreateAdmin).Methods("POST")
+	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
+	router.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser).Methods("POST")
+	router.HandleFunc("/recovery_password/", recoveryPasswordTokenHandler.GenerateRecoveryPasswordToken).Methods("POST")
+	router.HandleFunc("/verify_recovery_password_token/", recoveryPasswordTokenHandler.VerifyRecoveryPasswordToken).Methods("POST")
+	router.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken).Methods("POST")
+	router.HandleFunc("/change_user_password/", userHandler.ChangeUserPassword).Methods("POST")
+	router.HandleFunc("/users/all",userHandler.FindAllUsers).Methods("GET")
+	router.HandleFunc("/find_all_followers_for_user",classicUserFollowersHandler.FindAllFollowersInfoForUser).Methods("GET")
+	router.HandleFunc("/create_follower/",classicUserFollowersHandler.CreateClassicUserFollowers).Methods("POST")
+	router.HandleFunc("/create_following/",classicUserFollowingsHandler.CreateClassicUserFollowings).Methods("POST")
+	router.HandleFunc("/find_user_by_username", userHandler.FindByUserName).Methods("GET")
+	router.HandleFunc("/find_all_users_but_logged_in", userHandler.FindAllUsersButLoggedIn).Methods("GET")
+	router.HandleFunc("/find_selected_user_by_id", classicUserHandler.FindSelectedUserById).Methods("GET")
 
 
 	log.Fatal(http.ListenAndServe(":8080", cors(router)))

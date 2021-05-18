@@ -202,17 +202,7 @@ export default {
         !this.validWebsite() ||
         !this.validBiography()
       ) return;
-      /*
-      console.log(this.id)
-      console.log(this.username)
-      console.log(this.email)
-      console.log(this.phoneNumber)
-      console.log(this.selectedGender)
-      console.log(this.dateOfBirth)
-      console.log(this.website)
-      console.log(this.biography)
-      console.log(this.userType)
-      */
+     
       this.$http
         .post("http://localhost:8080/update_user_profile_info/", {
           id: this.id,

@@ -122,6 +122,10 @@ export default {
           website: this.website,
           biography: this.biography,
           is_blocked: false
+        },{
+            headers: {
+              "Authorization": "Bearer " + this.token,
+            },
         })
         .then((response) => {
           console.log(response.data.firstName);
