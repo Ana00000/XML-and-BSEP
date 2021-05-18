@@ -26,6 +26,25 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
 
+
+  front:
+    image: front:compose_build
+    build:
+      context: ./Nistagram-frontend
+      dockerfile: Dockerfile
+    command: npm run serve -- --port=8081
+    restart: on-failure
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./Nistagram-frontend:/Nistagram-frontend
+      - node_modules:/Nistagram-frontend/node_modules
+    environment:
+      FRONTEND_PORT: 8081
+    networks:
+      - backend
+
+
   campaign-service:
     restart: on-failure
     image: campaign-service:compose_build
@@ -225,6 +244,9 @@ services:
       DBPORT: 5432
     depends_on:
       - db
+
+volumes:
+  node_modules:
 
 networks:
   backend:
