@@ -329,6 +329,7 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
+          alert("Content is added! Add more content or continue creation.");
         })
         .catch((er) => {
           console.log(er.response.data);
@@ -338,7 +339,7 @@ export default {
       alert("Successful creation.");
       window.location.href = "http://localhost:8081/";
     },
-    addTag() {/*
+    addTag() {
       if (!this.validTag()) return;
 
       this.$http
@@ -351,9 +352,9 @@ export default {
         })
         .catch((er) => {
           console.log(er.response.data);
-        });*/
+        });
     },
-    CreateStoryAlbumTagStoryAlbums() {/*
+    CreateStoryAlbumTagStoryAlbums() {
       this.$http
         .post("http://localhost:8082/story_album_tag_story_albums/", {
           storyAlbumTagId: this.storyAlbumTagId,
@@ -365,7 +366,7 @@ export default {
         })
         .catch((er) => {
           console.log(er.response.data);
-        });*/
+        });
     },
     validLongitude() {
       if (this.longitude.length < 2) {

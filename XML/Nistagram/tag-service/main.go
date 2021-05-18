@@ -25,9 +25,9 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Tag{},&model.StoryTag{},&model.StoryTagStories{},&model.CommentTag{},
-				   &model.CommentTagComments{},&model.PostTag{},&model.PostTagPosts{},
-				   &model.PostAlbumTag{},&model.PostAlbumTagPostAlbums{})
+	db.AutoMigrate(&model.Tag{}, &model.StoryTag{}, &model.StoryTagStories{}, &model.CommentTag{},
+				   &model.CommentTagComments{}, &model.PostTag{}, &model.PostTagPosts{}, &model.PostAlbumTag{},
+				   &model.PostAlbumTagPostAlbums{}, &model.StoryAlbumTag{}, &model.StoryAlbumTagStoryAlbums{})
 	return db
 }
 

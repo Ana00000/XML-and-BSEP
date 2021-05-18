@@ -317,6 +317,8 @@ export default {
         .catch((er) => {
           console.log(er.response.data);
         });
+        
+        alert("Content is added! Add more content or continue creation.");
     },
     finish() {
       alert("Successful creation.");
