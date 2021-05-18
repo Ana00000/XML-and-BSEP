@@ -73,8 +73,8 @@ func initStoryAlbumContentService(repo *repository.StoryAlbumContentRepository) 
 	return &service.StoryAlbumContentService { Repo: repo }
 }
 
-func initStoryAlbumContentHandler(service *service.StoryAlbumContentService) *handler.StoryAlbumContentHandler{
-	return &handler.StoryAlbumContentHandler { Service: service}
+func initStoryAlbumContentHandler(service *service.StoryAlbumContentService, contentService * service.ContentService) *handler.StoryAlbumContentHandler{
+	return &handler.StoryAlbumContentHandler { Service: service, ContentService: contentService}
 }
 
 func initSingleStoryContentRepo(database *gorm.DB) *repository.SingleStoryContentRepository{
@@ -165,7 +165,7 @@ func main() {
 
 	repoStoryAlbumContent := initStoryAlbumContentRepo(database)
 	serviceStoryAlbumContent := initStoryAlbumContentService(repoStoryAlbumContent)
-	handlerStoryAlbumContent := initStoryAlbumContentHandler(serviceStoryAlbumContent)
+	handlerStoryAlbumContent := initStoryAlbumContentHandler(serviceStoryAlbumContent, serviceContent)
 
 	repoSingleStoryContent := initSingleStoryContentRepo(database)
 	serviceSingleStoryContent := initSingleStoryContentService(repoSingleStoryContent)
