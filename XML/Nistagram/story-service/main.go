@@ -73,8 +73,8 @@ func initStoryHandler(service *service.StoryService) *handler.StoryHandler{
 	return &handler.StoryHandler { Service: service }
 }
 
-func initStoryAlbumHandler(service *service.StoryAlbumService) *handler.StoryAlbumHandler{
-	return &handler.StoryAlbumHandler { Service: service }
+func initStoryAlbumHandler(service *service.StoryAlbumService, storyService * service.StoryService) *handler.StoryAlbumHandler{
+	return &handler.StoryAlbumHandler { Service: service, StoryService: storyService }
 }
 
 func initSingleStoryHandler(service *service.SingleStoryService, storyService *service.StoryService) *handler.SingleStoryHandler{
@@ -112,7 +112,7 @@ func main() {
 
 	repoStoryAlbum := initStoryAlbumRepo(database)
 	serviceStoryAlbum := initStoryAlbumServices(repoStoryAlbum)
-	handlerStoryAlbum := initStoryAlbumHandler(serviceStoryAlbum)
+	handlerStoryAlbum := initStoryAlbumHandler(serviceStoryAlbum, serviceStory)
 
 	repoSingleStory := initSingleStoryRepo(database)
 	serviceSingleStory := initSingleStoryServices(repoSingleStory)

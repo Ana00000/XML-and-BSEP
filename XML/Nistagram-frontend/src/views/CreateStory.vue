@@ -44,35 +44,15 @@
             v-if="!isHiddenLocation"
           />
           <v-text-field
-            label="Tag name"
-            v-model="tagName"
-            prepend-icon="mdi-address-circle"
-            v-if="!isHiddenTag"
-          />
-          <v-text-field
             label="Description"
             v-model="storyDescription"
             prepend-icon="mdi-address-circle"
             v-if="!isHiddenDescription"
-          /> 
-          <v-text-field
-            label="Path"
-            v-model="path"
-            prepend-icon="mdi-address-circle"
-          />
-          <v-select
-            class="typeCombo"
-            v-model="selectedType"
-            hint="Choose your type."
-            :items="types"
-            item-text="state"
-            :label="label1"
-            return-object
-            single-line
           />
            <v-select
-            class="typeComboSecond"
+            class="typeCombo"
             v-model="selectedStoryType"
+            v-if="!isHiddenDescription"
             hint="Choose your publicity story type."
             :items="storyTypes"
             item-text="state"
@@ -80,21 +60,83 @@
             return-object
             single-line
           />
+          <v-text-field
+            label="Path"
+            v-model="path"
+            prepend-icon="mdi-address-circle"
+            v-if="!isHiddenContent"
+          />
+          <v-select
+            class="typeCombo"
+            v-model="selectedType"
+            v-if="!isHiddenContent"
+            hint="Choose your type."
+            :items="types"
+            item-text="state"
+            :label="label1"
+            return-object
+            single-line
+          />
         </v-form>
+        <v-text-field
+          label="Tag name"
+          v-model="tagName"
+          prepend-icon="mdi-address-circle"
+          v-if="!isHiddenTag"
+        />
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
-        <v-btn color="info mb-5" v-on:click="isHiddenLocation = false">
+        <v-btn
+          color="info mb-5"
+          v-on:click="
+            (isHiddenLocation = true),
+              (isHiddenDescription = false),
+              (isHiddenDescriptionButton = false),
+              (isHiddenLocationButton = true)
+          "
+          v-if="!isHiddenLocationButton"
+        >
+          Skip location
+        </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-on:click="addLocation"
+          v-if="!isHiddenLocationButton"
+        >
           Add location
         </v-btn>
-        <v-btn color="info mb-5" v-on:click="isHiddenTag = false">
-          Add tag
+        <v-btn
+          color="info mb-5"
+          v-on:click="
+            (isHiddenDescriptionButton = true),
+              (isHiddenDescription = true),
+              (isHiddenContentButton = false),
+              (isHiddenContent = false)
+          "
+          v-if="!isHiddenDescriptionButton"
+        >
+          Skip description
         </v-btn>
-        <v-btn color="info mb-5" v-on:click="isHiddenDescription = false">
+        <v-btn
+          color="info mb-5"
+          v-on:click="addDescription"
+          v-if="!isHiddenDescriptionButton"
+        >
           Add description
         </v-btn>
-      </v-card-actions>
-      <v-card-actions class="justify-center mb-5">
-        <v-btn color="info mb-5" v-on:click="createStory"> Create </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-if="!isHiddenContentButton"
+          v-on:click="addContent"
+        >
+          Add content
+        </v-btn>
+        <v-btn color="info mb-5" v-if="!isHiddenTagButton" v-on:click="addTag">
+          Add tag
+        </v-btn>
+        <v-btn color="info mb-5" v-if="!isHiddenTagButton" v-on:click="finish">
+          Finish
+        </v-btn>
       </v-card-actions>
     </v-card>
     <div class="spacing" />
@@ -114,35 +156,28 @@ export default {
     tagName: null,
     storyDescription: "",
     locationId: null,
+    storyTypes: ["CLOSE_FRIENDS", "ALL_FRIENDS", "PUBLIC"],
+    selectedStoryType: "CLOSE_FRIENDS",
+    label2: "Story publicity type",
     path: "",
     types: ["PICTURE", "VIDEO"],
     selectedType: "PICTURE",
     label1: "Type",
     storyId: null,
-    isHiddenLocation: true,
-    isHiddenTag: true,
+    isHiddenLocationButton: false,
+    isHiddenLocation: false,
+    isHiddenDescriptionButton: true,
     isHiddenDescription: true,
-    storyTypes: ["CLOSE_FRIENDS", "ALL_FRIENDS", "PUBLIC"],
-    selectedStoryType: "CLOSE_FRIENDS",
-    label2: "Story publicity type"
+    isHiddenContentButton: true,
+    isHiddenContent: true,
+    isHiddenTagButton: true,
+    isHiddenTag: true,
+    isValidLocation: false,
+    isValidStoryDescription: false,
+    storyTagId: null
   }),
   methods: {
-    createStory() {
-      if (!this.validPath() || !this.validStoryDescription()) return;
-      
-      this.createTag();
-
-      if (
-        this.longitude == "" &&
-        this.latitude == "" &&
-        this.country == "" &&
-        this.city == "" &&
-        this.streetName == "" &&
-        this.streetNumber == ""
-      ) {
-        this.createStoryWithoutLocation();
-        return;
-      }
+    addLocation() {
       if (
         !this.validLongitude() ||
         !this.validLatitude() ||
@@ -153,73 +188,84 @@ export default {
       )
         return;
 
-      this.$http
-        .post("http://localhost:8083/", {
-          longitude: this.longitude,
-          latitude: this.latitude,
-          country: this.country,
-          city: this.city,
-          streetName: this.streetName,
-          streetNumber: this.streetNumber,
-        })
-        .then((response) => {
-          this.locationId = response.data;
-          this.createStoryWithLocation();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+      this.isValidLocation = true;
+      this.isHiddenLocationButton = true;
+      this.isHiddenLocation = true;
+      this.isHiddenDescriptionButton = false;
+      this.isHiddenDescription = false;
     },
-    createTag() {
-      if (this.tagName == null) return;
-      if (!this.validTag()) return;
+    addDescription() {
+      if (!this.validStoryDescription()) return;
 
-      this.$http
-        .post("http://localhost:8082/story_tag/", {
-          name: this.tagName,
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+      this.isValidStoryDescription = true;
+      this.isHiddenDescriptionButton = true;
+      this.isHiddenDescription = true;
+      this.isHiddenContentButton = false;
+      this.isHiddenContent = false;
     },
-    createStoryWithLocation() {
-      this.$http
-        .post("http://localhost:8086/single_story/", {
-          description: this.storyDescription,
-          userID: localStorage.getItem("userId"),
-          locationId: this.locationId,
-          storyType: this.selectedStoryType
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.storyId = response.data;
-          this.createStoryContent();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+    addContent() {
+      if (!this.validPath()) return;
+
+      this.isHiddenContentButton = true;
+      this.isHiddenContent = true;
+      this.isHiddenTagButton = false;
+      this.isHiddenTag = false;
+
+      if (this.isValidLocation) {
+        this.$http
+          .post("http://localhost:8083/", {
+            longitude: this.longitude,
+            latitude: this.latitude,
+            country: this.country,
+            city: this.city,
+            streetName: this.streetName,
+            streetNumber: this.streetNumber,
+          })
+          .then((response) => {
+            this.locationId = response.data;
+            this.createStoryDescription();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      } else {
+        this.createStoryDescription();
+      }
     },
-    createStoryWithoutLocation() {
-      this.$http
-        .post("http://localhost:8086/single_story/", {
-          description: this.storyDescription,
-          userID: localStorage.getItem("userId"),
-          storyType: this.selectedStoryType
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.storyId = response.data;
-          this.createStoryContent();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+    createStoryDescription() {
+      if (this.isValidStoryDescription) {
+        this.$http
+          .post("http://localhost:8086/single_story/", {
+            description: this.storyDescription,
+            userID: localStorage.getItem("userId"),
+            locationId: this.locationId,
+            storyType: this.selectedStoryType
+          })
+          .then((response) => {
+            this.storyId = response.data;
+            this.createContent();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      } else {
+        this.$http
+          .post("http://localhost:8086/single_story/", {
+            description: "",
+            userID: localStorage.getItem("userId"),
+            locationId: this.locationId,
+            storyType: this.selectedStoryType
+          })
+          .then((response) => {
+            this.storyId = response.data;
+            this.createContent();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      }
     },
-    createStoryContent() {
-      setTimeout(5000);
+    createContent() {
       this.$http
         .post("http://localhost:8085/single_story_content/", {
           path: this.path,
@@ -228,25 +274,44 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
-          alert("Successful creation.");
-          window.location.href = "http://localhost:8081/";
         })
         .catch((er) => {
           console.log(er.response.data);
         });
     },
-    validTag() {
-      if (this.tagName.length > 30) {
-        alert("Your tag name shouldn't contain more than 30 characters!");
-        return false;
-      } else if (this.tagName.match(/[!#$%^&*:'<>+/\\"]/g)) {
-        alert("Your tag name shouldn't contain those special characters.");
-        return false;
-      } else if (this.tagName.match(/\d/g)) {
-        alert("Your tag name shouldn't contain numbers!");
-        return false;
-      }
-      return true;
+    finish() {
+      alert("Successful creation.");
+      window.location.href = "http://localhost:8081/";
+    },
+    addTag() {
+      if (!this.validTag()) return;
+
+      this.$http
+        .post("http://localhost:8082/story_tag/", {
+          name: this.tagName,
+        })
+        .then((response) => {
+          this.storyTagId = response.data;
+          this.createStoryTagStories();
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    createStoryTagStories() {
+      console.log(this.storyTagId)
+      this.$http
+        .post("http://localhost:8082/story_tag_stories/", {
+          story_tag_id: this.storyTagId,
+          story_id: this.storyId,
+        })
+        .then((response) => {
+          console.log(response.data);
+          alert("Tag is created! Add more tags or finish creation.");
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
     },
     validLongitude() {
       if (this.longitude.length < 2) {
@@ -333,7 +398,10 @@ export default {
       return true;
     },
     validStoryDescription() {
-      if (this.storyDescription.length > 50) {
+      if (this.storyDescription.length < 1) {
+        alert("Your story description should contain at least 1 character!");
+        return;
+      } else if (this.storyDescription.length > 50) {
         alert(
           "Your story description shouldn't contain more than 50 characters!"
         );
@@ -354,6 +422,22 @@ export default {
       }
       return true;
     },
+    validTag() {
+      if (this.tagName == null) {
+        alert("Your tag name should contain at least 1 character!");
+        return;
+      } else if (this.tagName.length > 30) {
+        alert("Your tag name shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.tagName.match(/[!#$%^&*:'<>+/\\"]/g)) {
+        alert("Your tag name shouldn't contain those special characters.");
+        return false;
+      } else if (this.tagName.match(/\d/g)) {
+        alert("Your tag name shouldn't contain numbers!");
+        return false;
+      }
+      return true;
+    },
   },
 };
 </script>
@@ -364,11 +448,6 @@ export default {
 }
 
 .typeCombo {
-  width: 94%;
-  margin-left: 6%;
-}
-
-.typeComboSecond {
   width: 94%;
   margin-left: 6%;
 }

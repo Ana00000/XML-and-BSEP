@@ -13,6 +13,7 @@ import (
 
 type PostAlbumContentHandler struct {
 	Service * service.PostAlbumContentService
+	ContentService * service.ContentService
 }
 
 func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWriter, r *http.Request) {
@@ -29,9 +30,10 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 		contentType = model.VIDEO
 	}
 
+	id := uuid.New()
 	postAlbumContent := model.PostAlbumContent{
 		Content: model.Content{
-			ID:   uuid.UUID{},
+			ID:   id,
 			Path: postAlbumContentDTO.Path,
 			Type: contentType,
 		},
@@ -43,6 +45,13 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	err = handler.ContentService.CreateContent(&postAlbumContent.Content)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
