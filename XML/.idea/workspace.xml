@@ -6,6 +6,7 @@
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateProfile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateProfile.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/UserUpdateProfileInfoDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/UserUpdateProfileInfoDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/AdminRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/AdminRepository.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

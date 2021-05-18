@@ -214,7 +214,7 @@ export default {
       console.log(this.userType)
       */
       this.$http
-        .post("http://localhost:8080/update_user_profile_info", {
+        .post("http://localhost:8080/update_user_profile_info/", {
           id: this.id,
           firstName: this.firstName,
           lastName: this.lastName,
@@ -228,7 +228,7 @@ export default {
           userType: this.userType
         },{
             headers: {
-              Authorization: "Bearer " + this.token,
+              "Authorization": "Bearer " + this.token,
             },
         })
         .then((response) => {
