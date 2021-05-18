@@ -61,6 +61,16 @@ const routes = [
     component: () => import('../views/CreateStory.vue')
   },
   {
+    path: '/createPostAlbum',
+    name: 'CreatePostAlbum',
+    component: () => import('../views/CreatePostAlbum.vue')
+  },
+  {
+    path: '/createStoryAlbum',
+    name: 'CreateStoryAlbum',
+    component: () => import('../views/CreateStoryAlbum.vue')
+  },
+  {
     path: '/posts',
     name: 'Posts',
     component: () => import('../views/Posts.vue')

@@ -77,6 +77,8 @@ export default {
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
                 { title: 'Create Story', path: '/createStory' },
+                { title: 'Create Post Album', path: '/createPostAlbum' },
+                { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' }
             ]
@@ -89,6 +91,8 @@ export default {
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
                 { title: 'Create Story', path: '/createStory' },
+                { title: 'Create Post Album', path: '/createPostAlbum' },
+                { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' }
             ]

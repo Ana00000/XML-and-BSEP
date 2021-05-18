@@ -11,41 +11,41 @@ import (
 	_ "strconv"
 )
 
-type PostTagHandler struct {
-	Service * service.PostTagService
+type StoryAlbumTagHandler struct {
+	Service * service.StoryAlbumTagService
 	TagService * service.TagService
 }
 
-func (handler *PostTagHandler) CreatePostTag(w http.ResponseWriter, r *http.Request) {
-	var postTagDTO dto.PostTagDTO
-	err := json.NewDecoder(r.Body).Decode(&postTagDTO)
+func (handler *StoryAlbumTagHandler) CreateStoryAlbumTag(w http.ResponseWriter, r *http.Request) {
+	var storyAlbumTagDTO dto.StoryAlbumTagDTO
+	err := json.NewDecoder(r.Body).Decode(&storyAlbumTagDTO)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	id := uuid.New()
-	postTag := model.PostTag{
+	storyAlbumTag := model.StoryAlbumTag{
 		Tag: model.Tag{
 			ID:   id,
-			Name: postTagDTO.Name,
+			Name: storyAlbumTagDTO.Name,
 		},
 	}
 
-	err = handler.Service.CreatePostTag(&postTag)
+	err = handler.Service.CreateStoryAlbumTag(&storyAlbumTag)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
-	err = handler.TagService.CreateTag(&postTag.Tag)
+	err = handler.TagService.CreateTag(&storyAlbumTag.Tag)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
-	postTagIDJson, _ := json.Marshal(postTag.ID)
-	w.Write(postTagIDJson)
+	storyAlbumTagIDJson, _ := json.Marshal(storyAlbumTag.ID)
+	w.Write(storyAlbumTagIDJson)
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")

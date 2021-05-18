@@ -3,7 +3,7 @@
     <div class="spacing" />
     <v-card width="600" class="mx-auto mt-5" color="white">
       <v-card-title class="justify-center">
-        <h1 class="display-1">Post creation</h1>
+        <h1 class="display-1">Story album creation</h1>
       </v-card-title>
       <v-card-text>
         <v-form class="mx-auto ml-5 mr-5">
@@ -45,9 +45,20 @@
           />
           <v-text-field
             label="Description"
-            v-model="postDescription"
+            v-model="storyAlbumDescription"
             prepend-icon="mdi-address-circle"
             v-if="!isHiddenDescription"
+          />
+           <v-select
+            class="typeCombo"
+            v-model="selectedStoryType"
+            v-if="!isHiddenDescription"
+            hint="Choose your publicity story type."
+            :items="storyTypes"
+            item-text="state"
+            :label="label2"
+            return-object
+            single-line
           />
           <v-text-field
             label="Path"
@@ -59,6 +70,23 @@
             class="typeCombo"
             v-model="selectedType"
             v-if="!isHiddenContent"
+            hint="Choose your type."
+            :items="types"
+            item-text="state"
+            :label="label1"
+            return-object
+            single-line
+          />
+          <v-text-field
+            label="Path"
+            v-model="path"
+            prepend-icon="mdi-address-circle"
+            v-if="!isHiddenAdditionalContent"
+          />
+          <v-select
+            class="typeCombo"
+            v-model="selectedType"
+            v-if="!isHiddenAdditionalContent"
             hint="Choose your type."
             :items="types"
             item-text="state"
@@ -120,6 +148,20 @@
         >
           Add content
         </v-btn>
+         <v-btn
+          color="info mb-5"
+          v-if="!isHiddenAdditionalContentButton"
+          v-on:click="createAdditionalContent"
+        >
+          Add more content
+        </v-btn>
+         <v-btn
+          color="info mb-5"
+          v-if="!isHiddenAdditionalContentButton"
+          v-on:click="continueCreation"
+        >
+          Continue
+        </v-btn>
         <v-btn color="info mb-5" v-if="!isHiddenTagButton" v-on:click="addTag">
           Add tag
         </v-btn>
@@ -134,7 +176,7 @@
 
 <script>
 export default {
-  name: "CreatePost",
+  name: "CreateStoryAlbum",
   data: () => ({
     longitude: "",
     latitude: "",
@@ -143,13 +185,16 @@ export default {
     streetName: "",
     streetNumber: "",
     tagName: null,
-    postDescription: "",
+    storyAlbumDescription: "",
     locationId: null,
     path: "",
     types: ["PICTURE", "VIDEO"],
     selectedType: "PICTURE",
     label1: "Type",
-    postId: null,
+    storyTypes: ["CLOSE_FRIENDS", "ALL_FRIENDS", "PUBLIC"],
+    selectedStoryType: "CLOSE_FRIENDS",
+    label2: "Story publicity type",
+    storyAlbumId: null,
     isHiddenLocationButton: false,
     isHiddenLocation: false,
     isHiddenDescriptionButton: true,
@@ -159,8 +204,10 @@ export default {
     isHiddenTagButton: true,
     isHiddenTag: true,
     isValidLocation: false,
-    isValidPostDescription: false,
-    postTagId: null
+    isValidStoryAlbumDescription: false,
+    storyAlbumTagId: null,
+    isHiddenAdditionalContentButton: true,
+    isHiddenAdditionalContent: true
   }),
   methods: {
     addLocation() {
@@ -181,9 +228,9 @@ export default {
       this.isHiddenDescription = false;
     },
     addDescription() {
-      if (!this.validPostDescription()) return;
+      if (!this.validStoryAlbumDescription()) return;
 
-      this.isValidPostDescription = true;
+      this.isValidStoryAlbumDescription = true;
       this.isHiddenDescriptionButton = true;
       this.isHiddenDescription = true;
       this.isHiddenContentButton = false;
@@ -194,8 +241,8 @@ export default {
 
       this.isHiddenContentButton = true;
       this.isHiddenContent = true;
-      this.isHiddenTagButton = false;
-      this.isHiddenTag = false;
+      this.isHiddenAdditionalContentButton = false;
+      this.isHiddenAdditionalContent = false;
 
       if (this.isValidLocation) {
         this.$http
@@ -209,25 +256,26 @@ export default {
           })
           .then((response) => {
             this.locationId = response.data;
-            this.createPostDescription();
+            this.createStoryAlbumDescription();
           })
           .catch((er) => {
             console.log(er.response.data);
           });
       } else {
-        this.createPostDescription();
+        this.createStoryAlbumDescription();
       }
     },
-    createPostDescription() {
-      if (this.isValidPostDescription) {
+    createStoryAlbumDescription() {
+      if (this.isValidStoryAlbumDescription) {
         this.$http
-          .post("http://localhost:8084/single_post/", {
-            description: this.postDescription,
+          .post("http://localhost:8086/story_album/", {
+            description: this.storyAlbumDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
+            storyType: this.selectedStoryType
           })
           .then((response) => {
-            this.postId = response.data;
+            this.storyAlbumId = response.data;
             this.createContent();
           })
           .catch((er) => {
@@ -235,13 +283,14 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:8084/single_post/", {
+          .post("http://localhost:8086/story_album/", {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
+            storyType: this.selectedStoryType
           })
           .then((response) => {
-            this.postId = response.data;
+            this.storyAlbumId = response.data;
             this.createContent();
           })
           .catch((er) => {
@@ -251,13 +300,36 @@ export default {
     },
     createContent() {
       this.$http
-        .post("http://localhost:8085/single_post_content/", {
+        .post("http://localhost:8085/story_album_content/", {
           path: this.path,
           type: this.selectedType,
-          single_post_id: this.postId,
+          story_album_id: this.storyAlbumId,
         })
         .then((response) => {
           console.log(response.data);
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    continueCreation() {
+      this.isHiddenAdditionalContentButton = true;
+      this.isHiddenAdditionalContent = true;
+      this.isHiddenTagButton = false;
+      this.isHiddenTag = false;
+    },
+    createAdditionalContent() {
+      if (!this.validPath()) return;
+
+      this.$http
+        .post("http://localhost:8085/story_album_content/", {
+          path: this.path,
+          type: this.selectedType,
+          story_album_id: this.storyAlbumId,
+        })
+        .then((response) => {
+          console.log(response.data);
+          alert("Content is added! Add more content or continue creation.");
         })
         .catch((er) => {
           console.log(er.response.data);
@@ -271,22 +343,22 @@ export default {
       if (!this.validTag()) return;
 
       this.$http
-        .post("http://localhost:8082/post_tag/", {
+        .post("http://localhost:8082/story_album_tag/", {
           name: this.tagName,
         })
         .then((response) => {
-          this.postTagId = response.data;
-          this.createPostTagPosts();
+          this.storyAlbumTagId = response.data;
+          this.CreateStoryAlbumTagStoryAlbums();
         })
         .catch((er) => {
           console.log(er.response.data);
         });
     },
-    createPostTagPosts() {
+    CreateStoryAlbumTagStoryAlbums() {
       this.$http
-        .post("http://localhost:8082/post_tag_posts/", {
-          post_tag_id: this.postTagId,
-          post_id: this.postId,
+        .post("http://localhost:8082/story_album_tag_story_albums/", {
+          storyAlbumTagId: this.storyAlbumTagId,
+          storyAlbumId: this.storyAlbumId,
         })
         .then((response) => {
           console.log(response.data);
@@ -380,13 +452,15 @@ export default {
       }
       return true;
     },
-    validPostDescription() {
-      if (this.postDescription.length < 1) {
-        alert("Your post description should contain at least 1 character!");
-        return;
-      } else if (this.postDescription.length > 50) {
+    validStoryAlbumDescription() {
+      if (this.storyAlbumDescription.length < 1) {
         alert(
-          "Your post description shouldn't contain more than 50 characters!"
+          "Your story album description should contain at least 1 character!"
+        );
+        return;
+      } else if (this.storyAlbumDescription.length > 50) {
+        alert(
+          "Your story album description shouldn't contain more than 50 characters!"
         );
         return false;
       }

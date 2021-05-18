@@ -14,6 +14,7 @@ import (
 
 type StoryAlbumHandler struct {
 	Service * service.StoryAlbumService
+	StoryService * service.StoryService
 }
 
 func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +51,16 @@ func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *htt
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	err = handler.StoryService.CreateStory(&storyAlbum.Story)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	storyAlbumIDJson, _ := json.Marshal(storyAlbum.ID)
+	w.Write(storyAlbumIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
