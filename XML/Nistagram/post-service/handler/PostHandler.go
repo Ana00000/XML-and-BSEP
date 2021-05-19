@@ -315,7 +315,23 @@ func (handler *PostHandler) FindAllPublicPostsNotRegisteredUser(w http.ResponseW
 
 	// returns all POSTS of public and valid users
 	var publicValidPosts = handler.PostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
-	postJson, _ := json.Marshal(publicValidPosts)
+	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
+
+	//finds all conents
+	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
+
+
+	//finds all locations
+	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
+
+	//find all tags
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
+
+	//creates a list of dtos
+	var postsDTOS = handler.CreatePostsDTOList(publicValidPosts,contents,locations,tags)
+
+
+	postJson, _ := json.Marshal(postsDTOS)
 	w.Write(postJson)
 
 	w.WriteHeader(http.StatusOK)
