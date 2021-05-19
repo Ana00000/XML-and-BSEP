@@ -30,9 +30,18 @@ func (repo *PostRepository) FindAllPosts() []model.Post {
 	return posts
 }
 
+/*
+func (repo *PostRepository) FindAllValidPosts() []model.Post {
+	var allPosts []model.Post = repo.FindAllPosts()
+
+	for i:= 0; i< len(allPosts); i++{
+
+	}
+}*/
+
 func (repo *PostRepository) FindAllPostsForUser(userId uuid.UUID) []model.Post {
 	var posts []model.Post
-	repo.Database.Select("*").Where("user_id != ?", userId).Find(&posts)
+	repo.Database.Select("*").Where("user_id = ?", userId).Find(&posts)
 	return posts
 }
 

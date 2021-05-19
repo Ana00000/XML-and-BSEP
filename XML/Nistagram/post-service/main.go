@@ -80,8 +80,8 @@ func initCommentHandler(service *service.CommentService) *handler.CommentHandler
 	return &handler.CommentHandler{ Service: service }
 }
 
-func initPostHandler(service *service.PostService) *handler.PostHandler{
-	return &handler.PostHandler{ Service: service }
+func initPostHandler(postService *service.PostService) *handler.PostHandler{
+	return &handler.PostHandler{ PostService: postService }
 }
 
 func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{

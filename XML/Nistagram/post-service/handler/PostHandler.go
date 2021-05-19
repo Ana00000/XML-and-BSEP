@@ -7,12 +7,14 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
+	classicUserService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 	"time"
 )
 
 type PostHandler struct {
-	Service *service.PostService
+	PostService *service.PostService
+	ClassicUserService * classicUserService.ClassicUserService
 }
 
 func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +35,7 @@ func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		IsDeleted:    false,
 	}
 
-	err = handler.Service.CreatePost(&post)
+	err = handler.PostService.CreatePost(&post)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
@@ -51,7 +53,7 @@ func (handler *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = handler.Service.UpdatePost(&postDTO)
+	err = handler.PostService.UpdatePost(&postDTO)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
@@ -60,3 +62,14 @@ func (handler *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+/*
+func (handler *PostHandler) FindAllValidPosts(w http.ResponseWriter, r *http.Request) {
+	err = handler.ClassicUserService.FindAllValidClassicUsers()
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+
+}*/
