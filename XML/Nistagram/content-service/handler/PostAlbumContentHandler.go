@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"io/ioutil"
 	"net/http"
 	_ "strconv"
 )
@@ -15,6 +16,8 @@ type PostAlbumContentHandler struct {
 	Service * service.PostAlbumContentService
 	ContentService * service.ContentService
 }
+
+var pathPostAlbumGlobal = ""
 
 func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWriter, r *http.Request) {
 	var postAlbumContentDTO dto.PostAlbumContentDTO
@@ -34,7 +37,7 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 	postAlbumContent := model.PostAlbumContent{
 		Content: model.Content{
 			ID:   id,
-			Path: postAlbumContentDTO.Path,
+			Path: pathPostAlbumGlobal,
 			Type: contentType,
 		},
 		PostAlbumId: postAlbumContentDTO.PostAlbumId,
@@ -52,6 +55,35 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
+	pathPostAlbumGlobal = ""
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *PostAlbumContentHandler) Upload(writer http.ResponseWriter, request *http.Request) {
+	request.ParseMultipartForm(10 << 20)
+
+	file, hand, err := request.FormFile("myPostAlbumFile")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+
+	tempFile, err := ioutil.TempFile("Media",  "*" + hand.Filename)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer tempFile.Close()
+
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Println(err)
+	}
+	tempFile.Write(fileBytes)
+
+	pathPostAlbumGlobal = tempFile.Name()
+
+	pathJson, _ := json.Marshal(tempFile.Name())
+	writer.Write(pathJson)
 }

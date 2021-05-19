@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"io/ioutil"
 	"net/http"
 	_ "strconv"
 )
@@ -15,6 +16,8 @@ type StoryAlbumContentHandler struct {
 	Service * service.StoryAlbumContentService
 	ContentService * service.ContentService
 }
+
+var pathStoryAlbumGlobal = ""
 
 func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.ResponseWriter, r *http.Request) {
 	var storyAlbumContentDTO dto.StoryAlbumContentDTO
@@ -34,7 +37,7 @@ func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.Response
 	storyAlbumContent := model.StoryAlbumContent{
 		Content: model.Content{
 			ID:   id,
-			Path: storyAlbumContentDTO.Path,
+			Path: pathStoryAlbumGlobal,
 			Type: contentType,
 		},
 		StoryAlbumId: storyAlbumContentDTO.StoryAlbumId,
@@ -52,6 +55,35 @@ func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.Response
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
+	pathStoryAlbumGlobal = ""
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *StoryAlbumContentHandler) Upload(writer http.ResponseWriter, request *http.Request) {
+	request.ParseMultipartForm(10 << 20)
+
+	file, hand, err := request.FormFile("myStoryAlbumFile")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+
+	tempFile, err := ioutil.TempFile("Media",  "*" + hand.Filename)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer tempFile.Close()
+
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Println(err)
+	}
+	tempFile.Write(fileBytes)
+
+	pathStoryAlbumGlobal = tempFile.Name()
+
+	pathJson, _ := json.Marshal(tempFile.Name())
+	writer.Write(pathJson)
 }

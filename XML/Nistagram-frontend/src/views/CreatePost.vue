@@ -49,12 +49,6 @@
             prepend-icon="mdi-address-circle"
             v-if="!isHiddenDescription"
           />
-          <v-text-field
-            label="Path"
-            v-model="path"
-            prepend-icon="mdi-address-circle"
-            v-if="!isHiddenContent"
-          />
           <v-select
             class="typeCombo"
             v-model="selectedType"
@@ -66,6 +60,21 @@
             return-object
             single-line
           />
+          <iframe
+            name="dummyframe"
+            id="dummyframe"
+            style="display: none"
+          ></iframe>
+          <form
+            action="http://localhost:8085/uploadPostMedia/"
+            enctype="multipart/form-data"
+            method="post"
+            v-if="!isHiddenContent"
+            target="dummyframe"
+          >
+            <input type="file" accept="image/*,video/*,.mkv" name="myPostFile" />
+            <input type="submit" value="upload file .." />
+          </form>
         </v-form>
         <v-text-field
           label="Tag name"
@@ -160,7 +169,8 @@ export default {
     isHiddenTag: true,
     isValidLocation: false,
     isValidPostDescription: false,
-    postTagId: null
+    postTagId: null,
+    kljuc: null,
   }),
   methods: {
     addLocation() {
@@ -190,8 +200,6 @@ export default {
       this.isHiddenContent = false;
     },
     addContent() {
-      if (!this.validPath()) return;
-
       this.isHiddenContentButton = true;
       this.isHiddenContent = true;
       this.isHiddenTagButton = false;
@@ -392,19 +400,6 @@ export default {
       }
       return true;
     },
-    validPath() {
-      if (this.path.length < 3) {
-        alert("Your path should contain at least 3 characters!");
-        return false;
-      } else if (this.path.length > 50) {
-        alert("Your path shouldn't contain more than 50 characters!");
-        return false;
-      } else if (this.path.match(/[!@#$%^&*'<>+"]/g)) {
-        alert("Your path shouldn't contain those special characters.");
-        return false;
-      }
-      return true;
-    },
     validTag() {
       if (this.tagName == null) {
         alert("Your tag name should contain at least 1 character!");
@@ -428,6 +423,10 @@ export default {
 <style scoped>
 .spacing {
   height: 100px;
+}
+
+.uploadButton {
+  margin-left: 6%;
 }
 
 .typeCombo {
