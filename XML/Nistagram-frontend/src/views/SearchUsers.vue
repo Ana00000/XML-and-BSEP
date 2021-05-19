@@ -75,7 +75,11 @@ export default {
       console.log(this.id)
       console.log(this.token)
       this.$http
-        .get("http://localhost:8080/find_all_users_but_logged_in?id=" + this.id)
+        .get("http://localhost:8080/find_all_users_but_logged_in?id=" + this.id, {
+            headers: {
+              "Authorization": "Bearer " + this.token,
+            },
+        })
         .then((resp) => {
           console.log("USAO")
           this.users = resp.data

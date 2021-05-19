@@ -29,7 +29,6 @@ func (repo *AdminRepository) UpdateAdminProfileInfo(user *dto.UserUpdateProfileI
 
 	result := repo.Database.Model(&model.Admin{}).Where("id = ?", user.ID)
 	result.Update("username", user.Username)
-
 	fmt.Println(result.RowsAffected)
 	result.Update("phone_number", user.PhoneNumber)
 	fmt.Println(result.RowsAffected)
@@ -44,7 +43,6 @@ func (repo *AdminRepository) UpdateAdminProfileInfo(user *dto.UserUpdateProfileI
 	result.Update("website", user.Website)
 	fmt.Println(result.RowsAffected)
 	result.Update("biography", user.Biography)
-	fmt.Println(result.RowsAffected)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating admin profile info")
 	return nil
