@@ -20,7 +20,7 @@
             <v-hover>
               <template v-slot:default="{ hover }">
                 <v-list-item-content>
-                  <img :src="item.path" />
+                  <img :src="require(`../../../${item.path}`)" alt class="icon" />
 
                   <v-fade-transition>
                     <v-overlay v-if="hover" absolute color="#036358">
