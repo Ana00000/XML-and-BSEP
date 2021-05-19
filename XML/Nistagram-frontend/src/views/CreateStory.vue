@@ -82,9 +82,10 @@
             method="post"
             v-if="!isHiddenContent"
             target="dummyframe"
+            class="uploadButton"
           >
             <input type="file" accept="image/*,video/*,.mkv" name="myStoryFile" />
-            <input type="submit" value="upload file .." />
+            <input type="submit" value=" <- Upload file" v-on:click="(isHiddenContentButton = true)"/>
           </form>
         </v-form>
         <v-text-field
@@ -135,7 +136,7 @@
         </v-btn>
         <v-btn
           color="info mb-5"
-          v-if="!isHiddenContentButton"
+          v-if="isHiddenContentButton"
           v-on:click="addContent"
         >
           Add content
@@ -177,7 +178,7 @@ export default {
     isHiddenLocation: false,
     isHiddenDescriptionButton: true,
     isHiddenDescription: true,
-    isHiddenContentButton: true,
+    isHiddenContentButton: false,
     isHiddenContent: true,
     isHiddenTagButton: true,
     isHiddenTag: true,
@@ -213,7 +214,7 @@ export default {
       this.isHiddenContent = false;
     },
     addContent() {
-      this.isHiddenContentButton = true;
+      this.isHiddenContentButton = false;
       this.isHiddenContent = true;
       this.isHiddenTagButton = false;
       this.isHiddenTag = false;
@@ -439,6 +440,10 @@ export default {
 <style scoped>
 .spacing {
   height: 100px;
+}
+
+.uploadButton {
+  margin-left: 6%;
 }
 
 .typeCombo {
