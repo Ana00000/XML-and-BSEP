@@ -4,8 +4,9 @@ import (
 	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/repository"
@@ -112,16 +113,23 @@ func initSingleStoryStoryHighlightsHandler(service *service.SingleStoryStoryHigh
 
 func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.StoryAlbumHandler, handlerStoryHighlight *handler.StoryHighlightHandler,
 	handlerSingleStoryStoryHighlights *handler.SingleStoryStoryHighlightsHandler,handlerSingleStory *handler.SingleStoryHandler){
-	mux := http.NewServeMux()
 
-	mux.HandleFunc("/story/", handlerStory.CreateStory)
-	mux.HandleFunc("/story_album/", handlerStoryAlbum.CreateStoryAlbum)
-	mux.HandleFunc("/story_highlight/", handlerStoryHighlight.CreateStoryHighlight)
-	mux.HandleFunc("/single_story_story_highlights/", handlerSingleStoryStoryHighlights.CreateSingleStoryStoryHighlights)
-	mux.HandleFunc("/single_story/", handlerSingleStory.CreateSingleStory)
+	router := mux.NewRouter().StrictSlash(true)
 
-	handlerVar := cors.Default().Handler(mux)
-	log.Fatal(http.ListenAndServe(":8086", handlerVar))
+	cors := handlers.CORS(
+		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowCredentials(),
+	)
+
+	router.HandleFunc("/story/", handlerStory.CreateStory).Methods("POST")
+	router.HandleFunc("/story_album/", handlerStoryAlbum.CreateStoryAlbum).Methods("POST")
+	router.HandleFunc("/story_highlight/", handlerStoryHighlight.CreateStoryHighlight).Methods("POST")
+	router.HandleFunc("/single_story_story_highlights/", handlerSingleStoryStoryHighlights.CreateSingleStoryStoryHighlights).Methods("POST")
+	router.HandleFunc("/single_story/", handlerSingleStory.CreateSingleStory).Methods("POST")
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
 func main() {

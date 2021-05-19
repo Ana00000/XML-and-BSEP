@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	_ "github.com/antchfx/xpath"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
@@ -114,16 +114,22 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 	handlerProfileSettingsBlockedProfiles *handler.ProfileSettingsBlockedProfilesHandler, handlerProfileSettingsMutedProfiles *handler.ProfileSettingsMutedProfilesHandler,
 	handlerProfileSettingsRejectedMessageProfiles *handler.ProfileSettingsRejectedMessageProfilesHandler){
 
-	mux := http.NewServeMux()
+	router := mux.NewRouter().StrictSlash(true)
 
-	mux.HandleFunc("/profile_settings/", handlerProfileSettings.CreateProfileSettings)
-	mux.HandleFunc("/profile_settings_approved_message_profiles/", handlerProfileSettingsApprovedMessageProfiles.CreateProfileSettingsApprovedMessageProfiles)
-	mux.HandleFunc("/profile_settings_blocked_profiles/", handlerProfileSettingsBlockedProfiles.CreateProfileSettingsBlockedProfiles)
-	mux.HandleFunc("/profile_settings_muted_profiles/", handlerProfileSettingsMutedProfiles.CreateProfileSettingsMutedProfiles)
-	mux.HandleFunc("/profile_settings_rejected_message_profiles/", handlerProfileSettingsRejectedMessageProfiles.CreateProfileSettingsRejectedMessageProfiles)
+	cors := handlers.CORS(
+		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowCredentials(),
+	)
 
-	handlerVar := cors.Default().Handler(mux)
-	log.Fatal(http.ListenAndServe(":8088", handlerVar))
+	router.HandleFunc("/profile_settings/{userID}", handlerProfileSettings.CreateProfileSettings).Methods("POST")
+	router.HandleFunc("/profile_settings_approved_message_profiles/", handlerProfileSettingsApprovedMessageProfiles.CreateProfileSettingsApprovedMessageProfiles).Methods("POST")
+	router.HandleFunc("/profile_settings_blocked_profiles/", handlerProfileSettingsBlockedProfiles.CreateProfileSettingsBlockedProfiles).Methods("POST")
+	router.HandleFunc("/profile_settings_muted_profiles/", handlerProfileSettingsMutedProfiles.CreateProfileSettingsMutedProfiles).Methods("POST")
+	router.HandleFunc("/profile_settings_rejected_message_profiles/", handlerProfileSettingsRejectedMessageProfiles.CreateProfileSettingsRejectedMessageProfiles).Methods("POST")
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
 func main() {

@@ -3,12 +3,40 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/ChangePasswordByToken.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/ChangePasswordByToken.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/Register.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/Register.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchUsers.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchUsers.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateProfile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateProfile.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/location-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/location-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/location-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/message-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/message-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/message-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/message-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/message-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/message-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +62,9 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Nistagram/user-service/service/ConfirmationTokenService.go" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -55,7 +86,10 @@
     <property name="configurable.GoLibrariesConfigurable.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
@@ -113,5 +147,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
   </component>
 </project>

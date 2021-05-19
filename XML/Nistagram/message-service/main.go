@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/repository"
@@ -97,15 +97,21 @@ func initPostMessageSubstanceHandler(service *service.PostMessageSubstanceServic
 func handleFunc(handlerMessage *handler.MessageHandler, handlerMessageSubstance *handler.MessageSubstanceHandler,
 				handlerStoryMessageSubstance *handler.StoryMessageSubstanceHandler, handlerPostMessageSubstance *handler.PostMessageSubstanceHandler){
 
-	mux := http.NewServeMux()
+	router := mux.NewRouter().StrictSlash(true)
 
-	mux.HandleFunc("/message/", handlerMessage.CreateMessage)
-	mux.HandleFunc("/message_content/", handlerMessageSubstance.CreateMessageSubstance)
-	mux.HandleFunc("/story_message_content/", handlerStoryMessageSubstance.CreateStoryMessageSubstance)
-	mux.HandleFunc("/post_message_content/", handlerPostMessageSubstance.CreatePostMessageSubstance)
+	cors := handlers.CORS(
+		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowCredentials(),
+	)
 
-	handlerVar := cors.Default().Handler(mux)
-	log.Fatal(http.ListenAndServe(":8089", handlerVar))
+	router.HandleFunc("/message/", handlerMessage.CreateMessage).Methods("POST")
+	router.HandleFunc("/message_content/", handlerMessageSubstance.CreateMessageSubstance).Methods("POST")
+	router.HandleFunc("/story_message_content/", handlerStoryMessageSubstance.CreateStoryMessageSubstance).Methods("POST")
+	router.HandleFunc("/post_message_content/", handlerPostMessageSubstance.CreatePostMessageSubstance).Methods("POST")
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
 func main() {

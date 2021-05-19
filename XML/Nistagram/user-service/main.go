@@ -265,7 +265,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	router.HandleFunc("/find_selected_user_by_id", classicUserHandler.FindSelectedUserById).Methods("GET")
 
 
-	log.Fatal(http.ListenAndServe(":8080", cors(router)))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
 func main() {

@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	_ "github.com/antchfx/xpath"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/repository"
@@ -127,17 +127,23 @@ func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContent
 	storyICRHandler *handler.StoryICRHandler, commentICRHandler *handler.CommentICRHandler, verificationRequestHandler *handler.VerificationRequestHandler,
 	agentRegistrationRequestHandler *handler.AgentRegistrationRequestHandler){
 
-	mux := http.NewServeMux()
+	router := mux.NewRouter().StrictSlash(true)
 
-	mux.HandleFunc("/inappropriateContentRequest", inappropriateContentRequestHandler.CreateInappropriateContentRequest)
-	mux.HandleFunc("/postICR", postICRHandler.CreatePostICR)
-	mux.HandleFunc("/storyICR", storyICRHandler.CreateStoryICR)
-	mux.HandleFunc("/commentICR", commentICRHandler.CreateCommentICR)
-	mux.HandleFunc("/verificationRequest", verificationRequestHandler.CreateVerificationRequest)
-	mux.HandleFunc("/agentRegistrationRequestHandler", agentRegistrationRequestHandler.CreateAgentRegistrationRequest)
+	cors := handlers.CORS(
+		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowCredentials(),
+	)
 
-	handlerVar := cors.Default().Handler(mux)
-	log.Fatal(http.ListenAndServe(":8087", handlerVar))
+	router.HandleFunc("/inappropriateContentRequest", inappropriateContentRequestHandler.CreateInappropriateContentRequest).Methods("POST")
+	router.HandleFunc("/postICR", postICRHandler.CreatePostICR).Methods("POST")
+	router.HandleFunc("/storyICR", storyICRHandler.CreateStoryICR).Methods("POST")
+	router.HandleFunc("/commentICR", commentICRHandler.CreateCommentICR).Methods("POST")
+	router.HandleFunc("/verificationRequest", verificationRequestHandler.CreateVerificationRequest).Methods("POST")
+	router.HandleFunc("/agentRegistrationRequestHandler", agentRegistrationRequestHandler.CreateAgentRegistrationRequest).Methods("POST")
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
 func main() {

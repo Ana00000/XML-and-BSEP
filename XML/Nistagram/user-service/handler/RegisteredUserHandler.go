@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
@@ -13,6 +13,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 	gomail "gopkg.in/mail.v2"
 	"net/http"
+	"os"
 	_ "strconv"
 	"time"
 )
@@ -65,7 +66,7 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	}
 
 	if err := handler.Validator.Struct(&registeredUserDTO); err != nil {
-		w.WriteHeader(http.StatusBadRequest) //400
+		w.WriteHeader(http.StatusExpectationFailed) //400
 		return
 	}
 
@@ -157,17 +158,15 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 
 	SendConfirmationMail(registeredUser.ClassicUser.User, confirmationToken.ConfirmationToken)
 
-	profileSettings:= settingsModel.ProfileSettings{
-		ID:                uuid.New(),
-		UserId:            userId,
-		UserVisibility:       settingsModel.PUBLIC_VISIBILITY,
-		MessageApprovalType: settingsModel.PUBLIC,
-		IsPostTaggable: true,
-		IsStoryTaggable: true,
-		IsCommentTaggable: true,
-
+	reqUrl := fmt.Sprintf("http://%s:%s/profile_settings/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), userId)
+	jsonOrders, _ := json.Marshal(nil)
+	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	fmt.Println(string(jsonOrders))
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonOrders))
+	if err != nil || resp.StatusCode == 404 {
+		print("Failed creating profile settings for user")
+		w.WriteHeader(http.StatusFailedDependency)
 	}
-	err := handler.ProfileSettingsService.CreateProfileSettings(&profileSettings)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)

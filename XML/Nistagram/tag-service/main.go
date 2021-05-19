@@ -4,8 +4,9 @@ import (
 	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
@@ -190,22 +191,28 @@ func handleFunc(handlerTag *handler.TagHandler, handlerPostTag *handler.PostTagH
 	handlerPostAlbumTag *handler.PostAlbumTagHandler, handlerPostAlbumTagPostAlbums *handler.PostAlbumTagPostAlbumsHandler,
 	handlerStoryAlbumTag *handler.StoryAlbumTagHandler, handlerStoryAlbumTagStoryAlbums *handler.StoryAlbumTagStoryAlbumsHandler){
 
-	mux := http.NewServeMux()
+	router := mux.NewRouter().StrictSlash(true)
 
-	mux.HandleFunc("/tag/", handlerTag.CreateTag)
-	mux.HandleFunc("/post_tag/", handlerPostTag.CreatePostTag)
-	mux.HandleFunc("/story_tag/", handlerStoryTag.CreateStoryTag)
-	mux.HandleFunc("/comment_tag/", handlerCommentTag.CreateCommentTag)
-	mux.HandleFunc("/comment_tag_comments/", handlerCommentTagComments.CreateCommentTagComments)
-	mux.HandleFunc("/post_tag_posts/", handlerPostTagPosts.CreatePostTagPosts)
-	mux.HandleFunc("/story_tag_stories/", handlerStoryTagStories.CreateStoryTagStories)
-	mux.HandleFunc("/post_album_tag/", handlerPostAlbumTag.CreatePostAlbumTag)
-	mux.HandleFunc("/post_album_tag_post_albums/", handlerPostAlbumTagPostAlbums.CreatePostAlbumTagPostAlbums)
-	mux.HandleFunc("/story_album_tag/", handlerStoryAlbumTag.CreateStoryAlbumTag)
-	mux.HandleFunc("/story_album_tag_story_albums/", handlerStoryAlbumTagStoryAlbums.CreateStoryAlbumTagStoryAlbums)
+	cors := handlers.CORS(
+		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowCredentials(),
+	)
 
-	handlerVar := cors.Default().Handler(mux)
-	log.Fatal(http.ListenAndServe(":8082", handlerVar))
+	router.HandleFunc("/tag/", handlerTag.CreateTag).Methods("POST")
+	router.HandleFunc("/post_tag/", handlerPostTag.CreatePostTag).Methods("POST")
+	router.HandleFunc("/story_tag/", handlerStoryTag.CreateStoryTag).Methods("POST")
+	router.HandleFunc("/comment_tag/", handlerCommentTag.CreateCommentTag).Methods("POST")
+	router.HandleFunc("/comment_tag_comments/", handlerCommentTagComments.CreateCommentTagComments).Methods("POST")
+	router.HandleFunc("/post_tag_posts/", handlerPostTagPosts.CreatePostTagPosts).Methods("POST")
+	router.HandleFunc("/story_tag_stories/", handlerStoryTagStories.CreateStoryTagStories).Methods("POST")
+	router.HandleFunc("/post_album_tag/", handlerPostAlbumTag.CreatePostAlbumTag).Methods("POST")
+	router.HandleFunc("/post_album_tag_post_albums/", handlerPostAlbumTagPostAlbums.CreatePostAlbumTagPostAlbums).Methods("POST")
+	router.HandleFunc("/story_album_tag/", handlerStoryAlbumTag.CreateStoryAlbumTag).Methods("POST")
+	router.HandleFunc("/story_album_tag_story_albums/", handlerStoryAlbumTagStoryAlbums.CreateStoryAlbumTagStoryAlbums).Methods("POST")
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
 func main() {

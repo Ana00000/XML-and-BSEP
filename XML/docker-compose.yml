@@ -32,7 +32,7 @@ services:
     build:
       context: ./Nistagram-frontend
       dockerfile: Dockerfile
-    command: npm run serve -- --port=8081
+    command: npm run serve -- --port 8081
     restart: on-failure
     ports:
       - "8081:8081"
@@ -41,6 +41,8 @@ services:
       - node_modules:/Nistagram-frontend/node_modules
     environment:
       FRONTEND_PORT: 8081
+    depends_on:
+      - gateway
     networks:
       - backend
 
@@ -242,6 +244,8 @@ services:
       PASSWORD: root
       DBNAME: userdb
       DBPORT: 5432
+      SETTINGS_SERVICE_DOMAIN: settings-service
+      SETTINGS_SERVICE_PORT: 8088
     depends_on:
       - db
 

@@ -4,8 +4,9 @@ import (
 	"fmt"
 	_ "fmt"
 	_ "github.com/antchfx/xpath"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/repository"
@@ -151,19 +152,25 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 	handlerStoryAlbumContent *handler.StoryAlbumContentHandler, handlerSingleStoryContent *handler.SingleStoryContentHandler,
 	handlerCommentContent *handler.CommentContentHandler, handlerMessageContent *handler.MessageContentHandler){
 
-	mux := http.NewServeMux()
+	router := mux.NewRouter().StrictSlash(true)
 
-	mux.HandleFunc("/content/", handlerContent.CreateContent)
-	mux.HandleFunc("/single_post_content/", handlerSinglePostContent.CreateSinglePostContent)
-	mux.HandleFunc("/single_story_content/", handlerSingleStoryContent.CreateSingleStoryContent)
-	mux.HandleFunc("/advertisement_content/", handlerAdvertisementContent.CreateAdvertisementContent)
-	mux.HandleFunc("/post_album_content/", handlerPostAlbumContent.CreatePostAlbumContent)
-	mux.HandleFunc("/story_album_content/", handlerStoryAlbumContent.CreateStoryAlbumContent)
-	mux.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent)
-	mux.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent)
+	cors := handlers.CORS(
+		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowCredentials(),
+	)
 
-	handlerVar := cors.Default().Handler(mux)
-	log.Fatal(http.ListenAndServe(":8085", handlerVar))
+	router.HandleFunc("/content/", handlerContent.CreateContent).Methods("POST")
+	router.HandleFunc("/single_post_content/", handlerSinglePostContent.CreateSinglePostContent).Methods("POST")
+	router.HandleFunc("/single_story_content/", handlerSingleStoryContent.CreateSingleStoryContent).Methods("POST")
+	router.HandleFunc("/advertisement_content/", handlerAdvertisementContent.CreateAdvertisementContent).Methods("POST")
+	router.HandleFunc("/post_album_content/", handlerPostAlbumContent.CreatePostAlbumContent).Methods("POST")
+	router.HandleFunc("/story_album_content/", handlerStoryAlbumContent.CreateStoryAlbumContent).Methods("POST")
+	router.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent).Methods("POST")
+	router.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent).Methods("POST")
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
 func main() {

@@ -110,7 +110,7 @@ export default {
           return;
       
       this.$http
-        .post("http://localhost:8080/registered_user/", {
+        .post("http://localhost:8080/api/user/registered_user/", {
           username: this.username,
           password: this.password,
           email : this.userEmail,
@@ -122,10 +122,6 @@ export default {
           website: this.website,
           biography: this.biography,
           is_blocked: false
-        },{
-            headers: {
-              "Authorization": "Bearer " + this.token,
-            },
         })
         .then((response) => {
           console.log(response.data.firstName);
