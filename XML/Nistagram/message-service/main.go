@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/repository"
@@ -95,14 +96,16 @@ func initPostMessageSubstanceHandler(service *service.PostMessageSubstanceServic
 
 func handleFunc(handlerMessage *handler.MessageHandler, handlerMessageSubstance *handler.MessageSubstanceHandler,
 				handlerStoryMessageSubstance *handler.StoryMessageSubstanceHandler, handlerPostMessageSubstance *handler.PostMessageSubstanceHandler){
-	router := mux.NewRouter().StrictSlash(true)
 
-	router.HandleFunc("/message/", handlerMessage.CreateMessage).Methods("POST")
-	router.HandleFunc("/message_content/", handlerMessageSubstance.CreateMessageSubstance).Methods("POST")
-	router.HandleFunc("/story_message_content/", handlerStoryMessageSubstance.CreateStoryMessageSubstance).Methods("POST")
-	router.HandleFunc("/post_message_content/", handlerPostMessageSubstance.CreatePostMessageSubstance).Methods("POST")
+	mux := http.NewServeMux()
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8082"), router))
+	mux.HandleFunc("/message/", handlerMessage.CreateMessage)
+	mux.HandleFunc("/message_content/", handlerMessageSubstance.CreateMessageSubstance)
+	mux.HandleFunc("/story_message_content/", handlerStoryMessageSubstance.CreateStoryMessageSubstance)
+	mux.HandleFunc("/post_message_content/", handlerPostMessageSubstance.CreatePostMessageSubstance)
+
+	handlerVar := cors.Default().Handler(mux)
+	log.Fatal(http.ListenAndServe(":8089", handlerVar))
 }
 
 func main() {

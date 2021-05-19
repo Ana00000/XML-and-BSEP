@@ -259,7 +259,7 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http.Request) {
 
 	if err := TokenValid(r); err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
+		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
 

@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/service"
 	"net/http"
 )
 

@@ -64,9 +64,11 @@ func initHandler(service *service.LocationService) *handler.LocationHandler{
 
 func handleFunc(handler *handler.LocationHandler){
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/", handler.CreateLocation)
 	mux.HandleFunc("/find_location_by_id", handler.FindByID)
 	handlerVar := cors.Default().Handler(mux)
+
 	log.Fatal(http.ListenAndServe(":8083", handlerVar))
 }
 

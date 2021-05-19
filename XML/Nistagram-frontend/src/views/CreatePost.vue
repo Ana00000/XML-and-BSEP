@@ -44,12 +44,6 @@
             v-if="!isHiddenLocation"
           />
           <v-text-field
-            label="Tag name"
-            v-model="tagName"
-            prepend-icon="mdi-address-circle"
-            v-if="!isHiddenTag"
-          />
-          <v-text-field
             label="Description"
             v-model="postDescription"
             prepend-icon="mdi-address-circle"
@@ -59,10 +53,12 @@
             label="Path"
             v-model="path"
             prepend-icon="mdi-address-circle"
+            v-if="!isHiddenContent"
           />
           <v-select
             class="typeCombo"
             v-model="selectedType"
+            v-if="!isHiddenContent"
             hint="Choose your type."
             :items="types"
             item-text="state"
@@ -71,14 +67,65 @@
             single-line
           />
         </v-form>
+        <v-text-field
+          label="Tag name"
+          v-model="tagName"
+          prepend-icon="mdi-address-circle"
+          v-if="!isHiddenTag"
+        />
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
-        <v-btn color="info mb-5" v-on:click="isHiddenLocation=false"> Add location  </v-btn>
-        <v-btn color="info mb-5" v-on:click="isHiddenTag=false"> Add tag </v-btn>
-        <v-btn color="info mb-5" v-on:click="isHiddenDescription=false"> Add description </v-btn>
-      </v-card-actions>
-      <v-card-actions class="justify-center mb-5">
-        <v-btn color="info mb-5" v-on:click="createPost"> Create </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-on:click="
+            (isHiddenLocation = true),
+              (isHiddenDescription = false),
+              (isHiddenDescriptionButton = false),
+              (isHiddenLocationButton = true)
+          "
+          v-if="!isHiddenLocationButton"
+        >
+          Skip location
+        </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-on:click="addLocation"
+          v-if="!isHiddenLocationButton"
+        >
+          Add location
+        </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-on:click="
+            (isHiddenDescriptionButton = true),
+              (isHiddenDescription = true),
+              (isHiddenContentButton = false),
+              (isHiddenContent = false)
+          "
+          v-if="!isHiddenDescriptionButton"
+        >
+          Skip description
+        </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-on:click="addDescription"
+          v-if="!isHiddenDescriptionButton"
+        >
+          Add description
+        </v-btn>
+        <v-btn
+          color="info mb-5"
+          v-if="!isHiddenContentButton"
+          v-on:click="addContent"
+        >
+          Add content
+        </v-btn>
+        <v-btn color="info mb-5" v-if="!isHiddenTagButton" v-on:click="addTag">
+          Add tag
+        </v-btn>
+        <v-btn color="info mb-5" v-if="!isHiddenTagButton" v-on:click="finish">
+          Finish
+        </v-btn>
       </v-card-actions>
     </v-card>
     <div class="spacing" />
@@ -103,27 +150,20 @@ export default {
     selectedType: "PICTURE",
     label1: "Type",
     postId: null,
-    isHiddenLocation: true,
+    isHiddenLocationButton: false,
+    isHiddenLocation: false,
+    isHiddenDescriptionButton: true,
+    isHiddenDescription: true,
+    isHiddenContentButton: true,
+    isHiddenContent: true,
+    isHiddenTagButton: true,
     isHiddenTag: true,
-    isHiddenDescription: true
+    isValidLocation: false,
+    isValidPostDescription: false,
+    postTagId: null
   }),
   methods: {
-    createPost() {
-      if (!this.validPath() || !this.validPostDescription()) return;
-
-      this.createTag();
-
-      if (
-        this.longitude == "" &&
-        this.latitude == "" &&
-        this.country == "" &&
-        this.city == "" &&
-        this.streetName == "" &&
-        this.streetNumber == ""
-      ) {
-        this.createPostWithoutLocation();
-        return;
-      }
+    addLocation() {
       if (
         !this.validLongitude() ||
         !this.validLatitude() ||
@@ -134,71 +174,82 @@ export default {
       )
         return;
 
-      this.$http
-        .post("http://localhost:8083/", {
-          longitude: this.longitude,
-          latitude: this.latitude,
-          country: this.country,
-          city: this.city,
-          streetName: this.streetName,
-          streetNumber: this.streetNumber,
-        })
-        .then((response) => {
-          this.locationId = response.data;
-          this.createPostWithLocation();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+      this.isValidLocation = true;
+      this.isHiddenLocationButton = true;
+      this.isHiddenLocation = true;
+      this.isHiddenDescriptionButton = false;
+      this.isHiddenDescription = false;
     },
-    createTag() {
-      if (this.tagName == null) return;
-      if (!this.validTag()) return;
+    addDescription() {
+      if (!this.validPostDescription()) return;
 
-      this.$http
-        .post("http://localhost:8082/post_tag/", {
-          name: this.tagName,
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+      this.isValidPostDescription = true;
+      this.isHiddenDescriptionButton = true;
+      this.isHiddenDescription = true;
+      this.isHiddenContentButton = false;
+      this.isHiddenContent = false;
     },
-    createPostWithLocation() {
-      this.$http
-        .post("http://localhost:8084/single_post/", {
-          description: this.postDescription,
-          userID: localStorage.getItem("userId"),
-          locationId: this.locationId,
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.postId = response.data;
-          this.createPostContent();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+    addContent() {
+      if (!this.validPath()) return;
+
+      this.isHiddenContentButton = true;
+      this.isHiddenContent = true;
+      this.isHiddenTagButton = false;
+      this.isHiddenTag = false;
+
+      if (this.isValidLocation) {
+        this.$http
+          .post("http://localhost:8083/", {
+            longitude: this.longitude,
+            latitude: this.latitude,
+            country: this.country,
+            city: this.city,
+            streetName: this.streetName,
+            streetNumber: this.streetNumber,
+          })
+          .then((response) => {
+            this.locationId = response.data;
+            this.createPostDescription();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      } else {
+        this.createPostDescription();
+      }
     },
-    createPostWithoutLocation() {
-      this.$http
-        .post("http://localhost:8084/single_post/", {
-          description: this.postDescription,
-          userID: localStorage.getItem("userId"),
-        })
-        .then((response) => {
-          console.log(response.data);
-          this.postId = response.data;
-          this.createPostContent();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+    createPostDescription() {
+      if (this.isValidPostDescription) {
+        this.$http
+          .post("http://localhost:8084/single_post/", {
+            description: this.postDescription,
+            userID: localStorage.getItem("userId"),
+            locationId: this.locationId,
+          })
+          .then((response) => {
+            this.postId = response.data;
+            this.createContent();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      } else {
+        this.$http
+          .post("http://localhost:8084/single_post/", {
+            description: "",
+            userID: localStorage.getItem("userId"),
+            locationId: this.locationId,
+          })
+          .then((response) => {
+            this.postId = response.data;
+            this.createContent();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      }
     },
-    createPostContent() {
-      setTimeout(5000);
+    createContent() {
       this.$http
         .post("http://localhost:8085/single_post_content/", {
           path: this.path,
@@ -207,25 +258,43 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
-          alert("Successful creation.");
-          window.location.href = "http://localhost:8081/";
         })
         .catch((er) => {
           console.log(er.response.data);
         });
     },
-    validTag() {
-      if (this.tagName.length > 30) {
-        alert("Your tag name shouldn't contain more than 30 characters!");
-        return false;
-      } else if (this.tagName.match(/[!#$%^&*:'<>+/\\"]/g)) {
-        alert("Your tag name shouldn't contain those special characters.");
-        return false;
-      } else if (this.tagName.match(/\d/g)) {
-        alert("Your tag name shouldn't contain numbers!");
-        return false;
-      }
-      return true;
+    finish() {
+      alert("Successful creation.");
+      window.location.href = "http://localhost:8081/";
+    },
+    addTag() {
+      if (!this.validTag()) return;
+
+      this.$http
+        .post("http://localhost:8082/post_tag/", {
+          name: this.tagName,
+        })
+        .then((response) => {
+          this.postTagId = response.data;
+          this.createPostTagPosts();
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    createPostTagPosts() {
+      this.$http
+        .post("http://localhost:8082/post_tag_posts/", {
+          post_tag_id: this.postTagId,
+          post_id: this.postId,
+        })
+        .then((response) => {
+          console.log(response.data);
+          alert("Tag is created! Add more tags or finish creation.");
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
     },
     validLongitude() {
       if (this.longitude.length < 2) {
@@ -312,7 +381,10 @@ export default {
       return true;
     },
     validPostDescription() {
-      if (this.postDescription.length > 50) {
+      if (this.postDescription.length < 1) {
+        alert("Your post description should contain at least 1 character!");
+        return;
+      } else if (this.postDescription.length > 50) {
         alert(
           "Your post description shouldn't contain more than 50 characters!"
         );
@@ -329,6 +401,22 @@ export default {
         return false;
       } else if (this.path.match(/[!@#$%^&*'<>+"]/g)) {
         alert("Your path shouldn't contain those special characters.");
+        return false;
+      }
+      return true;
+    },
+    validTag() {
+      if (this.tagName == null) {
+        alert("Your tag name should contain at least 1 character!");
+        return;
+      } else if (this.tagName.length > 30) {
+        alert("Your tag name shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.tagName.match(/[!#$%^&*:'<>+/\\"]/g)) {
+        alert("Your tag name shouldn't contain those special characters.");
+        return false;
+      } else if (this.tagName.match(/\d/g)) {
+        alert("Your tag name shouldn't contain numbers!");
         return false;
       }
       return true;

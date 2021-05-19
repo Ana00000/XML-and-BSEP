@@ -1,11 +1,10 @@
 package main
 
 import (
-	"fmt"
-	_ "fmt"
 	_ "github.com/antchfx/xpath"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/repository"
@@ -114,14 +113,17 @@ func initMultiUseCampaignHandler(service *service.MultiUseCampaignService) *hand
 
 func handleFunc(handlerMultiUseCampaign *handler.MultiUseCampaignHandler,handlerDisposableCampaign *handler.DisposableCampaignHandler,handlerCampaign *handler.CampaignHandler,handlerAdvertisement *handler.AdvertisementHandler,
 	handlerCampaignChosenGroup *handler.CampaignChosenGroupHandler){
-	router := mux.NewRouter().StrictSlash(true)
 
-	router.HandleFunc("/multi_use_campaign/", handlerMultiUseCampaign.CreateMultiUseCampaign).Methods("POST")
-	router.HandleFunc("/disposable_campaign/", handlerDisposableCampaign.CreateDisposableCampaign).Methods("POST")
-	router.HandleFunc("/campaign/", handlerCampaign.CreateCampaign).Methods("POST")
-	router.HandleFunc("/advertisement/", handlerAdvertisement.CreateAdvertisement).Methods("POST")
-	router.HandleFunc("/campaign_chosen_group/", handlerCampaignChosenGroup.CreateCampaignChosenGroup).Methods("POST")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", "8087"), router))
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/multi_use_campaign/", handlerMultiUseCampaign.CreateMultiUseCampaign)
+	mux.HandleFunc("/disposable_campaign/", handlerDisposableCampaign.CreateDisposableCampaign)
+	mux.HandleFunc("/campaign/", handlerCampaign.CreateCampaign)
+	mux.HandleFunc("/advertisement/", handlerAdvertisement.CreateAdvertisement)
+	mux.HandleFunc("/campaign_chosen_group/", handlerCampaignChosenGroup.CreateCampaignChosenGroup)
+
+	handlerVar := cors.Default().Handler(mux)
+	log.Fatal(http.ListenAndServe(":8090", handlerVar))
 }
 
 func main() {

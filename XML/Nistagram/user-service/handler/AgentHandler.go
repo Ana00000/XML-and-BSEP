@@ -17,6 +17,7 @@ import (
 type AgentHandler struct {
 	AgentService *service.AgentService
 	UserService  *service.UserService
+	ClassicUserService *service.ClassicUserService
 	Validator    *validator.Validate
 	PasswordUtil *util.PasswordUtil
 }
@@ -93,6 +94,16 @@ func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
+	if err := handler.ClassicUserService.CreateClassicUser(&agent.ClassicUser); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	if err := handler.UserService.CreateUser(&agent.ClassicUser.User); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+	
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
