@@ -2,13 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Media/2937041752021-05-05 11-26-24.mkv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/539913050Screenshot (62).png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/0278807992021-05-05 11-26-24.mkv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/179226418Screenshot (58).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/2937041752021-05-05 11-26-24.mkv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/6289616582021-05-05 11-26-24.mkv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/650578631Screenshot (58).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/690678693test2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/940812001test2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/upload-022949723.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/upload-139026990.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/upload-439719495.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/upload-495868999.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePostAlbum.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePostAlbum.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStoryAlbum.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStoryAlbum.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/PostAlbumContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/PostAlbumContentHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/StoryAlbumContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/StoryAlbumContentHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

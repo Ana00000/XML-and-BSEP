@@ -55,8 +55,6 @@ func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.Response
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
-	pathStoryAlbumGlobal = ""
-
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

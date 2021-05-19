@@ -55,8 +55,6 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
-	pathPostAlbumGlobal = ""
-
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
