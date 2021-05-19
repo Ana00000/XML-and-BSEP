@@ -84,3 +84,11 @@ func (repo * ClassicUserFollowingsRepository) FindAllValidFollowingsForUser(user
 	return validFollowings
 
 }
+
+func (repo *ClassicUserFollowingsRepository) CheckIfFollowingPostUser(followingUserId uuid.UUID, classicUserId uuid.UUID) bool{
+	follower := &model.ClassicUserFollowers{}
+	if repo.Database.First(&follower, "following_user_id = ? and classic_user_id = ?", followingUserId, classicUserId).RowsAffected == 0{
+		return false
+	}
+	return true
+}

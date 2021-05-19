@@ -47,3 +47,11 @@ func (service *PostService) FindAllFollowingPosts(followings []userModel.Classic
 	}
 	return nil
 }
+
+func (service *PostService) FindAllPublicPostsNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.Post {
+	posts := service.Repo.FindAllPublicPostsNotRegisteredUser(allValidUsers)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}

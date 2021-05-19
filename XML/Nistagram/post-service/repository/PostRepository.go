@@ -33,7 +33,7 @@ func (repo *PostRepository) FindAllPosts() []model.Post {
 
 func (repo *PostRepository) FindByID(ID uuid.UUID) *model.Post {
 	post := &model.Post{}
-	if repo.Database.First(&post, "id = ?", ID).RowsAffected == 0 {
+	if repo.Database.First(&post, "id = ? and is_deleted = ?", ID, false).RowsAffected == 0 {
 		return nil
 	}
 	return post
@@ -61,6 +61,23 @@ func (repo *PostRepository) FindAllFollowingPosts(followings []userModel.Classic
 	}
 	return allFollowingPosts
 }
+
+func (repo *PostRepository) FindAllPublicPostsNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.Post {
+	var allPosts = repo.FindAllPosts()
+	var allPublicPosts []model.Post
+
+	for i:=0;i<len(allPosts);i++{
+		for j:=0; j<len(allValidUsers);j++{
+			if allPosts[i].UserID == allValidUsers[j].ID {
+				allPublicPosts = append(allPublicPosts, allPosts[i])
+			}
+		}
+	}
+
+	return allPublicPosts
+}
+
+
 
 
 

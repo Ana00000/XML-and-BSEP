@@ -25,3 +25,4 @@ func (service * ClassicUserFollowersService) FindAllFollowersForUser(userId uuid
 	}
 	return nil
 }
+

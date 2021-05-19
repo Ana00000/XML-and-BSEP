@@ -6,6 +6,8 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
+	settingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
+	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	userRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"gorm.io/driver/postgres"
@@ -83,8 +85,8 @@ func initCommentHandler(service *service.CommentService) *handler.CommentHandler
 	return &handler.CommentHandler{ Service: service }
 }
 
-func initPostHandler(postService *service.PostService, classicUserService *userService.ClassicUserService, classicUserFollowingsService *userService.ClassicUserFollowingsService) *handler.PostHandler{
-	return &handler.PostHandler{ PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService}
+func initPostHandler(postService *service.PostService, classicUserService *userService.ClassicUserService, classicUserFollowingsService *userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService) *handler.PostHandler{
+	return &handler.PostHandler{ PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings}
 }
 
 func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
@@ -129,6 +131,15 @@ func initClassicUserFollowingsService(repo *userRepository.ClassicUserFollowings
 	return &userService.ClassicUserFollowingsService{ Repo: repo }
 }
 
+// PROFILE SETTINGS
+func initProfileSettingsRepo(database *gorm.DB) *settingsRepository.ProfileSettingsRepository{
+	return &settingsRepository.ProfileSettingsRepository{ Database: database }
+}
+
+func initProfileSettingsService(repo *settingsRepository.ProfileSettingsRepository) *settingsService.ProfileSettingsService{
+	return &settingsService.ProfileSettingsService{ Repo: repo }
+}
+
 
 
 
@@ -167,6 +178,7 @@ func main() {
 	repoSinglePost := initSinglePostRepo(database)
 	repoClassicUser := initClassicUserRepo(database)
 	repoClassicUserFollowings := initClassicUserFollowingsRepo(database)
+	repoProfileSettings := initProfileSettingsRepo(database)
 
 	serviceActivity := initActivityService(repoActivity)
 	serviceComment := initCommentService(repoComment)
@@ -176,10 +188,11 @@ func main() {
 	serviceSinglePost := initSinglePostService(repoSinglePost)
 	serviceClassicUser := initClassicUserService(repoClassicUser)
 	serviceClassicUserFollowings := initClassicUserFollowingsService(repoClassicUserFollowings)
+	serviceProfileSettings := initProfileSettingsService(repoProfileSettings)
 
 	handlerActivity := initActivityHandler(serviceActivity)
 	handlerComment := initCommentHandler(serviceComment)
-	handlerPost := initPostHandler(servicePost, serviceClassicUser, serviceClassicUserFollowings)
+	handlerPost := initPostHandler(servicePost, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings)
 	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
 	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost)

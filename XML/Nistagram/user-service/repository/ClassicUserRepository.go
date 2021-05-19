@@ -110,6 +110,13 @@ func (repo *ClassicUserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []m
 	return users
 }
 
+func (repo *ClassicUserRepository) FindAllValidUsers() []model.ClassicUser {
+
+	var users []model.ClassicUser
+	repo.Database.Select("*").Where("is_confirmed = ? and is_deleted = ? ", true, false).Find(&users)
+	return users
+}
+
 func (repo *ClassicUserRepository) CheckIfUserValid(userId uuid.UUID) bool {
 
 	var user = repo.FindById(userId)
