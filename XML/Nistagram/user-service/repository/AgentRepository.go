@@ -27,6 +27,7 @@ func (repo *AgentRepository) UpdateAgentProfileInfo(user *dto.UserUpdateProfileI
 		gender = model.FEMALE
 	}
 
+	//MISSING ISDELETED AND ISCONFIRMED CHECK
 	result := repo.Database.Model(&model.Agent{}).Where("id = ?", user.ID)
 	result.Update("username", user.Username)
 

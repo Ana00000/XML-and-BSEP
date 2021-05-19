@@ -63,13 +63,32 @@ export default {
     methods:{
     init(){
         this.userType =localStorage.getItem('userType');
+        this.userPrivacy = localStorage.getItem('userPrivacy')
+        
+        console.log(this.userPrivacy)
         if (this.userType == 0){   // ADMIN
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Update Profile', path: '/updateProfile' }
             ]
         } else if (this.userType == 1) {   // REGISTERED_USER
-            this.items = [
+            console.log("NESTO")
+            if (this.userPrivacy == "PRIVATE"){
+                this.items = [
+                { title: 'Home', path: '/' },
+                { title: 'Posts', path: '/posts' },
+                { title: 'Stories', path: '/stories' },
+                { title: 'Highlighted Stories', path: '/highlightedStories' },
+                { title: 'Reacted Posts', path: '/reactedPosts' },
+                { title: 'Create Post', path: '/createPost' },
+                { title: 'Create Story', path: '/createStory' },
+                { title: 'Search users', path: '/searchUsers' },
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Follow Requests', path: '/followRequests' }
+            ]
+
+            }else{
+                 this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Posts', path: '/posts' },
                 { title: 'Stories', path: '/stories' },
@@ -82,6 +101,7 @@ export default {
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' }
             ]
+            }
         } else if (this.userType == 2) {   // AGENT
             this.items = [
                 { title: 'Home', path: '/' },
@@ -96,6 +116,8 @@ export default {
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' }
             ]
+            
+           
         } else {   // NOT YET REGISTERED
             this.items = [
                 { title: 'Home', path: '/' }

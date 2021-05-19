@@ -2,5 +2,5 @@ package model
 
 type ClassicUser struct {
 	User
-	IsDeleted bool `json:"isDeleted" gorm:"not null"`
+	IsDeleted bool `json:"is_deleted" gorm:"not null"`
 }
