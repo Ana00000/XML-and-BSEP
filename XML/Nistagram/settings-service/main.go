@@ -99,6 +99,7 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 	mux.HandleFunc("/profile_settings_blocked_profiles/", handlerProfileSettingsBlockedProfiles.CreateProfileSettingsBlockedProfiles)
 	mux.HandleFunc("/profile_settings_muted_profiles/", handlerProfileSettingsMutedProfiles.CreateProfileSettingsMutedProfiles)
 	mux.HandleFunc("/profile_settings_rejected_message_profiles/", handlerProfileSettingsRejectedMessageProfiles.CreateProfileSettingsRejectedMessageProfiles)
+	mux.HandleFunc("/find_profile_settings_by_user_id", handlerProfileSettings.FindProfileSettingByUserId)
 
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8088", handlerVar))
