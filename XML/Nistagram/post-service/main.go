@@ -3,12 +3,18 @@ package main
 import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	contentRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/repository"
+	contentService "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
+	locationRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/repository"
+	locationService "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
 	settingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
+	tagsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
+	tagsService "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	userRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"gorm.io/driver/postgres"
@@ -86,8 +92,8 @@ func initCommentHandler(service *service.CommentService) *handler.CommentHandler
 	return &handler.CommentHandler{ Service: service }
 }
 
-func initPostHandler(postService *service.PostService, classicUserService *userService.ClassicUserService, classicUserFollowingsService *userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService) *handler.PostHandler{
-	return &handler.PostHandler{ PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings}
+func initPostHandler(postService *service.PostService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, postContentService *contentService.SinglePostContentService,locationService *locationService.LocationService, postTagPostsService *tagsService.PostTagPostsService,tagService *tagsService.TagService) *handler.PostHandler{
+	return &handler.PostHandler{ PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings, PostContentService: postContentService, LocationService: locationService, PostTagPostsService: postTagPostsService, TagService: tagService}
 }
 
 func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
@@ -139,6 +145,42 @@ func initProfileSettingsRepo(database *gorm.DB) *settingsRepository.ProfileSetti
 
 func initProfileSettingsService(repo *settingsRepository.ProfileSettingsRepository) *settingsService.ProfileSettingsService{
 	return &settingsService.ProfileSettingsService{ Repo: repo }
+}
+
+// POST CONTENT
+func initPostContentRepo(database *gorm.DB) *contentRepository.SinglePostContentRepository{
+	return &contentRepository.SinglePostContentRepository{ Database: database }
+}
+
+func initPostContentService(repo *contentRepository.SinglePostContentRepository) *contentService.SinglePostContentService{
+	return &contentService.SinglePostContentService{ Repo: repo }
+}
+
+// LOCATION
+func initLocationRepo(database *gorm.DB) *locationRepository.LocationRepository{
+	return &locationRepository.LocationRepository{ Database: database }
+}
+
+func initLocationService(repo *locationRepository.LocationRepository) *locationService.LocationService{
+	return &locationService.LocationService{ Repo: repo }
+}
+
+// POST TAG POST
+func initPostTagPostRepo(database *gorm.DB) *tagsRepository.PostTagPostsRepository{
+	return &tagsRepository.PostTagPostsRepository{ Database: database }
+}
+
+func initPostTagPostService(repo *tagsRepository.PostTagPostsRepository) *tagsService.PostTagPostsService{
+	return &tagsService.PostTagPostsService{ Repo: repo }
+}
+
+// TAG
+func initTagRepo(database *gorm.DB) *tagsRepository.TagRepository{
+	return &tagsRepository.TagRepository{ Database: database }
+}
+
+func initTagService(repo *tagsRepository.TagRepository) *tagsService.TagService{
+	return &tagsService.TagService{ Repo: repo }
 }
 
 
@@ -194,6 +236,10 @@ func main() {
 	repoClassicUser := initClassicUserRepo(database)
 	repoClassicUserFollowings := initClassicUserFollowingsRepo(database)
 	repoProfileSettings := initProfileSettingsRepo(database)
+	repoPostContent := initPostContentRepo(database)
+	repoLocation := initLocationRepo(database)
+	repoPostTagPost := initPostTagPostRepo(database)
+	repoTag := initTagRepo(database)
 
 	serviceActivity := initActivityService(repoActivity)
 	serviceComment := initCommentService(repoComment)
@@ -204,10 +250,14 @@ func main() {
 	serviceClassicUser := initClassicUserService(repoClassicUser)
 	serviceClassicUserFollowings := initClassicUserFollowingsService(repoClassicUserFollowings)
 	serviceProfileSettings := initProfileSettingsService(repoProfileSettings)
+	servicePostContent := initPostContentService(repoPostContent)
+	serviceLocation := initLocationService(repoLocation)
+	servicePostTagPost := initPostTagPostService(repoPostTagPost)
+	serviceTag := initTagService(repoTag)
 
 	handlerActivity := initActivityHandler(serviceActivity)
 	handlerComment := initCommentHandler(serviceComment)
-	handlerPost := initPostHandler(servicePost, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings)
+	handlerPost := initPostHandler(servicePost, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, servicePostContent, serviceLocation, servicePostTagPost, serviceTag)
 	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
 	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost)

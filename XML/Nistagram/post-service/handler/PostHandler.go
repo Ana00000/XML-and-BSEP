@@ -4,11 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
+	contentService "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
+	locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
+	locationService "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
 	settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
+	tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+	tagsService "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 	"time"
@@ -19,6 +25,10 @@ type PostHandler struct {
 	ClassicUserService * userService.ClassicUserService
 	ClassicUserFollowingsService * userService.ClassicUserFollowingsService
 	ProfileSettings *settingsService.ProfileSettingsService
+	PostContentService *contentService.SinglePostContentService
+	LocationService *locationService.LocationService
+	PostTagPostsService *tagsService.PostTagPostsService
+	TagService *tagsService.TagService
 }
 
 func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
@@ -85,16 +95,79 @@ func (handler *PostHandler) FindAllPostsForUserNotRegisteredUser(w http.Response
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
+	//finds all posts
 	var posts = handler.PostService.FindAllPostsForUser(uuid.MustParse(id))
 	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
 
-	postsJson, _ := json.Marshal(posts)
+	//finds all conents
+	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
+
+
+	//finds all locations
+	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
+
+	//find all tags
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+
+	//creates a list of dtos
+	var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
+
+
+	postsJson, _ := json.Marshal(postsDTOS)
 	w.Write(postsJson)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
 
 }
+
+
+func (handler *PostHandler) CreatePostsDTOList(posts []model.Post, contents []contentModel.SinglePostContent, locations []locationModel.Location, tags []tagsModel.PostTagPosts) []dto.SelectedPostDTO {
+	var listOfPostsDTOs []dto.SelectedPostDTO
+
+	for i := 0; i < len(posts); i++ {
+		var postDTO dto.SelectedPostDTO
+		fmt.Println("POSTS")
+		postDTO.PostId = posts[i].ID
+		postDTO.Description = posts[i].Description
+		postDTO.CreationDate = posts[i].CreationDate
+
+		for j := 0; j < len(contents); j++ {
+			if contents[j].SinglePostId == posts[i].ID {
+				postDTO.Path = contents[i].Path
+			}
+		}
+
+		for k := 0; k < len(locations); k++ {
+			if locations[k].ID == posts[i].LocationId {
+				postDTO.LocationId = locations[k].ID
+				postDTO.City = locations[k].City
+				postDTO.Country = locations[k].Country
+				postDTO.StreetName = locations[k].StreetName
+				postDTO.StreetNumber = locations[k].StreetNumber
+			}
+		}
+
+		var listOfTags []string
+		for p := 0; p < len(tags); p++ {
+			if tags[p].PostId == posts[i].UserID {
+				listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].PostTagId))
+
+			}
+		}
+
+		postDTO.Tags = listOfTags
+
+		listOfPostsDTOs = append(listOfPostsDTOs, postDTO)
+
+	}
+
+	return listOfPostsDTOs
+
+}
+
+
+
 
 func (handler *PostHandler) FindAllPostsForUserRegisteredUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")

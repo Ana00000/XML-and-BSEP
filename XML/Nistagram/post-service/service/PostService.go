@@ -55,3 +55,6 @@ func (service *PostService) FindAllPublicPostsNotRegisteredUser(allValidUsers []
 	}
 	return nil
 }
+
+
+
