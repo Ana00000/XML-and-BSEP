@@ -82,7 +82,8 @@ func (handler *SinglePostContentHandler) Upload(writer http.ResponseWriter, requ
 	}
 	tempFile.Write(fileBytes)
 
-	pathPostGlobal = tempFile.Name()
+
+	pathPostGlobal = tempFile.Name()[6:len(tempFile.Name())]
 
 	pathJson, _ := json.Marshal(tempFile.Name())
 	writer.Write(pathJson)
