@@ -6,7 +6,6 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 )
 
 type PostService struct {
@@ -32,29 +31,6 @@ func (service *PostService) FindByID(ID uuid.UUID) *model.Post {
 	return post
 }
 
-func (service *PostService) FindAllPostsForUser(ID uuid.UUID) []model.Post {
-	posts := service.Repo.FindAllPostsForUser(ID)
-	if posts != nil {
-		return posts
-	}
-	return nil
-}
-
-func (service *PostService) FindAllFollowingPosts(followings []userModel.ClassicUserFollowings) []model.Post {
-	posts := service.Repo.FindAllFollowingPosts(followings)
-	if posts != nil {
-		return posts
-	}
-	return nil
-}
-
-func (service *PostService) FindAllPublicPostsNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.Post {
-	posts := service.Repo.FindAllPublicPostsNotRegisteredUser(allValidUsers)
-	if posts != nil {
-		return posts
-	}
-	return nil
-}
 
 
 

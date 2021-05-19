@@ -92,8 +92,8 @@ func initCommentHandler(service *service.CommentService) *handler.CommentHandler
 	return &handler.CommentHandler{ Service: service }
 }
 
-func initPostHandler(postService *service.PostService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, postContentService *contentService.SinglePostContentService,locationService *locationService.LocationService, postTagPostsService *tagsService.PostTagPostsService,tagService *tagsService.TagService) *handler.PostHandler{
-	return &handler.PostHandler{ PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings, PostContentService: postContentService, LocationService: locationService, PostTagPostsService: postTagPostsService, TagService: tagService}
+func initPostHandler(postService *service.PostService) *handler.PostHandler{
+	return &handler.PostHandler{ PostService: postService}
 }
 
 func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
@@ -104,8 +104,8 @@ func initPostCollectionHandler(service *service.PostCollectionService) *handler.
 	return &handler.PostCollectionHandler{ Service: service }
 }
 
-func initSinglePostHandler(service *service.SinglePostService, postService *service.PostService) *handler.SinglePostHandler{
-	return &handler.SinglePostHandler{ Service: service, PostService: postService }
+func initSinglePostHandler(singlePostService *service.SinglePostService, postService *service.PostService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, postContentService *contentService.SinglePostContentService,locationService *locationService.LocationService, postTagPostsService *tagsService.PostTagPostsService,tagService *tagsService.TagService) *handler.SinglePostHandler{
+	return &handler.SinglePostHandler{ SinglePostService: singlePostService, PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings, PostContentService: postContentService, LocationService: locationService, PostTagPostsService: postTagPostsService, TagService: tagService }
 }
 
 func initPostCollectionPostsRepo(database *gorm.DB) *repository.PostCollectionPostsRepository{
@@ -210,13 +210,13 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
 	router.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts).Methods("POST")
 
-	router.HandleFunc("/find_all_posts_for_not_reg", handlerPost.FindAllPostsForUserNotRegisteredUser).Methods("GET")
-	router.HandleFunc("/find_all_posts_for_reg", handlerPost.FindAllPostsForUserRegisteredUser).Methods("GET")
-	router.HandleFunc("/find_all_following_posts", handlerPost.FindAllFollowingPosts).Methods("GET")
-	router.HandleFunc("/find_selected_post_not_reg", handlerPost.FindSelectedPostByIdForNotRegisteredUsers).Methods("GET")
-	router.HandleFunc("/find_selected_post_reg", handlerPost.FindSelectedPostByIdForRegisteredUsers).Methods("GET")
-	router.HandleFunc("/find_all_public_posts_not_reg/", handlerPost.FindAllPublicPostsNotRegisteredUser).Methods("GET")
-	router.HandleFunc("/find_all_public_posts_reg", handlerPost.FindAllPublicPostsRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_posts_for_not_reg", handlerSinglePost.FindAllPostsForUserNotRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_posts_for_reg", handlerSinglePost.FindAllPostsForUserRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_following_posts", handlerSinglePost.FindAllFollowingPosts).Methods("GET")
+	router.HandleFunc("/find_selected_post_not_reg", handlerSinglePost.FindSelectedPostByIdForNotRegisteredUsers).Methods("GET")
+	router.HandleFunc("/find_selected_post_reg", handlerSinglePost.FindSelectedPostByIdForRegisteredUsers).Methods("GET")
+	router.HandleFunc("/find_all_public_posts_not_reg/", handlerSinglePost.FindAllPublicPostsNotRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_public_posts_reg", handlerSinglePost.FindAllPublicPostsRegisteredUser).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8084", cors(router)))
 }
@@ -257,10 +257,10 @@ func main() {
 
 	handlerActivity := initActivityHandler(serviceActivity)
 	handlerComment := initCommentHandler(serviceComment)
-	handlerPost := initPostHandler(servicePost, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, servicePostContent, serviceLocation, servicePostTagPost, serviceTag)
+	handlerPost := initPostHandler(servicePost)
 	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
-	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost)
+	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, servicePostContent, serviceLocation, servicePostTagPost, serviceTag)
 
 	handleFunc(handlerActivity, handlerComment, handlerPost, handlerPostAlbum, handlerPostCollection, handlerSinglePost, handlerPostCollectionPosts)
 }
