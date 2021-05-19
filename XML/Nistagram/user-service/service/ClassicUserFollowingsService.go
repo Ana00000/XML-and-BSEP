@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/google/uuid"
+	requestModel "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 )
@@ -19,6 +20,6 @@ func (service * ClassicUserFollowingsService) CreateClassicUserFollowings(classi
 }
 
 
-func (service * ClassicUserFollowingsService)  CheckIfFollowingUser(classicUserId uuid.UUID, followingUserId uuid.UUID) bool {
-	return service.Repo.CheckIfFollowingUser(classicUserId, followingUserId)
+func (service * ClassicUserFollowingsService)  CheckFollowingStatus(classicUserId uuid.UUID, followingUserId uuid.UUID, followRequests []requestModel.FollowRequest) string {
+	return service.Repo.CheckFollowingStatus(classicUserId, followingUserId, followRequests)
 }

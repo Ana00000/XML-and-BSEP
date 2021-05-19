@@ -49,12 +49,6 @@
             prepend-icon="mdi-address-circle"
             v-if="!isHiddenDescription"
           />
-          <v-text-field
-            label="Path"
-            v-model="path"
-            prepend-icon="mdi-address-circle"
-            v-if="!isHiddenContent"
-          />
           <v-select
             class="typeCombo"
             v-model="selectedType"
@@ -66,12 +60,30 @@
             return-object
             single-line
           />
-          <v-text-field
-            label="Path"
-            v-model="path"
-            prepend-icon="mdi-address-circle"
-            v-if="!isHiddenAdditionalContent"
-          />
+          <iframe
+            name="dummyframe"
+            id="dummyframe"
+            style="display: none"
+          ></iframe>
+          <form
+            action="http://localhost:8085/uploadPostAlbumMedia/"
+            enctype="multipart/form-data"
+            method="post"
+            v-if="!isHiddenContent"
+            target="dummyframe"
+            class="uploadButton"
+          >
+            <input
+              type="file"
+              accept="image/*,video/*,.mkv"
+              name="myPostAlbumFile"
+            />
+            <input
+              type="submit"
+              value=" <- Upload file"
+              v-on:click="(isHiddenContentButton = true)"
+            />
+          </form>
           <v-select
             class="typeCombo"
             v-model="selectedType"
@@ -83,6 +95,21 @@
             return-object
             single-line
           />
+          <form
+            action="http://localhost:8085/uploadPostAlbumMedia/"
+            enctype="multipart/form-data"
+            method="post"
+            v-if="!isHiddenAdditionalContent"
+            target="dummyframe"
+            class="uploadButton"
+          >
+            <input
+              type="file"
+              accept="image/*,video/*,.mkv"
+              name="myPostAlbumFile"
+            />
+            <input type="submit" value=" <- Upload file" />
+          </form>
         </v-form>
         <v-text-field
           label="Tag name"
@@ -132,19 +159,19 @@
         </v-btn>
         <v-btn
           color="info mb-5"
-          v-if="!isHiddenContentButton"
+          v-if="isHiddenContentButton"
           v-on:click="addContent"
         >
           Add content
         </v-btn>
-         <v-btn
+        <v-btn
           color="info mb-5"
           v-if="!isHiddenAdditionalContentButton"
           v-on:click="createAdditionalContent"
         >
           Add more content
         </v-btn>
-         <v-btn
+        <v-btn
           color="info mb-5"
           v-if="!isHiddenAdditionalContentButton"
           v-on:click="continueCreation"
@@ -185,7 +212,7 @@ export default {
     isHiddenLocation: false,
     isHiddenDescriptionButton: true,
     isHiddenDescription: true,
-    isHiddenContentButton: true,
+    isHiddenContentButton: false,
     isHiddenContent: true,
     isHiddenTagButton: true,
     isHiddenTag: true,
@@ -193,7 +220,7 @@ export default {
     isValidPostAlbumDescription: false,
     postAlbumTagId: null,
     isHiddenAdditionalContentButton: true,
-    isHiddenAdditionalContent: true
+    isHiddenAdditionalContent: true,
   }),
   methods: {
     addLocation() {
@@ -223,9 +250,7 @@ export default {
       this.isHiddenContent = false;
     },
     addContent() {
-      if (!this.validPath()) return;
-
-      this.isHiddenContentButton = true;
+      this.isHiddenContentButton = false;
       this.isHiddenContent = true;
       this.isHiddenAdditionalContentButton = false;
       this.isHiddenAdditionalContent = false;
@@ -303,8 +328,6 @@ export default {
       this.isHiddenTag = false;
     },
     createAdditionalContent() {
-      if (!this.validPath()) return;
-
       this.$http
         .post("http://localhost:8080/api/content/post_album_content/", {
           path: this.path,
@@ -317,8 +340,8 @@ export default {
         .catch((er) => {
           console.log(er.response.data);
         });
-        
-        alert("Content is added! Add more content or continue creation.");
+
+      alert("Content is added! Add more content or continue creation.");
     },
     finish() {
       alert("Successful creation.");
@@ -451,19 +474,6 @@ export default {
       }
       return true;
     },
-    validPath() {
-      if (this.path.length < 3) {
-        alert("Your path should contain at least 3 characters!");
-        return false;
-      } else if (this.path.length > 50) {
-        alert("Your path shouldn't contain more than 50 characters!");
-        return false;
-      } else if (this.path.match(/[!@#$%^&*'<>+"]/g)) {
-        alert("Your path shouldn't contain those special characters.");
-        return false;
-      }
-      return true;
-    },
     validTag() {
       if (this.tagName == null) {
         alert("Your tag name should contain at least 1 character!");
@@ -487,6 +497,10 @@ export default {
 <style scoped>
 .spacing {
   height: 100px;
+}
+
+.uploadButton {
+  margin-left: 6%;
 }
 
 .typeCombo {

@@ -28,7 +28,7 @@ func initDB() *gorm.DB{
 	}
 
 	db.AutoMigrate(&model.InappropriateContentRequest{}, &model.PostICR{}, &model.StoryICR{},
-	               &model.CommentICR{}, &model.VerificationRequest{}, &model.AgentRegistrationRequest{})
+	               &model.CommentICR{}, &model.VerificationRequest{}, &model.AgentRegistrationRequest{}, &model.FollowRequest{})
 	return db
 }
 
@@ -75,6 +75,10 @@ func initAgentRegistrationRequestRepo(database *gorm.DB) *repository.AgentRegist
 	return &repository.AgentRegistrationRequestRepository { Database: database }
 }
 
+func initFollowRequestRepo(database *gorm.DB) *repository.FollowRequestRepository{
+	return &repository.FollowRequestRepository { Database: database }
+}
+
 func initInappropriateContentRequestServices(repo *repository.InappropriateContentRequestRepository) *service.InappropriateContentRequestService{
 	return &service.InappropriateContentRequestService { Repo: repo }
 }
@@ -97,6 +101,10 @@ func initVerificationRequestServices(repo *repository.VerificationRequestReposit
 
 func initAgentRegistrationRequestServices(repo *repository.AgentRegistrationRequestRepository) *service.AgentRegistrationRequestService{
 	return &service.AgentRegistrationRequestService { Repo: repo }
+}
+
+func initFollowRequestServices(repo *repository.FollowRequestRepository) *service.FollowRequestService{
+	return &service.FollowRequestService { Repo: repo }
 }
 
 func initInappropriateContentRequestHandler(service *service.InappropriateContentRequestService) *handler.InappropriateContentRequestHandler{
@@ -123,9 +131,13 @@ func initAgentRegistrationRequestHandler(service *service.AgentRegistrationReque
 	return &handler.AgentRegistrationRequestHandler { Service: service }
 }
 
+func initFollowRequestHandler(service *service.FollowRequestService) *handler.FollowRequestHandler{
+	return &handler.FollowRequestHandler { Service: service }
+}
+
 func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContentRequestHandler, postICRHandler *handler.PostICRHandler,
 	storyICRHandler *handler.StoryICRHandler, commentICRHandler *handler.CommentICRHandler, verificationRequestHandler *handler.VerificationRequestHandler,
-	agentRegistrationRequestHandler *handler.AgentRegistrationRequestHandler){
+	agentRegistrationRequestHandler *handler.AgentRegistrationRequestHandler, followRequestHandler *handler.FollowRequestHandler){
 
 	router := mux.NewRouter().StrictSlash(true)
 
@@ -142,6 +154,11 @@ func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContent
 	router.HandleFunc("/commentICR", commentICRHandler.CreateCommentICR).Methods("POST")
 	router.HandleFunc("/verificationRequest", verificationRequestHandler.CreateVerificationRequest).Methods("POST")
 	router.HandleFunc("/agentRegistrationRequestHandler", agentRegistrationRequestHandler.CreateAgentRegistrationRequest).Methods("POST")
+	router.HandleFunc("/create_follow_request/", followRequestHandler.CreateFollowRequest).Methods("POST")
+	router.HandleFunc("/find_all_pending_requests_for_user", followRequestHandler.FindAllPendingFollowerRequestsForUser).Methods("GET")
+	router.HandleFunc("/find_request_by_id", followRequestHandler.FindRequestById).Methods("GET")
+	router.HandleFunc("/reject_follow_request", followRequestHandler.RejectFollowRequest).Methods("POST")
+
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
@@ -155,6 +172,7 @@ func main() {
 	commentICRRepo := initCommentICRRepo(database)
 	verificationRequestRepo := initVerificationRequestRepo(database)
 	agentRegistrationRequestRepo := initAgentRegistrationRequestRepo(database)
+	followRequestRepo := initFollowRequestRepo(database)
 
 	inappropriateContentRequestService := initInappropriateContentRequestServices(inappropriateContentRequestRepo)
 	postICRService := initPostICRServices(postICRRepo)
@@ -162,6 +180,7 @@ func main() {
 	commentICRService := initCommentICRServices(commentICRRepo)
 	verificationRequestService := initVerificationRequestServices(verificationRequestRepo)
 	agentRegistrationRequestService := initAgentRegistrationRequestServices(agentRegistrationRequestRepo)
+	followRequestService := initFollowRequestServices(followRequestRepo)
 
 	inappropriateContentRequestHandler := initInappropriateContentRequestHandler(inappropriateContentRequestService)
 	postICRHandler := initPostICRHandler(postICRService)
@@ -169,7 +188,8 @@ func main() {
 	commentICRHandler := initCommentICRHandler(commentICRService)
 	verificationRequestRHandler := initVerificationRequestHandler(verificationRequestService)
 	agentRegistrationRequestHandler := initAgentRegistrationRequestHandler(agentRegistrationRequestService)
+	followRequestHandler := initFollowRequestHandler(followRequestService)
 
 	handleFunc(inappropriateContentRequestHandler, postICRHandler,storyICRHandler, commentICRHandler,
-		verificationRequestRHandler,agentRegistrationRequestHandler)
+		verificationRequestRHandler,agentRegistrationRequestHandler, followRequestHandler)
 }

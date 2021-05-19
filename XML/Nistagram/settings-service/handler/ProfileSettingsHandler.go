@@ -39,7 +39,7 @@ func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWrit
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func (handler *ProfileSettingsHandler) FindProfileSettingsForUser(w http.ResponseWriter, r *http.Request) {
+func (handler *ProfileSettingsHandler) FindProfileSettingByUserId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userId := vars["userID"]
 

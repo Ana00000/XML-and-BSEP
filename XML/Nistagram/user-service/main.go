@@ -9,6 +9,10 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/mikespook/gorbac"
+	requestsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/repository"
+	requestsService "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
+	settingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
+	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
@@ -84,6 +88,24 @@ func initUserHandler(UserService *service.UserService,AdminService *service.Admi
 	}
 }
 //SETTINGS
+func initSettingsRepo(database *gorm.DB) *settingsRepository.ProfileSettingsRepository{
+	return &settingsRepository.ProfileSettingsRepository { Database: database }
+}
+
+func initSettingsService(repo *settingsRepository.ProfileSettingsRepository) *settingsService.ProfileSettingsService{
+	return &settingsService.ProfileSettingsService { Repo: repo }
+}
+
+//REQUESTS
+func initRequestsRepo(database *gorm.DB) *requestsRepository.FollowRequestRepository{
+	return &requestsRepository.FollowRequestRepository { Database: database }
+}
+
+func initRequestsService(repo *requestsRepository.FollowRequestRepository) *requestsService.FollowRequestService{
+	return &requestsService.FollowRequestService { Repo: repo }
+}
+
+
 
 //ADMIN
 func initAdminRepo(database *gorm.DB) *repository.AdminRepository{
@@ -112,8 +134,8 @@ func initClassicUserService(repo *repository.ClassicUserRepository) *service.Cla
 	return &service.ClassicUserService { Repo: repo }
 }
 
-func initClassicUserHandler(classicUserService *service.ClassicUserService, classicUserFollowingsService *service.ClassicUserFollowingsService) *handler.ClassicUserHandler{
-	return &handler.ClassicUserHandler { ClassicUserService: classicUserService,  ClassicUserFollowingsService: classicUserFollowingsService}
+func initClassicUserHandler(classicUserService *service.ClassicUserService, profileSettingsService *settingsService.ProfileSettingsService, classicUserFollowingsService *service.ClassicUserFollowingsService, requestsService *requestsService.FollowRequestService ) *handler.ClassicUserHandler{
+	return &handler.ClassicUserHandler { ClassicUserService: classicUserService, ProfileSettingsService: profileSettingsService, ClassicUserFollowingsService: classicUserFollowingsService, FollowRequestService: requestsService}
 }
 
 //REGISTERED USER
@@ -175,6 +197,8 @@ func initRecoveryPasswordTokenRepo(database *gorm.DB) *repository.RecoveryPasswo
 	return &repository.RecoveryPasswordTokenRepository { Database: database }
 }
 
+
+
 func initClassicUserCampaignsService(repo *repository.ClassicUserCampaignsRepository) *service.ClassicUserCampaignsService{
 	return &service.ClassicUserCampaignsService { Repo: repo }
 }
@@ -199,12 +223,12 @@ func initClassicUserCampaignsHandler(service *service.ClassicUserCampaignsServic
 	return &handler.ClassicUserCampaignsHandler { Service: service }
 }
 
-func initClassicUserFollowersHandler(service *service.ClassicUserFollowersService, userService *service.UserService) *handler.ClassicUserFollowersHandler{
-	return &handler.ClassicUserFollowersHandler { ClassicUserFollowersService: service, UserService: userService}
+func initClassicUserFollowersHandler(service *service.ClassicUserFollowersService) *handler.ClassicUserFollowersHandler{
+	return &handler.ClassicUserFollowersHandler { ClassicUserFollowersService: service}
 }
 
-func initClassicUserFollowingsHandler(service *service.ClassicUserFollowingsService) *handler.ClassicUserFollowingsHandler{
-	return &handler.ClassicUserFollowingsHandler { Service: service }
+func initClassicUserFollowingsHandler(classicUserFollowings *service.ClassicUserFollowingsService, classicUserFollowersService *service.ClassicUserFollowersService, followRequestService *requestsService.FollowRequestService) *handler.ClassicUserFollowingsHandler{
+	return &handler.ClassicUserFollowingsHandler { ClassicUserFollowingsService: classicUserFollowings , ClassicUserFollowersService: classicUserFollowersService, FollowRequestService: followRequestService}
 }
 
 func initRecoveryPasswordTokenHandler(recoveryPasswordTokenService *service.RecoveryPasswordTokenService, userService *service.UserService, validator *validator.Validate) *handler.RecoveryPasswordTokenHandler {
@@ -290,6 +314,8 @@ func main() {
 	classicUserFollowersRepo := initClassicUserFollowersRepo(database)
 	classicUserFollowingsRepo := initClassicUserFollowingsRepo(database)
 	recoveryPasswordTokenRepo := initRecoveryPasswordTokenRepo(database)
+	settingsRepo := initSettingsRepo(database)
+	requestsRepo := initRequestsRepo(database)
 
 	userService := initUserService(userRepo)
 	registeredUserService := initRegisteredUserService(registeredUserRepo)
@@ -301,6 +327,8 @@ func main() {
 	classicUserFollowersService := initClassicUserFollowersService(classicUserFollowersRepo)
 	classicUserFollowingsService := initClassicUserFollowingsService(classicUserFollowingsRepo)
 	recoveryPasswordTokenService := initRecoveryPasswordTokenService(recoveryPasswordTokenRepo)
+	settingsService := initSettingsService(settingsRepo)
+	requestsService := initRequestsService(requestsRepo)
 
 
 	passwordUtil := initPasswordUtil()
@@ -310,10 +338,10 @@ func main() {
 	agentHandler := initAgentHandler(agentService, userService, classicUserService, validator, passwordUtil)
 	confirmationTokenHandler := initConfirmationTokenHandler(confirmationTokenService,userService,registeredUserService,classicUserService)
 	classicUserCampaignsHandler := initClassicUserCampaignsHandler(classicUserCampaignsService)
-	classicUserFollowersHandler := initClassicUserFollowersHandler(classicUserFollowersService, userService)
-	classicUserFollowingsHandler := initClassicUserFollowingsHandler(classicUserFollowingsService)
-	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(recoveryPasswordTokenService, userService, validator)
-	classicUserHandler := initClassicUserHandler(classicUserService, classicUserFollowingsService)
+	classicUserFollowersHandler := initClassicUserFollowersHandler(classicUserFollowersService)
+	classicUserFollowingsHandler := initClassicUserFollowingsHandler(classicUserFollowingsService, classicUserFollowersService, requestsService )
+	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(recoveryPasswordTokenService,classicUserService,registeredUserService,userService, validator)
+	classicUserHandler := initClassicUserHandler(classicUserService, settingsService, classicUserFollowingsService, requestsService)
 	handleFunc(userHandler, confirmationTokenHandler, adminHandler,classicUserHandler, agentHandler,registeredUserHandler,classicUserCampaignsHandler,classicUserFollowingsHandler,classicUserFollowersHandler,recoveryPasswordTokenHandler)
 
 }

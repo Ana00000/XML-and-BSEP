@@ -169,11 +169,16 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 	router.HandleFunc("/story_album_content/", handlerStoryAlbumContent.CreateStoryAlbumContent).Methods("POST")
 	router.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent).Methods("POST")
 	router.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent).Methods("POST")
+	router.HandleFunc("/uploadPostMedia/", handlerSinglePostContent.Upload).Methods("POST")
+	router.HandleFunc("/uploadPostAlbumMedia/", handlerPostAlbumContent.Upload).Methods("POST")
+	router.HandleFunc("/uploadStoryMedia/", handlerSingleStoryContent.Upload).Methods("POST")
+	router.HandleFunc("/uploadStoryAlbumMedia/", handlerStoryAlbumContent.Upload).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
 func main() {
+
 	database := initDB()
 	repoContent := initContentRepo(database)
 	serviceContent := initContentService(repoContent)
