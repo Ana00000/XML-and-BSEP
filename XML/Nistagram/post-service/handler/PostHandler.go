@@ -141,7 +141,20 @@ func (handler *PostHandler) FindAllPostsForUserRegisteredUser(w http.ResponseWri
 			var posts = handler.PostService.FindAllPostsForUser(uuid.MustParse(id))
 			//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
 
-			postsJson, _ := json.Marshal(posts)
+			//finds all conents
+			var contents = handler.PostContentService.FindAllContentsForPosts(posts)
+
+
+			//finds all locations
+			var locations = handler.LocationService.FindAllLocationsForPosts(posts)
+
+			//find all tags
+			var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+
+			//creates a list of dtos
+			var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
+
+			postsJson, _ := json.Marshal(postsDTOS)
 			w.Write(postsJson)
 			w.WriteHeader(http.StatusOK)
 			w.Header().Set("Content-Type", "application/json")
@@ -155,7 +168,20 @@ func (handler *PostHandler) FindAllPostsForUserRegisteredUser(w http.ResponseWri
 		var posts = handler.PostService.FindAllPostsForUser(uuid.MustParse(id))
 		//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
 
-		postsJson, _ := json.Marshal(posts)
+		//finds all conents
+		var contents = handler.PostContentService.FindAllContentsForPosts(posts)
+
+
+		//finds all locations
+		var locations = handler.LocationService.FindAllLocationsForPosts(posts)
+
+		//find all tags
+		var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+
+		//creates a list of dtos
+		var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
+
+		postsJson, _ := json.Marshal(postsDTOS)
 		w.Write(postsJson)
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
@@ -180,7 +206,20 @@ func (handler *PostHandler) FindAllFollowingPosts(w http.ResponseWriter, r *http
 	// returns NOT DELETED POSTS from valid following users
 	var posts = handler.PostService.FindAllFollowingPosts(followings)
 
-	postsJson, _ := json.Marshal(posts)
+	//finds all conents
+	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
+
+
+	//finds all locations
+	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
+
+	//find all tags
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+
+	//creates a list of dtos
+	var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
+
+	postsJson, _ := json.Marshal(postsDTOS)
 	w.Write(postsJson)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -202,6 +241,8 @@ func (handler *PostHandler) FindSelectedPostByIdForNotRegisteredUsers(w http.Res
 	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(post.UserID)
 	if profileSettings.UserVisibility == settingsModel.PUBLIC_VISIBILITY{
 		// EVERYONE CAN SELECT THIS POST
+
+
 		postJson, _ := json.Marshal(post)
 		w.Write(postJson)
 
@@ -304,7 +345,22 @@ func (handler *PostHandler) FindAllPublicPostsRegisteredUser(w http.ResponseWrit
 
 	// returns all POSTS of public and valid users
 	var publicValidPosts = handler.PostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
-	postJson, _ := json.Marshal(publicValidPosts)
+
+
+	//finds all conents
+	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
+
+
+	//finds all locations
+	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
+
+	//find all tags
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
+
+	//creates a list of dtos
+	var postsDTOS = handler.CreatePostsDTOList(publicValidPosts,contents,locations,tags)
+
+	postJson, _ := json.Marshal(postsDTOS)
 	w.Write(postJson)
 
 	w.WriteHeader(http.StatusOK)
