@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/rs/cors"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
@@ -149,19 +150,33 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	handlerPostAlbum *handler.PostAlbumHandler, handlerPostCollection *handler.PostCollectionHandler,
 	handlerSinglePost *handler.SinglePostHandler, handlerPostCollectionPosts *handler.PostCollectionPostsHandler){
 
-	mux := http.NewServeMux()
+	router := mux.NewRouter().StrictSlash(true)
 
-	mux.HandleFunc("/post/", handlerPost.CreatePost)
-	mux.HandleFunc("/post_album/", handlerPostAlbum.CreatePostAlbum)
-	mux.HandleFunc("/single_post/", handlerSinglePost.CreateSinglePost)
-	mux.HandleFunc("/activity/", handlerActivity.CreateActivity)
-	mux.HandleFunc("/comment/", handlerComment.CreateComment)
-	mux.HandleFunc("/update_post/", handlerPost.UpdatePost)
-	mux.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection)
-	mux.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts)
+	cors := handlers.CORS(
+		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowCredentials(),
+	)
 
-	handlerVar := cors.Default().Handler(mux)
-	log.Fatal(http.ListenAndServe(":8084", handlerVar))
+	router.HandleFunc("/post/", handlerPost.CreatePost).Methods("POST")
+	router.HandleFunc("/post_album/", handlerPostAlbum.CreatePostAlbum).Methods("POST")
+	router.HandleFunc("/single_post/", handlerSinglePost.CreateSinglePost).Methods("POST")
+	router.HandleFunc("/activity/", handlerActivity.CreateActivity).Methods("POST")
+	router.HandleFunc("/comment/", handlerComment.CreateComment).Methods("POST")
+	router.HandleFunc("/update_post/", handlerPost.UpdatePost).Methods("POST")
+	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
+	router.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts).Methods("POST")
+
+	router.HandleFunc("/find_all_posts_for_not_reg", handlerPost.FindAllPostsForUserNotRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_posts_for_reg", handlerPost.FindAllPostsForUserRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_following_posts", handlerPost.FindAllFollowingPosts).Methods("GET")
+	router.HandleFunc("/find_selected_post_not_reg", handlerPost.FindSelectedPostByIdForNotRegisteredUsers).Methods("GET")
+	router.HandleFunc("/find_selected_post_reg", handlerPost.FindSelectedPostByIdForRegisteredUsers).Methods("GET")
+	router.HandleFunc("/find_all_public_posts_not_reg/", handlerPost.FindAllPublicPostsNotRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_public_posts_reg", handlerPost.FindAllPublicPostsRegisteredUser).Methods("GET")
+
+	log.Fatal(http.ListenAndServe(":8084", cors(router)))
 }
 
 func main() {

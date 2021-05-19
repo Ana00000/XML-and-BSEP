@@ -67,15 +67,21 @@ func (handler *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
-// FALI PROVERA ZA FINDALLPOSTSFORUSER DA LI JE PUBLIC USER (ONDA MOGU SVI DA VIDE) I AKO NIJE PUBLIC USER ONDA MORA DA GA PRATI DA BI VIDEO NJEGOVE POSTOVE
 
 // for selected user (you can only select VALID users)
-func (handler *PostHandler) FindAllPostsForUser(w http.ResponseWriter, r *http.Request) {
+func (handler *PostHandler) FindAllPostsForUserNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
-	var checIfValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(id))
-	if  checIfValid == false {
+	var checkIfValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(id))
+	if  checkIfValid == false {
 		fmt.Println("User NOT valid")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	fmt.Println("User IS valid")
+	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(uuid.MustParse(id))
+	if profileSettings.UserVisibility == settingsModel.PRIVATE_VISIBILITY{
+		fmt.Println("User IS PRIVATE")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
@@ -87,6 +93,49 @@ func (handler *PostHandler) FindAllPostsForUser(w http.ResponseWriter, r *http.R
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
+
+}
+
+func (handler *PostHandler) FindAllPostsForUserRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	logId := r.URL.Query().Get("logId")
+
+	var checkIfValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(id))
+	if  checkIfValid == false {
+		fmt.Println("User NOT valid")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(uuid.MustParse(id))
+	if profileSettings.UserVisibility == settingsModel.PRIVATE_VISIBILITY{
+		fmt.Println("User IS PRIVATE")
+
+		// CHECK IF LOGID FOLLOWING POST USERID
+		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPost(uuid.MustParse(logId), uuid.MustParse(id))
+		if checkIfFollowing == true{
+			var posts = handler.PostService.FindAllPostsForUser(uuid.MustParse(id))
+			//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
+
+			postsJson, _ := json.Marshal(posts)
+			w.Write(postsJson)
+			w.WriteHeader(http.StatusOK)
+			w.Header().Set("Content-Type", "application/json")
+
+		}else{
+
+			fmt.Println("Not following private user")
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+	}else{
+		var posts = handler.PostService.FindAllPostsForUser(uuid.MustParse(id))
+		//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
+
+		postsJson, _ := json.Marshal(posts)
+		w.Write(postsJson)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+
+	}
 }
 
 
