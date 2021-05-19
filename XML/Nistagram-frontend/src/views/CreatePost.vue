@@ -199,7 +199,7 @@ export default {
 
       if (this.isValidLocation) {
         this.$http
-          .post("http://localhost:8083/", {
+          .post("http://localhost:8080/api/location/", {
             longitude: this.longitude,
             latitude: this.latitude,
             country: this.country,
@@ -221,7 +221,7 @@ export default {
     createPostDescription() {
       if (this.isValidPostDescription) {
         this.$http
-          .post("http://localhost:8084/single_post/", {
+          .post("http://localhost:8080/api/post/single_post/", {
             description: this.postDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -235,7 +235,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:8084/single_post/", {
+          .post("http://localhost:8080/api/post/single_post/", {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -251,7 +251,7 @@ export default {
     },
     createContent() {
       this.$http
-        .post("http://localhost:8085/single_post_content/", {
+        .post("http://localhost:8080/api/content/single_post_content/", {
           path: this.path,
           type: this.selectedType,
           single_post_id: this.postId,
@@ -271,7 +271,7 @@ export default {
       if (!this.validTag()) return;
 
       this.$http
-        .post("http://localhost:8082/post_tag/", {
+        .post("http://localhost:8080/api/tag/post_tag/", {
           name: this.tagName,
         })
         .then((response) => {
@@ -284,7 +284,7 @@ export default {
     },
     createPostTagPosts() {
       this.$http
-        .post("http://localhost:8082/post_tag_posts/", {
+        .post("http://localhost:8080/api/tag/post_tag_posts/", {
           post_tag_id: this.postTagId,
           post_id: this.postId,
         })

@@ -231,8 +231,8 @@ services:
     restart: on-failure
     image: user-service:compose_build
     build:
-      context: ./Nistagram
-      dockerfile: Dockerfile.user
+      context: ./Nistagram/user-service
+      dockerfile: Dockerfile
     networks:
       - backend
     ports:

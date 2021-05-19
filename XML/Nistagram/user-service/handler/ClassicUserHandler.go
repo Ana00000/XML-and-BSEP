@@ -4,16 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
-	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
+	"os"
 	_ "strconv"
 )
 
 type ClassicUserHandler struct {
 	ClassicUserService * service.ClassicUserService
-	ProfileSettingsService * settingsService.ProfileSettingsService
 	ClassicUserFollowingsService * service.ClassicUserFollowingsService
 }
 
@@ -27,18 +26,25 @@ func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r
 		fmt.Println("User not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
-
+	var profileSettings = dto.ProfileSettingsDTO{}
+	reqUrl := fmt.Sprintf("http://%s:%s/find_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	err := getJson(reqUrl, &profileSettings)
+	if err!=nil{
+		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+	/*
 	var profileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(uuid.MustParse(id))
 	if profileSettings == nil {
 		fmt.Println("Profile settings not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
-
-	if profileSettings.UserVisibility == settingsModel.PRIVATE_VISIBILITY {
+	*/
+	if profileSettings.UserVisibility == "PRIVATE_VISIBILITY" {
 		user.ProfileVisibility = "PRIVATE"
 		fmt.Println("PRIVATE")
 	} else {
-		user.ProfileVisibility = "PUBLIC"
+		user.ProfileVisibility = "PUBLIC_VISIBILITY"
 		fmt.Println("PUBLIC")
 	}
 
@@ -56,5 +62,15 @@ func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func getJson(url string, target interface{}) error {
+	r, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	return json.NewDecoder(r.Body).Decode(target)
 }
 

@@ -68,7 +68,7 @@ export default {
       this.confirmationToken = hrefPaths[4];
       this.userId = hrefPaths[5];
       this.$http
-        .post("http://localhost:8080/verify_recovery_password_token/", {
+        .post("http://localhost:8080/api/user/verify_recovery_password_token/", {
             recovery_password_token: this.confirmationToken,
             user_id: this.userId
         },{
@@ -94,7 +94,7 @@ export default {
             return;
         }
         this.$http
-        .post("http://localhost:8080/change_user_password/", {
+        .post("http://localhost:8080/api/user/change_user_password/", {
             email: this.userEmail,
             password: this.password,
             confirmed_password: this.confirmPassword

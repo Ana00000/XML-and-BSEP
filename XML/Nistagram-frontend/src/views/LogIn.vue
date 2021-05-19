@@ -50,7 +50,7 @@ export default {
   methods: {
     logIn() {
       this.$http
-        .post("http://localhost:8080/login/", {
+        .post("http://localhost:8080/api/user/login/", {
            username: this.username,
            password: this.password
         })

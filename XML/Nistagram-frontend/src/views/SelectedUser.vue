@@ -104,7 +104,7 @@ export default {
     getUser() {
       console.log(this.selectedUser);
       this.$http
-        .get("http://localhost:8080/find_selected_user_by_id?id=" + this.selectedUser+"&logId=" + this.logId)
+        .get("http://localhost:8080/api/user/find_selected_user_by_id?id=" + this.selectedUser+"&logId=" + this.logId)
         .then((resp) => {
           this.setUserInfo(resp.data);
           console.log(resp.data);
@@ -147,7 +147,7 @@ export default {
       this.isHiddenSendFollowRequest = true;
       
      this.$http
-        .post("http://localhost:8080/create_following/", {
+        .post("http://localhost:8080/api/user/create_following/", {
           classic_user_id: this.logId,
           following_user_id: this.selectedUser,
       

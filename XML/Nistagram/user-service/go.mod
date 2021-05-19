@@ -1,7 +1,6 @@
 module user-service
 
 replace (
-	github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service => ../settings-service
 	github.com/xml/XML-and-BSEP/XML/Nistagram/user-service => ./
 )
 
@@ -15,7 +14,6 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.2
 	github.com/mikespook/gorbac v2.1.0+incompatible
-	github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service v0.0.0-00010101000000-000000000000
 	github.com/xml/XML-and-BSEP/XML/Nistagram/user-service v0.0.0-00010101000000-000000000000
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	gopkg.in/go-playground/validator.v9 v9.31.0

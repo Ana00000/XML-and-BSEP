@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -23,7 +22,6 @@ type RegisteredUserHandler struct {
 	UserService * service.UserService
 	ClassicUserService * service.ClassicUserService
 	ConfirmationTokenService * service.ConfirmationTokenService
-	ProfileSettingsService * settingsService.ProfileSettingsService
 	Validator                *validator.Validate
 	PasswordUtil             *util.PasswordUtil
 }

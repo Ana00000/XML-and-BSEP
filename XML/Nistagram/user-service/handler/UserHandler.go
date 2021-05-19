@@ -6,7 +6,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/mikespook/gorbac"
-	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -25,7 +24,6 @@ type UserHandler struct {
 	AdminService * service.AdminService
 	ClassicUserService * service.ClassicUserService
 	AgentService * service.AgentService
-	ProfileSettingsService * settingsService.ProfileSettingsService
 	Rbac * gorbac.RBAC
 	PermissionFindAllUsers *gorbac.Permission
 	RegisteredUserService * service.RegisteredUserService
@@ -365,10 +363,18 @@ func (handler *UserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *ht
 }
 
 func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Request) {
-
+	var profileSettings []Data
+	reqUrl := fmt.Sprintf("http://%s:%s/find_all_for_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
+	err := getJson(reqUrl, &profileSettings)
+	if err!=nil{
+		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+/*
 	var profileSettings = handler.ProfileSettingsService.FindAllProfileSettingsForPublicUsers()
+*/
 	var users []model.User
-	users = handler.UserService.FindAllPublicUsers(profileSettings)
+	users = handler.UserService.FindAllPublicUsers(convertListDataToListUUID(profileSettings))
 
 
 	usersJson, _ := json.Marshal(users)
@@ -398,4 +404,14 @@ func (handler *UserHandler) FindByUserName(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "application/json")
 }
 
+type Data struct {
+	Uuid uuid.UUID
+}
 
+func convertListDataToListUUID(datas []Data) []uuid.UUID {
+	var uuids []uuid.UUID
+	for i := 0; i < len(datas); i++ {
+		uuids=append(uuids, datas[i].Uuid)
+	}
+	return uuids
+}

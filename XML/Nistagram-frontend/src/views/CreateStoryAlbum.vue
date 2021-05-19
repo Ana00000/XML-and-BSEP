@@ -246,7 +246,7 @@ export default {
 
       if (this.isValidLocation) {
         this.$http
-          .post("http://localhost:8083/", {
+          .post("http://localhost:8080/api/location/", {
             longitude: this.longitude,
             latitude: this.latitude,
             country: this.country,
@@ -268,7 +268,7 @@ export default {
     createStoryAlbumDescription() {
       if (this.isValidStoryAlbumDescription) {
         this.$http
-          .post("http://localhost:8086/story_album/", {
+          .post("http://localhost:8080/api/story/story_album/", {
             description: this.storyAlbumDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -283,7 +283,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:8086/story_album/", {
+          .post("http://localhost:8080/api/story/story_album/", {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -300,7 +300,7 @@ export default {
     },
     createContent() {
       this.$http
-        .post("http://localhost:8085/story_album_content/", {
+        .post("http://localhost:8080/api/content/story_album_content/", {
           path: this.path,
           type: this.selectedType,
           story_album_id: this.storyAlbumId,
@@ -322,7 +322,7 @@ export default {
       if (!this.validPath()) return;
 
       this.$http
-        .post("http://localhost:8085/story_album_content/", {
+        .post("http://localhost:8080/api/content/story_album_content/", {
           path: this.path,
           type: this.selectedType,
           story_album_id: this.storyAlbumId,
@@ -343,7 +343,7 @@ export default {
       if (!this.validTag()) return;
 
       this.$http
-        .post("http://localhost:8082/story_album_tag/", {
+        .post("http://localhost:8080/api/tag/story_album_tag/", {
           name: this.tagName,
         })
         .then((response) => {
@@ -356,7 +356,7 @@ export default {
     },
     CreateStoryAlbumTagStoryAlbums() {
       this.$http
-        .post("http://localhost:8082/story_album_tag_story_albums/", {
+        .post("http://localhost:8080/api/tag/story_album_tag_story_albums/", {
           storyAlbumTagId: this.storyAlbumTagId,
           storyAlbumId: this.storyAlbumId,
         })

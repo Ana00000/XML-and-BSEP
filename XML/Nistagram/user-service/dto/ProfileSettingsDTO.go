@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type ProfileSettingsDTO struct{
+type ProfileSettingsDTO struct {
 	UserId uuid.UUID `json:"user_id"`
 	UserVisibility string `json:"user_visibility"`
 	MessageApprovalType string `json:"message_approval_type"`

@@ -25,7 +25,7 @@ export default {
       alert(this.confirmationToken+"/"+this.userId)
       
       this.$http
-        .post("http://localhost:8080/confirm_registration/", {
+        .post("http://localhost:8080/api/user/confirm_registration/", {
           confirmation_token: this.confirmationToken,
           user_id: this.userId,
         })

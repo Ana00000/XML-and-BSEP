@@ -213,7 +213,7 @@ export default {
 
       if (this.isValidLocation) {
         this.$http
-          .post("http://localhost:8083/", {
+          .post("http://localhost:8080/api/location/", {
             longitude: this.longitude,
             latitude: this.latitude,
             country: this.country,
@@ -235,7 +235,7 @@ export default {
     createStoryDescription() {
       if (this.isValidStoryDescription) {
         this.$http
-          .post("http://localhost:8086/single_story/", {
+          .post("http://localhost:8080/api/story/single_story/", {
             description: this.storyDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -250,7 +250,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:8086/single_story/", {
+          .post("http://localhost:8080/api/story/single_story/", {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -267,7 +267,7 @@ export default {
     },
     createContent() {
       this.$http
-        .post("http://localhost:8085/single_story_content/", {
+        .post("http://localhost:8080/api/content/single_story_content/", {
           path: this.path,
           type: this.selectedType,
           single_story_id: this.storyId,
@@ -287,7 +287,7 @@ export default {
       if (!this.validTag()) return;
 
       this.$http
-        .post("http://localhost:8082/story_tag/", {
+        .post("http://localhost:8080/api/tag/story_tag/", {
           name: this.tagName,
         })
         .then((response) => {
@@ -301,7 +301,7 @@ export default {
     createStoryTagStories() {
       console.log(this.storyTagId)
       this.$http
-        .post("http://localhost:8082/story_tag_stories/", {
+        .post("http://localhost:8080/api/tag/story_tag_stories/", {
           story_tag_id: this.storyTagId,
           story_id: this.storyId,
         })

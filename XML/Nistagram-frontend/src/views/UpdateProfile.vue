@@ -157,7 +157,7 @@ export default {
       this.token = localStorage.getItem("token");
 
       this.$http
-        .get("http://localhost:8080/find_user_by_id?id=" + this.id)
+        .get("http://localhost:8080/api/user/find_user_by_id?id=" + this.id)
         .then((response) => {
           this.user = response.data;
           this.setUserInfo(this.user);
@@ -204,7 +204,7 @@ export default {
       ) return;
      
       this.$http
-        .post("http://localhost:8080/update_user_profile_info/", {
+        .post("http://localhost:8080/api/user/update_user_profile_info/", {
           id: this.id,
           firstName: this.firstName,
           lastName: this.lastName,

@@ -37,7 +37,7 @@ export default {
       if (!this.validCertificate()) return;
       this.$http
         .post(
-          "http://localhost:8080/recovery_password/",
+          "http://localhost:8080/api/user/recovery_password/",
           {
               email: this.emailRecover
           }

@@ -232,7 +232,7 @@ export default {
 
       if (this.isValidLocation) {
         this.$http
-          .post("http://localhost:8083/", {
+          .post("http://localhost:8080/api/location/", {
             longitude: this.longitude,
             latitude: this.latitude,
             country: this.country,
@@ -254,7 +254,7 @@ export default {
     createPostAlbumDescription() {
       if (this.isValidPostAlbumDescription) {
         this.$http
-          .post("http://localhost:8084/post_album/", {
+          .post("http://localhost:8080/api/post/post_album/", {
             description: this.postAlbumDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -268,7 +268,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:8084/post_album/", {
+          .post("http://localhost:8080/api/post/post_album/", {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -284,7 +284,7 @@ export default {
     },
     createContent() {
       this.$http
-        .post("http://localhost:8085/post_album_content/", {
+        .post("http://localhost:8080/api/content/post_album_content/", {
           path: this.path,
           type: this.selectedType,
           post_album_id: this.postAlbumId,
@@ -306,7 +306,7 @@ export default {
       if (!this.validPath()) return;
 
       this.$http
-        .post("http://localhost:8085/post_album_content/", {
+        .post("http://localhost:8080/api/content/post_album_content/", {
           path: this.path,
           type: this.selectedType,
           post_album_id: this.postAlbumId,
@@ -328,7 +328,7 @@ export default {
       if (!this.validTag()) return;
 
       this.$http
-        .post("http://localhost:8082/post_album_tag/", {
+        .post("http://localhost:8080/api/tag/post_album_tag/", {
           name: this.tagName,
         })
         .then((response) => {
@@ -341,7 +341,7 @@ export default {
     },
     CreatePostAlbumTagPostAlbums() {
       this.$http
-        .post("http://localhost:8082/post_album_tag_post_albums/", {
+        .post("http://localhost:8080/api/tag/post_album_tag_post_albums/", {
           postAlbumTagId: this.postAlbumTagId,
           postAlbumId: this.postAlbumId,
         })
