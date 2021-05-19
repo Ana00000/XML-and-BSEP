@@ -33,6 +33,6 @@ func (service *ClassicUserFollowingsService) FindAllValidFollowingsForUser(ID uu
 }
 
 func (service * ClassicUserFollowingsService) CheckIfFollowingPost(followingUserId uuid.UUID, classicUserId uuid.UUID) bool {
-	return service.Repo.CheckIfFollowingPostUser(followingUserId, classicUserId)
+	return service.Repo.CheckIfFollowingPost(followingUserId, classicUserId)
 
 }
