@@ -121,54 +121,6 @@ func (handler *PostHandler) FindAllPostsForUserNotRegisteredUser(w http.Response
 
 }
 
-
-func (handler *PostHandler) CreatePostsDTOList(posts []model.Post, contents []contentModel.SinglePostContent, locations []locationModel.Location, tags []tagsModel.PostTagPosts) []dto.SelectedPostDTO {
-	var listOfPostsDTOs []dto.SelectedPostDTO
-
-	for i := 0; i < len(posts); i++ {
-		var postDTO dto.SelectedPostDTO
-		fmt.Println("POSTS")
-		postDTO.PostId = posts[i].ID
-		postDTO.Description = posts[i].Description
-		postDTO.CreationDate = posts[i].CreationDate
-
-		for j := 0; j < len(contents); j++ {
-			if contents[j].SinglePostId == posts[i].ID {
-				postDTO.Path = contents[i].Path
-			}
-		}
-
-		for k := 0; k < len(locations); k++ {
-			if locations[k].ID == posts[i].LocationId {
-				postDTO.LocationId = locations[k].ID
-				postDTO.City = locations[k].City
-				postDTO.Country = locations[k].Country
-				postDTO.StreetName = locations[k].StreetName
-				postDTO.StreetNumber = locations[k].StreetNumber
-			}
-		}
-
-		var listOfTags []string
-		for p := 0; p < len(tags); p++ {
-			if tags[p].PostId == posts[i].UserID {
-				listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].PostTagId))
-
-			}
-		}
-
-		postDTO.Tags = listOfTags
-
-		listOfPostsDTOs = append(listOfPostsDTOs, postDTO)
-
-	}
-
-	return listOfPostsDTOs
-
-}
-
-
-
-
 func (handler *PostHandler) FindAllPostsForUserRegisteredUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	logId := r.URL.Query().Get("logId")
@@ -357,4 +309,48 @@ func (handler *PostHandler) FindAllPublicPostsRegisteredUser(w http.ResponseWrit
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *PostHandler) CreatePostsDTOList(posts []model.Post, contents []contentModel.SinglePostContent, locations []locationModel.Location, tags []tagsModel.PostTagPosts) []dto.SelectedPostDTO {
+	var listOfPostsDTOs []dto.SelectedPostDTO
+
+	for i := 0; i < len(posts); i++ {
+		var postDTO dto.SelectedPostDTO
+		fmt.Println("POSTS")
+		postDTO.PostId = posts[i].ID
+		postDTO.Description = posts[i].Description
+		postDTO.CreationDate = posts[i].CreationDate
+
+		for j := 0; j < len(contents); j++ {
+			if contents[j].SinglePostId == posts[i].ID {
+				postDTO.Path = contents[i].Path
+			}
+		}
+
+		for k := 0; k < len(locations); k++ {
+			if locations[k].ID == posts[i].LocationId {
+				postDTO.LocationId = locations[k].ID
+				postDTO.City = locations[k].City
+				postDTO.Country = locations[k].Country
+				postDTO.StreetName = locations[k].StreetName
+				postDTO.StreetNumber = locations[k].StreetNumber
+			}
+		}
+
+		var listOfTags []string
+		for p := 0; p < len(tags); p++ {
+			if tags[p].PostId == posts[i].UserID {
+				listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].PostTagId))
+
+			}
+		}
+
+		postDTO.Tags = listOfTags
+
+		listOfPostsDTOs = append(listOfPostsDTOs, postDTO)
+
+	}
+
+	return listOfPostsDTOs
+
 }
