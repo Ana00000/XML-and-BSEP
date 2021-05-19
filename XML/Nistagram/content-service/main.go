@@ -140,12 +140,17 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 	mux.HandleFunc("/story_album_content/", handlerStoryAlbumContent.CreateStoryAlbumContent)
 	mux.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent)
 	mux.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent)
+	mux.HandleFunc("/uploadPostMedia/", handlerSinglePostContent.Upload)
+	mux.HandleFunc("/uploadPostAlbumMedia/", handlerPostAlbumContent.Upload)
+	mux.HandleFunc("/uploadStoryMedia/", handlerSingleStoryContent.Upload)
+	mux.HandleFunc("/uploadStoryAlbumMedia/", handlerStoryAlbumContent.Upload)
 
 	handlerVar := cors.Default().Handler(mux)
 	log.Fatal(http.ListenAndServe(":8085", handlerVar))
 }
 
 func main() {
+
 	database := initDB()
 	repoContent := initContentRepo(database)
 	serviceContent := initContentService(repoContent)
