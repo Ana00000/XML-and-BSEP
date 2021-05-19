@@ -98,7 +98,7 @@ func (handler *PostHandler) FindAllFollowingPosts(w http.ResponseWriter, r *http
 	// retuns only valid FOLLOWINGS
 	var followings = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), allValidUsers)
 
-	// returns POSTS from valid following users
+	// returns NOT DELETED POSTS from valid following users
 	var posts = handler.PostService.FindAllFollowingPosts(followings)
 
 	postsJson, _ := json.Marshal(posts)

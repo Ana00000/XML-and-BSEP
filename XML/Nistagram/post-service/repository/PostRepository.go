@@ -31,7 +31,6 @@ func (repo *PostRepository) FindAllPosts() []model.Post {
 	return posts
 }
 
-
 func (repo *PostRepository) FindByID(ID uuid.UUID) *model.Post {
 	post := &model.Post{}
 	if repo.Database.First(&post, "id = ?", ID).RowsAffected == 0 {
@@ -43,19 +42,19 @@ func (repo *PostRepository) FindByID(ID uuid.UUID) *model.Post {
 // USED WHEN CLICKING ON A SELECTED USER (YOU CAN SELECT FROM A LIST OF ONLY VALID USERS)
 func (repo *PostRepository) FindAllPostsForUser(userId uuid.UUID) []model.Post {
 	var posts []model.Post
-	repo.Database.Select("*").Where("user_id = ?", userId).Find(&posts)
+	repo.Database.Select("*").Where("user_id = ? and is_deleted = ?", userId, false).Find(&posts)
 	return posts
 }
 
 
-// FIND ALL VALID POSTS THAT LOGGED IN USER FOLLOWS
+// FIND ALL NOT DELETED VALID POSTS THAT LOGGED IN USER FOLLOWS
 func (repo *PostRepository) FindAllFollowingPosts(followings []userModel.ClassicUserFollowings) []model.Post {
 	var allPosts = repo.FindAllPosts()
 	var allFollowingPosts []model.Post
 
 	for i:= 0; i< len(allPosts); i++{
 		for j := 0; j < len(followings); i++{
-			if allPosts[i].UserID == followings[i].FollowingUserId{
+			if (allPosts[i].UserID == followings[i].FollowingUserId) && (allPosts[i].IsDeleted == false){
 				allFollowingPosts = append(allFollowingPosts, allPosts[i])
 			}
 		}
