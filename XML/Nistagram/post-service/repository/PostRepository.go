@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
+	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"gorm.io/gorm"
 )
 
@@ -30,20 +31,6 @@ func (repo *PostRepository) FindAllPosts() []model.Post {
 	return posts
 }
 
-/*
-func (repo *PostRepository) FindAllValidPosts() []model.Post {
-	var allPosts []model.Post = repo.FindAllPosts()
-
-	for i:= 0; i< len(allPosts); i++{
-
-	}
-}*/
-
-func (repo *PostRepository) FindAllPostsForUser(userId uuid.UUID) []model.Post {
-	var posts []model.Post
-	repo.Database.Select("*").Where("user_id = ?", userId).Find(&posts)
-	return posts
-}
 
 func (repo *PostRepository) FindByID(ID uuid.UUID) *model.Post {
 	post := &model.Post{}
@@ -52,6 +39,31 @@ func (repo *PostRepository) FindByID(ID uuid.UUID) *model.Post {
 	}
 	return post
 }
+
+// USED WHEN CLICKING ON A SELECTED USER (YOU CAN SELECT FROM A LIST OF VALID USERS)
+func (repo *PostRepository) FindAllPostsForUser(userId uuid.UUID) []model.Post {
+	var posts []model.Post
+	repo.Database.Select("*").Where("user_id = ?", userId).Find(&posts)
+	return posts
+}
+
+func (repo *PostRepository) FindAllValidPosts(allValidUsers []userModel.User) []model.Post {
+	var allPosts = repo.FindAllPosts()
+	var allValidPosts []model.Post
+
+	for i:= 0; i< len(allPosts); i++{
+		for j := 0; j < len(allValidUsers); i++{
+			if allPosts[i].UserID == allValidUsers[j].ID{
+				allValidPosts = append(allValidPosts, allPosts[i])
+			}
+		}
+	}
+	return allValidPosts
+}
+
+// FIND ALL VALID POSTS FOR USERS THAT LOGGED IN USER FOLLOWS
+
+
 
 
 

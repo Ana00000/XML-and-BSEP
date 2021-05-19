@@ -63,13 +63,34 @@ func (handler *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
-/*
+
 func (handler *PostHandler) FindAllValidPosts(w http.ResponseWriter, r *http.Request) {
-	err = handler.ClassicUserService.FindAllValidClassicUsers()
-	if err != nil {
-		fmt.Println(err)
+	id := r.URL.Query().Get("id")
+
+	var users = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+	if  users == nil {
+		fmt.Println("No user found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 
-}*/
+}
+
+func (handler *PostHandler) FindAllPostsForUser(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var checIfValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(id))
+	if  checIfValid == false {
+		fmt.Println("User NOT valid")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	var posts = handler.PostService.FindAllValidPostsForUser(uuid.MustParse(id))
+	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
+
+	postsJson, _ := json.Marshal(posts)
+	w.Write(postsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}

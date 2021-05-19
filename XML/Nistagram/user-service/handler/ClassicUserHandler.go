@@ -68,6 +68,7 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter
 	id := r.URL.Query().Get("id")
 
 	var user = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
 	if  user == nil {
 		fmt.Println("No user found")
 		w.WriteHeader(http.StatusExpectationFailed)
