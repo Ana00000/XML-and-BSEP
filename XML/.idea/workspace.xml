@@ -2,7 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/repository/SinglePostContentRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/repository/SinglePostContentRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/service/SinglePostContentService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/service/SinglePostContentService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/location-service/repository/LocationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/repository/LocationRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/location-service/service/LocationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/service/LocationService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/PostHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/PostHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/PostTagPostsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/repository/PostTagPostsRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/PostTagPostsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/service/PostTagPostsService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

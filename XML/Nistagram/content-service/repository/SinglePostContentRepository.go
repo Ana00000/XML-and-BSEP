@@ -39,3 +39,18 @@ func (repo *SinglePostContentRepository) FindAllContentsForPosts(allPosts []post
 
 	return contents
 }
+
+func (repo *SinglePostContentRepository) FindAllContentsForPost(post *postsModel.Post) []model.SinglePostContent {
+	var contents []model.SinglePostContent
+	var allContents = repo.FindAll()
+
+	for j:=0; j<len(allContents);j++{
+			if post.ID == allContents[j].SinglePostId{
+				contents = append(contents, allContents[j])
+			}
+		}
+
+
+
+	return contents
+}

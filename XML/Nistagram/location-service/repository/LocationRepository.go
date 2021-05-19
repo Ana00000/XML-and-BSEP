@@ -45,3 +45,17 @@ func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []postsModel.P
 	}
 	return locations
 }
+
+func (repo *LocationRepository) FindAllLocationsForPost(post *postsModel.Post) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for j:=0; j<len(allLocations);j++{
+			if post.LocationId == allLocations[j].ID{
+				locations = append(locations, allLocations[j])
+			}
+		}
+
+
+	return locations
+}

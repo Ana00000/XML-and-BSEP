@@ -31,3 +31,12 @@ func (service *LocationService) FindAllLocationsForPosts(allPosts []postsModel.P
 	}
 	return nil
 }
+
+func (service *LocationService) FindAllLocationsForPost(post *postsModel.Post) []model.Location {
+	locations := service.Repo.FindAllLocationsForPost(post)
+	if locations != nil {
+		return locations
+	}
+	return nil
+}
+

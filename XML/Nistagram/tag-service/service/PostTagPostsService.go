@@ -26,3 +26,12 @@ func (service *PostTagPostsService) FindAllTagsForPosts(allPosts []postsModel.Po
 	}
 	return nil
 }
+
+func (service *PostTagPostsService) FindAllTagsForPost(post *postsModel.Post) []model.PostTagPosts {
+	tags := service.Repo.FindAllTagsForPost(post)
+	if tags != nil {
+		return tags
+	}
+	return nil
+}
+

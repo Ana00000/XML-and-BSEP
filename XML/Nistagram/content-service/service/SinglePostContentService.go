@@ -26,3 +26,12 @@ func (service *SinglePostContentService) FindAllContentsForPosts(allPosts []post
 	}
 	return nil
 }
+
+func (service *SinglePostContentService) FindAllContentsForPost(post *postsModel.Post) []model.SinglePostContent {
+	posts := service.Repo.FindAllContentsForPost(post)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
+

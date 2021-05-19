@@ -25,16 +25,29 @@ func (repo *PostTagPostsRepository) FindAll() []model.PostTagPosts {
 
 
 func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.Post) []model.PostTagPosts {
-	var locations []model.PostTagPosts
+	var tags []model.PostTagPosts
 	var allTags = repo.FindAll()
 
 	for i:=0;i<len(allPosts);i++{
 		for j:=0; j<len(allTags);j++{
 			if allPosts[i].ID == allTags[j].PostId{
-				locations = append(locations, allTags[j])
+				tags = append(tags, allTags[j])
 			}
 		}
 
 	}
-	return locations
+	return tags
+}
+
+func (repo *PostTagPostsRepository) FindAllTagsForPost(post *postsModel.Post) []model.PostTagPosts {
+	var tags []model.PostTagPosts
+	var allTags = repo.FindAll()
+
+	for j:=0; j<len(allTags);j++{
+			if post.ID == allTags[j].PostId{
+				tags = append(tags, allTags[j])
+			}
+		}
+
+	return tags
 }

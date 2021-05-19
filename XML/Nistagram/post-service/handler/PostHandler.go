@@ -241,9 +241,19 @@ func (handler *PostHandler) FindSelectedPostByIdForNotRegisteredUsers(w http.Res
 	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(post.UserID)
 	if profileSettings.UserVisibility == settingsModel.PUBLIC_VISIBILITY{
 		// EVERYONE CAN SELECT THIS POST
+		//finds all conents
+		var contents = handler.PostContentService.FindAllContentsForPost(post)
 
+		//finds all locations
+		var locations = handler.LocationService.FindAllLocationsForPost(post)
 
-		postJson, _ := json.Marshal(post)
+		//find all tags
+		var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
+
+		//creates a list of dtos
+		var postDTO = handler.CreatePostDTO(post,contents,locations,tags)
+
+		postJson, _ := json.Marshal(postDTO)
 		w.Write(postJson)
 
 		w.WriteHeader(http.StatusOK)
@@ -275,7 +285,19 @@ func (handler *PostHandler) FindSelectedPostByIdForRegisteredUsers(w http.Respon
 	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(post.UserID)
 	if profileSettings.UserVisibility == settingsModel.PUBLIC_VISIBILITY{
 		// EVERYONE CAN SELECT THIS POST
-		postJson, _ := json.Marshal(post)
+		//finds all conents
+		var contents = handler.PostContentService.FindAllContentsForPost(post)
+
+		//finds all locations
+		var locations = handler.LocationService.FindAllLocationsForPost(post)
+
+		//find all tags
+		var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
+
+		//creates a list of dtos
+		var postDTO = handler.CreatePostDTO(post,contents,locations,tags)
+
+		postJson, _ := json.Marshal(postDTO)
 		w.Write(postJson)
 
 		w.WriteHeader(http.StatusOK)
@@ -284,7 +306,19 @@ func (handler *PostHandler) FindSelectedPostByIdForRegisteredUsers(w http.Respon
 		// CHECK IF LOGID FOLLOWING POST USERID
 		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPost(uuid.MustParse(logId), post.UserID)
 		if checkIfFollowing == true{
-			postJson, _ := json.Marshal(post)
+
+			//finds all conents
+			var contents = handler.PostContentService.FindAllContentsForPost(post)
+
+			//finds all locations
+			var locations = handler.LocationService.FindAllLocationsForPost(post)
+
+			//find all tags
+			var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
+
+			//creates a list of dtos
+			var postDTO = handler.CreatePostDTO(post,contents,locations,tags)
+			postJson, _ := json.Marshal(postDTO)
 			w.Write(postJson)
 
 			w.WriteHeader(http.StatusOK)
@@ -350,7 +384,6 @@ func (handler *PostHandler) FindAllPublicPostsRegisteredUser(w http.ResponseWrit
 	//finds all conents
 	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
 
-
 	//finds all locations
 	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
 
@@ -379,7 +412,7 @@ func (handler *PostHandler) CreatePostsDTOList(posts []model.Post, contents []co
 
 		for j := 0; j < len(contents); j++ {
 			if contents[j].SinglePostId == posts[i].ID {
-				postDTO.Path = contents[i].Path
+				postDTO.Path = contents[j].Path
 			}
 		}
 
@@ -408,5 +441,45 @@ func (handler *PostHandler) CreatePostsDTOList(posts []model.Post, contents []co
 	}
 
 	return listOfPostsDTOs
+
+}
+
+func (handler *PostHandler) CreatePostDTO(posts *model.Post, contents []contentModel.SinglePostContent, locations []locationModel.Location, tags []tagsModel.PostTagPosts) dto.SelectedPostDTO {
+
+
+			var postDTO dto.SelectedPostDTO
+			fmt.Println("POSTS")
+			postDTO.PostId = posts.ID
+			postDTO.Description = posts.Description
+			postDTO.CreationDate = posts.CreationDate
+
+			for j := 0; j < len(contents); j++ {
+				if contents[j].SinglePostId == posts.ID {
+					postDTO.Path = contents[j].Path
+				}
+			}
+
+			for k := 0; k < len(locations); k++ {
+				if locations[k].ID == posts.LocationId {
+					postDTO.LocationId = locations[k].ID
+					postDTO.City = locations[k].City
+					postDTO.Country = locations[k].Country
+					postDTO.StreetName = locations[k].StreetName
+					postDTO.StreetNumber = locations[k].StreetNumber
+				}
+			}
+
+			var listOfTags []string
+			for p := 0; p < len(tags); p++ {
+				if tags[p].PostId == posts.UserID {
+					listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].PostTagId))
+
+				}
+			}
+
+			postDTO.Tags = listOfTags
+
+
+	return postDTO
 
 }
