@@ -30,7 +30,7 @@ func (repo * ProfileSettingsRepository) FindAllProfileSettingsForPublicUsers() [
 	var listPublicUsers []uuid.UUID
 
 	for i := 0; i< len(profileSettings); i++{
-		if profileSettings[i].UserVisibility == model.PRIVATE_VISIBILITY {
+		if profileSettings[i].UserVisibility == model.PUBLIC_VISIBILITY {
 			listPublicUsers = append(listPublicUsers, profileSettings[i].UserId)
 		}
 	}

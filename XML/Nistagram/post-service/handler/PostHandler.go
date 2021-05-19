@@ -336,7 +336,6 @@ func (handler *PostHandler) FindAllPublicPostsNotRegisteredUser(w http.ResponseW
 
 	// returns only VALID users
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-
 	// returns all PUBLIC users
 	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
 
@@ -347,7 +346,6 @@ func (handler *PostHandler) FindAllPublicPostsNotRegisteredUser(w http.ResponseW
 	//finds all conents
 	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
 
-
 	//finds all locations
 	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
 
@@ -356,7 +354,6 @@ func (handler *PostHandler) FindAllPublicPostsNotRegisteredUser(w http.ResponseW
 
 	//creates a list of dtos
 	var postsDTOS = handler.CreatePostsDTOList(publicValidPosts,contents,locations,tags)
-
 
 	postJson, _ := json.Marshal(postsDTOS)
 	w.Write(postJson)
@@ -405,7 +402,6 @@ func (handler *PostHandler) CreatePostsDTOList(posts []model.Post, contents []co
 
 	for i := 0; i < len(posts); i++ {
 		var postDTO dto.SelectedPostDTO
-		fmt.Println("POSTS")
 		postDTO.PostId = posts[i].ID
 		postDTO.Description = posts[i].Description
 		postDTO.CreationDate = posts[i].CreationDate
@@ -428,9 +424,8 @@ func (handler *PostHandler) CreatePostsDTOList(posts []model.Post, contents []co
 
 		var listOfTags []string
 		for p := 0; p < len(tags); p++ {
-			if tags[p].PostId == posts[i].UserID {
+			if tags[p].PostId == posts[i].ID {
 				listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].PostTagId))
-
 			}
 		}
 
@@ -471,7 +466,7 @@ func (handler *PostHandler) CreatePostDTO(posts *model.Post, contents []contentM
 
 			var listOfTags []string
 			for p := 0; p < len(tags); p++ {
-				if tags[p].PostId == posts.UserID {
+				if tags[p].PostId == posts.ID {
 					listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].PostTagId))
 
 				}

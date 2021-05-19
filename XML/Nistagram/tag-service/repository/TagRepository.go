@@ -20,7 +20,7 @@ func (repo * TagRepository) CreateTag(tag *model.Tag) error {
 
 func (repo *TagRepository) FindTagNameById(ID uuid.UUID) string{
 	tag := &model.Tag{}
-	if repo.Database.First(&tag, "id = ?", ID, false).RowsAffected == 0 {
+	if repo.Database.First(&tag, "id = ?", ID).RowsAffected == 0 {
 		return ""
 	}
 	return tag.Name

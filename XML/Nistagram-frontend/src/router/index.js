@@ -76,6 +76,11 @@ const routes = [
     component: () => import('../views/Posts.vue')
   },
   {
+    path: '/publicPostsAll',
+    name: 'PublicPostsAll',
+    component: () => import('../views/PublicPostsAll.vue')
+  },
+  {
     path: '/stories',
     name: 'Stories',
     component: () => import('../views/Stories.vue')

@@ -77,6 +77,7 @@ export default {
                 this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Posts', path: '/posts' },
+                { title: 'Public Posts All', path: '/publicPostsAll' },
                 { title: 'Stories', path: '/stories' },
                 { title: 'Highlighted Stories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
@@ -91,6 +92,7 @@ export default {
                  this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Posts', path: '/posts' },
+                { title: 'Public Posts All', path: '/publicPostsAll' },
                 { title: 'Stories', path: '/stories' },
                 { title: 'Highlighted Stories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
