@@ -23,3 +23,11 @@ func (service * ClassicUserFollowingsService) CreateClassicUserFollowings(classi
 func (service * ClassicUserFollowingsService)  CheckFollowingStatus(classicUserId uuid.UUID, followingUserId uuid.UUID, followRequests []requestModel.FollowRequest) string {
 	return service.Repo.CheckFollowingStatus(classicUserId, followingUserId, followRequests)
 }
+
+func (service *ClassicUserFollowingsService) FindAllValidFollowingsForUser(ID uuid.UUID, allValidUsers []model.ClassicUser) []model.ClassicUserFollowings {
+	followings := service.Repo.FindAllValidFollowingsForUser(ID, allValidUsers)
+	if followings != nil {
+		return followings
+	}
+	return nil
+}

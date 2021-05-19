@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/mikespook/gorbac"
-	"github.com/rs/cors"
 	requestsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/repository"
 	requestsService "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
 	settingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
@@ -251,12 +250,12 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	router.HandleFunc("/confirm_registration/", confirmationTokenHandler.VerifyConfirmationToken).Methods("POST")
 	router.HandleFunc("/change_user_password/", userHandler.ChangeUserPassword).Methods("POST")
 	router.HandleFunc("/users/all",userHandler.FindAllUsers).Methods("GET")
-	router.HandleFunc("/find_all_followers_for_user",classicUserFollowersHandler.FindAllFollowersInfoForUser).Methods("GET")
-	router.HandleFunc("/create_follower/",classicUserFollowersHandler.CreateClassicUserFollowers).Methods("POST")
-	router.HandleFunc("/create_following/",classicUserFollowingsHandler.CreateClassicUserFollowings).Methods("POST")
+
+	router.HandleFunc("/create_following/",classicUserFollowingsHandler.CreateClassicUserFollowing).Methods("POST")
 	router.HandleFunc("/find_user_by_username", userHandler.FindByUserName).Methods("GET")
-	router.HandleFunc("/find_all_users_but_logged_in", userHandler.FindAllUsersButLoggedIn).Methods("GET")
+	router.HandleFunc("/find_all_classic_users_but_logged_in", classicUserHandler.FindAllUsersButLoggedIn).Methods("GET")
 	router.HandleFunc("/find_selected_user_by_id", classicUserHandler.FindSelectedUserById).Methods("GET")
+	router.HandleFunc("/accept_follow_request/", classicUserFollowingsHandler.AcceptFollowerRequest).Methods("POST")
 
 
 	log.Fatal(http.ListenAndServe(":8080", cors(router)))

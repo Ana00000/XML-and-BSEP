@@ -40,30 +40,28 @@ func (repo *PostRepository) FindByID(ID uuid.UUID) *model.Post {
 	return post
 }
 
-// USED WHEN CLICKING ON A SELECTED USER (YOU CAN SELECT FROM A LIST OF VALID USERS)
+// USED WHEN CLICKING ON A SELECTED USER (YOU CAN SELECT FROM A LIST OF ONLY VALID USERS)
 func (repo *PostRepository) FindAllPostsForUser(userId uuid.UUID) []model.Post {
 	var posts []model.Post
 	repo.Database.Select("*").Where("user_id = ?", userId).Find(&posts)
 	return posts
 }
 
-func (repo *PostRepository) FindAllValidPosts(allValidUsers []userModel.User) []model.Post {
+
+// FIND ALL VALID POSTS THAT LOGGED IN USER FOLLOWS
+func (repo *PostRepository) FindAllFollowingPosts(followings []userModel.ClassicUserFollowings) []model.Post {
 	var allPosts = repo.FindAllPosts()
-	var allValidPosts []model.Post
+	var allFollowingPosts []model.Post
 
 	for i:= 0; i< len(allPosts); i++{
-		for j := 0; j < len(allValidUsers); i++{
-			if allPosts[i].UserID == allValidUsers[j].ID{
-				allValidPosts = append(allValidPosts, allPosts[i])
+		for j := 0; j < len(followings); i++{
+			if allPosts[i].UserID == followings[i].FollowingUserId{
+				allFollowingPosts = append(allFollowingPosts, allPosts[i])
 			}
 		}
 	}
-	return allValidPosts
+	return allFollowingPosts
 }
-
-// FIND ALL VALID POSTS FOR USERS THAT LOGGED IN USER FOLLOWS
-
-
 
 
 

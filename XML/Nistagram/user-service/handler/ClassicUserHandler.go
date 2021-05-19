@@ -69,10 +69,10 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter
 
 	var user = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
 	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
-	if  user == nil {
+	/*if  user == nil {
 		fmt.Println("No user found")
 		w.WriteHeader(http.StatusExpectationFailed)
-	}
+	}*/
 
 	userJson, _ := json.Marshal(user)
 	w.Write(userJson)

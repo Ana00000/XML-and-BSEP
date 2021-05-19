@@ -6,6 +6,8 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
+	userRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
+	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -23,6 +25,7 @@ func initDB() *gorm.DB{
 	db.AutoMigrate(&model.Post{}, &model.Activity{}, &model.Comment{}, &model.PostAlbum{}, &model.SinglePost{}, &model.PostCollection{})
 	return db
 }
+
 
 func initActivityRepo(database *gorm.DB) *repository.ActivityRepository{
 	return &repository.ActivityRepository{ Database: database }
@@ -80,8 +83,8 @@ func initCommentHandler(service *service.CommentService) *handler.CommentHandler
 	return &handler.CommentHandler{ Service: service }
 }
 
-func initPostHandler(postService *service.PostService) *handler.PostHandler{
-	return &handler.PostHandler{ PostService: postService }
+func initPostHandler(postService *service.PostService, classicUserService *userService.ClassicUserService, classicUserFollowingsService *userService.ClassicUserFollowingsService) *handler.PostHandler{
+	return &handler.PostHandler{ PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService}
 }
 
 func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
@@ -107,6 +110,29 @@ func initPostCollectionPostsServices(repo *repository.PostCollectionPostsReposit
 func initPostCollectionPostsHandler(service *service.PostCollectionPostsService) *handler.PostCollectionPostsHandler{
 	return &handler.PostCollectionPostsHandler { Service: service }
 }
+
+// CLASSIC USER
+func initClassicUserRepo(database *gorm.DB) *userRepository.ClassicUserRepository{
+	return &userRepository.ClassicUserRepository{ Database: database }
+}
+
+func initClassicUserService(repo *userRepository.ClassicUserRepository) *userService.ClassicUserService{
+	return &userService.ClassicUserService{ Repo: repo }
+}
+
+// CLASSIC USER FOLLOWINGS
+func initClassicUserFollowingsRepo(database *gorm.DB) *userRepository.ClassicUserFollowingsRepository{
+	return &userRepository.ClassicUserFollowingsRepository{ Database: database }
+}
+
+func initClassicUserFollowingsService(repo *userRepository.ClassicUserFollowingsRepository) *userService.ClassicUserFollowingsService{
+	return &userService.ClassicUserFollowingsService{ Repo: repo }
+}
+
+
+
+
+
 
 func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handler.CommentHandler, handlerPost *handler.PostHandler,
 	handlerPostAlbum *handler.PostAlbumHandler, handlerPostCollection *handler.PostCollectionHandler,
@@ -139,6 +165,8 @@ func main() {
 	repoPostAlbum := initPostAlbumRepo(database)
 	repoPostCollection := initPostCollectionRepo(database)
 	repoSinglePost := initSinglePostRepo(database)
+	repoClassicUser := initClassicUserRepo(database)
+	repoClassicUserFollowings := initClassicUserFollowingsRepo(database)
 
 	serviceActivity := initActivityService(repoActivity)
 	serviceComment := initCommentService(repoComment)
@@ -146,10 +174,12 @@ func main() {
 	servicePostAlbum := initPostAlbumService(repoPostAlbum)
 	servicePostCollection := initPostCollectionService(repoPostCollection)
 	serviceSinglePost := initSinglePostService(repoSinglePost)
+	serviceClassicUser := initClassicUserService(repoClassicUser)
+	serviceClassicUserFollowings := initClassicUserFollowingsService(repoClassicUserFollowings)
 
 	handlerActivity := initActivityHandler(serviceActivity)
 	handlerComment := initCommentHandler(serviceComment)
-	handlerPost := initPostHandler(servicePost)
+	handlerPost := initPostHandler(servicePost, serviceClassicUser, serviceClassicUserFollowings)
 	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
 	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost)

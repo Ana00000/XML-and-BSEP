@@ -27,14 +27,6 @@ func (service * PostService) UpdatePost(post *dto.PostUpdateDTO) error {
 	return nil
 }
 
-func (service *PostService) FindAllPosts() []model.Post {
-	posts := service.Repo.FindAllPosts()
-	if posts != nil {
-		return posts
-	}
-	return nil
-}
-
 func (service *PostService) FindByID(ID uuid.UUID) *model.Post {
 	post := service.Repo.FindByID(ID)
 	return post
@@ -48,16 +40,8 @@ func (service *PostService) FindAllPostsForUser(ID uuid.UUID) []model.Post {
 	return nil
 }
 
-func (service *PostService) FindAllValidPostsForUser(ID uuid.UUID) []model.Post {
-	posts := service.Repo.FindAllValidPostsForUser(ID)
-	if posts != nil {
-		return posts
-	}
-	return nil
-}
-
-func (service *PostService) FindAllValidPosts(allValidUsers []userModel.User) []model.Post {
-	posts := service.Repo.FindAllValidPosts(allValidUsers)
+func (service *PostService) FindAllFollowingPosts(followings []userModel.ClassicUserFollowings) []model.Post {
+	posts := service.Repo.FindAllFollowingPosts(followings)
 	if posts != nil {
 		return posts
 	}

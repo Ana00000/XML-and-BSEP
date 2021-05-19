@@ -4,11 +4,13 @@
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/PostHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/PostHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/post-service/repository/PostRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/repository/PostRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/post-service/service/PostService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/service/PostService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowingsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowingsRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserFollowingsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserFollowingsService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
