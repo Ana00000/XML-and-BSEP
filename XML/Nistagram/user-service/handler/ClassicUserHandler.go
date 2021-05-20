@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
-	requestsService "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
-	settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
-	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 	"os"
@@ -17,7 +14,6 @@ import (
 type ClassicUserHandler struct {
 	ClassicUserService * service.ClassicUserService
 	ClassicUserFollowingsService * service.ClassicUserFollowingsService
-	FollowRequestService * requestsService.FollowRequestService
 }
 
 func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r *http.Request) {
@@ -30,8 +26,8 @@ func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r
 		fmt.Println("User not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
-	var profileSettings = dto.ProfileSettingsDTO{}
-	reqUrl := fmt.Sprintf("http://%s:%s/find_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	var profileSettings dto.ProfileSettingsDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &profileSettings)
 	if err!=nil{
 		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
@@ -51,8 +47,15 @@ func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r
 		user.ProfileVisibility = "PUBLIC_VISIBILITY"
 		fmt.Println("PUBLIC")
 	}
-
-	var allFollowRequestsForUser = handler.FollowRequestService.FindAllFollowerRequestsForUser(uuid.MustParse(logId))
+	//izmjenjeno da dobija requestove iz request microservica listu FollowerRequestForUserDTO i radi posle sa njom
+	var  allFollowRequestsForUser []dto.FollowRequestForUserDTO
+	reqUrlFollowRequests := fmt.Sprintf("http://%s:%s/find_all_requests_by_user_id/%s", os.Getenv("REQUESTS_SERVICE_DOMAIN"), os.Getenv("REQUESTS_SERVICE_PORT"), logId)
+	err = getJson(reqUrlFollowRequests, &allFollowRequestsForUser)
+	if err!=nil{
+		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+	//var allFollowRequestsForUser = handler.FollowRequestService.FindAllFollowerRequestsForUser(uuid.MustParse(logId))
 	fmt.Println("USPEO1")
 	var checkFollowingStatus = handler.ClassicUserFollowingsService.CheckFollowingStatus(uuid.MustParse(logId),uuid.MustParse(id),allFollowRequestsForUser)
 	if (checkFollowingStatus == "FOLLOWING") || (checkFollowingStatus == "NOT FOLLOWING") || (checkFollowingStatus == "PENDING"){
@@ -96,4 +99,3 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
-

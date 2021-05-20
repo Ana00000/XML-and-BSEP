@@ -78,7 +78,7 @@ export default {
     getRequest() {
       console.log(this.selectedRequestId);
       this.$http
-        .get("http://localhost:8087/find_request_by_id?id=" + this.selectedRequestId)
+        .get("http://localhost:8080/api/requests/find_request_by_id?id=" + this.selectedRequestId)
         .then((resp) => {
           this.setRequestInfo(resp.data);
           this.requestFollower = resp.data.classic_user_id
@@ -98,7 +98,7 @@ export default {
       console.log(this.requestFollower)
       
      this.$http
-        .post("http://localhost:8080/accept_follow_request/", {
+        .post("http://localhost:8080/api/user/accept_follow_request/", {
           classic_user_id: this.requestFollower,
           follower_user_id: this.logId,
       
@@ -113,7 +113,7 @@ export default {
     },
     rejectRequest(){
        this.$http
-        .post("http://localhost:8087/reject_follow_request?id="+this.selectedRequestId, {})
+        .post("http://localhost:8080/api/requests/reject_follow_request?id="+this.selectedRequestId, {})
         .then((resp) => {
           console.log(resp.data);
           alert("Rejected  follow!");

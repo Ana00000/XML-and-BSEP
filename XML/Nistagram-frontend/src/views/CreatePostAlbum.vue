@@ -66,7 +66,7 @@
             style="display: none"
           ></iframe>
           <form
-            action="http://localhost:8085/uploadPostAlbumMedia/"
+            action="http://localhost:8080/api/content/uploadPostAlbumMedia/"
             enctype="multipart/form-data"
             method="post"
             v-if="!isHiddenContent"
@@ -96,7 +96,7 @@
             single-line
           />
           <form
-            action="http://localhost:8085/uploadPostAlbumMedia/"
+            action="http://localhost:8080/api/content/uploadPostAlbumMedia/"
             enctype="multipart/form-data"
             method="post"
             v-if="!isHiddenAdditionalContent"

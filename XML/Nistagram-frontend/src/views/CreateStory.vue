@@ -77,7 +77,7 @@
             style="display: none"
           ></iframe>
           <form
-            action="http://localhost:8085/uploadStoryMedia/"
+            action="http://localhost:8080/api/content/uploadStoryMedia/"
             enctype="multipart/form-data"
             method="post"
             v-if="!isHiddenContent"

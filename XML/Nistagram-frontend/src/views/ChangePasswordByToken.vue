@@ -71,10 +71,6 @@ export default {
         .post("http://localhost:8080/api/user/verify_recovery_password_token/", {
             recovery_password_token: this.confirmationToken,
             user_id: this.userId
-        },{
-            headers: {
-              "Authorization": "Bearer " + this.token,
-            },
         })
         .then((res) => {
           alert(res.data)

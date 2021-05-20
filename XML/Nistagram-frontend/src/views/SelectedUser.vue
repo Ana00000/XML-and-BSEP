@@ -123,7 +123,7 @@ export default {
           console.log(resp.data.profileVisibility);
           console.log(resp.data.followingStatus);
 
-          if(resp.data.profileVisibility == "PUBLIC")
+          if(resp.data.profileVisibility == "PUBLIC_VISIBILITY")
             console.log("PUBLIC JE");
           else if(resp.data.profileVisibility == "PRIVATE")
             console.log("PRIVATE JE");
@@ -142,7 +142,7 @@ export default {
             this.isHiddenSendFollowRequest = false
             this.isHiddenFollowRequestSent = true;
             console.log("FALSE JE I PRIVATE JE");
-          }else if(resp.data.followingStatus == "NOT FOLLOWING" && resp.data.profileVisibility == "PUBLIC"){
+          }else if(resp.data.followingStatus == "NOT FOLLOWING" && resp.data.profileVisibility == "PUBLIC_VISIBILITY"){
             this.isHiddenFollowing  = true
             this.isHiddenFollow = false
             this.isHiddenSendFollowRequest = true
@@ -193,7 +193,7 @@ export default {
        this.isHiddenFollowRequestSent = false;
 
        this.$http
-        .post("http://localhost:8087/create_follow_request/", {
+        .post("http://localhost:8080/api/requests/create_follow_request/", {
           classic_user_id: this.logId,
           follower_user_id: this.selectedUser,
       

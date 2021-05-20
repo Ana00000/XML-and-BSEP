@@ -246,6 +246,8 @@ services:
       DBPORT: 5432
       SETTINGS_SERVICE_DOMAIN: settings-service
       SETTINGS_SERVICE_PORT: 8088
+      REQUESTS_SERVICE_DOMAIN: requests-service
+      REQUESTS_SERVICE_PORT: 8087
     depends_on:
       - db
 

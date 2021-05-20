@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 	"github.com/google/uuid"
-	requestModel "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"gorm.io/gorm"
 )
@@ -31,11 +31,10 @@ func (repo * ClassicUserFollowingsRepository) FindAllFollowingsForUser(userId uu
 	return followings
 }
 
-func (repo * ClassicUserFollowingsRepository) CheckFollowingStatus(classicUserId uuid.UUID, followingUserId uuid.UUID, followRequests []requestModel.FollowRequest) string{
+func (repo * ClassicUserFollowingsRepository) CheckFollowingStatus(classicUserId uuid.UUID, followingUserId uuid.UUID, followRequests []dto.FollowRequestForUserDTO) string{
 	var allFollowingForUser = repo.FindAllFollowingsForUser(classicUserId)
 
-	fmt.Println("DUZINA")
-	fmt.Println(len(followRequests))
+	fmt.Println("DUZINA u CheckFollowingStatus" + string(len(followRequests)))
 	following, doneFollowing := repo.CheckIfFollowing(allFollowingForUser, followingUserId)
 	if doneFollowing {
 		return following
@@ -50,9 +49,10 @@ func (repo * ClassicUserFollowingsRepository) CheckFollowingStatus(classicUserId
 	return "NOT FOLLOWING"
 }
 
-func (repo *ClassicUserFollowingsRepository) CheckIfPending(followRequests []requestModel.FollowRequest, followingUserId uuid.UUID) (string, bool) {
+func (repo *ClassicUserFollowingsRepository) CheckIfPending(followRequests []dto.FollowRequestForUserDTO, followingUserId uuid.UUID) (string, bool) {
 	for i := 0; i < len(followRequests); i++ {
-		if followRequests[i].FollowerUserId == followingUserId && followRequests[i].FollowRequestStatus == requestModel.PENDING {
+		fmt.Println(followRequests[i].FollowRequestStatus)
+		if followRequests[i].FollowerUserId == followingUserId && followRequests[i].FollowRequestStatus == "PENDING" {
 			fmt.Println("PENDING JE")
 			return "PENDING", true
 		}

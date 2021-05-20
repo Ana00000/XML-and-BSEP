@@ -65,7 +65,7 @@ export default {
       console.log(this.id)
       console.log(this.token)
       this.$http
-        .get("http://localhost:8087/find_all_pending_requests_for_user?id=" + this.id)
+        .get("http://localhost:8080/api/requests/find_all_pending_requests_for_user?id=" + this.id)
         .then((resp) => {
           console.log("USAO")
           this.requests = resp.data
