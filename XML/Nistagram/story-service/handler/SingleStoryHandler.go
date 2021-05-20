@@ -5,36 +5,20 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
-	locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
-	settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
-	tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
-
-	//contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
-	//locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
-	//settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
-	//tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
-
-	//contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
-	//locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
-	//settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
-	//tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
-
-	//contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	contentService "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
-	//locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
+	locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	locationService "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
-	//settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
+	settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
-	//"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
-	//"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
-	//tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+	tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	tagsService "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
-
-	//"net/http"
+	"net/http"
 	_ "strconv"
-	//"time"
+	"time"
 )
 
 type SingleStoryHandler struct {
@@ -49,7 +33,7 @@ type SingleStoryHandler struct {
 	StoryTagStoriesService *tagsService.StoryTagStoriesService
 	TagService *tagsService.TagService
 }
-/*
+
 func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *http.Request) {
 	var singleStoryDTO dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
@@ -248,7 +232,7 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 
 // FIND SELECTED STORY BY ID (ONLY IF NOT DELETED)!
 // IF PUBLIC/ IF FOLLOWING PRIVATE PROFILE
-func (handler *SingleStoryHandler) FindSelectedsStoryByIdForNotRegisteredUsers(w http.ResponseWriter, r *http.Request) {
+func (handler *SingleStoryHandler) FindSelectedStoryByIdForNotRegisteredUsers(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
 
@@ -497,4 +481,4 @@ func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, cont
 
 	return storyDTO
 
-}*/
+}
