@@ -205,32 +205,6 @@ export default {
       this.firstName = item.firstName;
       this.lastName = item.lastName;
     },
-    followProfile() {
-      this.$http
-        .post("http://localhost:8080/create_following/", {
-          classic_user_id: this.logId,
-          following_user_id: this.selectedUser,
-        })
-        .then((resp) => {
-          console.log(resp.data);
-          alert("Successfully followed profile!");
-          window.location.reload();
-        })
-        .catch((err) => console.log(err));
-    },
-    sendFollowRequest() {
-      this.$http
-        .post("http://localhost:8087/create_follow_request/", {
-          classic_user_id: this.logId,
-          follower_user_id: this.selectedUser,
-        })
-        .then((resp) => {
-          console.log(resp.data);
-          alert("Successfully sent follow request!");
-          window.location.reload();
-        })
-        .catch((err) => console.log(err));
-    },
   },
 };
 </script>
