@@ -76,11 +76,12 @@ func (repo * ClassicUserFollowingsRepository) FindAllValidFollowingsForUser(user
 
 	for i := 0; i < len(allValidUsers); i++{
 		for j :=0; j < len(followings); j++{
-			if allValidUsers[i].ID == followings[j].ClassicUserId{
+			if allValidUsers[i].ID == followings[j].FollowingUserId{
 				validFollowings = append(validFollowings, followings[j])
 			}
 		}
 	}
+
 	return validFollowings
 
 }

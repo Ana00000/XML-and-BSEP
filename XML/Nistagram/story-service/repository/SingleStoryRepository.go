@@ -92,8 +92,8 @@ func (repo *SingleStoryRepository) FindAllFollowingStories(followings []userMode
 	var notExpiredStories []model.SingleStory
 
 	for i:= 0; i< len(allStories); i++{
-		for j := 0; j < len(followings); i++{
-			if (allStories[i].UserId == followings[i].FollowingUserId) && (allStories[i].IsDeleted == false){
+		for j := 0; j < len(followings); j++{
+			if (allStories[i].UserId == followings[j].FollowingUserId) && (allStories[i].IsDeleted == false){
 				allFollowingStories = append(allFollowingStories, allStories[i])
 			}
 		}

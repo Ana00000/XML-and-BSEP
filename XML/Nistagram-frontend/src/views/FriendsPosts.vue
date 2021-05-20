@@ -3,12 +3,12 @@
     <v-container grid-list-lg >
       <div class="spacingOne" />
       <div class="title">
-        <h1>Public Posts</h1>
+        <h1>Friends Posts</h1>
       </div>
       <div class="spacingTwo" />
       <v-layout row>
         <v-flex lg4 v-for="item in posts" :key="item.id" class="space-bottom">
-          <v-card class="mx-auto"  v-on:click="getPost()">
+          <v-card class="mx-auto">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{
@@ -59,7 +59,7 @@
 
 <script>
 export default {
-  name: "PublicPostsAllForNotRegistered",
+  name: "FriendsPosts",
   data: () => ({
     posts: []
   }),
@@ -69,15 +69,13 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8084/find_all_public_posts_not_reg/")
+        .get("http://localhost:8084/find_all_following_posts?id=" + localStorage.getItem("userId"))
         .then((response) => {
           this.posts = response.data;
+          console.log(response.data)
         })
         .catch(console.log);
     },
-    getPost(){
-      window.location.href = "http://localhost:8081/postById";
-    }
   },
 };
 </script>
