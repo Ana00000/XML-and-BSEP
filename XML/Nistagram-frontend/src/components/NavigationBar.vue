@@ -88,7 +88,8 @@ export default {
                 { title: 'Create Story', path: '/createStory' },
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' },
-                { title: 'Follow Requests', path: '/followRequests' }
+                { title: 'Follow Requests', path: '/followRequests' },
+                { title: 'Add Close Friends', path: '/addCloseFriends' }
             ]
 
             }else{
@@ -107,7 +108,8 @@ export default {
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'Search users', path: '/searchUsers' },
-                { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Add Close Friends', path: '/addCloseFriends' }
             ]
             }
         } else if (this.userType == 2) {   // AGENT
@@ -126,7 +128,8 @@ export default {
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'Search users', path: '/searchUsers' },
-                { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Add Close Friends', path: '/addCloseFriends' }
             ]
             
            
