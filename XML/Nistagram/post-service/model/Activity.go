@@ -7,10 +7,10 @@ import (
 
 type Activity struct {
 	ID uuid.UUID `json:"id"`
-	PostID uuid.UUID `json:"postID" gorm:"not null"`
-	UserID uuid.UUID `json:"userID" gorm:"not null"`
-	Liked bool `json:"liked" gorm:"not null"`
-	IsFavorite bool `json:"isFavorite" gorm:"not null"`
+	PostID uuid.UUID `json:"post_id" gorm:"not null"`
+	UserID uuid.UUID `json:"user_id" gorm:"not null"`
+	LikedStatus LikedStatus `json:"liked_status" gorm:"not null"`
+	IsFavorite bool `json:"is_favorite" gorm:"not null"`
 }
 
 func (activity *Activity) BeforeCreate(store *gorm.DB) error {

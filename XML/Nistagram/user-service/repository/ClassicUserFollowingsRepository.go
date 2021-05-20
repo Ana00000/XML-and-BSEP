@@ -69,3 +69,27 @@ func (repo *ClassicUserFollowingsRepository) CheckIfFollowing(allFollowingForUse
 	}
 	return "", false
 }
+
+func (repo * ClassicUserFollowingsRepository) FindAllValidFollowingsForUser(userId uuid.UUID, allValidUsers []model.ClassicUser) []model.ClassicUserFollowings{
+	var followings  = repo.FindAllFollowingsForUser(userId)
+	var validFollowings []model.ClassicUserFollowings
+
+	for i := 0; i < len(allValidUsers); i++{
+		for j :=0; j < len(followings); j++{
+			if allValidUsers[i].ID == followings[j].FollowingUserId{
+				validFollowings = append(validFollowings, followings[j])
+			}
+		}
+	}
+
+	return validFollowings
+
+}
+
+func (repo *ClassicUserFollowingsRepository) CheckIfFollowingPostStory(followingUserId uuid.UUID, classicUserId uuid.UUID) bool{
+	follower := &model.ClassicUserFollowings{}
+	if repo.Database.First(&follower, "following_user_id = ? and classic_user_id = ?", followingUserId, classicUserId).RowsAffected == 0{
+		return false
+	}
+	return true
+}

@@ -10,5 +10,6 @@ type SingleStoryDTO struct {
 	UserId uuid.UUID `json:"userId"`
 	LocationId uuid.UUID `json:"locationId"`
 	IsDeleted bool `json:"isDeleted"`
+	IsExpired bool `json:"isExpired"`
 	Type string `json:"storyType"`
 }

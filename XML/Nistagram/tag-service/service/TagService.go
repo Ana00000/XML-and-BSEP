@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
 )
@@ -15,4 +16,10 @@ func (service * TagService) CreateTag(tag *model.Tag) error {
 		return err
 	}
 	return nil
+}
+
+
+func (service *TagService) FindTagNameById(ID uuid.UUID) string {
+	tag := service.Repo.FindTagNameById(ID)
+	return tag
 }

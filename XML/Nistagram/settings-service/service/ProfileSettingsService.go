@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
+	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 )
 
 type ProfileSettingsService struct {
@@ -37,4 +38,12 @@ func (service * ProfileSettingsService) FindAllProfileSettingsForPublicUsers() [
 func (service *ProfileSettingsService) FindProfileSettingByUserId(id uuid.UUID) *model.ProfileSettings {
 	user := service.Repo.FindProfileSettingByUserId(id)
 	return user
+}
+
+func (service * ProfileSettingsService) FindAllPublicUsers(allValidUsers []userModel.ClassicUser) []userModel.ClassicUser{
+	publicUsers := service.Repo.FindAllPublicUsers(allValidUsers)
+	if publicUsers != nil {
+		return publicUsers
+	}
+	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
+	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"gorm.io/gorm"
 )
 
@@ -29,7 +30,7 @@ func (repo * ProfileSettingsRepository) FindAllProfileSettingsForPublicUsers() [
 	var listPublicUsers []uuid.UUID
 
 	for i := 0; i< len(profileSettings); i++{
-		if profileSettings[i].UserVisibility == model.PRIVATE_VISIBILITY {
+		if profileSettings[i].UserVisibility == model.PUBLIC_VISIBILITY {
 			listPublicUsers = append(listPublicUsers, profileSettings[i].UserId)
 		}
 	}
@@ -47,6 +48,22 @@ func (repo * ProfileSettingsRepository) FindProfileSettingByUserId(userId uuid.U
 	}
 
 	return profileSetting
+}
+
+func (repo * ProfileSettingsRepository) FindAllPublicUsers(allValidUsers []userModel.ClassicUser) []userModel.ClassicUser {
+
+	var publicProfileSettings = repo.FindAllProfileSettingsForPublicUsers()
+	var listOfPublicUsers []userModel.ClassicUser
+
+	for i:=0; i<len(allValidUsers); i++{
+		for j:=0; j<len(publicProfileSettings);j++{
+			if publicProfileSettings[j] == allValidUsers[i].ID{
+				listOfPublicUsers = append(listOfPublicUsers, allValidUsers[i])
+			}
+		}
+	}
+
+	return listOfPublicUsers
 }
 
 

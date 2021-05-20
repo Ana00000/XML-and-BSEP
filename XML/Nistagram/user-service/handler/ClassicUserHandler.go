@@ -68,13 +68,25 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter
 	id := r.URL.Query().Get("id")
 
 	var user = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
-	if  user == nil {
+	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
+	/*if  user == nil {
 		fmt.Println("No user found")
 		w.WriteHeader(http.StatusExpectationFailed)
-	}
+	}*/
 
 	userJson, _ := json.Marshal(user)
 	w.Write(userJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *ClassicUserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Request) {
+
+	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
+	var publicProfiles = handler.ProfileSettingsService.FindAllPublicUsers(allValidUsers)
+
+	publicJson, _ := json.Marshal(publicProfiles)
+	w.Write(publicJson)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
