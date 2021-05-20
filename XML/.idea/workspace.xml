@@ -3,12 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/repository/SinglePostContentRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/repository/SinglePostContentRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/repository/SingleStoryContentRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/repository/SingleStoryContentRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/service/SingleStoryContentService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/service/SingleStoryContentService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/story-service/handler/SingleStoryHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/handler/SingleStoryHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/repository/SingleStoryRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/repository/SingleStoryRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/service/SingleStoryService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/service/SingleStoryService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/StoryTagStoriesRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/repository/StoryTagStoriesRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/StoryTagStoriesService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/service/StoryTagStoriesService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

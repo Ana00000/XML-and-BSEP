@@ -10,6 +10,11 @@ import (
 	//tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 
 	//contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
+	//locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
+	//settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
+	//tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+
+	//contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	contentService "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
 	//locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	locationService "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
@@ -292,7 +297,7 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
-	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(story.UserID)
+	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(story.UserId)
 	if profileSettings.UserVisibility == settingsModel.PUBLIC_VISIBILITY{
 		// EVERYONE CAN SELECT THIS STORY
 		//finds all conents
