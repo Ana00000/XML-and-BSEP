@@ -69,7 +69,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8084/find_all_public_posts_reg/")
+        .get("http://localhost:8084/find_all_public_posts_reg?id=" + localStorage.getItem("userId"))
         .then((response) => {
           this.posts = response.data;
         })
