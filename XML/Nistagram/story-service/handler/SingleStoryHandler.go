@@ -61,6 +61,7 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 			UserId:       singleStoryDTO.UserId,
 			LocationId:   singleStoryDTO.LocationId,
 			IsDeleted:    false,
+			IsExpired: 	  false,
 			Type:         singleStoryType,
 		},
 	}

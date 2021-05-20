@@ -83,21 +83,11 @@ export default {
   },
   methods: {
     init() {
-      this.id = localStorage.getItem("userId");
-      this.token = localStorage.getItem("token");
-
-      console.log(this.id);
-      console.log(this.token);
       this.$http
-        .get(
-          "http://localhost:8080/find_all_classic_users_but_logged_in?id=" +
-            this.id
-        )
+        .get("http://localhost:8080/find_all_public_users/")
         .then((resp) => {
-          console.log("USAO");
           this.users = resp.data;
           this.usersCopy = resp.data;
-          console.log("duzina: " + this.users.length);
         })
         .catch(console.log);
     },
@@ -114,10 +104,7 @@ export default {
       }
       this.users = resultOfSearch;
     },
-
     redirectToSelectedUser() {
-      console.log("OK");
-      console.log("usao ovde i id je: " + this.selectedUser.id);
       localStorage.setItem("selectedUserUsername", this.selectedUser.username);
       localStorage.setItem("selectedUserId", this.selectedUser.id);
       window.location.href =
