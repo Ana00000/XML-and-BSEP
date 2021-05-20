@@ -59,10 +59,9 @@
 
 <script>
 export default {
-  name: "PublicPostsAll",
+  name: "PublicPostsAllForNotRegistered",
   data: () => ({
-    posts: [],
-    allTags: ""
+    posts: []
   }),
   mounted() {
     this.init();
