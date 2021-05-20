@@ -81,6 +81,11 @@ const routes = [
     component: () => import('../views/PublicPostsAll.vue')
   },
   {
+    path: '/publicPostsAllForNotRegistered',
+    name: 'PublicPostsAllForNotRegistered',
+    component: () => import('../views/PublicPostsAllForNotRegistered.vue')
+  },
+  {
     path: '/stories',
     name: 'Stories',
     component: () => import('../views/Stories.vue')
@@ -89,6 +94,11 @@ const routes = [
     path: '/publicStoriesAll',
     name: 'PublicStoriesAll',
     component: () => import('../views/PublicStoriesAll.vue')
+  },
+  {
+    path: '/publicStoriesAllForNotRegistered',
+    name: 'PublicStoriesAllForNotRegistered',
+    component: () => import('../views/PublicStoriesAllForNotRegistered.vue')
   },
   {
     path: '/publicPostAlbumsAll',

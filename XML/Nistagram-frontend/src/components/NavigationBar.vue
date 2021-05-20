@@ -77,11 +77,11 @@ export default {
                 this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Posts', path: '/posts' },
-                { title: 'Public Posts All', path: '/publicPostsAll' },
+                { title: 'Public Posts', path: '/publicPostsAll' },
                 { title: 'Stories', path: '/stories' },
-                { title: 'Public Stories All', path: '/publicStoriesAll' },
-                { title: 'Public Post Albums All', path: '/publicPostAlbumsAll' },
-                { title: 'Public Story Albums All', path: '/publicStoryAlbumsAll' },
+                { title: 'Public Stories', path: '/publicStoriesAll' },
+                { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
+                { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
                 { title: 'Highlighted Stories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
@@ -95,11 +95,11 @@ export default {
                  this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Posts', path: '/posts' },
-                { title: 'Public Posts All', path: '/publicPostsAll' },
+                { title: 'Public Posts', path: '/publicPostsAll' },
                 { title: 'Stories', path: '/stories' },
-                { title: 'Public Stories All', path: '/publicStoriesAll' },
-                { title: 'Public Post Albums All', path: '/publicPostAlbumsAll' },
-                { title: 'Public Story Albums All', path: '/publicStoryAlbumsAll' },
+                { title: 'Public Stories', path: '/publicStoriesAll' },
+                { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
+                { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
                 { title: 'Highlighted Stories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
@@ -114,11 +114,11 @@ export default {
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Posts', path: '/posts' },
-                { title: 'Public Posts All', path: '/publicPostsAll' },
+                { title: 'Public Posts', path: '/publicPostsAll' },
                 { title: 'Stories', path: '/stories' },
-                { title: 'Public Stories All', path: '/publicStoriesAll' },
-                { title: 'Public Post Albums All', path: '/publicPostAlbumsAll' },
-                { title: 'Public Story Albums All', path: '/publicStoryAlbumsAll' },
+                { title: 'Public Stories', path: '/publicStoriesAll' },
+                { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
+                { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
                 { title: 'HighlightedStories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
@@ -132,7 +132,9 @@ export default {
            
         } else {   // NOT YET REGISTERED
             this.items = [
-                { title: 'Home', path: '/' }
+                { title: 'Home', path: '/' },
+                { title: 'Public Posts', path: '/publicPostsAllForNotRegistered' },
+                { title: 'Public Stories', path: '/publicStoriesAllForNotRegistered' },
             ]
         }
     },

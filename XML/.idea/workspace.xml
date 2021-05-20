@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Media/378229881Screenshot (62).png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/541522091Screenshot (63).png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/542957314Screenshot (63).png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/947089519Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicPostsAll.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicPostsAll.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicStoriesAll.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicStoriesAll.vue" afterDir="false" />
-    </list>
+    <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
