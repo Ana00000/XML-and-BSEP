@@ -91,6 +91,16 @@ const routes = [
     component: () => import('../views/PublicStoriesAll.vue')
   },
   {
+    path: '/publicPostAlbumsAll',
+    name: 'PublicPostAlbumsAll',
+    component: () => import('../views/PublicPostAlbumsAll.vue')
+  },
+  {
+    path: '/publicStoryAlbumsAll',
+    name: 'PublicStoryAlbumsAll',
+    component: () => import('../views/PublicStoryAlbumsAll.vue')
+  },
+  {
     path: '/highlightedStories',
     name: 'HighlightedStories',
     component: () => import('../views/HighlightedStories.vue')
