@@ -1,11 +1,12 @@
 <template>
   <div class="searchDiv">
-    <br />
-    <div>
-      <h1 class="display-2">You can find users here!</h1>
-    </div>
-    <div class="welcoming">Search users by username</div>
-    <br />
+
+        <div class="spacingOne" />
+        <div class="title">
+          <h1>You can find users here!</h1>
+          <div class="welcoming"> Search users by username</div>
+        </div>
+        <div class="spacingTwo" />
 
     <v-container>
       <v-layout row wrap>
@@ -13,7 +14,7 @@
           class="mx-auto"
           style="width: 90%; height: 300px; overflow-y: scroll"
         >
-          <v-toolbar color="#13077d" dark>
+          <v-toolbar color="light-blue darken-4">
             <v-text-field
               hide-details
               prepend-icon="mdi-magnify"
@@ -133,25 +134,39 @@ export default {
 }
 
 .cardClass {
-  display: none;
+  display: none; 
 }
 .template {
-  min-height: 1000px;
+    min-height: 1000px;
 }
 .allUsers {
-  position: absolute;
-  right: 500px;
-  top: 490px;
+    position: absolute;
+    right: 500px;
+    top: 490px;
 }
 .welcoming {
-  font-weight: bolder;
-  font-size: 25px;
+    font-weight: bolder;
+    font-size: 25px;
+    margin-left: 7%;
 }
 .searchDiv {
-  height: 840px;
+     height: 840px; 
+    
 }
-.containerDiv {
+.containerDiv{
   font-weight: bolder;
   font-size: 20px;
+}
+
+.spacingOne {
+  height: 50px;
+}
+
+.title {
+  margin-left: 40%;
+}
+
+.spacingTwo {
+  height: 100px;
 }
 </style>
