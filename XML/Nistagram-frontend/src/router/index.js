@@ -46,9 +46,19 @@ const routes = [
     component: () => import('../views/SearchUsers.vue')
   },
   {
+    path: '/searchUsersForNotRegistered',
+    name: 'SearchUsersForNotRegistered',
+    component: () => import('../views/SearchUsersForNotRegistered.vue')
+  },
+  {
     path: '/selectedUser',
     name: 'SelectedUser',
     component: () => import('../views/SelectedUser.vue')
+  },
+  {
+    path: '/selectedUserForNotRegistered',
+    name: 'SelectedUserForNotRegistered',
+    component: () => import('../views/SelectedUserForNotRegistered.vue')
   },
   {
     path: '/createPost',

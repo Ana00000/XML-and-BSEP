@@ -135,6 +135,7 @@ export default {
                 { title: 'Home', path: '/' },
                 { title: 'Public Posts', path: '/publicPostsAllForNotRegistered' },
                 { title: 'Public Stories', path: '/publicStoriesAllForNotRegistered' },
+                { title: 'Search users', path: '/searchUsersForNotRegistered' },
             ]
         }
     },

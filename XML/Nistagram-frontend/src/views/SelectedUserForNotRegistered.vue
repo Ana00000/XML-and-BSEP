@@ -145,7 +145,7 @@
 
 <script>
 export default {
-  name: "SelectedUser",
+  name: "SelectedUserForNotRegistered",
   data: () => ({
     username: null,
     firstName: null,
@@ -226,7 +226,7 @@ export default {
         .catch(console.log("Didn't set user info!"));
 
         this.$http
-        .get("http://localhost:8084/find_all_posts_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"))
+        .get("http://localhost:8084/find_all_posts_for_not_reg?id=" + this.selectedUser)
         .then((response) => {
           this.posts = response.data;
         })

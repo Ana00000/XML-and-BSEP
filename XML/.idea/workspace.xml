@@ -2,12 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/FriendsPosts.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/FriendsStories.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/028095487Screenshot (63).png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/050484050Shortest_Video_on_Youtube.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/150618761Shortest_Video_on_Youtube.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/789622868Screenshot (63).png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/061135983Screenshot (63).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/108052235Screenshot (62).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/265399046Screenshot (63).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/378229881Screenshot (62).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/519425923Shortest_Video_on_Youtube.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/541522091Screenshot (63).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/542957314Screenshot (63).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/553508213test1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/609880302Screenshot (65).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/620458884Shortest_Video_on_Youtube.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/813894067Shortest_Video_on_Youtube.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Media/947089519Shortest_Video_on_Youtube.mp4" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/components/NavigationBar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/components/NavigationBar.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/router/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/Posts.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/Stories.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
