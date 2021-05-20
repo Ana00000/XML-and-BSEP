@@ -32,7 +32,7 @@ func (repo *LocationRepository) FindAll() []model.Location {
 }
 
 
-func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []postsModel.Post) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []postsModel.SinglePost) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 
@@ -47,7 +47,7 @@ func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []postsModel.P
 	return locations
 }
 
-func (repo *LocationRepository) FindAllLocationsForPost(post *postsModel.Post) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForPost(post *postsModel.SinglePost) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 
@@ -61,7 +61,7 @@ func (repo *LocationRepository) FindAllLocationsForPost(post *postsModel.Post) [
 	return locations
 }
 
-func (repo *LocationRepository) FindAllLocationsForStories(allStories []storyModel.Story) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForStories(allStories []storyModel.SingleStory) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 
@@ -76,7 +76,7 @@ func (repo *LocationRepository) FindAllLocationsForStories(allStories []storyMod
 	return locations
 }
 
-func (repo *LocationRepository) FindAllLocationsForStory(story *storyModel.Story) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForStory(story *storyModel.SingleStory) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 

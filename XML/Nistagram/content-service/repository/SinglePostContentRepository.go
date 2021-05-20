@@ -24,7 +24,7 @@ func (repo *SinglePostContentRepository) FindAll() []model.SinglePostContent {
 }
 
 
-func (repo *SinglePostContentRepository) FindAllContentsForPosts(allPosts []postsModel.Post) []model.SinglePostContent {
+func (repo *SinglePostContentRepository) FindAllContentsForPosts(allPosts []postsModel.SinglePost) []model.SinglePostContent {
 	var contents []model.SinglePostContent
 	var allContents = repo.FindAll()
 
@@ -40,7 +40,7 @@ func (repo *SinglePostContentRepository) FindAllContentsForPosts(allPosts []post
 	return contents
 }
 
-func (repo *SinglePostContentRepository) FindAllContentsForPost(post *postsModel.Post) []model.SinglePostContent {
+func (repo *SinglePostContentRepository) FindAllContentsForPost(post *postsModel.SinglePost) []model.SinglePostContent {
 	var contents []model.SinglePostContent
 	var allContents = repo.FindAll()
 

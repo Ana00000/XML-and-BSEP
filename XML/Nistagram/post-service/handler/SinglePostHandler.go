@@ -390,7 +390,7 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func (handler *SinglePostHandler) CreatePostsDTOList(posts []model.Post, contents []contentModel.SinglePostContent, locations []locationModel.Location, tags []tagsModel.PostTagPosts) []dto.SelectedPostDTO {
+func (handler *SinglePostHandler) CreatePostsDTOList(posts []model.SinglePost, contents []contentModel.SinglePostContent, locations []locationModel.Location, tags []tagsModel.PostTagPosts) []dto.SelectedPostDTO {
 	var listOfPostsDTOs []dto.SelectedPostDTO
 
 	for i := 0; i < len(posts); i++ {
@@ -432,7 +432,7 @@ func (handler *SinglePostHandler) CreatePostsDTOList(posts []model.Post, content
 
 }
 
-func (handler *SinglePostHandler) CreatePostDTO(posts *model.Post, contents []contentModel.SinglePostContent, locations []locationModel.Location, tags []tagsModel.PostTagPosts) dto.SelectedPostDTO {
+func (handler *SinglePostHandler) CreatePostDTO(posts *model.SinglePost, contents []contentModel.SinglePostContent, locations []locationModel.Location, tags []tagsModel.PostTagPosts) dto.SelectedPostDTO {
 
 
 	var postDTO dto.SelectedPostDTO

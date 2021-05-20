@@ -24,7 +24,7 @@ func (repo *PostTagPostsRepository) FindAll() []model.PostTagPosts {
 }
 
 
-func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.Post) []model.PostTagPosts {
+func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.SinglePost) []model.PostTagPosts {
 	var tags []model.PostTagPosts
 	var allTags = repo.FindAll()
 
@@ -39,7 +39,7 @@ func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.Po
 	return tags
 }
 
-func (repo *PostTagPostsRepository) FindAllTagsForPost(post *postsModel.Post) []model.PostTagPosts {
+func (repo *PostTagPostsRepository) FindAllTagsForPost(post *postsModel.SinglePost) []model.PostTagPosts {
 	var tags []model.PostTagPosts
 	var allTags = repo.FindAll()
 

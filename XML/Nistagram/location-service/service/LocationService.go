@@ -25,7 +25,7 @@ func (service *LocationService) FindByID(ID uuid.UUID) *model.Location {
 	return location
 }
 
-func (service *LocationService) FindAllLocationsForPosts(allPosts []postsModel.Post) []model.Location {
+func (service *LocationService) FindAllLocationsForPosts(allPosts []postsModel.SinglePost) []model.Location {
 	locations := service.Repo.FindAllLocationsForPosts(allPosts)
 	if locations != nil {
 		return locations
@@ -33,7 +33,7 @@ func (service *LocationService) FindAllLocationsForPosts(allPosts []postsModel.P
 	return nil
 }
 
-func (service *LocationService) FindAllLocationsForPost(post *postsModel.Post) []model.Location {
+func (service *LocationService) FindAllLocationsForPost(post *postsModel.SinglePost) []model.Location {
 	locations := service.Repo.FindAllLocationsForPost(post)
 	if locations != nil {
 		return locations
@@ -41,7 +41,7 @@ func (service *LocationService) FindAllLocationsForPost(post *postsModel.Post) [
 	return nil
 }
 
-func (service *LocationService) FindAllLocationsForStories(allStories []storyModel.Story) []model.Location {
+func (service *LocationService) FindAllLocationsForStories(allStories []storyModel.SingleStory) []model.Location {
 	locations := service.Repo.FindAllLocationsForStories(allStories)
 	if locations != nil {
 		return locations
@@ -49,7 +49,7 @@ func (service *LocationService) FindAllLocationsForStories(allStories []storyMod
 	return nil
 }
 
-func (service *LocationService) FindAllLocationsForStory(story *storyModel.Story) []model.Location {
+func (service *LocationService) FindAllLocationsForStory(story *storyModel.SingleStory) []model.Location {
 	locations := service.Repo.FindAllLocationsForStory(story)
 	if locations != nil {
 		return locations

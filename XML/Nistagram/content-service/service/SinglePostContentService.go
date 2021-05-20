@@ -19,7 +19,7 @@ func (service * SinglePostContentService) CreateSinglePostContent(singlePostCont
 }
 
 
-func (service *SinglePostContentService) FindAllContentsForPosts(allPosts []postsModel.Post) []model.SinglePostContent {
+func (service *SinglePostContentService) FindAllContentsForPosts(allPosts []postsModel.SinglePost) []model.SinglePostContent {
 	posts := service.Repo.FindAllContentsForPosts(allPosts)
 	if posts != nil {
 		return posts
@@ -27,7 +27,7 @@ func (service *SinglePostContentService) FindAllContentsForPosts(allPosts []post
 	return nil
 }
 
-func (service *SinglePostContentService) FindAllContentsForPost(post *postsModel.Post) []model.SinglePostContent {
+func (service *SinglePostContentService) FindAllContentsForPost(post *postsModel.SinglePost) []model.SinglePostContent {
 	posts := service.Repo.FindAllContentsForPost(post)
 	if posts != nil {
 		return posts

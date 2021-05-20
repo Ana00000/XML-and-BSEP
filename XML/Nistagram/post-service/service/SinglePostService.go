@@ -19,12 +19,12 @@ func (service * SinglePostService) CreateSinglePost(singlePost *model.SinglePost
 	return nil
 }
 
-func (service *SinglePostService) FindByID(ID uuid.UUID) *model.Post {
+func (service *SinglePostService) FindByID(ID uuid.UUID) *model.SinglePost {
 	post := service.Repo.FindByID(ID)
 	return post
 }
 
-func (service *SinglePostService) FindAllPostsForUser(ID uuid.UUID) []model.Post {
+func (service *SinglePostService) FindAllPostsForUser(ID uuid.UUID) []model.SinglePost {
 	posts := service.Repo.FindAllPostsForUser(ID)
 	if posts != nil {
 		return posts
@@ -32,7 +32,7 @@ func (service *SinglePostService) FindAllPostsForUser(ID uuid.UUID) []model.Post
 	return nil
 }
 
-func (service *SinglePostService) FindAllFollowingPosts(followings []userModel.ClassicUserFollowings) []model.Post {
+func (service *SinglePostService) FindAllFollowingPosts(followings []userModel.ClassicUserFollowings) []model.SinglePost {
 	posts := service.Repo.FindAllFollowingPosts(followings)
 	if posts != nil {
 		return posts
@@ -40,7 +40,7 @@ func (service *SinglePostService) FindAllFollowingPosts(followings []userModel.C
 	return nil
 }
 
-func (service *SinglePostService) FindAllPublicPostsNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.Post {
+func (service *SinglePostService) FindAllPublicPostsNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.SinglePost {
 	posts := service.Repo.FindAllPublicPostsNotRegisteredUser(allValidUsers)
 	if posts != nil {
 		return posts
