@@ -144,6 +144,11 @@ const routes = [
     path: '/postById',
     name: 'PostById',
     component: () => import('../views/PostById.vue')
+  },
+  {
+    path: '/addCloseFriends',
+    name: 'AddCloseFriends',
+    component: () => import('../views/AddCloseFriends.vue')
   }
 ]
 
