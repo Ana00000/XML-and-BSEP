@@ -43,22 +43,20 @@
       <v-btn
         v-if="!isHiddenFollow"
         v-on:click="followProfile"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
-        rounded
         >Follow</v-btn
       >
     </div>
     <div class="FollowingButton">
       <v-btn
         v-if="!isHiddenFollowing"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
-        rounded
         >Following</v-btn
       >
     </div>
@@ -66,22 +64,20 @@
       <v-btn
         v-if="!isHiddenSendFollowRequest"
         v-on:click="sendFollowRequest"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
-        rounded
         >Send Follow Request</v-btn
       >
     </div>
     <div class="FollowRequestSentButton">
       <v-btn
         v-if="!isHiddenFollowRequestSent"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
-        rounded
         >Follow Request Sent</v-btn
       >
     </div>
