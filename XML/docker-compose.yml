@@ -86,6 +86,8 @@ services:
       DBPORT: 5432
     depends_on:
       - db
+    volumes:
+      - "./content-images:/app/public/uploads"
 
   location-service:
     restart: on-failure
@@ -253,6 +255,7 @@ services:
 
 volumes:
   node_modules:
+  content-images:
 
 networks:
   backend:
