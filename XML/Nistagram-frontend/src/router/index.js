@@ -81,9 +81,34 @@ const routes = [
     component: () => import('../views/PublicPostsAll.vue')
   },
   {
+    path: '/publicPostsAllForNotRegistered',
+    name: 'PublicPostsAllForNotRegistered',
+    component: () => import('../views/PublicPostsAllForNotRegistered.vue')
+  },
+  {
     path: '/stories',
     name: 'Stories',
     component: () => import('../views/Stories.vue')
+  },
+  {
+    path: '/publicStoriesAll',
+    name: 'PublicStoriesAll',
+    component: () => import('../views/PublicStoriesAll.vue')
+  },
+  {
+    path: '/publicStoriesAllForNotRegistered',
+    name: 'PublicStoriesAllForNotRegistered',
+    component: () => import('../views/PublicStoriesAllForNotRegistered.vue')
+  },
+  {
+    path: '/publicPostAlbumsAll',
+    name: 'PublicPostAlbumsAll',
+    component: () => import('../views/PublicPostAlbumsAll.vue')
+  },
+  {
+    path: '/publicStoryAlbumsAll',
+    name: 'PublicStoryAlbumsAll',
+    component: () => import('../views/PublicStoryAlbumsAll.vue')
   },
   {
     path: '/highlightedStories',

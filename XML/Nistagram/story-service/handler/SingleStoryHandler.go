@@ -410,9 +410,18 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 		storyDTO.Description = stories[i].Description
 		storyDTO.CreationDate = stories[i].CreationDate
 
+
+
 		for j := 0; j < len(contents); j++ {
 			if contents[j].SingleStoryId == stories[i].ID {
 				storyDTO.Path = contents[j].Path
+
+				if contents[j].Type == contentModel.VIDEO{
+					storyDTO.Type = "VIDEO"
+				}else if contents[j].Type == contentModel.PICTURE{
+					storyDTO.Type = "PICTURE"
+				}
+
 			}
 		}
 
@@ -455,6 +464,12 @@ func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, cont
 	for j := 0; j < len(contents); j++ {
 		if contents[j].SingleStoryId == story.ID {
 			storyDTO.Path = contents[j].Path
+
+			if contents[j].Type == contentModel.VIDEO{
+				storyDTO.Type = "VIDEO"
+			}else if contents[j].Type == contentModel.PICTURE{
+				storyDTO.Type = "PICTURE"
+			}
 		}
 	}
 

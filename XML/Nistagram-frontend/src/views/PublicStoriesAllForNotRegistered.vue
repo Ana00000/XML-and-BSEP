@@ -3,11 +3,11 @@
     <v-container grid-list-lg >
       <div class="spacingOne" />
       <div class="title">
-        <h1>Public Posts</h1>
+        <h1>Public Stories</h1>
       </div>
       <div class="spacingTwo" />
       <v-layout row>
-        <v-flex lg4 v-for="item in posts" :key="item.id" class="space-bottom">
+        <v-flex lg4 v-for="item in stories" :key="item.id" class="space-bottom">
           <v-card class="mx-auto">
             <v-list-item three-line>
               <v-list-item-content>
@@ -59,9 +59,9 @@
 
 <script>
 export default {
-  name: "PublicPostsAll",
+  name: "PublicStoriesAllForNotRegistered",
   data: () => ({
-    posts: []
+    stories: []
   }),
   mounted() {
     this.init();
@@ -69,9 +69,9 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8084/find_all_public_posts_reg/")
+        .get("http://localhost:8086/find_all_public_stories_not_reg/")
         .then((response) => {
-          this.posts = response.data;
+          this.stories = response.data;
         })
         .catch(console.log);
     },

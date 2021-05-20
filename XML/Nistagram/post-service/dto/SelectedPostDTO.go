@@ -18,4 +18,5 @@ type SelectedPostDTO struct {
 	StreetNumber string `json:"street_number"`
 	Tags []string `json:"tags"`
 	IsDeleted bool `json:"is_deleted"`
+	Type string `json:"type"`
 }

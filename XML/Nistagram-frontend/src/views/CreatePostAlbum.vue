@@ -75,7 +75,7 @@
           >
             <input
               type="file"
-              accept="image/*,video/*,.mkv"
+              accept="image/*,video/*,.mp4"
               name="myPostAlbumFile"
             />
             <input
@@ -105,7 +105,7 @@
           >
             <input
               type="file"
-              accept="image/*,video/*,.mkv"
+              accept="image/*,video/*,.mp4"
               name="myPostAlbumFile"
             />
             <input type="submit" value=" <- Upload file" />

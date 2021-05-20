@@ -86,7 +86,7 @@
           >
             <input
               type="file"
-              accept="image/*,video/*,.mkv"
+              accept="image/*,video/*,.mp4"
               name="myStoryAlbumFile"
             />
             <input
@@ -116,7 +116,7 @@
           >
             <input
               type="file"
-              accept="image/*,video/*,.mkv"
+              accept="image/*,video/*,.mp4"
               name="myStoryAlbumFile"
             />
             <input type="submit" value=" <- Upload file" />

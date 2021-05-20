@@ -73,13 +73,13 @@
             target="dummyframe"
             class="uploadButton"
           >
-            <template v-if="selectedType === 'PICTURE'">
-              <input id="pic" type="file" accept="image/*" name="myPostFile" />
-            </template>
-            <template v-else>
-              <input id="vid" type="file" accept="video/*, .mp4" name="myPostFile" />
-            </template>
-            <input type="submit" value=" <- Upload file" v-on:click="ValidteType"/>
+          <template v-if="selectedType === 'PICTURE'">
+            <input id="pic" type="file" accept="image/*" name="myPostFile" />
+          </template>
+          <template v-else>
+            <input id="vid" type="file" accept="video/*, .mp4" name="myPostFile" />
+          </template>
+          <input type="submit" value=" <- Upload file" v-on:click="ValidteType"/>
           </form>
         </v-form>
         <v-text-field

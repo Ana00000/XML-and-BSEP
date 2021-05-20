@@ -59,7 +59,7 @@
 
 <script>
 export default {
-  name: "PublicPostsAll",
+  name: "PublicPostsAllForNotRegistered",
   data: () => ({
     posts: []
   }),
@@ -69,7 +69,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8084/find_all_public_posts_reg/")
+        .get("http://localhost:8084/find_all_public_posts_not_reg/")
         .then((response) => {
           this.posts = response.data;
         })
