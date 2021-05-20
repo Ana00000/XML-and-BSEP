@@ -145,7 +145,7 @@
       <div class="spacingTwo" />
       <v-layout row>
         <v-flex lg4 v-for="item in posts" :key="item.id" class="space-bottom">
-          <v-card class="mx-auto">
+          <v-card class="mx-auto" v-on:click="getPost(item)">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{
@@ -333,6 +333,14 @@ export default {
         })
         .catch((err) => console.log(err));
     },
+    getPost(item){
+      localStorage.setItem("selectedPostDescription", item.description);
+      localStorage.setItem("selectedPostTags", item.tags);
+      localStorage.setItem("selectedPostPath", item.path);
+      localStorage.setItem("selectedPostType", item.type);
+
+      window.location.href = "http://localhost:8081/postById";
+    }
   },
 };
 </script>
