@@ -402,6 +402,12 @@ func (handler *SinglePostHandler) CreatePostsDTOList(posts []model.SinglePost, c
 		for j := 0; j < len(contents); j++ {
 			if contents[j].SinglePostId == posts[i].ID {
 				postDTO.Path = contents[j].Path
+
+				if contents[j].Type == contentModel.VIDEO{
+					postDTO.Type = "VIDEO"
+				}else if contents[j].Type == contentModel.PICTURE{
+					postDTO.Type = "PICTURE"
+				}
 			}
 		}
 
@@ -444,6 +450,12 @@ func (handler *SinglePostHandler) CreatePostDTO(posts *model.SinglePost, content
 	for j := 0; j < len(contents); j++ {
 		if contents[j].SinglePostId == posts.ID {
 			postDTO.Path = contents[j].Path
+
+			if contents[j].Type == contentModel.VIDEO{
+				postDTO.Type = "VIDEO"
+			}else if contents[j].Type == contentModel.PICTURE{
+				postDTO.Type = "PICTURE"
+			}
 		}
 	}
 
