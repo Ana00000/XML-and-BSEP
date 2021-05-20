@@ -49,7 +49,7 @@
             prepend-icon="mdi-address-circle"
             v-if="!isHiddenDescription"
           />
-           <v-select
+          <v-select
             class="typeCombo"
             v-model="selectedStoryType"
             v-if="!isHiddenDescription"
@@ -84,8 +84,22 @@
             target="dummyframe"
             class="uploadButton"
           >
-            <input type="file" accept="image/*,video/*,.mp4" name="myStoryFile" />
-            <input type="submit" value=" <- Upload file" v-on:click="(isHiddenContentButton = true)"/>
+            <template v-if="selectedType === 'PICTURE'">
+              <input id="pic" type="file" accept="image/*" name="myStoryFile" />
+            </template>
+            <template v-else>
+              <input
+                id="vid"
+                type="file"
+                accept="video/*, .mp4"
+                name="myStoryFile"
+              />
+            </template>
+            <input
+              type="submit"
+              value=" <- Upload file"
+              v-on:click="ValidteType"
+            />
           </form>
         </v-form>
         <v-text-field
@@ -120,7 +134,7 @@
           v-on:click="
             (isHiddenDescriptionButton = true),
               (isHiddenDescription = true),
-              (isHiddenContentButton = false),
+              (isVisibleContentButton = false),
               (isHiddenContent = false)
           "
           v-if="!isHiddenDescriptionButton"
@@ -136,7 +150,7 @@
         </v-btn>
         <v-btn
           color="info mb-5"
-          v-if="isHiddenContentButton"
+          v-if="isVisibleContentButton"
           v-on:click="addContent"
         >
           Add content
@@ -178,13 +192,14 @@ export default {
     isHiddenLocation: false,
     isHiddenDescriptionButton: true,
     isHiddenDescription: true,
-    isHiddenContentButton: false,
+    isVisibleContentButton: false,
     isHiddenContent: true,
     isHiddenTagButton: true,
     isHiddenTag: true,
     isValidLocation: false,
     isValidStoryDescription: false,
-    storyTagId: null
+    storyTagId: null,
+    extension: "",
   }),
   methods: {
     addLocation() {
@@ -204,17 +219,58 @@ export default {
       this.isHiddenDescriptionButton = false;
       this.isHiddenDescription = false;
     },
+    GetExtension(pathFile) {
+      console.log(pathFile);
+      let out = pathFile.split("\\");
+      let fileName = out[out.length - 1];
+      let dotSplit = fileName.split(".");
+      this.extension = dotSplit[dotSplit.length - 1];
+      console.log(this.extension);
+    },
+    ValidteType() {
+      let pathFile = "";
+      if (this.selectedType === "PICTURE") {
+        pathFile = document.getElementById("pic").value;
+        this.GetExtension(pathFile);
+        console.log(this.extension);
+        if (
+          this.extension === "PNG" ||
+          this.extension === "png" ||
+          this.extension === "JPG" ||
+          this.extension === "jpg" ||
+          this.extension === "jpeg" ||
+          this.extension === "JPEG"
+        ) {
+          this.isVisibleContentButton = true;
+        } else {
+          this.isVisibleContentButton = false;
+          alert(
+            "Please, choose a picture in a correct format e.g. png, jpg or jpeg."
+          );
+        }
+      } else {
+        pathFile = document.getElementById("vid").value;
+        this.GetExtension(pathFile);
+        console.log(this.extension);
+        if (this.extension === "mp4" || this.extension === "MP4") {
+          this.isVisibleContentButton = true;
+        } else {
+          this.isVisibleContentButton = false;
+          alert("Please, choose a video in a correct format mp4.");
+        }
+      }
+    },
     addDescription() {
       if (!this.validStoryDescription()) return;
 
       this.isValidStoryDescription = true;
       this.isHiddenDescriptionButton = true;
       this.isHiddenDescription = true;
-      this.isHiddenContentButton = false;
+      this.isVisibleContentButton = false;
       this.isHiddenContent = false;
     },
     addContent() {
-      this.isHiddenContentButton = false;
+      this.isVisibleContentButton = false;
       this.isHiddenContent = true;
       this.isHiddenTagButton = false;
       this.isHiddenTag = false;
@@ -247,7 +303,7 @@ export default {
             description: this.storyDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
-            storyType: this.selectedStoryType
+            storyType: this.selectedStoryType,
           })
           .then((response) => {
             this.storyId = response.data;
@@ -262,7 +318,7 @@ export default {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
-            storyType: this.selectedStoryType
+            storyType: this.selectedStoryType,
           })
           .then((response) => {
             this.storyId = response.data;
@@ -307,7 +363,7 @@ export default {
         });
     },
     createStoryTagStories() {
-      console.log(this.storyTagId)
+      console.log(this.storyTagId);
       this.$http
         .post("http://localhost:8082/story_tag_stories/", {
           story_tag_id: this.storyTagId,
