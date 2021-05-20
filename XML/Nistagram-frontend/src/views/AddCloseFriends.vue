@@ -11,7 +11,7 @@
       <v-layout row wrap>
         <v-card
           class="mx-auto"
-          style="width: 90%; height: 300px; overflow-y: scroll"
+          style="width: 50%; height: 300px; overflow-y: scroll"
         >
           <v-toolbar color="light-blue darken-4">
             <v-text-field
@@ -32,7 +32,7 @@
                 <v-list-item
                   :key="user.id"
                   :value="user"
-                  v-on:click="addCloseFriend(user)"
+                  v-on:click="setCloseFriend(user)"
                 >
                   <template>
                     <v-list-item-content>
@@ -61,6 +61,10 @@
         </v-card>
       </v-layout>
     </v-container>
+    <div class="spacingTwo" />
+    <v-btn color="info mb-5" v-on:click="addCloseFriend" class="addButton">
+      Add
+    </v-btn>
   </div>
 </template>
 
@@ -72,6 +76,8 @@ export default {
     users: [],
     usersCopy: [],
     selectedUser: null,
+    classicUserId: "",
+    followerUserId: "",
   }),
   mounted() {
     this.init();
@@ -92,7 +98,6 @@ export default {
         })
         .catch(console.log);
     },
-
     searchQuery() {
       var resultOfSearch = [];
       for (var i = 0; i < this.usersCopy.length; i++) {
@@ -105,11 +110,15 @@ export default {
       }
       this.users = resultOfSearch;
     },
-    addCloseFriend(item) {
+    setCloseFriend(item) {
+      this.classicUserId = item.classic_user_id;
+      this.followerUserId = item.follower_user_id;
+    },
+    addCloseFriend() {
       this.$http
         .post("http://localhost:8080/create_close_friend/", {
-          classic_user_id: item.classic_user_id,
-          close_friend_user_id: item.follower_user_id,
+          classic_user_id: this.classicUserId,
+          close_friend_user_id: this.followerUserId,
         })
         .then(alert("You have added this friend as close friend."))
         .catch((er) => {
@@ -160,5 +169,10 @@ export default {
 
 .spacingTwo {
   height: 100px;
+}
+
+.addButton {
+  margin-left: 45%;
+  width: 150px;
 }
 </style>
