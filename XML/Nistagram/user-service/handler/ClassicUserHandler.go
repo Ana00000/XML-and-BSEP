@@ -80,3 +80,14 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter
 	w.Header().Set("Content-Type", "application/json")
 }
 
+func (handler *ClassicUserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Request) {
+
+	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
+	var publicProfiles = handler.ProfileSettingsService.FindAllPublicUsers(allValidUsers)
+
+	publicJson, _ := json.Marshal(publicProfiles)
+	w.Write(publicJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
