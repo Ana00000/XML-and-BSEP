@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
 )
@@ -16,3 +17,31 @@ func (service * ActivityService) CreateActivity(activity *model.Activity) error 
 	}
 	return nil
 }
+
+func (service * ActivityService) FindAllLikesForPost(postId uuid.UUID) []model.Activity{
+	activities := service.Repo.FindAllLikesForPost(postId)
+	if activities != nil {
+		return activities
+	}
+	return nil
+}
+
+
+func (service * ActivityService) FindAllDislikesForPost(postId uuid.UUID) []model.Activity{
+	activities := service.Repo.FindAllDislikesForPost(postId)
+	if activities != nil {
+		return activities
+	}
+	return nil
+}
+
+func (service * ActivityService) FindAllFavoritesForPost(postId uuid.UUID) []model.Activity{
+	activities := service.Repo.FindAllFavoritesForPost(postId)
+	if activities != nil {
+		return activities
+	}
+	return nil
+}
+
+
+
