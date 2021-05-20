@@ -32,20 +32,16 @@
                 <v-list-item
                   :key="user.id"
                   :value="user"
-                  v-on:click="redirectToSelectedUser"
+                  v-on:click="addCloseFriend(user)"
                 >
                   <template>
                     <v-list-item-content>
                       <v-list-item-subtitle
-                        v-text="'USERNAME: ' + user.username"
+                        v-text="'Classic user id: ' + user.classic_user_id"
                         class="containerDiv"
                       />
                       <v-list-item-subtitle
-                        v-text="'FIRST NAME: ' + user.firstName"
-                        class="containerDiv"
-                      />
-                      <v-list-item-subtitle
-                        v-text="'LAST NAME: ' + user.lastName"
+                        v-text="'Follower user id: ' + user.follower_user_id"
                         class="containerDiv"
                       />
                       <v-list-item-subtitle
@@ -83,13 +79,14 @@ export default {
   methods: {
     init() {
       this.id = localStorage.getItem("userId");
-      this.token = localStorage.getItem("token");
       this.$http
         .get(
-          "http://localhost:8080/find_all_classic_users_but_logged_in?id=" +
+          "http://localhost:8080/find_all_mutual_followers_for_user?id=" +
             this.id
         )
         .then((resp) => {
+          console.log(resp.data);
+
           this.users = resp.data;
           this.usersCopy = resp.data;
         })
@@ -108,11 +105,16 @@ export default {
       }
       this.users = resultOfSearch;
     },
-
-    redirectToSelectedUser() {
-      localStorage.setItem("selectedFriendUsername", this.selectedUser.username);
-      localStorage.setItem("selectedFriendId", this.selectedUser.id);
-      window.location.href = "http://localhost:8081/selectedUser";
+    addCloseFriend(item) {
+      this.$http
+        .post("http://localhost:8080/create_close_friend/", {
+          classic_user_id: item.classic_user_id,
+          close_friend_user_id: item.follower_user_id,
+        })
+        .then(alert("You have added this friend as close friend."))
+        .catch((er) => {
+          console.log(er.response.data);
+        });
     },
   },
 };

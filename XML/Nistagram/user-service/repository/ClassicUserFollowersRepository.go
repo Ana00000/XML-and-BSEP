@@ -46,14 +46,15 @@ func (repo *ClassicUserFollowersRepository) FindAllMutualFollowerForUser(userId 
 
 	var allFollowersForFirstUser = repo.FindAllFollowersForUser(userId)
 
+	fmt.Println(allFollowersForFirstUser)
 	var mutualFollowers []model.ClassicUserFollowers
 
 	for i:=0; i<len(allFollowersForFirstUser); i++{
-		var allFollowersForSecondUser = repo.FindAllFollowersForUser(allFollowersForFirstUser[i].ClassicUserId)
-
+		var allFollowersForSecondUser = repo.FindAllFollowersForUser(allFollowersForFirstUser[i].FollowerUserId)
+fmt.Println(allFollowersForSecondUser)
 		for j:=0; j<len(allFollowersForSecondUser);j++{
 			if allFollowersForSecondUser[j].FollowerUserId == userId{
-				mutualFollowers = append(mutualFollowers, allFollowersForSecondUser[j])
+				mutualFollowers = append(mutualFollowers, allFollowersForFirstUser[i])
 			}
 		}
 	}
