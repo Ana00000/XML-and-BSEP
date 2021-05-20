@@ -29,10 +29,10 @@ func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w ht
 
 	// PROVERA DA LI SE MEDJUSOBNO PRATE
 
-	var checkIfFollowing1 = handler.ClassicUserFollowersService.CheckIfFollowers(classicUserCloseFriendsDTO.CloseFriendUserId, classicUserCloseFriendsDTO.ClassicUserId)
-	var checkIfFollowing2 = handler.ClassicUserFollowersService.CheckIfFollowers(classicUserCloseFriendsDTO.ClassicUserId, classicUserCloseFriendsDTO.CloseFriendUserId)
+	var checkIfFollowingFirstUser = handler.ClassicUserFollowersService.CheckIfFollowers(classicUserCloseFriendsDTO.CloseFriendUserId, classicUserCloseFriendsDTO.ClassicUserId)
+	var checkIfFollowingSecondUser = handler.ClassicUserFollowersService.CheckIfFollowers(classicUserCloseFriendsDTO.ClassicUserId, classicUserCloseFriendsDTO.CloseFriendUserId)
 
-	if checkIfFollowing1 != true || checkIfFollowing2 != true{
+	if checkIfFollowingFirstUser != true || checkIfFollowingSecondUser != true{
 		fmt.Println("Users are not following eachother")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
@@ -52,3 +52,4 @@ func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w ht
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
+

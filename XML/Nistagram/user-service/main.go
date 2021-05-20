@@ -273,7 +273,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 
 	router.HandleFunc("/create_close_friend/", classicUserCloseFriendsHandler.CreateClassicUserCloseFriend).Methods("POST")
 
-
+	router.HandleFunc("/find_all_mutual_followers_for_user", classicUserFollowersHandler.FindAllMutualFollowerForUser).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8080", cors(router)))
 }

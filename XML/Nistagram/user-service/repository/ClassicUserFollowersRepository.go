@@ -40,3 +40,26 @@ func (repo *ClassicUserFollowersRepository) CheckIfFollowers(classicUserId uuid.
 	return true
 }
 
+//metoda koja dobavlja sve potencijalne close friends (mutual follow izmedju usera)
+// MUTUAL FOLLOWERS FOR FIRST USER
+func (repo *ClassicUserFollowersRepository) FindAllMutualFollowerForUser(userId uuid.UUID) []model.ClassicUserFollowers {
+
+	var allFollowersForFirstUser = repo.FindAllFollowersForUser(userId)
+
+	var mutualFollowers []model.ClassicUserFollowers
+
+	for i:=0; i<len(allFollowersForFirstUser); i++{
+		var allFollowersForSecondUser = repo.FindAllFollowersForUser(allFollowersForFirstUser[i].ClassicUserId)
+
+		for j:=0; j<len(allFollowersForSecondUser);j++{
+			if allFollowersForSecondUser[j].FollowerUserId == userId{
+				mutualFollowers = append(mutualFollowers, allFollowersForSecondUser[j])
+			}
+		}
+	}
+
+	return mutualFollowers
+}
+
+
+
