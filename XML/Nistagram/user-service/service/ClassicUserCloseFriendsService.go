@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 )
@@ -16,3 +17,8 @@ func (service * ClassicUserCloseFriendsService) CreateClassicUserCloseFriends(cl
 	}
 	return nil
 }
+
+func (service * ClassicUserCloseFriendsService)  CheckIfCloseFriend(classicUserId uuid.UUID, closeFriendUserId uuid.UUID) bool {
+	return service.Repo.CheckIfCloseFriend(classicUserId, closeFriendUserId)
+}
+

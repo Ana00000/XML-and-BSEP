@@ -26,13 +26,6 @@ func (service *SingleStoryService) FindByID(ID uuid.UUID) *model.SingleStory {
 }
 
 
-func (service *SingleStoryService) FindAllFollowingStories(followings []userModel.ClassicUserFollowings) []model.SingleStory {
-	stories := service.Repo.FindAllFollowingStories(followings)
-	if stories != nil {
-		return stories
-	}
-	return nil
-}
 
 
 
@@ -57,7 +50,30 @@ func (service *SingleStoryService) FindAllPublicStoriesNotRegisteredUser(allVali
 
 // REGISTERED
 
-// metoda koja se poziva kada registrovani user udje na profil nekog usera
+
+// metoda koja se poziva kada registrovani user udje na profil nekog usera KOME SE NALAZI U CLOSE FRIENDS
+// ZNACI USLOVI: CLOSE FIRENDS ILI ALL FRIENDS ILI PUBLIC STORY
+func (service *SingleStoryService) FindAllStoriesForUserCloseFriend(ID uuid.UUID) []model.SingleStory {
+	stories := service.Repo.FindAllStoriesForUserCloseFriend(ID)
+	if stories != nil {
+		return stories
+	}
+	return nil
+}
+
+
+// metoda koja se poziva kada registrovani user udje na profil nekog usera koga prati (PUBLIC ILI PRIVATE) ali nije CLOSE FRIENDS
+// ZNACI USLOVI: ILI PUBLIC STORY ILI ALL FRIENDS STORY
+func (service *SingleStoryService) FindAllStoriesForUserPublicAllFriends(ID uuid.UUID) []model.SingleStory {
+	stories := service.Repo.FindAllStoriesForUserPublicAllFriends(ID)
+	if stories != nil {
+		return stories
+	}
+	return nil
+}
+
+// metoda koja se poziva kada registrovani user udje na profil nekog usera koga ne prati ali je user PUBLIC
+// ZNACI USLOVI: ILI PUBLIC STORY
 func (service *SingleStoryService) FindAllStoriesForUserPublic(ID uuid.UUID) []model.SingleStory {
 	stories := service.Repo.FindAllStoriesForUserPublic(ID)
 	if stories != nil {
@@ -66,8 +82,9 @@ func (service *SingleStoryService) FindAllStoriesForUserPublic(ID uuid.UUID) []m
 	return nil
 }
 
-func (service *SingleStoryService) FindAllStoriesForUserPrivate(ID uuid.UUID) []model.SingleStory {
-	stories := service.Repo.FindAllStoriesForUserPrivate(ID)
+// FIND ALL NOT DELETED VALID STORIES THAT LOGGED IN USER FOLLOWS
+func (service *SingleStoryService) FindAllFollowingStories(followings []userModel.ClassicUserFollowings) []model.SingleStory {
+	stories := service.Repo.FindAllFollowingStories(followings)
 	if stories != nil {
 		return stories
 	}
