@@ -71,9 +71,9 @@ const routes = [
     component: () => import('../views/CreateStoryAlbum.vue')
   },
   {
-    path: '/posts',
-    name: 'Posts',
-    component: () => import('../views/Posts.vue')
+    path: '/friendsPosts',
+    name: 'FriendsPosts',
+    component: () => import('../views/FriendsPosts.vue')
   },
   {
     path: '/publicPostsAll',
@@ -86,9 +86,9 @@ const routes = [
     component: () => import('../views/PublicPostsAllForNotRegistered.vue')
   },
   {
-    path: '/stories',
-    name: 'Stories',
-    component: () => import('../views/Stories.vue')
+    path: '/friendsStories',
+    name: 'FriendsStories',
+    component: () => import('../views/FriendsStories.vue')
   },
   {
     path: '/publicStoriesAll',

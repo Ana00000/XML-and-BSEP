@@ -76,9 +76,9 @@ export default {
             if (this.userPrivacy == "PRIVATE"){
                 this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Posts', path: '/posts' },
+                { title: 'Friends Posts', path: '/friendsPosts' },
                 { title: 'Public Posts', path: '/publicPostsAll' },
-                { title: 'Stories', path: '/stories' },
+                { title: 'Friends Stories', path: '/friendsStories' },
                 { title: 'Public Stories', path: '/publicStoriesAll' },
                 { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
                 { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
@@ -94,9 +94,9 @@ export default {
             }else{
                  this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Posts', path: '/posts' },
+                { title: 'Friends Posts', path: '/friendsPosts' },
                 { title: 'Public Posts', path: '/publicPostsAll' },
-                { title: 'Stories', path: '/stories' },
+                { title: 'Friends Stories', path: '/friendsStories' },
                 { title: 'Public Stories', path: '/publicStoriesAll' },
                 { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
                 { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
@@ -113,9 +113,9 @@ export default {
         } else if (this.userType == 2) {   // AGENT
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Posts', path: '/posts' },
+                { title: 'Friends Posts', path: '/friendsPosts' },
                 { title: 'Public Posts', path: '/publicPostsAll' },
-                { title: 'Stories', path: '/stories' },
+                { title: 'Friends Stories', path: '/friendsStories' },
                 { title: 'Public Stories', path: '/publicStoriesAll' },
                 { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
                 { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
