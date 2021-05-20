@@ -20,7 +20,7 @@
 
             <v-list-item three-line v-if="item.type == 'VIDEO'">
               <v-list-item-content> 
-               <video width="320" height="240" controls autoplay>
+               <video width="320" height="240" controls>
                   <source :src="require(`../../../Media/${ item.path }`)" type="video/mp4">
                 </video>
               </v-list-item-content>
