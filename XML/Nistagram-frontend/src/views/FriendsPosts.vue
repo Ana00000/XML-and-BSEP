@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container grid-list-lg >
+    <v-container grid-list-lg>
       <div class="spacingOne" />
       <div class="title">
         <h1>Friends Posts</h1>
@@ -8,7 +8,7 @@
       <div class="spacingTwo" />
       <v-layout row>
         <v-flex lg4 v-for="item in posts" :key="item.id" class="space-bottom">
-          <v-card class="mx-auto">
+          <v-card class="mx-auto" v-on:click="getPost(item)">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{
@@ -19,16 +19,25 @@
             </v-list-item>
 
             <v-list-item three-line v-if="item.type == 'VIDEO'">
-              <v-list-item-content> 
-               <video width="320" height="240" controls>
-                  <source :src="require(`../../../Media/${ item.path }`)" type="video/mp4">
+              <v-list-item-content>
+                <video width="320" height="240" controls>
+                  <source
+                    :src="require(`../../../Media/${item.path}`)"
+                    type="video/mp4"
+                  />
                 </video>
               </v-list-item-content>
             </v-list-item>
 
-             <v-list-item three-line v-if="item.type != 'VIDEO'">
-              <v-list-item-content> 
-                <img :src="require(`../../../Media/${ item.path }`)" alt class="icon" width="320" height="240"/>
+            <v-list-item three-line v-if="item.type != 'VIDEO'">
+              <v-list-item-content>
+                <img
+                  :src="require(`../../../Media/${item.path}`)"
+                  alt
+                  class="icon"
+                  width="320"
+                  height="240"
+                />
               </v-list-item-content>
             </v-list-item>
 
@@ -61,7 +70,7 @@
 export default {
   name: "FriendsPosts",
   data: () => ({
-    posts: []
+    posts: [],
   }),
   mounted() {
     this.init();
@@ -69,12 +78,23 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8084/find_all_following_posts?id=" + localStorage.getItem("userId"))
+        .get(
+          "http://localhost:8084/find_all_following_posts?id=" +
+            localStorage.getItem("userId")
+        )
         .then((response) => {
           this.posts = response.data;
-          console.log(response.data)
+          console.log(response.data);
         })
         .catch(console.log);
+    },
+    getPost(item) {
+      localStorage.setItem("selectedPostDescription", item.description);
+      localStorage.setItem("selectedPostTags", item.tags);
+      localStorage.setItem("selectedPostPath", item.path);
+      localStorage.setItem("selectedPostType", item.type);
+
+      window.location.href = "http://localhost:8081/postById";
     },
   },
 };
