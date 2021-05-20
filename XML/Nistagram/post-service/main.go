@@ -202,6 +202,12 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/post_album/", handlerPostAlbum.CreatePostAlbum).Methods("POST")
 	router.HandleFunc("/single_post/", handlerSinglePost.CreateSinglePost).Methods("POST")
 	router.HandleFunc("/activity/", handlerActivity.CreateActivity).Methods("POST")
+
+	router.HandleFunc("/find_all_likes_for_post", handlerActivity.FindAllLikesForPost).Methods("GET")
+	router.HandleFunc("/find_all_dislikes_for_post", handlerActivity.FindAllDislikesForPost).Methods("GET")
+	router.HandleFunc("/find_all_favorites_for_post", handlerActivity.FindAllFavoritesForPost).Methods("GET")
+	router.HandleFunc("/find_all_activities_for_post", handlerActivity.FindAllActivitiesForPost).Methods("GET")
+	
 	router.HandleFunc("/comment/", handlerComment.CreateComment).Methods("POST")
 	router.HandleFunc("/update_post/", handlerPost.UpdatePost).Methods("POST")
 	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
