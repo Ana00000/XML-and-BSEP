@@ -26,7 +26,6 @@ func (repo * ClassicUserCloseFriendsRepository) FindAllCloseFriendsForUser(userI
 
 
 //CheckIfCloseFriend
-
 func (repo * ClassicUserCloseFriendsRepository) CheckIfCloseFriend(classicUserId uuid.UUID, closeFriendUserId uuid.UUID) bool{
 	var closeFriends *model.ClassicUserCloseFriends
 
@@ -36,3 +35,5 @@ func (repo * ClassicUserCloseFriendsRepository) CheckIfCloseFriend(classicUserId
 	return true
 
 }
+
+

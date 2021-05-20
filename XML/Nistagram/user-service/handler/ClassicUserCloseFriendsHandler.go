@@ -37,6 +37,15 @@ func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w ht
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
+	var allCloseFriendsForUser = handler.ClassicUserCloseFriendsService.FindAllCloseFriendsForUser(classicUserCloseFriendsDTO.ClassicUserId)
+	for i:=0; i<len(allCloseFriendsForUser);i++{
+		if allCloseFriendsForUser[i].CloseFriendUserId == classicUserCloseFriendsDTO.CloseFriendUserId{
+			fmt.Println("User already a close friend")
+			w.WriteHeader(http.StatusConflict)//409
+		}
+	}
+
+
 	classicUserCloseFriends := model.ClassicUserCloseFriends{
 		ID:               uuid.UUID{},
 		ClassicUserId: classicUserCloseFriendsDTO.ClassicUserId,

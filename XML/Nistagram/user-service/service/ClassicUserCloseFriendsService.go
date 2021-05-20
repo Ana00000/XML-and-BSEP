@@ -22,3 +22,12 @@ func (service * ClassicUserCloseFriendsService)  CheckIfCloseFriend(classicUserI
 	return service.Repo.CheckIfCloseFriend(classicUserId, closeFriendUserId)
 }
 
+func (service * ClassicUserCloseFriendsService) FindAllCloseFriendsForUser(userId uuid.UUID) []model.ClassicUserCloseFriends{
+	users := service.Repo.FindAllCloseFriendsForUser(userId)
+	if users != nil {
+		return users
+	}
+	return nil
+}
+
+
