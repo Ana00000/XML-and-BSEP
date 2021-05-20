@@ -26,3 +26,6 @@ func (service * ClassicUserFollowersService) FindAllFollowersForUser(userId uuid
 	return nil
 }
 
+func (service * ClassicUserFollowersService) CheckIfFollowers(classicUserId uuid.UUID, followerUserId uuid.UUID, ) bool {
+	return service.Repo.CheckIfFollowers(classicUserId, followerUserId)
+}

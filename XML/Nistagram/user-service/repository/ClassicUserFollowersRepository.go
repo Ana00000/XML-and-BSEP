@@ -31,5 +31,12 @@ func (repo * ClassicUserFollowersRepository) FindAllFollowersForUser(userId uuid
 	return followers
 }
 
-
+//CheckIfFollowers
+func (repo *ClassicUserFollowersRepository) CheckIfFollowers(classicUserId uuid.UUID, followerUserId uuid.UUID) bool {
+	follower := &model.ClassicUserFollowers{}
+	if repo.Database.First(&follower, "classic_user_id = ? and follower_user_id = ?", classicUserId, followerUserId).RowsAffected == 0{
+		return false
+	}
+	return true
+}
 
