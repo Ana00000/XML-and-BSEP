@@ -129,7 +129,7 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 		fmt.Println("User IS PRIVATE")
 
 		// CHECK IF LOGID FOLLOWING POST USERID
-		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPost(uuid.MustParse(logId), uuid.MustParse(id))
+		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), uuid.MustParse(id))
 		if checkIfFollowing == true{
 			var posts = handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id))
 			//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
@@ -297,7 +297,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 		w.Header().Set("Content-Type", "application/json")
 	}else{
 		// CHECK IF LOGID FOLLOWING POST USERID
-		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPost(uuid.MustParse(logId), post.UserID)
+		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), post.UserID)
 		if checkIfFollowing == true{
 
 			//finds all conents

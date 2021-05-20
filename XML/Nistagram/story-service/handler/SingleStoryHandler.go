@@ -4,6 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
+	locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
+	settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
+	tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+
 	//contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	//locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	//settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
@@ -20,16 +25,16 @@ import (
 	locationService "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	//settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
+	//"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
+	//"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
 	//tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	tagsService "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 
-	"net/http"
+	//"net/http"
 	_ "strconv"
-	"time"
+	//"time"
 )
 
 type SingleStoryHandler struct {
@@ -44,7 +49,7 @@ type SingleStoryHandler struct {
 	StoryTagStoriesService *tagsService.StoryTagStoriesService
 	TagService *tagsService.TagService
 }
-
+/*
 func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *http.Request) {
 	var singleStoryDTO dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
@@ -92,7 +97,7 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-/*
+
 // for selected user (you can only select VALID users)
 func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
@@ -151,7 +156,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 		fmt.Println("User IS PRIVATE")
 
 		// CHECK IF LOGID FOLLOWING STORY USERID
-		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingStory(uuid.MustParse(logId), uuid.MustParse(id))
+		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), uuid.MustParse(id))
 		if checkIfFollowing == true{
 			var stories = handler.SingleStoryService.FindAllStoriesForUser(uuid.MustParse(id))
 			//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
@@ -319,7 +324,7 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 		w.Header().Set("Content-Type", "application/json")
 	}else{
 		// CHECK IF LOGID FOLLOWING STORY USERID
-		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingStory(uuid.MustParse(logId), story.UserId)
+		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), story.UserId)
 		if checkIfFollowing == true{
 
 			//finds all conents
