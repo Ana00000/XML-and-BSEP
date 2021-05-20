@@ -25,13 +25,6 @@ func (service *SingleStoryService) FindByID(ID uuid.UUID) *model.SingleStory {
 	return story
 }
 
-func (service *SingleStoryService) FindAllStoriesForUser(ID uuid.UUID) []model.SingleStory {
-	stories := service.Repo.FindAllStoriesForUser(ID)
-	if stories != nil {
-		return stories
-	}
-	return nil
-}
 
 func (service *SingleStoryService) FindAllFollowingStories(followings []userModel.ClassicUserFollowings) []model.SingleStory {
 	stories := service.Repo.FindAllFollowingStories(followings)
@@ -41,8 +34,40 @@ func (service *SingleStoryService) FindAllFollowingStories(followings []userMode
 	return nil
 }
 
+
+
+// doneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+
+// NOT REGISTERED
+func (service *SingleStoryService) FindAllStoriesForUserNotReg(ID uuid.UUID) []model.SingleStory {
+	stories := service.Repo.FindAllStoriesForUserNotReg(ID)
+	if stories != nil {
+		return stories
+	}
+	return nil
+}
+
 func (service *SingleStoryService) FindAllPublicStoriesNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.SingleStory {
 	stories := service.Repo.FindAllPublicStoriesNotRegisteredUser(allValidUsers)
+	if stories != nil {
+		return stories
+	}
+	return nil
+}
+
+// REGISTERED
+
+// metoda koja se poziva kada registrovani user udje na profil nekog usera
+func (service *SingleStoryService) FindAllStoriesForUserPublic(ID uuid.UUID) []model.SingleStory {
+	stories := service.Repo.FindAllStoriesForUserPublic(ID)
+	if stories != nil {
+		return stories
+	}
+	return nil
+}
+
+func (service *SingleStoryService) FindAllStoriesForUserPrivate(ID uuid.UUID) []model.SingleStory {
+	stories := service.Repo.FindAllStoriesForUserPrivate(ID)
 	if stories != nil {
 		return stories
 	}

@@ -32,6 +32,8 @@ type SingleStoryHandler struct {
 	LocationService *locationService.LocationService
 	StoryTagStoriesService *tagsService.StoryTagStoriesService
 	TagService *tagsService.TagService
+
+	ClassicUserCloseFriendsService * userService.ClassicUserCloseFirendsService
 }
 
 func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *http.Request) {
@@ -82,116 +84,9 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 	w.Header().Set("Content-Type", "application/json")
 }
 
-// for selected user (you can only select VALID users)
-func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-
-	var checkIfValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(id))
-	if  checkIfValid == false {
-		fmt.Println("User NOT valid")
-		w.WriteHeader(http.StatusExpectationFailed)
-	}
-
-	fmt.Println("User IS valid")
-	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(uuid.MustParse(id))
-	if profileSettings.UserVisibility == settingsModel.PRIVATE_VISIBILITY{
-		fmt.Println("User IS PRIVATE")
-		w.WriteHeader(http.StatusExpectationFailed)
-	}
-
-	//finds all stories
-	var stories = handler.SingleStoryService.FindAllStoriesForUser(uuid.MustParse(id))
-	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
-
-	//finds all conents
-	var contents = handler.StoryContentService.FindAllContentsForStories(stories)
 
 
-	//finds all locations
-	var locations = handler.LocationService.FindAllLocationsForStories(stories)
 
-	//find all tags
-	var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
-
-	//creates a list of dtos
-	var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
-
-
-	storiesJson, _ := json.Marshal(storiesDTOS)
-	w.Write(storiesJson)
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-
-
-}
-
-func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	logId := r.URL.Query().Get("logId")
-
-	var checkIfValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(id))
-	if  checkIfValid == false {
-		fmt.Println("User NOT valid")
-		w.WriteHeader(http.StatusExpectationFailed)
-	}
-
-	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(uuid.MustParse(id))
-	if profileSettings.UserVisibility == settingsModel.PRIVATE_VISIBILITY{
-		fmt.Println("User IS PRIVATE")
-
-		// CHECK IF LOGID FOLLOWING STORY USERID
-		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), uuid.MustParse(id))
-		if checkIfFollowing == true{
-			var stories = handler.SingleStoryService.FindAllStoriesForUser(uuid.MustParse(id))
-			//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
-
-			//finds all conents
-			var contents = handler.StoryContentService.FindAllContentsForStories(stories)
-
-
-			//finds all locations
-			var locations = handler.LocationService.FindAllLocationsForStories(stories)
-
-			//find all tags
-			var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
-
-			//creates a list of dtos
-			var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
-
-			storiesJson, _ := json.Marshal(storiesDTOS)
-			w.Write(storiesJson)
-			w.WriteHeader(http.StatusOK)
-			w.Header().Set("Content-Type", "application/json")
-
-		}else{
-
-			fmt.Println("Not following private user")
-			w.WriteHeader(http.StatusExpectationFailed)
-		}
-	}else{
-		var stories = handler.SingleStoryService.FindAllStoriesForUser(uuid.MustParse(id))
-		//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
-
-		//finds all conents
-		var contents = handler.StoryContentService.FindAllContentsForStories(stories)
-
-
-		//finds all locations
-		var locations = handler.LocationService.FindAllLocationsForStories(stories)
-
-		//find all tags
-		var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
-
-		//creates a list of dtos
-		var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
-
-		storiesJson, _ := json.Marshal(storiesDTOS)
-		w.Write(storiesJson)
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-
-	}
-}
 
 
 // returns all VALID stories from FOLLOWING users (FOR HOMEPAGE)
@@ -230,45 +125,6 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 
 }
 
-// FIND SELECTED STORY BY ID (ONLY IF NOT DELETED)!
-// IF PUBLIC/ IF FOLLOWING PRIVATE PROFILE
-func (handler *SingleStoryHandler) FindSelectedStoryByIdForNotRegisteredUsers(w http.ResponseWriter, r *http.Request) {
-
-	id := r.URL.Query().Get("id")
-
-	var story = handler.SingleStoryService.FindByID(uuid.MustParse(id))
-	if story == nil {
-		fmt.Println("User not found")
-		w.WriteHeader(http.StatusExpectationFailed)
-	}
-
-	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(story.UserId)
-	if profileSettings.UserVisibility == settingsModel.PUBLIC_VISIBILITY{
-		// EVERYONE CAN SELECT THIS STORY
-		//finds all conents
-		var contents = handler.StoryContentService.FindAllContentsForStory(story)
-
-		//finds all locations
-		var locations = handler.LocationService.FindAllLocationsForStory(story)
-
-		//find all tags
-		var tags = handler.StoryTagStoriesService.FindAllTagsForStory(story)
-
-		//creates a list of dtos
-		var storyDTO = handler.CreateStoryDTO(story,contents,locations,tags)
-
-		storyJson, _ := json.Marshal(storyDTO)
-		w.Write(storyJson)
-
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-	}else{
-		// FOR POSTMAN CHECK (should redirect)
-		fmt.Println("Profile is private")
-		w.WriteHeader(http.StatusExpectationFailed)
-	}
-
-}
 
 
 // FIND SELECTED STORY BY ID (ONLY IF NOT DELETED)!
@@ -333,7 +189,12 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 
 }
 
-//FIND ALL PUBLIC STORIES (for not registered users)
+
+//doneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+
+// NEREGISTROVANI
+
+//// tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
 func (handler *SingleStoryHandler) FindAllPublicStoriesNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
 	// returns only VALID users
@@ -343,6 +204,7 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesNotRegisteredUser(w http.
 
 	// returns all STORIES of public and valid users
 	var publicValidStories = handler.SingleStoryService.FindAllPublicStoriesNotRegisteredUser(allPublicUsers)
+
 	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
 
 	//finds all conents
@@ -365,7 +227,49 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesNotRegisteredUser(w http.
 }
 
 
-//FindAllPublicStoriesRegisteredUser
+// kada neregistrovani user otvori PUBLIC usera sa spiska i onda na njegovom profilu vidi PUBLIC i NOT EXPIRED STORIJE
+func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var checkIfValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(id))
+	if  checkIfValid == false {
+		fmt.Println("User NOT valid")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	fmt.Println("User IS valid")
+	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(uuid.MustParse(id))
+	if profileSettings.UserVisibility == settingsModel.PRIVATE_VISIBILITY{
+		fmt.Println("User IS PRIVATE")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	//finds all stories
+	var stories = handler.SingleStoryService.FindAllStoriesForUserNotReg(uuid.MustParse(id))
+	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
+
+	//finds all conents
+	var contents = handler.StoryContentService.FindAllContentsForStories(stories)
+
+
+	//finds all locations
+	var locations = handler.LocationService.FindAllLocationsForStories(stories)
+
+	//find all tags
+	var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
+
+	//creates a list of dtos
+	var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
+
+
+	storiesJson, _ := json.Marshal(storiesDTOS)
+	w.Write(storiesJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+
+}
+
 func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
@@ -399,6 +303,107 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 	w.Header().Set("Content-Type", "application/json")
 }
 
+
+// metoda koja se poziva kada registrovani user udje na profil nekog usera
+func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	logId := r.URL.Query().Get("logId")
+
+	var checkIfValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(id))
+	if  checkIfValid == false {
+		fmt.Println("User NOT valid")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(uuid.MustParse(id))
+	if profileSettings.UserVisibility == settingsModel.PRIVATE_VISIBILITY{
+		fmt.Println("User IS PRIVATE")
+
+		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), uuid.MustParse(id))
+		if checkIfFollowing == true{
+
+			var checkIfCloseFriend = handler.ClassicUserCloseFirends.CheckIfCloseFriend(uuid.MustParse(id), uuid.MustParse(logId))
+
+			if checkIfCloseFriend = true{
+
+				var stories = handler.SingleStoryService.FindAllStoriesForUserPrivateCloseFriend(uuid.MustParse(id))
+				//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
+
+				//finds all conents
+				var contents = handler.StoryContentService.FindAllContentsForStories(stories)
+
+				//finds all locations
+				var locations = handler.LocationService.FindAllLocationsForStories(stories)
+
+				//find all tags
+				var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
+
+				//creates a list of dtos
+				var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
+
+				storiesJson, _ := json.Marshal(storiesDTOS)
+				w.Write(storiesJson)
+				w.WriteHeader(http.StatusOK)
+				w.Header().Set("Content-Type", "application/json")
+
+			}
+			else{
+				var stories = handler.SingleStoryService.FindAllStoriesForUserPrivate(uuid.MustParse(id))
+				//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
+
+				//finds all conents
+				var contents = handler.StoryContentService.FindAllContentsForStories(stories)
+
+				//finds all locations
+				var locations = handler.LocationService.FindAllLocationsForStories(stories)
+
+				//find all tags
+				var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
+
+				//creates a list of dtos
+				var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
+
+				storiesJson, _ := json.Marshal(storiesDTOS)
+				w.Write(storiesJson)
+				w.WriteHeader(http.StatusOK)
+				w.Header().Set("Content-Type", "application/json")
+			}
+
+
+		}else{
+
+			fmt.Println("Not following private user")
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
+	}else{
+		var stories = handler.SingleStoryService.FindAllStoriesForUserPublic(uuid.MustParse(id))
+		//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
+
+		//finds all conents
+		var contents = handler.StoryContentService.FindAllContentsForStories(stories)
+
+
+		//finds all locations
+		var locations = handler.LocationService.FindAllLocationsForStories(stories)
+
+		//find all tags
+		var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
+
+		//creates a list of dtos
+		var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
+
+		storiesJson, _ := json.Marshal(storiesDTOS)
+		w.Write(storiesJson)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+
+	}
+}
+
+
+
+
+//DTOS
 func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleStory, contents []contentModel.SingleStoryContent, locations []locationModel.Location, tags []tagsModel.StoryTagStories) []dto.SelectedStoryDTO {
 	var listOfStoriesDTOs []dto.SelectedStoryDTO
 

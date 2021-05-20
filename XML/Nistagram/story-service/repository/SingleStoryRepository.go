@@ -25,6 +25,7 @@ func (repo *SingleStoryRepository) FindAllStories() []model.SingleStory {
 	return stories
 }
 
+
 // THIS SHOULD ONLY BE ACCESSED BY THE LOGGED IN USER WHOSE STORY IT IS
 // HE CAN SEE HIS EXPIRED STORIES
 func (repo *SingleStoryRepository) FindByID(ID uuid.UUID) *model.SingleStory {
@@ -45,24 +46,7 @@ func (repo *SingleStoryRepository) FindByID(ID uuid.UUID) *model.SingleStory {
 
 // FOR OTHER USERS
 // USED WHEN CLICKING ON A SELECTED USER (YOU CAN SELECT FROM A LIST OF ONLY VALID USERS)
-func (repo *SingleStoryRepository) FindAllStoriesForUser(userId uuid.UUID) []model.SingleStory {
-	var stories []model.SingleStory
-	var notExpiredStories []model.SingleStory
-	repo.Database.Select("*").Where("user_id = ? and is_deleted = ? and is_expired = ?", userId, false, false).Find(&stories)
 
-	for i:=0; i< len(stories); i++{
-		if stories[i].CreationDate.Add(60 * time.Second).After(time.Now()){
-			// PASSED TIME SHOULD SET STORY AS EXPIRED
-			//stories[i].IsExpired = true
-			repo.Database.Model(&model.SingleStory{}).Where("id = ?", stories[i].ID).Update("is_expired", true)
-			repo.Database.Model(&model.Story{}).Where("id = ?", stories[i].ID).Update("is_expired", true)
-		} else{
-			notExpiredStories = append(notExpiredStories, stories[i])
-		}
-	}
-
-	return notExpiredStories
-}
 
 // FOR MY USER WHEN HE WANTS TO LOOK AT HIS ARCHIVED STORIES
 // USED WHEN CLICKING ON A SELECTED USER (YOU CAN SELECT FROM A LIST OF ONLY VALID USERS)
@@ -114,6 +98,11 @@ func (repo *SingleStoryRepository) FindAllFollowingStories(followings []userMode
 
 }
 
+// DONNEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+
+
+// tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
 func (repo *SingleStoryRepository) FindAllPublicStoriesNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.SingleStory {
 	var allStories = repo.FindAllStories()
 	var allPublicStories []model.SingleStory
@@ -121,7 +110,7 @@ func (repo *SingleStoryRepository) FindAllPublicStoriesNotRegisteredUser(allVali
 
 	for i:=0;i<len(allStories);i++{
 		for j:=0; j<len(allValidUsers);j++{
-			if allStories[i].UserId == allValidUsers[j].ID {
+			if allStories[i].UserId == allValidUsers[j].ID && allStories[i].Type == model.PUBLIC{
 				allPublicStories = append(allPublicStories, allStories[i])
 			}
 		}
@@ -138,5 +127,54 @@ func (repo *SingleStoryRepository) FindAllPublicStoriesNotRegisteredUser(allVali
 		}
 	}
 
-	return allPublicStories
+	return notExpiredStories
+}
+
+func (repo *SingleStoryRepository) FindAllStoriesForUserNotReg(userId uuid.UUID) []model.SingleStory {
+	var stories []model.SingleStory
+	var notExpiredStories []model.SingleStory
+	repo.Database.Select("*").Where("user_id = ? and is_deleted = ? and is_expired = ? and type = ?", userId, false, false, 2).Find(&stories)
+
+	for i:=0; i< len(stories); i++{
+		if stories[i].CreationDate.Add(60 * time.Second).After(time.Now()){
+			// PASSED TIME SHOULD SET STORY AS EXPIRED
+			//stories[i].IsExpired = true
+			repo.Database.Model(&model.SingleStory{}).Where("id = ?", stories[i].ID).Update("is_expired", true)
+			repo.Database.Model(&model.Story{}).Where("id = ?", stories[i].ID).Update("is_expired", true)
+		} else{
+			notExpiredStories = append(notExpiredStories, stories[i])
+		}
+	}
+
+	return notExpiredStories
+}
+
+
+// metoda koja se poziva kada registrovani user udje na profil nekog usera
+func (repo *SingleStoryRepository) FindAllStoriesForUserPublic(userId uuid.UUID) []model.SingleStory {
+	var stories []model.SingleStory
+	var notExpiredStories []model.SingleStory
+	var returnStories []model.SingleStory
+
+	repo.Database.Select("*").Where("user_id = ? and is_deleted = ? and is_expired = ?", userId, false, false).Find(&stories)
+
+	for i:=0; i< len(stories); i++{
+		if stories[i].CreationDate.Add(60 * time.Second).After(time.Now()){
+			// PASSED TIME SHOULD SET STORY AS EXPIRED
+			//stories[i].IsExpired = true
+			repo.Database.Model(&model.SingleStory{}).Where("id = ?", stories[i].ID).Update("is_expired", true)
+			repo.Database.Model(&model.Story{}).Where("id = ?", stories[i].ID).Update("is_expired", true)
+		} else{
+			notExpiredStories = append(notExpiredStories, stories[i])
+		}
+	}
+
+	for j:=0; j<len(notExpiredStories); j++{
+		if notExpiredStories[j].Type == model.PUBLIC || notExpiredStories[j].Type == model.ALL_FRIENDS{
+			returnStories = append(returnStories, notExpiredStories[j])
+		}else if
+	}
+
+
+	return returnStories
 }

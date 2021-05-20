@@ -184,14 +184,20 @@ func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.S
 	router.HandleFunc("/story_highlight/", handlerStoryHighlight.CreateStoryHighlight).Methods("POST")
 	router.HandleFunc("/single_story_story_highlights/",handlerSingleStoryStoryHighlights.CreateSingleStoryStoryHighlights).Methods("POST")
 
+	// NOT REGISTERED USER
+	router.HandleFunc("/find_all_stories_for_not_reg", handlerSingleStory.FindAllStoriesForUserNotRegisteredUser).Methods("GET") // kada neregistrovani user otvori PUBLIC usera sa spiska i onda na njegovom profilu vidi PUBLIC i NOT EXPIRED STORIJE
+	router.HandleFunc("/find_all_public_stories_not_reg/", handlerSingleStory.FindAllPublicStoriesNotRegisteredUser).Methods("GET") // tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
 
-	router.HandleFunc("/find_all_stories_for_not_reg", handlerSingleStory.FindAllStoriesForUserNotRegisteredUser).Methods("GET")
+
+	// REGISTERED USER
+	router.HandleFunc("/find_all_public_stories_reg", handlerSingleStory.FindAllPublicStoriesRegisteredUser).Methods("GET") // tab PUBLIC STORIES za reg usera - prikazuju se svi PUBLIC, NOT EXPIRED I OD PUBLIC USERA KOJI NISU ON!
 	router.HandleFunc("/find_all_stories_for_reg", handlerSingleStory.FindAllStoriesForUserRegisteredUser).Methods("GET")
+
+
 	router.HandleFunc("/find_all_following_stories", handlerSingleStory.FindAllFollowingStories).Methods("GET")
-	router.HandleFunc("/find_selected_story_not_reg", handlerSingleStory.FindSelectedStoryByIdForNotRegisteredUsers).Methods("GET")
+	//router.HandleFunc("/find_selected_story_not_reg", handlerSingleStory.FindSelectedStoryByIdForNotRegisteredUsers).Methods("GET")
 	router.HandleFunc("/find_selected_story_reg", handlerSingleStory.FindSelectedStoryByIdForRegisteredUsers).Methods("GET")
-	router.HandleFunc("/find_all_public_stories_not_reg/", handlerSingleStory.FindAllPublicStoriesNotRegisteredUser).Methods("GET")
-	router.HandleFunc("/find_all_public_stories_reg", handlerSingleStory.FindAllPublicStoriesRegisteredUser).Methods("GET")
+
 
 	log.Fatal(http.ListenAndServe(":8086", cors(router)))
 
