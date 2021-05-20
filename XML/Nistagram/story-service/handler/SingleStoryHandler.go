@@ -268,8 +268,6 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForNotRegisteredUsers(w 
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
-
-
 }
 
 
