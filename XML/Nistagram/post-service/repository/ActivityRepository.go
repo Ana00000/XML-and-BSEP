@@ -37,3 +37,9 @@ func (repo * ActivityRepository) FindAllFavoritesForPost(postId uuid.UUID) []mod
 	repo.Database.Select("*").Where("post_id = ? and is_favorite = ?", postId, true).Find(&favorites)
 	return favorites
 }
+
+func (repo * ActivityRepository) FindAllActivitiesForPost(postId uuid.UUID) []model.Activity{
+	var allReactions []model.Activity
+	repo.Database.Select("*").Where("post_id = ?", postId).Find(&allReactions)
+	return allReactions
+}

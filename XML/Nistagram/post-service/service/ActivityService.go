@@ -43,5 +43,13 @@ func (service * ActivityService) FindAllFavoritesForPost(postId uuid.UUID) []mod
 	return nil
 }
 
+func (service * ActivityService) FindAllActivitiesForPost(postId uuid.UUID) []model.Activity{
+	activities := service.Repo.FindAllActivitiesForPost(postId)
+	if activities != nil {
+		return activities
+	}
+	return nil
+}
+
 
 
