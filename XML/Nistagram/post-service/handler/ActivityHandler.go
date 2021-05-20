@@ -27,7 +27,7 @@ func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Re
 		ID: uuid.UUID{},
 		PostID: activityDTO.PostID,
 		UserID: activityDTO.UserID,
-		Liked: activityDTO.Liked,
+		LikedStatus: activityDTO.LikedStatus,
 		IsFavorite: activityDTO.IsFavorite,
 	}
 

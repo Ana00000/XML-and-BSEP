@@ -9,7 +9,7 @@ type Activity struct {
 	ID uuid.UUID `json:"id"`
 	PostID uuid.UUID `json:"postID" gorm:"not null"`
 	UserID uuid.UUID `json:"userID" gorm:"not null"`
-	Liked bool `json:"liked" gorm:"not null"`
+	LikedStatus LikedStatus `json:"likedStatus" gorm:"not null"`
 	IsFavorite bool `json:"isFavorite" gorm:"not null"`
 }
 
