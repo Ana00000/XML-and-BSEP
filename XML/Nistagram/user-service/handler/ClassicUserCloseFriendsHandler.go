@@ -35,6 +35,7 @@ func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w ht
 	if checkIfFollowingFirstUser != true || checkIfFollowingSecondUser != true{
 		fmt.Println("Users are not following eachother")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	var allCloseFriendsForUser = handler.ClassicUserCloseFriendsService.FindAllCloseFriendsForUser(classicUserCloseFriendsDTO.ClassicUserId)
@@ -42,6 +43,7 @@ func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w ht
 		if allCloseFriendsForUser[i].CloseFriendUserId == classicUserCloseFriendsDTO.CloseFriendUserId{
 			fmt.Println("User already a close friend")
 			w.WriteHeader(http.StatusConflict)//409
+			return
 		}
 	}
 
@@ -55,6 +57,7 @@ func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w ht
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 

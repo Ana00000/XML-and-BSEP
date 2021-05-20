@@ -62,7 +62,12 @@
       </v-layout>
     </v-container>
     <div class="spacingTwo" />
-    <v-btn color="info mb-5" v-on:click="addCloseFriend" class="addButton">
+    <v-btn
+      color="info mb-5"
+      v-on:click="addCloseFriend"
+      class="addButton"
+      x-large
+    >
       Add
     </v-btn>
   </div>
@@ -120,9 +125,14 @@ export default {
           classic_user_id: this.classicUserId,
           close_friend_user_id: this.followerUserId,
         })
-        .then(alert("You have added this friend as close friend."))
+        .then((response) => {
+          console.log(response)
+          alert("You have added this friend as close friend.");
+        })
         .catch((er) => {
           console.log(er.response.data);
+          if (er.response.status == 409)
+            alert("You have already added this friend as close friend.");
         });
     },
   },
