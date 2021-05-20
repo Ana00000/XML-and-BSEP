@@ -5,6 +5,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/repository"
 	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
+	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 )
 
 type LocationService struct {
@@ -40,3 +41,18 @@ func (service *LocationService) FindAllLocationsForPost(post *postsModel.Post) [
 	return nil
 }
 
+func (service *LocationService) FindAllLocationsForStories(allStories []storyModel.Story) []model.Location {
+	locations := service.Repo.FindAllLocationsForStories(allStories)
+	if locations != nil {
+		return locations
+	}
+	return nil
+}
+
+func (service *LocationService) FindAllLocationsForStory(story *storyModel.Story) []model.Location {
+	locations := service.Repo.FindAllLocationsForStory(story)
+	if locations != nil {
+		return locations
+	}
+	return nil
+}
