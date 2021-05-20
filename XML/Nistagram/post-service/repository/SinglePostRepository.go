@@ -46,8 +46,8 @@ func (repo *SinglePostRepository) FindAllFollowingPosts(followings []userModel.C
 	var allFollowingPosts []model.SinglePost
 
 	for i:= 0; i< len(allPosts); i++{
-		for j := 0; j < len(followings); i++{
-			if (allPosts[i].UserID == followings[i].FollowingUserId) && (allPosts[i].IsDeleted == false){
+		for j := 0; j < len(followings); j++{
+			if (allPosts[i].UserID == followings[j].FollowingUserId) && (allPosts[i].IsDeleted == false){
 				allFollowingPosts = append(allFollowingPosts, allPosts[i])
 			}
 		}
