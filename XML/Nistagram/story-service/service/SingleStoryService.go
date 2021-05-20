@@ -20,12 +20,12 @@ func (service * SingleStoryService) CreateSingleStory(singleStory *model.SingleS
 }
 
 
-func (service *SingleStoryService) FindByID(ID uuid.UUID) *model.Story {
+func (service *SingleStoryService) FindByID(ID uuid.UUID) *model.SingleStory {
 	story := service.Repo.FindByID(ID)
 	return story
 }
 
-func (service *SingleStoryService) FindAllStoriesForUser(ID uuid.UUID) []model.Story {
+func (service *SingleStoryService) FindAllStoriesForUser(ID uuid.UUID) []model.SingleStory {
 	stories := service.Repo.FindAllStoriesForUser(ID)
 	if stories != nil {
 		return stories
@@ -33,7 +33,7 @@ func (service *SingleStoryService) FindAllStoriesForUser(ID uuid.UUID) []model.S
 	return nil
 }
 
-func (service *SingleStoryService) FindAllFollowingStories(followings []userModel.ClassicUserFollowings) []model.Story {
+func (service *SingleStoryService) FindAllFollowingStories(followings []userModel.ClassicUserFollowings) []model.SingleStory {
 	stories := service.Repo.FindAllFollowingStories(followings)
 	if stories != nil {
 		return stories
@@ -41,7 +41,7 @@ func (service *SingleStoryService) FindAllFollowingStories(followings []userMode
 	return nil
 }
 
-func (service *SingleStoryService) FindAllPublicStoriesNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.Story {
+func (service *SingleStoryService) FindAllPublicStoriesNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.SingleStory {
 	stories := service.Repo.FindAllPublicStoriesNotRegisteredUser(allValidUsers)
 	if stories != nil {
 		return stories

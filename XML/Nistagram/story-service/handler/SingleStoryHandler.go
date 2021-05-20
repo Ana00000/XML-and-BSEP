@@ -5,17 +5,22 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	//contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
+	//locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
+	//settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
+	//tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+
+	//contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	contentService "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
 	//locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	locationService "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	//settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
-	//tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
-	tagsService "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
-	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
+	//tagsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+	tagsService "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
+	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 
 	"net/http"
 	_ "strconv"
@@ -402,7 +407,7 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.Story, contents []contentModel.SingleStoryContent, locations []locationModel.Location, tags []tagsModel.StoryTagStories) []dto.SelectedStoryDTO {
+func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleStory, contents []contentModel.SingleStoryContent, locations []locationModel.Location, tags []tagsModel.StoryTagStories) []dto.SelectedStoryDTO {
 	var listOfStoriesDTOs []dto.SelectedStoryDTO
 
 	for i := 0; i < len(stories); i++ {
@@ -444,7 +449,7 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.Story, c
 
 }
 
-func (handler *SingleStoryHandler) CreateStoryDTO(story *model.Story, contents []contentModel.SingleStoryContent, locations []locationModel.Location, tags []tagsModel.StoryTagStories) dto.SelectedStoryDTO {
+func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, contents []contentModel.SingleStoryContent, locations []locationModel.Location, tags []tagsModel.StoryTagStories) dto.SelectedStoryDTO {
 
 
 	var storyDTO dto.SelectedStoryDTO

@@ -50,7 +50,5 @@ func (repo *SinglePostContentRepository) FindAllContentsForPost(post *postsModel
 			}
 		}
 
-
-
 	return contents
 }
