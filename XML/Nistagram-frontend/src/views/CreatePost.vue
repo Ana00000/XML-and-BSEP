@@ -73,7 +73,7 @@
             target="dummyframe"
             class="uploadButton"
           >
-            <input type="file" accept="image/*,video/*,.mkv" name="myPostFile" />
+            <input type="file" accept="image/*,video/*,.mp4" name="myPostFile" />
             <input type="submit" value=" <- Upload file" v-on:click="(isHiddenContentButton = true)"/>
           </form>
         </v-form>

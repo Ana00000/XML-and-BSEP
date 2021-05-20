@@ -18,9 +18,17 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item three-line>
-              <v-list-item-content>
-                <img :src="require(`../../../Media/${ item.path }`)" alt class="icon" width="600"/>
+            <v-list-item three-line v-if="item.type == 'VIDEO'">
+              <v-list-item-content> 
+               <video width="320" height="240" controls autoplay>
+                  <source :src="require(`../../../Media/${ item.path }`)" type="video/mp4">
+                </video>
+              </v-list-item-content>
+            </v-list-item>
+
+             <v-list-item three-line v-if="item.type != 'VIDEO'">
+              <v-list-item-content> 
+                <img :src="require(`../../../Media/${ item.path }`)" alt class="icon" width="320" height="240"/>
               </v-list-item-content>
             </v-list-item>
 
@@ -54,7 +62,7 @@ export default {
   name: "PublicPostsAll",
   data: () => ({
     posts: [],
-    allTags: "",
+    allTags: ""
   }),
   mounted() {
     this.init();
