@@ -38,7 +38,19 @@
                   <template>
                     <v-list-item-content>
                       <v-list-item-subtitle
-                        v-text="'LOCATION CITY: ' + location.city"
+                        v-text="'LOCATION CITY: ' + location.country"
+                        class="containerDiv"
+                      ></v-list-item-subtitle>
+                       <v-list-item-subtitle
+                        v-text="'LOCATION COUNTRY: ' + location.city"
+                        class="containerDiv"
+                      ></v-list-item-subtitle>
+                       <v-list-item-subtitle
+                        v-text="'LOCATION STREET NAME: ' + location.streetName"
+                        class="containerDiv"
+                      ></v-list-item-subtitle>
+                       <v-list-item-subtitle
+                        v-text="'LOCATION STREET NUMBER: ' + location.streetNumber"
                         class="containerDiv"
                       ></v-list-item-subtitle>
                       <v-list-item-subtitle
@@ -69,6 +81,7 @@ export default {
     locations: [],
     locationsCopy: [],
     selectedLocation: null,
+    locationString: "",
   }),
   mounted() {
     this.init();
@@ -87,17 +100,17 @@ export default {
     searchQuery() {
       var resultOfSearch = [];
       for (var i = 0; i < this.locationsCopy.length; i++) {
-        if (
-          this.locationsCopy[i].city
-            .toLowerCase()
-            .includes(this.searchInput.toLowerCase())
-        )
+        if (this.locationsCopy[i].city.toLowerCase().includes(this.searchInput.toLowerCase()) || this.locationsCopy[i].country.toLowerCase().includes(this.searchInput.toLowerCase()) || this.locationsCopy[i].streetName.toLowerCase().includes(this.searchInput.toLowerCase()))
           resultOfSearch.push(this.locationsCopy[i]);
       }
       this.locations = resultOfSearch;
     },
     redirectToSelectedLocation() {
-      localStorage.setItem("selectedLocationCity", this.selectedLocation.city);
+
+      this.locationString = this.selectedLocation.country+","+this.selectedLocation.city+","+this.selectedLocation.streetName+","+this.selectedLocation.streetNumber
+      console.log("STRING: ")
+      console.log(this.locationString)
+      localStorage.setItem("selectedLocationString", this.locationString);
       localStorage.setItem("selectedLocationId", this.selectedLocation.id);
       window.location.href =
         "http://localhost:8081/selectedLocationForNotRegistered";
