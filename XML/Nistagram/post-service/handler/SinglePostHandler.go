@@ -327,25 +327,14 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 //FIND ALL PUBLIC POSTS (for not registered users)
 func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
-	// returns only VALID users
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	// returns all PUBLIC users
 	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
-
-	// returns all POSTS of public and valid users
 	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
-	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
-
-	//finds all conents
 	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
-
-	//finds all locations
 	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
-
-	//find all tags
 	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
 
-	//creates a list of dtos
+
 	var postsDTOS = handler.CreatePostsDTOList(publicValidPosts,contents,locations,tags)
 
 	postJson, _ := json.Marshal(postsDTOS)
@@ -482,4 +471,19 @@ func (handler *SinglePostHandler) CreatePostDTO(posts *model.SinglePost, content
 
 	return postDTO
 
+}
+
+// SEARCH TAGS FOR NOT REGISTERED USER
+func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWriter, r *http.Request) {
+
+	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
+	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
+	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
+
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
+
+	tagsJson, _ := json.Marshal(tags)
+	w.Write(tagsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 }

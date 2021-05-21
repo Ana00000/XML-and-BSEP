@@ -192,7 +192,7 @@ func handleFunc(handlerTag *handler.TagHandler, handlerPostTag *handler.PostTagH
 	router.HandleFunc("/story_album_tag/", handlerStoryAlbumTag.CreateStoryAlbumTag).Methods("POST")
 	router.HandleFunc("/story_album_tag_story_albums/", handlerStoryAlbumTagStoryAlbums.CreateStoryAlbumTagStoryAlbums).Methods("POST")
 
-	
+
 	log.Fatal(http.ListenAndServe(":8082", cors(router)))
 
 }

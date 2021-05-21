@@ -35,3 +35,4 @@ func (service *PostTagPostsService) FindAllTagsForPost(post *postsModel.SinglePo
 	return nil
 }
 
+
