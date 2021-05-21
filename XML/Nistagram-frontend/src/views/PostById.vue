@@ -525,17 +525,31 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8084/post_collection_posts/", {
-          post_collection_id: this.postCollectionId,
-          single_post_id: localStorage.getItem("selectedPostId"),
-        })
+        .get(
+          "http://localhost:8084/find_all_post_collection_posts_for_post?id=" +
+            localStorage.getItem("selectedPostId")
+        )
         .then((response) => {
-          console.log(response.data);
-          alert("You have added this post to your collection.");
+          for (var i = 0; i < response.data.length; i++) {
+            if (this.postCollectionId == response.data[i].post_collection_id) {
+              alert("You have already added this post to selected collection.");
+              return;
+            }
+          }
+          this.$http
+            .post("http://localhost:8084/post_collection_posts/", {
+              post_collection_id: this.postCollectionId,
+              single_post_id: localStorage.getItem("selectedPostId"),
+            })
+            .then((response) => {
+              console.log(response.data);
+              alert("You have added this post to your collection.");
+            })
+            .catch((er) => {
+              console.log(er.response.data);
+            });
         })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+        .catch(console.log);
     },
   },
 };

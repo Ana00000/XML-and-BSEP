@@ -219,6 +219,7 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts).Methods("POST")
 
 	router.HandleFunc("/find_all_post_collections_for_reg", handlerPostCollection.FindAllPostCollectionsForUserRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_post_collection_posts_for_post", handlerPostCollectionPosts.FindAllPostCollectionPostsForPost).Methods("GET")
 
 	router.HandleFunc("/find_all_posts_for_not_reg", handlerSinglePost.FindAllPostsForUserNotRegisteredUser).Methods("GET")
 	router.HandleFunc("/find_all_posts_for_reg", handlerSinglePost.FindAllPostsForUserRegisteredUser).Methods("GET")
