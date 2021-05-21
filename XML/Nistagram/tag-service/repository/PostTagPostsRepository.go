@@ -51,3 +51,20 @@ func (repo *PostTagPostsRepository) FindAllTagsForPost(post *postsModel.SinglePo
 
 	return tags
 }
+
+
+// SEARCH FOR NOT REGISTERED USER
+func (repo *PostTagPostsRepository) FindAllTagsForPublicPosts(allPublicPosts []postsModel.SinglePost) []model.PostTagPosts {
+	var tags []model.PostTagPosts
+	var allTags = repo.FindAll()
+
+	for i:=0;i<len(allPublicPosts);i++{
+		for j:=0; j<len(allTags);j++{
+			if allPublicPosts[i].ID == allTags[j].PostId {
+				tags = append(tags, allTags[j])
+			}
+		}
+
+	}
+	return tags
+}
