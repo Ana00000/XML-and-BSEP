@@ -1,7 +1,9 @@
 package service
 
 import (
+	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
 )
@@ -51,5 +53,9 @@ func (service * ActivityService) FindAllActivitiesForPost(postId uuid.UUID) []mo
 	return nil
 }
 
-
+func (service * ActivityService) UpdateActivity(activity *dto.ActivityDTO) error {
+	result := service.Repo.UpdateActivity(activity)
+	fmt.Print(result)
+	return nil
+}
 

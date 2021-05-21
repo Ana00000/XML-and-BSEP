@@ -6,6 +6,7 @@ import (
 )
 
 type ActivityDTO struct {
+	ID uuid.UUID `json:"id"`
 	PostID uuid.UUID `json:"postID"`
 	UserID uuid.UUID `json:"userID"`
 	LikedStatus model.LikedStatus `json:"likedStatus"`
