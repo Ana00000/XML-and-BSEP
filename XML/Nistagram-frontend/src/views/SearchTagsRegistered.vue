@@ -100,7 +100,7 @@ export default {
       localStorage.setItem("selectedTagName", this.selectedTag.name);
       localStorage.setItem("selectedTagId", this.selectedTag.id);
       window.location.href =
-        "http://localhost:8081/selectedTagForRegistered";
+        "http://localhost:8081/postsForSelectedTagRegistered";
     },
   },
 };

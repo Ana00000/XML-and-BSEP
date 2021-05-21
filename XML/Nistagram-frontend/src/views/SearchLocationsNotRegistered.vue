@@ -113,7 +113,7 @@ export default {
       localStorage.setItem("selectedLocationString", this.locationString);
       localStorage.setItem("selectedLocationId", this.selectedLocation.id);
       window.location.href =
-        "http://localhost:8081/selectedLocationForNotRegistered";
+        "http://localhost:8081/postsForSelectedLocationNotRegistered";
     },
   },
 };

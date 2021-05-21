@@ -184,7 +184,28 @@ const routes = [
     path: '/searchLocationsReg',
     name: 'SearchLocationsReg',
     component: () => import('../views/SearchLocationsReg.vue')
+  },
+  {
+    path: '/postsForSelectedTagNotRegistered',
+    name: 'PostsForSelectedTagNotRegistered',
+    component: () => import('../views/PostsForSelectedTagNotRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedTagRegistered',
+    name: 'PostsForSelectedTagRegistered',
+    component: () => import('../views/PostsForSelectedTagRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedLocationNotRegistered',
+    name: 'PostsForSelectedLocationNotRegistered',
+    component: () => import('../views/PostsForSelectedLocationNotRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedLocationRegistered',
+    name: 'PostsForSelectedLocationRegistered',
+    component: () => import('../views/PostsForSelectedLocationRegistered.vue')
   }
+  
 ]
 
 const router = new VueRouter({
