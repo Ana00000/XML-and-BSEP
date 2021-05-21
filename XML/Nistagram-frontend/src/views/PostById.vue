@@ -208,7 +208,6 @@ export default {
         .catch(console.log);
     },
     favoritePost() {
-      this.favoriteActivityId = localStorage.getItem("favoriteActivityId");
       this.$http
         .get(
           "http://localhost:8084/find_all_activities_for_post?id=" +
@@ -224,12 +223,14 @@ export default {
             ) {
               alert("You have already favorited this post!");
               this.isHiddenRemoveFavorite = false;
+              this.favoriteActivityId =  this.activities[i].id;
               return;
             } else if (
               this.activities[i].user_id ==
                 localStorage.getItem("selectedUserId") &&
               this.activities[i].is_favorite == false
             ) {
+              this.favoriteActivityId =  this.activities[i].id;
               this.$http
                 .post("http://localhost:8084/update_activity/", {
                   id: this.favoriteActivityId,
@@ -257,7 +258,6 @@ export default {
               IsFavorite: true,
             })
             .then((response) => {
-              localStorage.setItem("favoriteActivityId", response.data);
               this.favoriteActivityId = response.data;
               this.isHiddenRemoveFavorite = false;
               alert("You have favorited this post.");
@@ -269,7 +269,26 @@ export default {
         .catch(console.log);
     },
     removeFavorite() {
-      this.favoriteActivityId = localStorage.getItem("favoriteActivityId");
+      this.$http
+        .get(
+          "http://localhost:8084/find_all_activities_for_post?id=" +
+            localStorage.getItem("selectedPostId")
+        )
+        .then((response) => {
+          this.activities = response.data;
+          for (var i = 0; i < this.activities.length; i++) {
+            if (
+              this.activities[i].user_id ==
+                localStorage.getItem("selectedUserId") &&
+              (this.activities[i].is_favorite == true  ||
+              this.activities[i].is_favorite == false)
+            ) {
+              this.favoriteActivityId =  this.activities[i].id;
+            } 
+          }
+        })
+        .catch(console.log);
+
       if (this.favoriteActivityId == null) {
         alert("You have not favorited this post.");
         return;
@@ -324,5 +343,18 @@ export default {
 .favoriteButton {
   width: 120px;
   margin-left: 10%;
+}
+
+.removeLikeButton {
+  width: 120px;
+}
+
+.removeDislikeButton {
+  width: 120px;
+}
+
+.removeFavoriteButton {
+  width: 200px;
+  margin-left: 1%;
 }
 </style>
