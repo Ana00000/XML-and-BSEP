@@ -11,7 +11,9 @@
           <v-card class="card">
             <v-list-item three-line>
               <v-list-item-content>
-                <v-list-item-subtitle>{{ post.description }}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{
+                  post.description
+                }}</v-list-item-subtitle>
                 <v-list-item-title>{{ post.tags }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -57,17 +59,19 @@
                 }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-
           </v-card>
         </v-flex>
       </v-layout>
     </v-container>
 
-     <v-btn color="info mb-5" v-on:click="likePost" class="likeButton">
+    <v-btn color="info mb-5" v-on:click="likePost" class="likeButton">
       Like
     </v-btn>
     <v-btn color="info mb-5" v-on:click="dislikePost" class="dislikeButton">
       Dislike
+    </v-btn>
+    <v-btn color="info mb-5" v-on:click="favoritePost" class="favoriteButton">
+      Favorite
     </v-btn>
   </div>
 </template>
@@ -94,6 +98,54 @@ export default {
           this.post = response.data;
         })
         .catch(console.log);
+    },
+    likePost() {
+      this.$http
+        .post("http://localhost:8084/activity/", {
+          postID: localStorage.getItem("selectedPostId"),
+          userID: localStorage.getItem("selectedUserId"),
+          likedStatus: 0,
+          IsFavorite: false,
+        })
+        .then((response) => {
+          console.log(response)
+          alert("You have liked this post.")
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    dislikePost() {
+      this.$http
+        .post("http://localhost:8084/activity/", {
+          postID: localStorage.getItem("selectedPostId"),
+          userID: localStorage.getItem("selectedUserId"),
+          likedStatus: 1,
+          IsFavorite: false,
+        })
+        .then((response) => {
+          console.log(response)
+          alert("You have disliked this post.")
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    favoritePost() {
+      this.$http
+        .post("http://localhost:8084/activity/", {
+          postID: localStorage.getItem("selectedPostId"),
+          userID: localStorage.getItem("selectedUserId"),
+          likedStatus: 2,
+          IsFavorite: true,
+        })
+        .then((response) => {
+          console.log(response)
+          alert("You have favorited this post.")
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
     },
   },
 };
@@ -123,6 +175,11 @@ export default {
 
 .dislikeButton {
   width: 120px;
-  margin-left: 30%;
+  margin-left: 10%;
+}
+
+.favoriteButton {
+  width: 120px;
+  margin-left: 10%;
 }
 </style>
