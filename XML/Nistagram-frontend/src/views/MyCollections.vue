@@ -23,7 +23,7 @@
     <v-container grid-list-lg>
       <div class="spacingOne" />
       <v-card-title class="justify-center">
-        <h1 class="display-1">Your Collections</h1>
+        <h1 class="display-1">My Collections</h1>
       </v-card-title>
       <div class="spacingTwo" />
       <v-layout row>
@@ -48,7 +48,7 @@
 
 <script>
 export default {
-  name: "CreateCollection",
+  name: "MyCollections",
   data: () => ({
     title: "",
     postCollectionId: null,
@@ -87,7 +87,7 @@ export default {
         .then((response) => {
           this.postCollectionId = response.data;
           alert("Successful creation of collection.");
-          window.location.href = "http://localhost:8081/createCollection";
+          window.location.href = "http://localhost:8081/myCollections";
         })
         .catch((er) => {
           console.log(er.response.data);
