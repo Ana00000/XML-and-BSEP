@@ -35,6 +35,10 @@ func (handler *PostCollectionHandler) CreatePostCollection(w http.ResponseWriter
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	postCollectionIDJson, _ := json.Marshal(postCollection.ID)
+	w.Write(postCollectionIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
