@@ -15,3 +15,11 @@ func (service *UserTagService) CreateUserTag(userTag *model.UserTag) error {
 	}
 	return nil
 }
+
+func (service *UserTagService) FindAll() []model.UserTag {
+	userTags := service.Repo.FindAll()
+	if userTags != nil {
+		return userTags
+	}
+	return nil
+}

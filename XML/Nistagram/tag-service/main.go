@@ -6,6 +6,8 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	profileSettingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
+	profileSettingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
@@ -32,6 +34,15 @@ func initDB() *gorm.DB{
 	return db
 }
 
+
+// SETTINGS
+func initProfileSettingsRepo(database *gorm.DB) *profileSettingsRepository.ProfileSettingsRepository{
+	return &profileSettingsRepository.ProfileSettingsRepository { Database: database }
+}
+
+func initProfileSettingsService(repo *profileSettingsRepository.ProfileSettingsRepository) *profileSettingsService.ProfileSettingsService{
+	return &profileSettingsService.ProfileSettingsService { Repo: repo }
+}
 
 
 func initPostTagPostsRepo(database *gorm.DB) *repository.PostTagPostsRepository{
@@ -96,10 +107,11 @@ func initTagHandler(service *service.TagService) *handler.TagHandler{
 	return &handler.TagHandler { Service: service }
 }
 
-func initUserTagHandler(service *service.UserTagService, tagService * service.TagService) *handler.UserTagHandler{
+func initUserTagHandler(service *service.UserTagService, tagService * service.TagService, profileSettingsService *profileSettingsService.ProfileSettingsService) *handler.UserTagHandler{
 	return &handler.UserTagHandler {
 		Service: service,
 		TagService: tagService,
+		ProfileSettingsService: profileSettingsService,
 	}
 }
 
@@ -120,8 +132,6 @@ func initPostAlbumTagPostAlbumsHandler(service *service.PostAlbumTagPostAlbumsSe
 	return &handler.PostAlbumTagPostAlbumsHandler { Service: service }
 }
 
-
-
 func initStoryAlbumTagStoryAlbumsHandler(service *service.StoryAlbumTagStoryAlbumsService) *handler.StoryAlbumTagStoryAlbumsHandler{
 	return &handler.StoryAlbumTagStoryAlbumsHandler { Service: service }
 }
@@ -141,6 +151,9 @@ func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagH
 
 	router.HandleFunc("/tag/", handlerTag.CreateTag).Methods("POST")
 	router.HandleFunc("/user_tag/", handlerUserTag.CreateUserTag).Methods("POST")
+	router.HandleFunc("/find_all_taggable_users_post/", handlerUserTag.FindAllTaggableUsersPost).Methods("GET")
+	router.HandleFunc("/find_all_taggable_users_story/", handlerUserTag.FindAllTaggableUsersStory).Methods("GET")
+	router.HandleFunc("/find_all_taggable_users_comment/", handlerUserTag.FindAllTaggableUsersComment).Methods("GET")
 	router.HandleFunc("/comment_tag_comments/", handlerCommentTagComments.CreateCommentTagComments).Methods("POST")
 	router.HandleFunc("/post_tag_posts/", handlerPostTagPosts.CreatePostTagPosts).Methods("POST")
 	router.HandleFunc("/story_tag_stories/", handlerStoryTagStories.CreateStoryTagStories).Methods("POST")
@@ -159,9 +172,12 @@ func main() {
 	serviceTag := initTagServices(repoTag)
 	handlerTag := initTagHandler(serviceTag)
 
+	repoProfileSettings := initProfileSettingsRepo(database)
+	profileSettingsService := initProfileSettingsService(repoProfileSettings)
+
 	repoUserTag := initUserTagRepo(database)
 	serviceUserTag := initUserTagServices(repoUserTag)
-	handlerUserTag := initUserTagHandler(serviceUserTag, serviceTag)
+	handlerUserTag := initUserTagHandler(serviceUserTag, serviceTag, profileSettingsService)
 
 	repoPostTagPosts := initPostTagPostsRepo(database)
 	servicePostTagPosts := initPostTagPostsServices(repoPostTagPosts)

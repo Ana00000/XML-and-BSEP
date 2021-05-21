@@ -32,3 +32,11 @@ func (service *TagService) FindTagByType(tagType string) *model.Tag {
 	tag := service.Repo.FindTagByType(tagType)
 	return tag
 }
+
+func (service *TagService) FindAll() []model.Tag {
+	tags := service.Repo.FindAll()
+	if tags != nil {
+		return tags
+	}
+	return nil
+}
