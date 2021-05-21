@@ -56,6 +56,14 @@ func (service *SinglePostService) FindAllPostsByIds(postsIds []uuid.UUID) []mode
 	return nil
 }
 
+func (service *SinglePostService) FindAllPublicPostsByIds(postsIds []uuid.UUID, allValidUsers []userModel.ClassicUser) []model.SinglePost {
+	posts := service.Repo.FindAllPublicPostsByIds(postsIds,allValidUsers)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
+
 func (service *SinglePostService) FindAllPostIdsWithLocationId(locationId uuid.UUID) []model.SinglePost {
 	posts := service.Repo.FindAllPostIdsWithLocationId(locationId)
 	if posts != nil {
@@ -64,3 +72,10 @@ func (service *SinglePostService) FindAllPostIdsWithLocationId(locationId uuid.U
 	return nil
 }
 
+func (service *SinglePostService) FindAllPublicPosts(postsList []model.SinglePost, alValidUsers []userModel.ClassicUser) []model.SinglePost {
+	posts := service.Repo.FindAllPublicPosts(postsList, alValidUsers)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}

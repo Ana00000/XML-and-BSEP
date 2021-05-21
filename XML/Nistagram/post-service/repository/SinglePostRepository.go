@@ -77,7 +77,23 @@ func (repo *SinglePostRepository) FindAllPostsByIds(postsIds []uuid.UUID) []mode
 
 	for i:=0; i<len(allPosts);i++{
 		for j:=0;j<len(postsIds);j++{
-			if allPosts[i].ID == postsIds[j]{
+			if allPosts[i].ID == postsIds[j] && allPosts[i].IsDeleted == false{
+				allTagPosts = append(allTagPosts, allPosts[i])
+			}
+		}
+	}
+
+	return allTagPosts
+}
+
+//FindAllPublicPostsByIds
+func (repo *SinglePostRepository) FindAllPublicPostsByIds(postsIds []uuid.UUID, allValidUsers []userModel.ClassicUser) []model.SinglePost {
+	var allPosts = repo.FindAllPublicPostsNotRegisteredUser(allValidUsers)
+	var allTagPosts []model.SinglePost
+
+	for i:=0; i<len(allPosts);i++{
+		for j:=0;j<len(postsIds);j++{
+			if allPosts[i].ID == postsIds[j] && allPosts[i].IsDeleted == false{
 				allTagPosts = append(allTagPosts, allPosts[i])
 			}
 		}
@@ -92,10 +108,26 @@ func (repo *SinglePostRepository) FindAllPostIdsWithLocationId(locationId uuid.U
 	var allPostsWithLocation []model.SinglePost
 
 	for i:=0; i<len(allPosts);i++{
-		if allPosts[i].LocationId == locationId{
+		if allPosts[i].LocationId == locationId && allPosts[i].IsDeleted == false{
 			allPostsWithLocation = append(allPostsWithLocation, allPosts[i])
 		}
 	}
 
 	return allPostsWithLocation
+}
+
+//FindAllPublicPosts
+func (repo *SinglePostRepository) FindAllPublicPosts(posts []model.SinglePost, allValidUsers []userModel.ClassicUser) []model.SinglePost {
+	var allPosts = repo.FindAllPublicPostsNotRegisteredUser(allValidUsers)
+	var allPublicPostsForList []model.SinglePost
+
+	for i:=0; i<len(allPosts);i++{
+		for j:=0;j<len(posts);j++{
+			if allPosts[i].ID == posts[j].ID{
+				allPublicPostsForList = append(allPublicPostsForList, allPosts[i])
+			}
+		}
+	}
+
+	return allPublicPostsForList
 }

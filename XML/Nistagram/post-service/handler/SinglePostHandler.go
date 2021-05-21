@@ -509,14 +509,16 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicPosts(w http.Response
 	w.Header().Set("Content-Type", "application/json")
 }
 
-// FIND ALL PUBLIC NOT DELETED POSTS WITH TAG
+// FIND ALL PUBLIC NOT DELETED POSTS WITH TAG - FOR NOT REG USER S
 func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *http.Request) {
 
 	tagName := r.URL.Query().Get("tagName") //tag id
 
+
 	var tagsId = handler.TagService.FindTagIdByTagName(tagName)
 	var postIds = handler.PostTagPostsService.FindAllPostIdsWithTagId(tagsId.ID)
-	var posts = handler.SinglePostService.FindAllPostsByIds(postIds)
+	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
+	var posts = handler.SinglePostService.FindAllPublicPostsByIds(postIds, allValidUsers)
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
@@ -530,14 +532,17 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 	w.Header().Set("Content-Type", "application/json")
 }
 
-// FIND ALL PUBLIC NOT DELETED POSTS WITH LOCATION
+// FIND ALL PUBLIC NOT DELETED POSTS WITH LOCATION - FOR NOT REG USER S
 func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter, r *http.Request) {
 
 	//county,city,streetName,streetNumber
 	locationString := r.URL.Query().Get("locationString")
 
 	var location = handler.LocationService.FindLocationIdByLocationString(locationString)
-	var posts = handler.SinglePostService.FindAllPostIdsWithLocationId(location.ID)
+	var locationPosts = handler.SinglePostService.FindAllPostIdsWithLocationId(location.ID)
+	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
+	var posts = handler.SinglePostService.FindAllPublicPosts(locationPosts, allValidUsers)
+
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
