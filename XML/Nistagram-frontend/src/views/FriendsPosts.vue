@@ -89,10 +89,8 @@ export default {
         .catch(console.log);
     },
     getPost(item) {
-      localStorage.setItem("selectedPostDescription", item.description);
-      localStorage.setItem("selectedPostTags", item.tags);
-      localStorage.setItem("selectedPostPath", item.path);
-      localStorage.setItem("selectedPostType", item.type);
+      localStorage.setItem("selectedUserId", item.user_id);
+      localStorage.setItem("selectedPostId", item.post_id);
 
       window.location.href = "http://localhost:8081/postById";
     },

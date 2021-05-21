@@ -11,26 +11,26 @@
           <v-card class="card">
             <v-list-item three-line>
               <v-list-item-content>
-                <v-list-item-subtitle>{{ description }}</v-list-item-subtitle>
-                <v-list-item-title>{{ tags }}</v-list-item-title>
+                <v-list-item-subtitle>{{ post.description }}</v-list-item-subtitle>
+                <v-list-item-title>{{ post.tags }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item three-line v-if="type == 'VIDEO'">
+            <v-list-item three-line v-if="post.type == 'VIDEO'">
               <v-list-item-content>
                 <video width="320" height="440" controls>
                   <source
-                    :src="require(`../../../Media/${path}`)"
+                    :src="require(`../../../Media/${post.path}`)"
                     type="video/mp4"
                   />
                 </video>
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item three-line v-if="type != 'VIDEO'">
+            <v-list-item three-line v-if="post.type != 'VIDEO'">
               <v-list-item-content>
                 <img
-                  :src="require(`../../../Media/${path}`)"
+                  :src="require(`../../../Media/${post.path}`)"
                   alt
                   class="icon"
                   width="320"
@@ -38,12 +38,32 @@
                 />
               </v-list-item-content>
             </v-list-item>
+
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle
+                  v-text="
+                    post.country +
+                    ' ' +
+                    post.city +
+                    ' ' +
+                    post.street_name +
+                    ' ' +
+                    post.street_number
+                  "
+                />
+                <v-list-item-subtitle>{{
+                  post.creation_date
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
           </v-card>
         </v-flex>
       </v-layout>
     </v-container>
 
-    <v-btn color="info mb-5" v-on:click="likePost" class="likeButton">
+     <v-btn color="info mb-5" v-on:click="likePost" class="likeButton">
       Like
     </v-btn>
     <v-btn color="info mb-5" v-on:click="dislikePost" class="dislikeButton">
@@ -56,20 +76,24 @@
 export default {
   name: "PostById",
   data: () => ({
-    description: "",
-    tags: [],
-    path: "",
-    type: null,
+    post: null,
   }),
   mounted() {
     this.init();
   },
   methods: {
     init() {
-      this.description = localStorage.getItem("selectedPostDescription");
-      this.tags = localStorage.getItem("selectedPostTags");
-      this.path = localStorage.getItem("selectedPostPath");
-      this.type = localStorage.getItem("selectedPostType");
+      this.$http
+        .get(
+          "http://localhost:8084/find_selected_post_for_logged_user?id=" +
+            localStorage.getItem("selectedPostId") +
+            "&logId=" +
+            localStorage.getItem("selectedUserId")
+        )
+        .then((response) => {
+          this.post = response.data;
+        })
+        .catch(console.log);
     },
   },
 };
@@ -88,6 +112,10 @@ export default {
   height: 50px;
 }
 
+.card {
+  margin-left: 20%;
+}
+
 .likeButton {
   width: 120px;
   margin-left: 30%;
@@ -96,9 +124,5 @@ export default {
 .dislikeButton {
   width: 120px;
   margin-left: 30%;
-}
-
-.card {
-  margin-left: 20%;
 }
 </style>
