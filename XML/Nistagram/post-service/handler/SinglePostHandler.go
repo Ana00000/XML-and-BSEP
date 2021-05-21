@@ -519,8 +519,8 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 	tagName := r.URL.Query().Get("tagName") //tag id
 
 
-	var tagsId = handler.TagService.FindTagIdByTagName(tagName)
-	var postIds = handler.PostTagPostsService.FindAllPostIdsWithTagId(tagsId.ID)
+	var tag = handler.TagService.FindTagByName(tagName)
+	var postIds = handler.PostTagPostsService.FindAllPostIdsWithTagId(tag.ID)
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var posts = handler.SinglePostService.FindAllPublicPostsByIds(postIds, allValidUsers)
 
@@ -644,8 +644,8 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 	tagName := r.URL.Query().Get("tagName") //tag id
 
 
-	var tagsId = handler.TagService.FindTagIdByTagName(tagName)
-	var postIds = handler.PostTagPostsService.FindAllPostIdsWithTagId(tagsId.ID)
+	var tag = handler.TagService.FindTagByName(tagName)
+	var postIds = handler.PostTagPostsService.FindAllPostIdsWithTagId(tag.ID)
 
 	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
 	var posts = handler.SinglePostService.FindAllPublicPostsByIds(postIds, allUsers)
