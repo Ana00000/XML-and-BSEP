@@ -483,3 +483,21 @@ func (handler *SinglePostHandler) CreatePostDTO(posts *model.SinglePost, content
 	return postDTO
 
 }
+
+// all posts (EXCEPT DELETED) for my current logged in user
+func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var posts = handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id))
+	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
+	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+
+	var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
+
+	postsJson, _ := json.Marshal(postsDTOS)
+	w.Write(postsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}
