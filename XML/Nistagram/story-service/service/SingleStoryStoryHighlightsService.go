@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/repository"
 )
@@ -13,6 +14,14 @@ func (service * SingleStoryStoryHighlightsService) CreateSingleStoryStoryHighlig
 	err := service.Repo.CreateSingleStoryStoryHighlights(singleStoryStoryHighlights)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (service * SingleStoryStoryHighlightsService) FindAllSingleStoryStoryHighlightsForStory(storyId uuid.UUID) []model.SingleStoryStoryHighlights{
+	singleStoryStoryHighlights := service.Repo.FindAllSingleStoryStoryHighlightsForStory(storyId)
+	if singleStoryStoryHighlights != nil {
+		return singleStoryStoryHighlights
 	}
 	return nil
 }

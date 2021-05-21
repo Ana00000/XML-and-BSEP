@@ -143,17 +143,35 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8086/single_story_story_highlights/", {
-          story_highlight_id: this.highlightedStoryId,
-          single_story_id: localStorage.getItem("mySelectedStoryId"),
-        })
+        .get(
+          "http://localhost:8086/find_all_single_story_story_highlights_for_story?id=" +
+            localStorage.getItem("mySelectedStoryId")
+        )
         .then((response) => {
-          console.log(response.data);
-          alert("You have added this story to selected story highlight.");
+          for (var i = 0; i < response.data.length; i++) {
+            if (
+              this.highlightedStoryId == response.data[i].story_highlight_id
+            ) {
+              alert(
+                "You have already added this story to selected story highlight."
+              );
+              return;
+            }
+          }
+          this.$http
+            .post("http://localhost:8086/single_story_story_highlights/", {
+              story_highlight_id: this.highlightedStoryId,
+              single_story_id: localStorage.getItem("mySelectedStoryId"),
+            })
+            .then((response) => {
+              console.log(response.data);
+              alert("You have added this story to selected story highlight.");
+            })
+            .catch((er) => {
+              console.log(er.response.data);
+            });
         })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+        .catch(console.log);
     },
   },
 };

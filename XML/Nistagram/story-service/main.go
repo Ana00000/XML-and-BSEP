@@ -185,6 +185,7 @@ func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.S
 	router.HandleFunc("/single_story_story_highlights/",handlerSingleStoryStoryHighlights.CreateSingleStoryStoryHighlights).Methods("POST")
 
 	router.HandleFunc("/find_all_story_highlights_for_user", handlerStoryHighlight.FindAllStoryHighlightsForUser).Methods("GET")
+	router.HandleFunc("/find_all_single_story_story_highlights_for_story", handlerSingleStoryStoryHighlights.FindAllSingleStoryStoryHighlightsForStory).Methods("GET")
 
 	// NOT REGISTERED USER
 	router.HandleFunc("/find_all_stories_for_not_reg", handlerSingleStory.FindAllStoriesForUserNotRegisteredUser).Methods("GET") // kada neregistrovani user otvori PUBLIC usera sa spiska i onda na njegovom profilu vidi PUBLIC i NOT EXPIRED STORIJE
