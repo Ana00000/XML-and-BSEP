@@ -164,6 +164,11 @@ const routes = [
     path: '/addCloseFriends',
     name: 'AddCloseFriends',
     component: () => import('../views/AddCloseFriends.vue')
+  },
+  {
+    path: '/storiesOfStoryHighlight',
+    name: 'StoriesOfStoryHighlight',
+    component: () => import('../views/StoriesOfStoryHighlight.vue')
   }
 ]
 

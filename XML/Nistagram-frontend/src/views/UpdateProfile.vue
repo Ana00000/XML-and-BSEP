@@ -163,7 +163,7 @@
           :key="item.id"
           class="space-bottom"
         >
-          <v-card class="mx-auto">
+          <v-card class="mx-auto" v-on:click="getStoryHighlight(item)">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{ item.title }}</v-list-item-subtitle>
@@ -187,7 +187,7 @@
           />
         </v-form>
       </v-card-text>
-      
+
       <v-card-actions class="justify-center mb-5">
         <v-btn color="info mb-5" v-on:click="createStoryHighlight">
           Create
@@ -342,6 +342,12 @@ export default {
         .catch((er) => {
           console.log(er.response.data);
         });
+    },
+    getStoryHighlight(item) {
+      localStorage.setItem("selectedStoryHighlightId", item.id);
+      localStorage.setItem("selectedStoryHighlightTitle", item.title);
+
+      window.location.href = "http://localhost:8081/storiesOfStoryHighlight";
     },
     validFirstName() {
       if (this.firstName.length < 2) {
