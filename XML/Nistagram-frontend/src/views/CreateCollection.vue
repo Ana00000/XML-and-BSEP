@@ -19,6 +19,30 @@
       </v-card-actions>
     </v-card>
     <div class="spacing" />
+
+    <v-container grid-list-lg>
+      <div class="spacingOne" />
+      <v-card-title class="justify-center">
+        <h1 class="display-1">Your Collections</h1>
+      </v-card-title>
+      <div class="spacingTwo" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in postCollections"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card class="mx-auto">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{ item.title }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
@@ -28,38 +52,46 @@ export default {
   data: () => ({
     title: "",
     postCollectionId: null,
+    postCollections: [],
   }),
+  mounted() {
+    this.init();
+  },
   methods: {
-    createCollection() {
-      if (!this.validTitle()) return;
-
+    init() {
       this.$http
         .get(
           "http://localhost:8084/find_all_post_collections_for_reg?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
-          for (var i = 0; i < response.data.length; i++) {
-            if (this.title == response.data[i].title) {
-              alert("You have already created collection with this name!");
-              return;
-            }
-          }
-          this.$http
-            .post("http://localhost:8084/post_collection/", {
-              title: this.title,
-              userID: localStorage.getItem("userId"),
-            })
-            .then((response) => {
-              this.postCollectionId = response.data;
-              alert("Successful creation of collection.");
-              this.title = "";
-            })
-            .catch((er) => {
-              console.log(er.response.data);
-            });
+          this.postCollections = response.data;
         })
         .catch(console.log);
+    },
+    createCollection() {
+      if (!this.validTitle()) return;
+
+      for (var i = 0; i < this.postCollections.length; i++) {
+        if (this.title == this.postCollections[i].title) {
+          alert("You have already created collection with this name!");
+          return;
+        }
+      }
+
+      this.$http
+        .post("http://localhost:8084/post_collection/", {
+          title: this.title,
+          userID: localStorage.getItem("userId"),
+        })
+        .then((response) => {
+          this.postCollectionId = response.data;
+          alert("Successful creation of collection.");
+          window.location.href = "http://localhost:8081/createCollection";
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
     },
     validTitle() {
       if (this.title.length < 2) {
