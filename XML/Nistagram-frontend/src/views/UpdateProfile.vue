@@ -114,6 +114,30 @@
         >
       </div>
       </v-container>
+
+      <v-container grid-list-lg>
+      <div class="spacingOne" />
+      <v-card-title class="justify-center">
+        <h1 class="display-1">My Highlighted Stories</h1>
+      </v-card-title>
+      <div class="spacingTwo" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in highlightedStories"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card class="mx-auto">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{ item.title }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
@@ -137,7 +161,8 @@ export default {
     isHiddenUpdate: true,
     isHiddenCancel: true,
     isReadOnly: true,
-    user: []
+    user: [],
+    highlightedStories: [],
   }),
   mounted() {
     this.init();
@@ -146,6 +171,16 @@ export default {
     init() {
       this.id = localStorage.getItem("userId");
       this.token = localStorage.getItem("token");
+
+      this.$http
+        .get(
+          "http://localhost:8086/find_all_story_highlights_for_user?id=" +
+            localStorage.getItem("userId")
+        )
+        .then((response) => {
+          this.highlightedStories = response.data;
+        })
+        .catch(console.log);
 
       this.$http
         .get("http://localhost:8080/find_user_by_id?id=" + this.id)
