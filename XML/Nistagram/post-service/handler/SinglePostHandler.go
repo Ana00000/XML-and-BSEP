@@ -480,3 +480,18 @@ func (handler *SinglePostHandler) CreatePostDTO(posts *model.SinglePost, content
 
 }
 
+// SEARCH TAGS FOR NOT REGISTERED USER
+func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWriter, r *http.Request) {
+
+	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
+	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
+	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
+
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
+
+	tagsJson, _ := json.Marshal(tags)
+	w.Write(tagsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
