@@ -153,7 +153,7 @@ export default {
               this.activities[i].user_id ==
                 localStorage.getItem("selectedUserId") &&
               (this.activities[i].liked_status == 1 ||
-              this.activities[i].liked_status == 2)
+                this.activities[i].liked_status == 2)
             ) {
               this.likeActivityId = this.activities[i].id;
               this.$http
@@ -208,6 +208,29 @@ export default {
             ) {
               alert("You have already disliked this post!");
               this.isHiddenRemoveDislike = false;
+              this.dislikeActivityId = this.activities[i].id;
+              return;
+            } else if (
+              this.activities[i].user_id ==
+                localStorage.getItem("selectedUserId") &&
+              (this.activities[i].liked_status == 0 ||
+                this.activities[i].liked_status == 2)
+            ) {
+              this.dislikeActivityId = this.activities[i].id;
+              this.$http
+                .post("http://localhost:8084/update_activity/", {
+                  id: this.dislikeActivityId,
+                  likedStatus: 1,
+                  IsFavorite: false,
+                })
+                .then((response) => {
+                  console.log(response);
+                  this.isHiddenRemoveDislike = false;
+                  alert("You have disliked this post.");
+                })
+                .catch((er) => {
+                  console.log(er.response.data);
+                });
               return;
             }
           }
@@ -374,6 +397,48 @@ export default {
           console.log(er.response.data);
         });
     },
+    removeDislike() {
+      this.$http
+        .get(
+          "http://localhost:8084/find_all_activities_for_post?id=" +
+            localStorage.getItem("selectedPostId")
+        )
+        .then((response) => {
+          this.activities = response.data;
+          for (var i = 0; i < this.activities.length; i++) {
+            if (
+              this.activities[i].user_id ==
+                localStorage.getItem("selectedUserId") &&
+              (this.activities[i].liked_status == 0 ||
+                this.activities[i].liked_status == 1 ||
+                this.activities[i].liked_status == 2)
+            ) {
+              this.dislikeActivityId = this.activities[i].id;
+            }
+          }
+        })
+        .catch(console.log);
+
+      if (this.dislikeActivityId == null) {
+        alert("You have not disliked this post.");
+        return;
+      }
+
+      this.$http
+        .post("http://localhost:8084/update_activity/", {
+          id: this.dislikeActivityId,
+          likedStatus: 2,
+          IsFavorite: false,
+        })
+        .then((response) => {
+          console.log(response);
+          this.isHiddenRemoveDislike = true;
+          alert("You have removed dislike for this post.");
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
   },
 };
 </script>
@@ -415,7 +480,7 @@ export default {
 }
 
 .removeDislikeButton {
-  width: 120px;
+  width: 150px;
 }
 
 .removeFavoriteButton {
