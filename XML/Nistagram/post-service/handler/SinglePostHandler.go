@@ -495,3 +495,17 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// SEARCH LOCATIONS FOR NOT REGISTERED USER
+func (handler *SinglePostHandler) FindAllLocationsForPublicPosts(w http.ResponseWriter, r *http.Request) {
+
+	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
+	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
+	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
+	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
+
+	locationsJson, _ := json.Marshal(locations)
+	w.Write(locationsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
