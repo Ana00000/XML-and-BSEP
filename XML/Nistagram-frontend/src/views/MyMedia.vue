@@ -12,7 +12,7 @@
       <div class="spacingTwo" />
       <v-layout row>
         <v-flex lg4 v-for="item in stories" :key="item.id" class="space-bottom">
-          <v-card class="mx-auto">
+          <v-card class="mx-auto" v-on:click="getMyStory(item)">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{
@@ -76,7 +76,7 @@
       <div class="spacingTwo" />
       <v-layout row>
         <v-flex lg4 v-for="item in posts" :key="item.id" class="space-bottom">
-          <v-card class="mx-auto" v-on:click="getPost(item)">
+          <v-card class="mx-auto" v-on:click="getMyPost(item)">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{
@@ -173,14 +173,22 @@ export default {
         })
         .catch(console.log);
     },
-    getPost(item) {
-      localStorage.setItem("selectedPostDescription", item.description);
-      localStorage.setItem("selectedPostTags", item.tags);
-      localStorage.setItem("selectedPostPath", item.path);
-      localStorage.setItem("selectedPostType", item.type);
+    getMyPost(item) {
+      localStorage.setItem("mySelectedPostDescription", item.description);
+      localStorage.setItem("mySelectedPostTags", item.tags);
+      localStorage.setItem("mySelectedPostPath", item.path);
+      localStorage.setItem("mySelectedPostType", item.type);
 
       window.location.href = "http://localhost:8081/postByIdWithoutActivity";
     },
+    getMyStory(item){
+      localStorage.setItem("mySelectedStoryDescription", item.description);
+      localStorage.setItem("mySelectedStoryTags", item.tags);
+      localStorage.setItem("mySelectedStoryPath", item.path);
+      localStorage.setItem("mySelectedStoryType", item.type);
+
+      window.location.href = "http://localhost:8081/storyByIdWithoutActivity";
+    }
   },
 };
 </script>
