@@ -3,8 +3,8 @@
 
         <div class="spacingOne" />
         <div class="title">
-          <h1>You can find tags here!</h1>
-          <div class="welcoming"> Search tags</div>
+          <h1>You can find locations here!</h1>
+          <div class="welcoming"> Search locations</div>
         </div>
         <div class="spacingTwo" />
 
@@ -26,19 +26,19 @@
           <v-list two-line>
             <v-list-item-group
               active-class="indigo--text"
-              v-model="selectedTag"
+              v-model="selectedLocation"
               single
             >
-              <template v-for="(tag, id) in tags">
+              <template v-for="(location, id) in locations">
                 <v-list-item
-                  :key="tag.id"
-                  :value="tag"
-                  v-on:click="redirectToSelectedTag"
+                  :key="location.id"
+                  :value="location"
+                  v-on:click="redirectToSelectedLocation"
                 >
                   <template>
                     <v-list-item-content>
                       <v-list-item-subtitle
-                        v-text="'TAG NAME: ' + tag.name"
+                        v-text="'LOCATION CITY: ' + location.city"
                         class="containerDiv"
                       ></v-list-item-subtitle>
                       <v-list-item-subtitle
@@ -49,7 +49,7 @@
                   </template>
                 </v-list-item>
                 <v-divider
-                  v-if="`A-${id}` < tags.length - 1"
+                  v-if="`A-${id}` < locations.length - 1"
                   :key="`A-${id}`"
                 />
               </template>
@@ -63,12 +63,12 @@
 
 <script>
 export default {
-  name: "SearchTagsNotRegistered",
+  name: "SearchLocationsNotRegistered",
   data: () => ({
     searchInput: "",
-    tags: [],
-    tagsCopy: [],
-    selectedTag: null,
+    locations: [],
+    locationsCopy: [],
+    selectedLocation: null,
   }),
   mounted() {
     this.init();
@@ -76,31 +76,31 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8084/find_all_tags_for_public_posts/")
+        .get("http://localhost:8084/find_all_locations_for_public_posts/")
         .then((resp) => {
-          this.tags = resp.data;
-          this.tagsCopy = resp.data;
+          this.locations = resp.data;
+          this.locationsCopy = resp.data;
         })
         .catch(console.log);
     },
 
     searchQuery() {
       var resultOfSearch = [];
-      for (var i = 0; i < this.tagsCopy.length; i++) {
+      for (var i = 0; i < this.locationsCopy.length; i++) {
         if (
-          this.tagsCopy[i].name
+          this.locationsCopy[i].city
             .toLowerCase()
             .includes(this.searchInput.toLowerCase())
         )
-          resultOfSearch.push(this.tagsCopy[i]);
+          resultOfSearch.push(this.locationsCopy[i]);
       }
-      this.tags = resultOfSearch;
+      this.locations = resultOfSearch;
     },
-    redirectToSelectedTag() {
-      localStorage.setItem("selectedTagName", this.selectedTag.name);
-      localStorage.setItem("selectedTagId", this.selectedTag.id);
+    redirectToSelectedLocation() {
+      localStorage.setItem("selectedLocationCity", this.selectedLocation.city);
+      localStorage.setItem("selectedLocationId", this.selectedLocation.id);
       window.location.href =
-        "http://localhost:8081/selectedTagForNotRegistered";
+        "http://localhost:8081/selectedLocationForNotRegistered";
     },
   },
 };
@@ -118,7 +118,7 @@ export default {
 .template {
     min-height: 1000px;
 }
-.allTags {
+.allLocations {
     position: absolute;
     right: 500px;
     top: 490px;
