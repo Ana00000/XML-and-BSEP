@@ -28,6 +28,7 @@ func (repo *ClassicUserRepository) FindById(id uuid.UUID) *model.ClassicUser {
 	return user
 }
 
+
 func (repo *ClassicUserRepository) UpdateClassicUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
 	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ? and is_deleted = ?", userId, false).Update("is_confirmed", isConfirmed)
 	fmt.Println(result.RowsAffected)
@@ -126,4 +127,28 @@ func (repo *ClassicUserRepository) CheckIfUserValid(userId uuid.UUID) bool {
 	}
 
 	return false
+}
+
+func (repo *ClassicUserRepository) FindSpecificUser(id uuid.UUID) model.ClassicUser {
+	var allUsers = repo.FindAllValidUsers()
+	var myUser model.ClassicUser
+
+	for i:=0; i<len(allUsers);i++{
+		if allUsers[i].ID == id{
+			myUser =  allUsers[i]
+		}
+ 	}
+
+ 	return myUser
+}
+
+func (repo *ClassicUserRepository) FindAllUsersByFollowingIds(userIds []model.ClassicUserFollowings) []model.ClassicUser {
+
+	var users []model.ClassicUser
+
+	for i:=0;i<len(userIds);i++{
+		user := repo.FindSpecificUser(userIds[i].FollowingUserId)
+		users = append(users, user)
+	}
+	return users
 }

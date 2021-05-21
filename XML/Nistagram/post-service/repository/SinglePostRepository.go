@@ -131,3 +131,17 @@ func (repo *SinglePostRepository) FindAllPublicPosts(posts []model.SinglePost, a
 
 	return allPublicPostsForList
 }
+
+func (repo *SinglePostRepository) FindAllPostsForUsers(users []userModel.ClassicUser) []model.SinglePost {
+	var allPosts = repo.FindAllPosts()
+	var allFollowingPosts []model.SinglePost
+
+	for i:= 0; i< len(allPosts); i++{
+		for j := 0; j < len(users); j++{
+			if (allPosts[i].UserID == users[j].ID) && (allPosts[i].IsDeleted == false){
+				allFollowingPosts = append(allFollowingPosts, allPosts[i])
+			}
+		}
+	}
+	return allFollowingPosts
+}

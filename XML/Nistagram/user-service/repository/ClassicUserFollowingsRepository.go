@@ -93,3 +93,25 @@ func (repo *ClassicUserFollowingsRepository) CheckIfFollowingPostStory(following
 	}
 	return true
 }
+
+func (repo * ClassicUserFollowingsRepository) FindAllUserWhoFollow(userId uuid.UUID) []model.ClassicUserFollowings{
+	var followings []model.ClassicUserFollowings
+	repo.Database.Select("*").Where("following_user_id = ?", userId).Find(&followings)
+	return followings
+}
+
+func (repo * ClassicUserFollowingsRepository) FindAllUserWhoFollowUserId(userId uuid.UUID, allValidUsers []model.ClassicUser) []model.ClassicUserFollowings{
+	var followings  = repo.FindAllUserWhoFollow(userId)
+	var validFollowings []model.ClassicUserFollowings
+
+	for i := 0; i < len(allValidUsers); i++{
+		for j :=0; j < len(followings); j++{
+			if allValidUsers[i].ID == followings[j].FollowingUserId{
+				validFollowings = append(validFollowings, followings[j])
+			}
+		}
+	}
+
+	return validFollowings
+
+}

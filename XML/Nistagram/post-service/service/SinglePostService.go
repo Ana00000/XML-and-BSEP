@@ -79,3 +79,11 @@ func (service *SinglePostService) FindAllPublicPosts(postsList []model.SinglePos
 	}
 	return nil
 }
+
+func (service *SinglePostService) FindAllPostsForUsers(users []userModel.ClassicUser) []model.SinglePost {
+	posts := service.Repo.FindAllFollowingPosts(users)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
