@@ -1,9 +1,13 @@
 <template>
   <div>
+    <div class="spacingOne" />
+      <div class="title">
+        <h1>My Media</h1>
+      </div>
     <v-container grid-list-lg>
       <div class="spacingOne" />
       <div class="title">
-        <h1>Stories</h1>
+        <h2>Stories</h2>
       </div>
       <div class="spacingTwo" />
       <v-layout row>
@@ -67,7 +71,7 @@
     <v-container grid-list-lg>
       <div class="spacingOne" />
       <div class="title">
-        <h1>Posts</h1>
+        <h2>Posts</h2>
       </div>
       <div class="spacingTwo" />
       <v-layout row>
@@ -150,7 +154,7 @@ export default {
     getPosts() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_posts_for_reg?id=" +
+          "http://localhost:8084/find_all_posts_for_logged_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -161,7 +165,7 @@ export default {
     getStories() {
       this.$http
         .get(
-          "http://localhost:8086/find_all_stories_for_reg?id=" +
+          "http://localhost:8086/find_all_stories_for_logged_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
