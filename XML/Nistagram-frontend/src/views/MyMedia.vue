@@ -174,18 +174,14 @@ export default {
         .catch(console.log);
     },
     getMyPost(item) {
-      localStorage.setItem("mySelectedPostDescription", item.description);
-      localStorage.setItem("mySelectedPostTags", item.tags);
-      localStorage.setItem("mySelectedPostPath", item.path);
-      localStorage.setItem("mySelectedPostType", item.type);
+      localStorage.setItem("mySelectedUserId", item.user_id);
+      localStorage.setItem("mySelectedPostId", item.post_id);
 
       window.location.href = "http://localhost:8081/postByIdWithoutActivity";
     },
     getMyStory(item){
-      localStorage.setItem("mySelectedStoryDescription", item.description);
-      localStorage.setItem("mySelectedStoryTags", item.tags);
-      localStorage.setItem("mySelectedStoryPath", item.path);
-      localStorage.setItem("mySelectedStoryType", item.type);
+      localStorage.setItem("mySelectedUserId", item.user_id);
+      localStorage.setItem("mySelectedPostId", item.story_id);
 
       window.location.href = "http://localhost:8081/storyByIdWithoutActivity";
     }

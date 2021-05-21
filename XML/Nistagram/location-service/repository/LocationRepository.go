@@ -57,7 +57,6 @@ func (repo *LocationRepository) FindAllLocationsForPost(post *postsModel.SingleP
 			}
 		}
 
-
 	return locations
 }
 

@@ -394,6 +394,7 @@ func (handler *SinglePostHandler) CreatePostsDTOList(posts []model.SinglePost, c
 		postDTO.PostId = posts[i].ID
 		postDTO.Description = posts[i].Description
 		postDTO.CreationDate = posts[i].CreationDate
+		postDTO.UserId = posts[i].UserID
 
 		for j := 0; j < len(contents); j++ {
 			if contents[j].SinglePostId == posts[i].ID {
