@@ -131,11 +131,6 @@ const routes = [
     component: () => import('../views/PublicStoryAlbumsAll.vue')
   },
   {
-    path: '/highlightedStories',
-    name: 'HighlightedStories',
-    component: () => import('../views/HighlightedStories.vue')
-  },
-  {
     path: '/reactedPosts',
     name: 'ReactedPosts',
     component: () => import('../views/ReactedPosts.vue')
