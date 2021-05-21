@@ -31,7 +31,9 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Post{}, &model.Activity{}, &model.Comment{}, &model.PostAlbum{}, &model.SinglePost{}, &model.PostCollection{})
+	db.AutoMigrate(&model.Post{}, &model.Activity{}, &model.Comment{},
+	               &model.PostAlbum{}, &model.SinglePost{}, &model.PostCollection{},
+	               &model.PostCollectionPosts{})
 	return db
 }
 

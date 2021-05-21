@@ -102,6 +102,30 @@
     >
       Remove Favorite
     </v-btn>
+
+    <v-container grid-list-lg v-if="!isHiddenCollections">
+      <div class="spacingOne" />
+      <v-card-title class="justify-center">
+        <h1 class="display-1">My Collections</h1>
+      </v-card-title>
+      <div class="spacingTwo" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in postCollections"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card class="mx-auto">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{ item.title }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
@@ -118,12 +142,24 @@ export default {
     isHiddenRemoveDislike: true,
     isHiddenRemoveFavorite: true,
     likeabilityStatus: null,
+    isHiddenCollections: true,
+    postCollections: [],
   }),
   mounted() {
     this.init();
   },
   methods: {
     init() {
+      this.$http
+        .get(
+          "http://localhost:8084/find_all_post_collections_for_reg?id=" +
+            localStorage.getItem("userId")
+        )
+        .then((response) => {
+          this.postCollections = response.data;
+        })
+        .catch(console.log);
+
       this.$http
         .get(
           "http://localhost:8084/find_selected_post_for_logged_user?id=" +
@@ -276,7 +312,10 @@ export default {
                 localStorage.getItem("selectedUserId") &&
               this.activities[i].is_favorite == true
             ) {
-              alert("You have already favorited this post!");
+              alert(
+                "You have already favorited this post!You can add this post to your collections now."
+              );
+              this.isHiddenCollections = false;
               this.isHiddenRemoveFavorite = false;
               this.favoriteActivityId = this.activities[i].id;
               this.likeabilityStatus = this.activities[i].liked_status;
@@ -297,7 +336,10 @@ export default {
                 .then((response) => {
                   console.log(response);
                   this.isHiddenRemoveFavorite = false;
-                  alert("You have favorited this post.");
+                  alert(
+                    "You have favorited this post.You can add this post to your collections now."
+                  );
+                  this.isHiddenCollections = false;
                 })
                 .catch((er) => {
                   console.log(er.response.data);
@@ -317,7 +359,10 @@ export default {
             .then((response) => {
               this.favoriteActivityId = response.data;
               this.isHiddenRemoveFavorite = false;
-              alert("You have favorited this post.");
+              alert(
+                "You have favorited this post.You can add this post to your collections now."
+              );
+              this.isHiddenCollections = false;
             })
             .catch((er) => {
               console.log(er.response.data);
@@ -363,6 +408,7 @@ export default {
         .then((response) => {
           console.log(response);
           this.isHiddenRemoveFavorite = true;
+          this.isHiddenCollections = true;
           alert("You have removed favorite for this post.");
         })
         .catch((er) => {

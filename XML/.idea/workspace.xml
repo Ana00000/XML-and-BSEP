@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateCollection.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateCollection.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/MyCollections.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/MyCollections.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
