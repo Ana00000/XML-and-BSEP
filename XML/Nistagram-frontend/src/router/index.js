@@ -164,6 +164,26 @@ const routes = [
     path: '/addCloseFriends',
     name: 'AddCloseFriends',
     component: () => import('../views/AddCloseFriends.vue')
+  },
+  {
+    path: '/searchTagsNotReg',
+    name: 'SearchTagsNotReg',
+    component: () => import('../views/SearchTagsNotReg.vue')
+  },
+  {
+    path: '/searchTagsReg',
+    name: 'SearchTagsReg',
+    component: () => import('../views/SearchTagsReg.vue')
+  },
+  {
+    path: '/searchLocationsNotReg',
+    name: 'SearchLocationsNotReg',
+    component: () => import('../views/SearchLocationsNotReg.vue')
+  },
+  {
+    path: '/searchLocationsReg',
+    name: 'SearchLocationsReg',
+    component: () => import('../views/SearchLocationsReg.vue')
   }
 ]
 
