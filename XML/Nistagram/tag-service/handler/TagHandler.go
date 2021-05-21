@@ -51,6 +51,9 @@ func (handler *TagHandler) CreateTag(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	tagIDJson, _ := json.Marshal(tag.ID)
+	w.Write(tagIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

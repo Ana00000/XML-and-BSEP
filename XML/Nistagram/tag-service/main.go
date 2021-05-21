@@ -26,7 +26,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Tag{}, &model.StoryTagStories{},
+	db.AutoMigrate(&model.Tag{}, &model.UserTag{}, &model.StoryTagStories{},
 				   &model.CommentTagComments{}, &model.PostTagPosts{},
 				   &model.PostAlbumTagPostAlbums{}, &model.StoryAlbumTagStoryAlbums{})
 	return db
@@ -60,8 +60,16 @@ func initTagRepo(database *gorm.DB) *repository.TagRepository{
 	return &repository.TagRepository { Database: database }
 }
 
+func initUserTagRepo(database *gorm.DB) *repository.UserTagRepository{
+	return &repository.UserTagRepository { Database: database }
+}
+
 func initTagServices(repo *repository.TagRepository) *service.TagService{
 	return &service.TagService { Repo: repo }
+}
+
+func initUserTagServices(repo *repository.UserTagRepository) *service.UserTagService{
+	return &service.UserTagService { Repo: repo }
 }
 
 func initPostTagPostsServices(repo *repository.PostTagPostsRepository) *service.PostTagPostsService{
@@ -76,12 +84,9 @@ func initStoryTagStoriesServices(repo *repository.StoryTagStoriesRepository) *se
 	return &service.StoryTagStoriesService { Repo: repo }
 }
 
-
 func initPostAlbumTagPostAlbumsServices(repo *repository.PostAlbumTagPostAlbumsRepository) *service.PostAlbumTagPostAlbumsService{
 	return &service.PostAlbumTagPostAlbumsService { Repo: repo }
 }
-
-
 
 func initStoryAlbumTagStoryAlbumsServices(repo *repository.StoryAlbumTagStoryAlbumsRepository) *service.StoryAlbumTagStoryAlbumsService{
 	return &service.StoryAlbumTagStoryAlbumsService { Repo: repo }
@@ -91,6 +96,12 @@ func initTagHandler(service *service.TagService) *handler.TagHandler{
 	return &handler.TagHandler { Service: service }
 }
 
+func initUserTagHandler(service *service.UserTagService, tagService * service.TagService) *handler.UserTagHandler{
+	return &handler.UserTagHandler {
+		Service: service,
+		TagService: tagService,
+	}
+}
 
 func initStoryTagStoriesHandler(service *service.StoryTagStoriesService) *handler.StoryTagStoriesHandler{
 	return &handler.StoryTagStoriesHandler { Service: service }
@@ -115,7 +126,7 @@ func initStoryAlbumTagStoryAlbumsHandler(service *service.StoryAlbumTagStoryAlbu
 	return &handler.StoryAlbumTagStoryAlbumsHandler { Service: service }
 }
 
-func handleFunc(handlerTag *handler.TagHandler, handlerCommentTagComments *handler.CommentTagCommentsHandler,
+func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagHandler, handlerCommentTagComments *handler.CommentTagCommentsHandler,
 	handlerPostTagPosts *handler.PostTagPostsHandler, handlerStoryTagStories *handler.StoryTagStoriesHandler,  handlerPostAlbumTagPostAlbums *handler.PostAlbumTagPostAlbumsHandler, handlerStoryAlbumTagStoryAlbums *handler.StoryAlbumTagStoryAlbumsHandler){
 
 
@@ -129,6 +140,7 @@ func handleFunc(handlerTag *handler.TagHandler, handlerCommentTagComments *handl
 	)
 
 	router.HandleFunc("/tag/", handlerTag.CreateTag).Methods("POST")
+	router.HandleFunc("/user_tag/", handlerUserTag.CreateUserTag).Methods("POST")
 	router.HandleFunc("/comment_tag_comments/", handlerCommentTagComments.CreateCommentTagComments).Methods("POST")
 	router.HandleFunc("/post_tag_posts/", handlerPostTagPosts.CreatePostTagPosts).Methods("POST")
 	router.HandleFunc("/story_tag_stories/", handlerStoryTagStories.CreateStoryTagStories).Methods("POST")
@@ -146,6 +158,10 @@ func main() {
 	repoTag := initTagRepo(database)
 	serviceTag := initTagServices(repoTag)
 	handlerTag := initTagHandler(serviceTag)
+
+	repoUserTag := initUserTagRepo(database)
+	serviceUserTag := initUserTagServices(repoUserTag)
+	handlerUserTag := initUserTagHandler(serviceUserTag, serviceTag)
 
 	repoPostTagPosts := initPostTagPostsRepo(database)
 	servicePostTagPosts := initPostTagPostsServices(repoPostTagPosts)
@@ -169,5 +185,5 @@ func main() {
 	serviceStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsServices(repoStoryAlbumTagStoryAlbums)
 	handlerStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsHandler(serviceStoryAlbumTagStoryAlbums)
 
-	handleFunc(handlerTag, handlerCommentTagComments,handlerPostTagPosts, handlerStoryTagStories, handlerPostAlbumTagPostAlbums, handlerStoryAlbumTagStoryAlbums)
+	handleFunc(handlerTag, handlerUserTag, handlerCommentTagComments,handlerPostTagPosts, handlerStoryTagStories, handlerPostAlbumTagPostAlbums, handlerStoryAlbumTagStoryAlbums)
 }

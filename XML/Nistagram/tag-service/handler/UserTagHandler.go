@@ -15,7 +15,7 @@ type UserTagHandler struct {
 	TagService *service.TagService
 }
 
-func (handler *UserTagHandler) CreateUserTagHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *UserTagHandler) CreateUserTag(w http.ResponseWriter, r *http.Request) {
 	var userTagDTO dto.UserTagDTO
 	if err := json.NewDecoder(r.Body).Decode(&userTagDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest) // 400
