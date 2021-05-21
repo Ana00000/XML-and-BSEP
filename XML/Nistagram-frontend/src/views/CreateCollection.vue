@@ -15,12 +15,7 @@
         </v-form>
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
-        <v-btn
-          color="info mb-5"
-          v-on:click="createCollection"
-        >
-          Create
-        </v-btn>
+        <v-btn color="info mb-5" v-on:click="createCollection"> Create </v-btn>
       </v-card-actions>
     </v-card>
     <div class="spacing" />
@@ -39,17 +34,32 @@ export default {
       if (!this.validTitle()) return;
 
       this.$http
-        .post("http://localhost:8084/post_collection/", {
-          title: this.title,
-          userID: localStorage.getItem("userId"),
-        })
+        .get(
+          "http://localhost:8084/find_all_post_collections_for_reg?id=" +
+            localStorage.getItem("userId")
+        )
         .then((response) => {
-          this.postCollectionId = response.data;
-          alert("Successful creation of collection.");
+          for (var i = 0; i < response.data.length; i++) {
+            if (this.title == response.data[i].title) {
+              alert("You have already created collection with this name!");
+              return;
+            }
+          }
+          this.$http
+            .post("http://localhost:8084/post_collection/", {
+              title: this.title,
+              userID: localStorage.getItem("userId"),
+            })
+            .then((response) => {
+              this.postCollectionId = response.data;
+              alert("Successful creation of collection.");
+              this.title = "";
+            })
+            .catch((er) => {
+              console.log(er.response.data);
+            });
         })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+        .catch(console.log);
     },
     validTitle() {
       if (this.title.length < 2) {
