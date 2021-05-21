@@ -25,12 +25,6 @@ func (service *SingleStoryService) FindByID(ID uuid.UUID) *model.SingleStory {
 	return story
 }
 
-
-
-
-
-// doneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-
 // NOT REGISTERED
 func (service *SingleStoryService) FindAllStoriesForUserNotReg(ID uuid.UUID) []model.SingleStory {
 	stories := service.Repo.FindAllStoriesForUserNotReg(ID)
@@ -85,6 +79,15 @@ func (service *SingleStoryService) FindAllStoriesForUserPublic(ID uuid.UUID) []m
 // FIND ALL NOT DELETED VALID STORIES THAT LOGGED IN USER FOLLOWS
 func (service *SingleStoryService) FindAllFollowingStories(followings []userModel.ClassicUserFollowings) []model.SingleStory {
 	stories := service.Repo.FindAllFollowingStories(followings)
+	if stories != nil {
+		return stories
+	}
+	return nil
+}
+
+// FIND ALL NOT DELETED STORIES FROM MY LOGGED IN USER (WITH EXPIRED STORIES)
+func (service *SingleStoryService) FindAllStoriesForLoggedUser(userId uuid.UUID) []model.SingleStory {
+	stories := service.Repo.FindAllStoriesForLoggedUser(userId)
 	if stories != nil {
 		return stories
 	}

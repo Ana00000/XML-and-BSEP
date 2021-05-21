@@ -193,8 +193,9 @@ func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.S
 	router.HandleFunc("/find_all_public_stories_reg", handlerSingleStory.FindAllPublicStoriesRegisteredUser).Methods("GET") // tab PUBLIC STORIES za reg usera - prikazuju se svi PUBLIC, NOT EXPIRED I OD PUBLIC USERA KOJI NISU ON!
 	router.HandleFunc("/find_all_stories_for_reg", handlerSingleStory.FindAllStoriesForUserRegisteredUser).Methods("GET") // metoda koja se poziva kada registrovani user udje na profil nekog usera
 	router.HandleFunc("/find_all_following_stories", handlerSingleStory.FindAllFollowingStories).Methods("GET") // tab FOLLOWING stories znaci svi storiji koji su PUBLIC I ALL FRIENDS , CLOSE FRIENDS storiji za one usere kojima je ulogovani user close friend
-	router.HandleFunc("/find_selected_story_reg", handlerSingleStory.FindSelectedStoryByIdForRegisteredUsers).Methods("GET")//metoda koju ulogovani user poziva kada hoce da otvori svoj stori (kako bi ga dodao u HIGHLIGHTS)
 
+	router.HandleFunc("/find_selected_story_reg", handlerSingleStory.FindSelectedStoryByIdForRegisteredUsers).Methods("GET")//metoda koju ulogovani user poziva kada hoce da otvori svoj stori (kako bi ga dodao u HIGHLIGHTS)
+	router.HandleFunc("/find_all_stories_for_logged_user", handlerSingleStory.FindAllStoriesForLoggedUser).Methods("GET") // metoda koju ulogovani user poziva kada hoce da vidi sve svoje storije (znaci i expired samo da nisu deleted)
 
 	log.Fatal(http.ListenAndServe(":8086", cors(router)))
 

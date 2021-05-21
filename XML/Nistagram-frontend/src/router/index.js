@@ -41,6 +41,11 @@ const routes = [
     component: () => import('../views/UpdateProfile.vue')
   },
   {
+    path: '/myMedia',
+    name: 'MyMedia',
+    component: () => import('../views/MyMedia.vue')
+  },
+  {
     path: '/searchUsers',
     name: 'SearchUsers',
     component: () => import('../views/SearchUsers.vue')
