@@ -355,6 +355,12 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.Respo
 		return
 	}
 
+	if post.IsDeleted == true{
+		fmt.Println("Deleted post")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
 	if post.UserID != uuid.MustParse(logId){
 			//POSTMAN CHECK
 			fmt.Println("Post doesnt belong to user")

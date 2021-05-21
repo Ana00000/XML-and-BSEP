@@ -85,10 +85,6 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 	w.Header().Set("Content-Type", "application/json")
 }
 
-
-
-//doneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-
 // NEREGISTROVANI
 
 //// tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
@@ -291,7 +287,6 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 }
 
 // FIND SELECTED STORY BY ID (ONLY IF NOT DELETED)!
-
 func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
@@ -301,12 +296,14 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 	if story == nil {
 		fmt.Println("User not found")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	if story.IsDeleted == true{
 
 		fmt.Println("Deleted story")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 
 	}
 
@@ -316,6 +313,7 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 
 		fmt.Println("Unavailable story to this user")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 
 	}
 
@@ -331,6 +329,24 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
+
+}
+
+
+// all stories (EXCEPT DELETED) for my current logged in user (expired and not expired, public, all_friend, close friends)
+func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var stories = handler.SingleStoryService.FindAllStoriesForLoggedUser(uuid.MustParse(id))
+	var contents = handler.StoryContentService.FindAllContentsForStories(stories)
+	var locations = handler.LocationService.FindAllLocationsForStories(stories)
+	var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
+	var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
+
+	storiesJson, _ := json.Marshal(storiesDTOS)
+	w.Write(storiesJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 
 }
 
