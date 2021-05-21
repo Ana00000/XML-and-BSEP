@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"gorm.io/gorm"
@@ -51,4 +52,20 @@ func (repo *PostTagPostsRepository) FindAllTagsForPost(post *postsModel.SinglePo
 
 	return tags
 }
+
+func (repo *PostTagPostsRepository) FindAllPostIdsWithTagId(tagId uuid.UUID) []uuid.UUID {
+	var postIds []uuid.UUID
+	var allPosts = repo.FindAll()
+
+	for i:=0; i <len(allPosts);i++{
+		if allPosts[i].PostTagId == tagId{
+			postIds = append(postIds, allPosts[i].PostId)
+		}
+	}
+
+	return postIds
+}
+
+
+
 

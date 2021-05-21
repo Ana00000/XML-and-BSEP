@@ -56,3 +56,7 @@ func (service *LocationService) FindAllLocationsForStory(story *storyModel.Singl
 	}
 	return nil
 }
+
+func (service *LocationService) FindLocationIdByLocationString(locationString string) model.Location {
+	return service.Repo.FindLocationIdByLocationString(locationString)
+}

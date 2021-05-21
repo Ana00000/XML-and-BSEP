@@ -25,3 +25,19 @@ func (repo *TagRepository) FindTagNameById(ID uuid.UUID) string{
 	}
 	return tag.Name
 }
+
+func (repo *TagRepository) FindAll() []model.Tag {
+	var tags []model.Tag
+	repo.Database.Select("*").Find(&tags)
+	return tags
+}
+
+
+//FindAllPostsByTagName
+func (repo *TagRepository) FindTagIdByTagName(tagName string) *model.Tag {
+	tag := &model.Tag{}
+	if repo.Database.First(&tag, "name = ?", tagName).RowsAffected == 0 {
+		return nil
+	}
+	return tag
+}

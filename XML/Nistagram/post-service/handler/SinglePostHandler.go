@@ -509,3 +509,45 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicPosts(w http.Response
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// FIND ALL PUBLIC NOT DELETED POSTS WITH TAG
+func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *http.Request) {
+
+	tagName := r.URL.Query().Get("tagName") //tag id
+
+	var tagsId = handler.TagService.FindTagIdByTagName(tagName)
+	var postIds = handler.PostTagPostsService.FindAllPostIdsWithTagId(tagsId.ID)
+	var posts = handler.SinglePostService.FindAllPostsByIds(postIds)
+
+	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
+	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+
+	var postDTO = handler.CreatePostsDTOList(posts,contents,locations,tags)
+
+	postsJson, _ := json.Marshal(postDTO)
+	w.Write(postsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+// FIND ALL PUBLIC NOT DELETED POSTS WITH LOCATION
+func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter, r *http.Request) {
+
+	//county,city,streetName,streetNumber
+	locationString := r.URL.Query().Get("locationString")
+
+	var location = handler.LocationService.FindLocationIdByLocationString(locationString)
+	var posts = handler.SinglePostService.FindAllPostIdsWithLocationId(location.ID)
+
+	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
+	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+
+	var postDTO = handler.CreatePostsDTOList(posts,contents,locations,tags)
+
+	postsJson, _ := json.Marshal(postDTO)
+	w.Write(postsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+

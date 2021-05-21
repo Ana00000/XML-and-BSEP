@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
@@ -34,5 +35,14 @@ func (service *PostTagPostsService) FindAllTagsForPost(post *postsModel.SinglePo
 	}
 	return nil
 }
+
+func (service *PostTagPostsService) FindAllPostIdsWithTagId(tagId uuid.UUID) []uuid.UUID {
+	postIds := service.Repo.FindAllPostIdsWithTagId(tagId)
+	if postIds != nil {
+		return postIds
+	}
+	return nil
+}
+
 
 

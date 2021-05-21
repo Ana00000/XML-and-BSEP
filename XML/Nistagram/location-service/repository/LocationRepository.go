@@ -7,6 +7,7 @@ import (
 	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type LocationRepository struct {
@@ -88,4 +89,27 @@ func (repo *LocationRepository) FindAllLocationsForStory(story *storyModel.Singl
 
 
 	return locations
+}
+
+func (repo *LocationRepository) FindLocationIdByLocationString(locationString string) model.Location {
+	var locationStringParts = strings.Split(locationString, ",")
+
+	var country = locationStringParts[0]
+	var city = locationStringParts[1]
+	var streetName = locationStringParts[2]
+	var streetNumber = locationStringParts[3]
+
+
+	var location   = model.Location{}
+
+	var allLocations = repo.FindAll()
+
+	for i:=0; i<len(allLocations);i++{
+		if allLocations[i].Country == country && allLocations[i].City == city && allLocations[i].StreetName == streetName && allLocations[i].StreetNumber == streetNumber{
+			location =  allLocations[i]
+		}
+	}
+
+	return location
+
 }

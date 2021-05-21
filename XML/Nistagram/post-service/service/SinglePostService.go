@@ -47,3 +47,20 @@ func (service *SinglePostService) FindAllPublicPostsNotRegisteredUser(allValidUs
 	}
 	return nil
 }
+
+func (service *SinglePostService) FindAllPostsByIds(postsIds []uuid.UUID) []model.SinglePost {
+	posts := service.Repo.FindAllPostsByIds(postsIds)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
+
+func (service *SinglePostService) FindAllPostIdsWithLocationId(locationId uuid.UUID) []model.SinglePost {
+	posts := service.Repo.FindAllPostIdsWithLocationId(locationId)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
+

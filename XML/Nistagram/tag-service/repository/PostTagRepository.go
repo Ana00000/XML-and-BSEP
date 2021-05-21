@@ -15,3 +15,5 @@ func (repo * PostTagRepository) CreatePostTag(postTag *model.PostTag) error {
 	fmt.Print(result)
 	return nil
 }
+
+

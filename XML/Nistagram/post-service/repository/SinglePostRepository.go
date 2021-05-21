@@ -69,3 +69,33 @@ func (repo *SinglePostRepository) FindAllPublicPostsNotRegisteredUser(allValidUs
 
 	return allPublicPosts
 }
+
+//FindAllPostsByIds
+func (repo *SinglePostRepository) FindAllPostsByIds(postsIds []uuid.UUID) []model.SinglePost {
+	var allPosts = repo.FindAllPosts()
+	var allTagPosts []model.SinglePost
+
+	for i:=0; i<len(allPosts);i++{
+		for j:=0;j<len(postsIds);j++{
+			if allPosts[i].ID == postsIds[j]{
+				allTagPosts = append(allTagPosts, allPosts[i])
+			}
+		}
+	}
+
+	return allTagPosts
+}
+
+//FindAllPostIdsWithLocationId
+func (repo *SinglePostRepository) FindAllPostIdsWithLocationId(locationId uuid.UUID) []model.SinglePost {
+	var allPosts = repo.FindAllPosts()
+	var allPostsWithLocation []model.SinglePost
+
+	for i:=0; i<len(allPosts);i++{
+		if allPosts[i].LocationId == locationId{
+			allPostsWithLocation = append(allPostsWithLocation, allPosts[i])
+		}
+	}
+
+	return allPostsWithLocation
+}
