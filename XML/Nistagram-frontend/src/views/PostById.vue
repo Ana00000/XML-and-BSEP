@@ -67,12 +67,6 @@
     <v-btn color="info mb-5" v-on:click="likePost" class="likeButton">
       Like
     </v-btn>
-    <v-btn color="info mb-5" v-on:click="dislikePost" class="dislikeButton">
-      Dislike
-    </v-btn>
-    <v-btn color="info mb-5" v-on:click="favoritePost" class="favoriteButton">
-      Favorite
-    </v-btn>
 
     <v-btn
       color="info mb-5"
@@ -82,6 +76,11 @@
     >
       Remove like
     </v-btn>
+
+    <v-btn color="info mb-5" v-on:click="dislikePost" class="dislikeButton">
+      Dislike
+    </v-btn>
+
     <v-btn
       color="info mb-5"
       v-on:click="removeDislike"
@@ -90,6 +89,11 @@
     >
       Remove dislike
     </v-btn>
+
+    <v-btn color="info mb-5" v-on:click="favoritePost" class="favoriteButton">
+      Favorite
+    </v-btn>
+
     <v-btn
       color="info mb-5"
       v-on:click="removeFavorite"
@@ -98,6 +102,7 @@
     >
       Remove Favorite
     </v-btn>
+
   </div>
 </template>
 
@@ -462,29 +467,31 @@ export default {
 
 .likeButton {
   width: 120px;
-  margin-left: 30%;
+  margin-left: 20%;
+}
+
+.removeLikeButton {
+  width: 150px;
+  margin-left: 3%;
 }
 
 .dislikeButton {
   width: 120px;
-  margin-left: 10%;
+  margin-left: 3%;
+}
+
+.removeDislikeButton {
+  width: 160px;
+  margin-left: 3%;
 }
 
 .favoriteButton {
   width: 120px;
-  margin-left: 10%;
-}
-
-.removeLikeButton {
-  width: 120px;
-}
-
-.removeDislikeButton {
-  width: 150px;
+  margin-left: 3%;
 }
 
 .removeFavoriteButton {
-  width: 200px;
-  margin-left: 1%;
+  width: 190px;
+  margin-left: 3%;
 }
 </style>
