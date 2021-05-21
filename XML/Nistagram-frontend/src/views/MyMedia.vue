@@ -136,7 +136,7 @@
 
 <script>
 export default {
-  name: "SelectedUser",
+  name: "MyMedia",
   data: () => ({
     posts: [],
     stories: [],
