@@ -46,9 +46,19 @@ const routes = [
     component: () => import('../views/SearchUsers.vue')
   },
   {
+    path: '/searchUsersForNotRegistered',
+    name: 'SearchUsersForNotRegistered',
+    component: () => import('../views/SearchUsersForNotRegistered.vue')
+  },
+  {
     path: '/selectedUser',
     name: 'SelectedUser',
     component: () => import('../views/SelectedUser.vue')
+  },
+  {
+    path: '/selectedUserForNotRegistered',
+    name: 'SelectedUserForNotRegistered',
+    component: () => import('../views/SelectedUserForNotRegistered.vue')
   },
   {
     path: '/createPost',
@@ -71,14 +81,44 @@ const routes = [
     component: () => import('../views/CreateStoryAlbum.vue')
   },
   {
-    path: '/posts',
-    name: 'Posts',
-    component: () => import('../views/Posts.vue')
+    path: '/friendsPosts',
+    name: 'FriendsPosts',
+    component: () => import('../views/FriendsPosts.vue')
   },
   {
-    path: '/stories',
-    name: 'Stories',
-    component: () => import('../views/Stories.vue')
+    path: '/publicPostsAll',
+    name: 'PublicPostsAll',
+    component: () => import('../views/PublicPostsAll.vue')
+  },
+  {
+    path: '/publicPostsAllForNotRegistered',
+    name: 'PublicPostsAllForNotRegistered',
+    component: () => import('../views/PublicPostsAllForNotRegistered.vue')
+  },
+  {
+    path: '/friendsStories',
+    name: 'FriendsStories',
+    component: () => import('../views/FriendsStories.vue')
+  },
+  {
+    path: '/publicStoriesAll',
+    name: 'PublicStoriesAll',
+    component: () => import('../views/PublicStoriesAll.vue')
+  },
+  {
+    path: '/publicStoriesAllForNotRegistered',
+    name: 'PublicStoriesAllForNotRegistered',
+    component: () => import('../views/PublicStoriesAllForNotRegistered.vue')
+  },
+  {
+    path: '/publicPostAlbumsAll',
+    name: 'PublicPostAlbumsAll',
+    component: () => import('../views/PublicPostAlbumsAll.vue')
+  },
+  {
+    path: '/publicStoryAlbumsAll',
+    name: 'PublicStoryAlbumsAll',
+    component: () => import('../views/PublicStoryAlbumsAll.vue')
   },
   {
     path: '/highlightedStories',
@@ -99,6 +139,16 @@ const routes = [
     path: '/selectedFollowRequest',
     name: 'SelectedFollowRequest',
     component: () => import('../views/SelectedFollowRequest.vue')
+  },
+  {
+    path: '/postById',
+    name: 'PostById',
+    component: () => import('../views/PostById.vue')
+  },
+  {
+    path: '/addCloseFriends',
+    name: 'AddCloseFriends',
+    component: () => import('../views/AddCloseFriends.vue')
   }
 ]
 

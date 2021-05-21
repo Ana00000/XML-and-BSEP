@@ -12,5 +12,6 @@ type Story struct {
 	UserId uuid.UUID `json:"userId" gorm:"not null"`
 	LocationId uuid.UUID `json:"locationId"`
 	IsDeleted bool `json:"isDeleted" gorm:"not null"`
+	IsExpired bool `json:"isExpired" gorm:"not null"`
 	Type StoryType `json:"type" gorm:"not null"`
 }

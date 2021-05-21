@@ -4,10 +4,20 @@ import (
 	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	contentRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/repository"
+	contentService "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
+	locationRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/repository"
+	locationService "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
+	settingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
+	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
+	tagsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
+	tagsService "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
+	userRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
+	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -102,8 +112,8 @@ func initCommentHandler(service *service.CommentService) *handler.CommentHandler
 	return &handler.CommentHandler{ Service: service }
 }
 
-func initPostHandler(service *service.PostService) *handler.PostHandler{
-	return &handler.PostHandler{ Service: service }
+func initPostHandler(postService *service.PostService) *handler.PostHandler{
+	return &handler.PostHandler{ PostService: postService}
 }
 
 func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
@@ -114,8 +124,8 @@ func initPostCollectionHandler(service *service.PostCollectionService) *handler.
 	return &handler.PostCollectionHandler{ Service: service }
 }
 
-func initSinglePostHandler(service *service.SinglePostService, postService *service.PostService) *handler.SinglePostHandler{
-	return &handler.SinglePostHandler{ Service: service, PostService: postService }
+func initSinglePostHandler(singlePostService *service.SinglePostService, postService *service.PostService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, postContentService *contentService.SinglePostContentService,locationService *locationService.LocationService, postTagPostsService *tagsService.PostTagPostsService,tagService *tagsService.TagService) *handler.SinglePostHandler{
+	return &handler.SinglePostHandler{ SinglePostService: singlePostService, PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings, PostContentService: postContentService, LocationService: locationService, PostTagPostsService: postTagPostsService, TagService: tagService }
 }
 
 func initPostCollectionPostsRepo(database *gorm.DB) *repository.PostCollectionPostsRepository{
@@ -129,6 +139,71 @@ func initPostCollectionPostsServices(repo *repository.PostCollectionPostsReposit
 func initPostCollectionPostsHandler(service *service.PostCollectionPostsService) *handler.PostCollectionPostsHandler{
 	return &handler.PostCollectionPostsHandler { Service: service }
 }
+
+// CLASSIC USER
+func initClassicUserRepo(database *gorm.DB) *userRepository.ClassicUserRepository{
+	return &userRepository.ClassicUserRepository{ Database: database }
+}
+
+func initClassicUserService(repo *userRepository.ClassicUserRepository) *userService.ClassicUserService{
+	return &userService.ClassicUserService{ Repo: repo }
+}
+
+// CLASSIC USER FOLLOWINGS
+func initClassicUserFollowingsRepo(database *gorm.DB) *userRepository.ClassicUserFollowingsRepository{
+	return &userRepository.ClassicUserFollowingsRepository{ Database: database }
+}
+
+func initClassicUserFollowingsService(repo *userRepository.ClassicUserFollowingsRepository) *userService.ClassicUserFollowingsService{
+	return &userService.ClassicUserFollowingsService{ Repo: repo }
+}
+
+// PROFILE SETTINGS
+func initProfileSettingsRepo(database *gorm.DB) *settingsRepository.ProfileSettingsRepository{
+	return &settingsRepository.ProfileSettingsRepository{ Database: database }
+}
+
+func initProfileSettingsService(repo *settingsRepository.ProfileSettingsRepository) *settingsService.ProfileSettingsService{
+	return &settingsService.ProfileSettingsService{ Repo: repo }
+}
+
+// POST CONTENT
+func initPostContentRepo(database *gorm.DB) *contentRepository.SinglePostContentRepository{
+	return &contentRepository.SinglePostContentRepository{ Database: database }
+}
+
+func initPostContentService(repo *contentRepository.SinglePostContentRepository) *contentService.SinglePostContentService{
+	return &contentService.SinglePostContentService{ Repo: repo }
+}
+
+// LOCATION
+func initLocationRepo(database *gorm.DB) *locationRepository.LocationRepository{
+	return &locationRepository.LocationRepository{ Database: database }
+}
+
+func initLocationService(repo *locationRepository.LocationRepository) *locationService.LocationService{
+	return &locationService.LocationService{ Repo: repo }
+}
+
+// POST TAG POST
+func initPostTagPostRepo(database *gorm.DB) *tagsRepository.PostTagPostsRepository{
+	return &tagsRepository.PostTagPostsRepository{ Database: database }
+}
+
+func initPostTagPostService(repo *tagsRepository.PostTagPostsRepository) *tagsService.PostTagPostsService{
+	return &tagsService.PostTagPostsService{ Repo: repo }
+}
+
+// TAG
+func initTagRepo(database *gorm.DB) *tagsRepository.TagRepository{
+	return &tagsRepository.TagRepository{ Database: database }
+}
+
+func initTagService(repo *tagsRepository.TagRepository) *tagsService.TagService{
+	return &tagsService.TagService{ Repo: repo }
+}
+
+
 
 func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handler.CommentHandler, handlerPost *handler.PostHandler,
 	handlerPostAlbum *handler.PostAlbumHandler, handlerPostCollection *handler.PostCollectionHandler,
@@ -147,13 +222,26 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/post_album/", handlerPostAlbum.CreatePostAlbum).Methods("POST")
 	router.HandleFunc("/single_post/", handlerSinglePost.CreateSinglePost).Methods("POST")
 	router.HandleFunc("/activity/", handlerActivity.CreateActivity).Methods("POST")
+
+	router.HandleFunc("/find_all_likes_for_post", handlerActivity.FindAllLikesForPost).Methods("GET")
+	router.HandleFunc("/find_all_dislikes_for_post", handlerActivity.FindAllDislikesForPost).Methods("GET")
+	router.HandleFunc("/find_all_favorites_for_post", handlerActivity.FindAllFavoritesForPost).Methods("GET")
+	router.HandleFunc("/find_all_activities_for_post", handlerActivity.FindAllActivitiesForPost).Methods("GET")
+
 	router.HandleFunc("/comment/", handlerComment.CreateComment).Methods("POST")
 	router.HandleFunc("/update_post/", handlerPost.UpdatePost).Methods("POST")
 	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
 	router.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts).Methods("POST")
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
+	router.HandleFunc("/find_all_posts_for_not_reg", handlerSinglePost.FindAllPostsForUserNotRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_posts_for_reg", handlerSinglePost.FindAllPostsForUserRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_following_posts", handlerSinglePost.FindAllFollowingPosts).Methods("GET")
+	router.HandleFunc("/find_selected_post_not_reg", handlerSinglePost.FindSelectedPostByIdForNotRegisteredUsers).Methods("GET")
+	router.HandleFunc("/find_selected_post_reg", handlerSinglePost.FindSelectedPostByIdForRegisteredUsers).Methods("GET")
+	router.HandleFunc("/find_all_public_posts_not_reg/", handlerSinglePost.FindAllPublicPostsNotRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_public_posts_reg", handlerSinglePost.FindAllPublicPostsRegisteredUser).Methods("GET")
 
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
 func main() {
@@ -168,6 +256,13 @@ func main() {
 	repoPostAlbum := initPostAlbumRepo(database)
 	repoPostCollection := initPostCollectionRepo(database)
 	repoSinglePost := initSinglePostRepo(database)
+	repoClassicUser := initClassicUserRepo(database)
+	repoClassicUserFollowings := initClassicUserFollowingsRepo(database)
+	repoProfileSettings := initProfileSettingsRepo(database)
+	repoPostContent := initPostContentRepo(database)
+	repoLocation := initLocationRepo(database)
+	repoPostTagPost := initPostTagPostRepo(database)
+	repoTag := initTagRepo(database)
 
 	serviceActivity := initActivityService(repoActivity)
 	serviceComment := initCommentService(repoComment)
@@ -175,13 +270,20 @@ func main() {
 	servicePostAlbum := initPostAlbumService(repoPostAlbum)
 	servicePostCollection := initPostCollectionService(repoPostCollection)
 	serviceSinglePost := initSinglePostService(repoSinglePost)
+	serviceClassicUser := initClassicUserService(repoClassicUser)
+	serviceClassicUserFollowings := initClassicUserFollowingsService(repoClassicUserFollowings)
+	serviceProfileSettings := initProfileSettingsService(repoProfileSettings)
+	servicePostContent := initPostContentService(repoPostContent)
+	serviceLocation := initLocationService(repoLocation)
+	servicePostTagPost := initPostTagPostService(repoPostTagPost)
+	serviceTag := initTagService(repoTag)
 
 	handlerActivity := initActivityHandler(serviceActivity)
 	handlerComment := initCommentHandler(serviceComment)
 	handlerPost := initPostHandler(servicePost)
 	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
-	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost)
+	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, servicePostContent, serviceLocation, servicePostTagPost, serviceTag)
 
 	handleFunc(handlerActivity, handlerComment, handlerPost, handlerPostAlbum, handlerPostCollection, handlerSinglePost, handlerPostCollectionPosts)
 }

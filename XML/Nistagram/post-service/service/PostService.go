@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
@@ -24,3 +25,12 @@ func (service * PostService) UpdatePost(post *dto.PostUpdateDTO) error {
 	fmt.Print(result)
 	return nil
 }
+
+func (service *PostService) FindByID(ID uuid.UUID) *model.Post {
+	post := service.Repo.FindByID(ID)
+	return post
+}
+
+
+
+

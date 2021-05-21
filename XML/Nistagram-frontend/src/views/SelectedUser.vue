@@ -37,29 +37,26 @@
           />
         </v-col>
       </v-row>
-    
     </v-container>
- 
-  <div class="FollowButton">
+
+    <div class="FollowButton">
       <v-btn
         v-if="!isHiddenFollow"
         v-on:click="followProfile"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
-        rounded
         >Follow</v-btn
       >
     </div>
     <div class="FollowingButton">
       <v-btn
         v-if="!isHiddenFollowing"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
-        rounded
         >Following</v-btn
       >
     </div>
@@ -67,26 +64,135 @@
       <v-btn
         v-if="!isHiddenSendFollowRequest"
         v-on:click="sendFollowRequest"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
-        rounded
         >Send Follow Request</v-btn
       >
     </div>
     <div class="FollowRequestSentButton">
       <v-btn
         v-if="!isHiddenFollowRequestSent"
-        color="#aba7ff"
+        color="info mb-5"
         elevation="24"
         x-large
         raised
-        rounded
         >Follow Request Sent</v-btn
       >
     </div>
-     </div>
+
+    <v-container grid-list-lg >
+      <div class="spacingOne" />
+      <div class="title">
+        <h1>Stories</h1>
+      </div>
+      <div class="spacingTwo" />
+      <v-layout row>
+        <v-flex lg4 v-for="item in stories" :key="item.id" class="space-bottom">
+          <v-card class="mx-auto">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{
+                  item.description
+                }}</v-list-item-subtitle>
+                <v-list-item-title>{{ item.tags }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item three-line v-if="item.type == 'VIDEO'">
+              <v-list-item-content> 
+               <video width="320" height="240" controls>
+                  <source :src="require(`../../../Media/${ item.path }`)" type="video/mp4">
+                </video>
+              </v-list-item-content>
+            </v-list-item>
+
+             <v-list-item three-line v-if="item.type != 'VIDEO'">
+              <v-list-item-content> 
+                <img :src="require(`../../../Media/${ item.path }`)" alt class="icon" width="320" height="240"/>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle
+                  v-text="
+                    item.country +
+                    ' ' +
+                    item.city +
+                    ' ' +
+                    item.street_name +
+                    ' ' +
+                    item.street_number
+                  "
+                />
+                <v-list-item-subtitle>{{
+                  item.creation_date
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+
+    <v-container grid-list-lg >
+      <div class="spacingOne" />
+      <div class="title">
+        <h1>Posts</h1>
+      </div>
+      <div class="spacingTwo" />
+      <v-layout row>
+        <v-flex lg4 v-for="item in posts" :key="item.id" class="space-bottom">
+          <v-card class="mx-auto" v-on:click="getPost(item)">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{
+                  item.description
+                }}</v-list-item-subtitle>
+                <v-list-item-title>{{ item.tags }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item three-line v-if="item.type == 'VIDEO'">
+              <v-list-item-content> 
+               <video width="320" height="240" controls>
+                  <source :src="require(`../../../Media/${ item.path }`)" type="video/mp4">
+                </video>
+              </v-list-item-content>
+            </v-list-item>
+
+             <v-list-item three-line v-if="item.type != 'VIDEO'">
+              <v-list-item-content> 
+                <img :src="require(`../../../Media/${ item.path }`)" alt class="icon" width="320" height="240"/>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle
+                  v-text="
+                    item.country +
+                    ' ' +
+                    item.city +
+                    ' ' +
+                    item.street_name +
+                    ' ' +
+                    item.street_number
+                  "
+                />
+                <v-list-item-subtitle>{{
+                  item.creation_date
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+
+  </div>
 </template>
 
 <script>
@@ -101,11 +207,13 @@ export default {
     isHiddenFollowing: true,
     isHiddenSendFollowRequest: true,
     isHiddenFollowRequestSent: true,
+    posts: [],
+    stories: [],
   }),
   mounted() {
     this.selectedUser = localStorage.getItem("selectedUserId");
     this.token = localStorage.getItem("token");
-    this.logId= localStorage.getItem("userId");
+    this.logId = localStorage.getItem("userId");
     console.log(this.selectedUser);
     this.init();
   },
@@ -127,19 +235,21 @@ export default {
             console.log("PUBLIC JE");
           else if(resp.data.profileVisibility == "PRIVATE")
             console.log("PRIVATE JE");
-          else
-            console.log("NISTA JE");
-          
-          if(resp.data.followingStatus == "FOLLOWING"){
-            this.isHiddenFollowing  = false
-            this.isHiddenFollow = true
-            this.isHiddenSendFollowRequest = true
+          else console.log("NISTA JE");
+
+          if (resp.data.followingStatus == "FOLLOWING") {
+            this.isHiddenFollowing = false;
+            this.isHiddenFollow = true;
+            this.isHiddenSendFollowRequest = true;
             this.isHiddenFollowRequestSent = true;
             console.log("TRUE JE");
-          }else if(resp.data.followingStatus == "NOT FOLLOWING" && resp.data.profileVisibility == "PRIVATE"){
-             this.isHiddenFollowing  = true
-            this.isHiddenFollow = true
-            this.isHiddenSendFollowRequest = false
+          } else if (
+            resp.data.followingStatus == "NOT FOLLOWING" &&
+            resp.data.profileVisibility == "PRIVATE"
+          ) {
+            this.isHiddenFollowing = true;
+            this.isHiddenFollow = true;
+            this.isHiddenSendFollowRequest = false;
             this.isHiddenFollowRequestSent = true;
             console.log("FALSE JE I PRIVATE JE");
           }else if(resp.data.followingStatus == "NOT FOLLOWING" && resp.data.profileVisibility == "PUBLIC_VISIBILITY"){
@@ -148,23 +258,37 @@ export default {
             this.isHiddenSendFollowRequest = true
             this.isHiddenFollowRequestSent = true;
             console.log("FALSE JE I PUBLIC");
-          }else if(resp.data.followingStatus == "PENDING" && resp.data.profileVisibility == "PRIVATE"){
-            this.isHiddenFollowing  = true
-            this.isHiddenFollow = true
-            this.isHiddenSendFollowRequest = true
+          } else if (
+            resp.data.followingStatus == "PENDING" &&
+            resp.data.profileVisibility == "PRIVATE"
+          ) {
+            this.isHiddenFollowing = true;
+            this.isHiddenFollow = true;
+            this.isHiddenSendFollowRequest = true;
             this.isHiddenFollowRequestSent = false;
-             console.log("PENDING JE I PRIVATE");
-          }else
-            console.log("OPET NISTA JE");
-        
+            console.log("PENDING JE I PRIVATE");
+          } else console.log("OPET NISTA JE");
         })
         .catch(console.log("Didn't set user info!"));
+
+        this.$http
+        .get("http://localhost:8084/find_all_posts_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"))
+        .then((response) => {
+          this.posts = response.data;
+        })
+        .catch(console.log);
+
+        this.$http
+        .get("http://localhost:8086/find_all_stories_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"))
+        .then((response) => {
+          this.stories = response.data;
+        })
+        .catch(console.log);
     },
     setUserInfo(item) {
       this.username = item.username;
       this.firstName = item.firstName;
       this.lastName = item.lastName;
-      
     },
     followProfile() {
       this.isHiddenFollow = true;
@@ -176,7 +300,6 @@ export default {
         .post("http://localhost:8080/api/user/create_following/", {
           classic_user_id: this.logId,
           following_user_id: this.selectedUser,
-      
         })
         .then((resp) => {
           console.log(resp.data);
@@ -184,19 +307,17 @@ export default {
           window.location.reload();
         })
         .catch((err) => console.log(err));
-      
     },
-    sendFollowRequest(){
-       this.isHiddenFollow = true; 
-       this.isHiddenFollowing = true; 
-       this.isHiddenSendFollowRequest = true;
-       this.isHiddenFollowRequestSent = false;
+    sendFollowRequest() {
+      this.isHiddenFollow = true;
+      this.isHiddenFollowing = true;
+      this.isHiddenSendFollowRequest = true;
+      this.isHiddenFollowRequestSent = false;
 
        this.$http
         .post("http://localhost:8080/api/requests/create_follow_request/", {
           classic_user_id: this.logId,
           follower_user_id: this.selectedUser,
-      
         })
         .then((resp) => {
           console.log(resp.data);
@@ -204,9 +325,16 @@ export default {
           window.location.reload();
         })
         .catch((err) => console.log(err));
+    },
+    getPost(item){
+      localStorage.setItem("selectedPostDescription", item.description);
+      localStorage.setItem("selectedPostTags", item.tags);
+      localStorage.setItem("selectedPostPath", item.path);
+      localStorage.setItem("selectedPostType", item.type);
+
+      window.location.href = "http://localhost:8081/postById";
     }
-    
-  }
+  },
 };
 </script>
 
@@ -215,8 +343,21 @@ export default {
   width: 25%;
   margin-left: 42%;
 }
+
 .center {
   margin-left: 50%;
   padding: 10px;
+}
+
+.spacingOne {
+  height: 50px;
+}
+
+.title {
+  margin-left: 44%;
+}
+
+.spacingTwo {
+  height: 100px;
 }
 </style>

@@ -25,3 +25,15 @@ func (service * ClassicUserFollowersService) FindAllFollowersForUser(userId uuid
 	}
 	return nil
 }
+
+func (service * ClassicUserFollowersService) CheckIfFollowers(classicUserId uuid.UUID, followerUserId uuid.UUID, ) bool {
+	return service.Repo.CheckIfFollowers(classicUserId, followerUserId)
+}
+
+func (service * ClassicUserFollowersService) FindAllMutualFollowerForUser(userId uuid.UUID) []model.ClassicUserFollowers{
+	users := service.Repo.FindAllMutualFollowerForUser(userId)
+	if users != nil {
+		return users
+	}
+	return nil
+}

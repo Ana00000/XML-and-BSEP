@@ -12,7 +12,7 @@ import (
 )
 
 type PostHandler struct {
-	Service *service.PostService
+	PostService *service.PostService
 }
 
 func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +33,7 @@ func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		IsDeleted:    false,
 	}
 
-	err = handler.Service.CreatePost(&post)
+	err = handler.PostService.CreatePost(&post)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
@@ -51,7 +51,7 @@ func (handler *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = handler.Service.UpdatePost(&postDTO)
+	err = handler.PostService.UpdatePost(&postDTO)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
@@ -60,3 +60,5 @@ func (handler *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+

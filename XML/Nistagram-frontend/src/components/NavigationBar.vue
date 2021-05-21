@@ -76,22 +76,31 @@ export default {
             if (this.userPrivacy == "PRIVATE"){
                 this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Posts', path: '/posts' },
-                { title: 'Stories', path: '/stories' },
+                { title: 'Friends Posts', path: '/friendsPosts' },
+                { title: 'Public Posts', path: '/publicPostsAll' },
+                { title: 'Friends Stories', path: '/friendsStories' },
+                { title: 'Public Stories', path: '/publicStoriesAll' },
+                { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
+                { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
                 { title: 'Highlighted Stories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
                 { title: 'Create Story', path: '/createStory' },
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' },
-                { title: 'Follow Requests', path: '/followRequests' }
+                { title: 'Follow Requests', path: '/followRequests' },
+                { title: 'Add Close Friends', path: '/addCloseFriends' }
             ]
 
             }else{
                  this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Posts', path: '/posts' },
-                { title: 'Stories', path: '/stories' },
+                { title: 'Friends Posts', path: '/friendsPosts' },
+                { title: 'Public Posts', path: '/publicPostsAll' },
+                { title: 'Friends Stories', path: '/friendsStories' },
+                { title: 'Public Stories', path: '/publicStoriesAll' },
+                { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
+                { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
                 { title: 'Highlighted Stories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
@@ -99,14 +108,19 @@ export default {
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'Search users', path: '/searchUsers' },
-                { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Add Close Friends', path: '/addCloseFriends' }
             ]
             }
         } else if (this.userType == 2) {   // AGENT
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Posts', path: '/posts' },
-                { title: 'Stories', path: '/stories' },
+                { title: 'Friends Posts', path: '/friendsPosts' },
+                { title: 'Public Posts', path: '/publicPostsAll' },
+                { title: 'Friends Stories', path: '/friendsStories' },
+                { title: 'Public Stories', path: '/publicStoriesAll' },
+                { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
+                { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
                 { title: 'HighlightedStories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
@@ -114,13 +128,17 @@ export default {
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'Search users', path: '/searchUsers' },
-                { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Add Close Friends', path: '/addCloseFriends' }
             ]
             
            
         } else {   // NOT YET REGISTERED
             this.items = [
-                { title: 'Home', path: '/' }
+                { title: 'Home', path: '/' },
+                { title: 'Public Posts', path: '/publicPostsAllForNotRegistered' },
+                { title: 'Public Stories', path: '/publicStoriesAllForNotRegistered' },
+                { title: 'Search users', path: '/searchUsersForNotRegistered' },
             ]
         }
     },

@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"fmt"
+	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"gorm.io/gorm"
 )
 
@@ -14,4 +15,39 @@ func (repo * StoryTagStoriesRepository) CreateStoryTagStories(storyTagStories *m
 	result := repo.Database.Create(storyTagStories)
 	fmt.Print(result)
 	return nil
+}
+
+func (repo *StoryTagStoriesRepository) FindAll() []model.StoryTagStories {
+	var tags []model.StoryTagStories
+	repo.Database.Select("*").Find(&tags)
+	return tags
+}
+
+
+func (repo *StoryTagStoriesRepository) FindAllTagsForStories(allStories []storyModel.SingleStory) []model.StoryTagStories {
+	var tags []model.StoryTagStories
+	var allTags = repo.FindAll()
+
+	for i:=0;i<len(allStories);i++{
+		for j:=0; j<len(allTags);j++{
+			if allStories[i].ID == allTags[j].StoryId{
+				tags = append(tags, allTags[j])
+			}
+		}
+
+	}
+	return tags
+}
+
+func (repo *StoryTagStoriesRepository) FindAllTagsForStory(story *storyModel.SingleStory) []model.StoryTagStories {
+	var tags []model.StoryTagStories
+	var allTags = repo.FindAll()
+
+	for j:=0; j<len(allTags);j++{
+		if story.ID == allTags[j].StoryId{
+			tags = append(tags, allTags[j])
+		}
+	}
+
+	return tags
 }

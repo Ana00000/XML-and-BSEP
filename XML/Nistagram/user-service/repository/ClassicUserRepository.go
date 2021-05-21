@@ -18,6 +18,16 @@ func (repo *ClassicUserRepository) CreateClassicUser(classicUser *model.ClassicU
 	return nil
 }
 
+func (repo *ClassicUserRepository) FindById(id uuid.UUID) *model.ClassicUser {
+	user := &model.ClassicUser{}
+
+	if repo.Database.First(&user, "id = ?", id).RowsAffected == 0 {
+		return nil
+	}
+
+	return user
+}
+
 func (repo *ClassicUserRepository) UpdateClassicUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
 	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ? and is_deleted = ?", userId, false).Update("is_confirmed", isConfirmed)
 	fmt.Println(result.RowsAffected)
@@ -98,4 +108,22 @@ func (repo *ClassicUserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []m
 	var users []model.ClassicUser
 	repo.Database.Select("*").Where("id != ? and is_confirmed = ? and is_deleted = ? ", userId, true, false).Find(&users)
 	return users
+}
+
+func (repo *ClassicUserRepository) FindAllValidUsers() []model.ClassicUser {
+
+	var users []model.ClassicUser
+	repo.Database.Select("*").Where("is_confirmed = ? and is_deleted = ? ", true, false).Find(&users)
+	return users
+}
+
+func (repo *ClassicUserRepository) CheckIfUserValid(userId uuid.UUID) bool {
+
+	var user = repo.FindById(userId)
+
+	if user.IsDeleted == false && user.IsConfirmed == true{
+		return true
+	}
+
+	return false
 }

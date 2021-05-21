@@ -80,7 +80,7 @@ func (handler *PostAlbumContentHandler) Upload(writer http.ResponseWriter, reque
 	}
 	tempFile.Write(fileBytes)
 
-	pathPostAlbumGlobal = tempFile.Name()
+	pathPostAlbumGlobal = tempFile.Name()[6:len(tempFile.Name())]
 
 	pathJson, _ := json.Marshal(tempFile.Name())
 	writer.Write(pathJson)

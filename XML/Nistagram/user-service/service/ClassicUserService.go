@@ -60,3 +60,16 @@ func (service *ClassicUserService) FindClassicUserByUserName(userName string) *m
 	user := service.Repo.FindClassicUserByUserName(userName)
 	return user
 }
+
+func (service *ClassicUserService) CheckIfUserValid(userId uuid.UUID) bool {
+	checkIfValid := service.Repo.CheckIfUserValid(userId)
+	return checkIfValid
+}
+
+func (service *ClassicUserService) FinAllValidUsers() []model.ClassicUser {
+	users := service.Repo.FindAllValidUsers()
+	if users != nil {
+		return users
+	}
+	return nil
+}
