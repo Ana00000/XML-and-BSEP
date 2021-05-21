@@ -287,7 +287,7 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 	// returns only VALID users
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
-	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
+	var publicValidPosts = handler.SinglePostService.FindAllPublicAndFriendsPostsValid(allPublicUsers)
 	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
 	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
@@ -310,7 +310,7 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
 
 	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
-	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
+	var publicValidPosts = handler.SinglePostService.FindAllPublicAndFriendsPostsValid(allPublicUsers)
 	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
 	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
@@ -489,7 +489,7 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
-	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
+	var publicValidPosts = handler.SinglePostService.FindAllPublicAndFriendsPostsValid(allPublicUsers)
 
 	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
 
@@ -504,7 +504,7 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicPosts(w http.Response
 
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
-	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
+	var publicValidPosts = handler.SinglePostService.FindAllPublicAndFriendsPostsValid(allPublicUsers)
 	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
 
 	locationsJson, _ := json.Marshal(locations)
@@ -545,7 +545,7 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 	var location = handler.LocationService.FindLocationIdByLocationString(locationString)
 	var locationPosts = handler.SinglePostService.FindAllPostIdsWithLocationId(location.ID)
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var posts = handler.SinglePostService.FindAllPublicPosts(locationPosts, allValidUsers)
+	var posts = handler.SinglePostService.FindAllPublicAndFriendsPosts(locationPosts, allValidUsers)
 
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
@@ -563,8 +563,6 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 
 // REGISTERED
 
-
-
 func Find(slice []userModel.ClassicUser, val userModel.ClassicUser) (int,bool){
 	for i, item := range slice{
 		if item == val{
@@ -573,28 +571,6 @@ func Find(slice []userModel.ClassicUser, val userModel.ClassicUser) (int,bool){
 	}
 
 	return -1, false
-}
-
-// SEARCH TAGS FOR REGISTERED USER - FIND ALL TAGS ON PUBLIC AND FOLLOWING POSTS
-func (handler *SinglePostHandler) FindAllTagsForPublicAndFollowingPosts(w http.ResponseWriter, r *http.Request) {
-
-	id := r.URL.Query().Get("id") //logged in reg user id
-
-	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
-
-	var allFollowings = handler.ClassicUserFollowingsService.FindAllUserWhoFollowUserId(uuid.MustParse(id), allValidUsers) //moj user je classic user
-	var allFollowingUsers = handler.ClassicUserService.FindAllUsersByFollowingIds(allFollowings)
-
-	// ALL PUBLIC AND FRIENDS USERS EXCEPT LOGGED
-	var allUsers = handler.MergePublicAndFollowingUsers(allPublicUsers, allFollowingUsers)
-	var allPosts = handler.SinglePostService.FindAllPostsForUsers(allUsers)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(allPosts)
-
-	tagsJson, _ := json.Marshal(tags)
-	w.Write(tagsJson)
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
 }
 
 func (handler *SinglePostHandler) MergePublicAndFollowingUsers(allPublicUsers []userModel.ClassicUser, allFollowingUsers []userModel.ClassicUser) []userModel.ClassicUser {
@@ -613,13 +589,47 @@ func (handler *SinglePostHandler) MergePublicAndFollowingUsers(allPublicUsers []
 	return allPublicAndFollowingUsers
 }
 
-// SEARCH LOCATIONS FOR REGISTERED USER - FIND ALL LOCATIONS ON PUBLIC AND FOLLOWING POSTS
-func (handler *SinglePostHandler) FindAllLocationsForPublicAndFollowingPosts(w http.ResponseWriter, r *http.Request) {
+func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []userModel.ClassicUser {
 
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
-	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
-	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
+
+	var allFollowings = handler.ClassicUserFollowingsService.FindAllUserWhoFollowUserId(id, allValidUsers) //moj user je classic user
+	var allFollowingUsers = handler.ClassicUserService.FindAllUsersByFollowingIds(allFollowings)
+
+	// ALL PUBLIC AND FRIENDS USERS EXCEPT LOGGED
+	var allUsers = handler.MergePublicAndFollowingUsers(allPublicUsers, allFollowingUsers)
+
+
+	return allUsers
+}
+
+// SEARCH TAGS FOR REGISTERED USER - FIND ALL TAGS ON PUBLIC AND FOLLOWING POSTS
+func (handler *SinglePostHandler) FindAllTagsForPublicAndFollowingPosts(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id") //logged in reg user id
+
+	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
+	var allPosts = handler.SinglePostService.FindAllPostsForUsers(allUsers)
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(allPosts)
+
+	tagsJson, _ := json.Marshal(tags)
+	w.Write(tagsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+
+
+// SEARCH LOCATIONS FOR REGISTERED USER - FIND ALL LOCATIONS ON PUBLIC AND FOLLOWING POSTS
+func (handler *SinglePostHandler) FindAllLocationsForPublicAndFollowingPosts(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id") //logged in reg user id
+
+	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
+	var allPosts = handler.SinglePostService.FindAllPostsForUsers(allUsers)
+
+	var locations = handler.LocationService.FindAllLocationsForPosts(allPosts)
 
 	locationsJson, _ := json.Marshal(locations)
 	w.Write(locationsJson)
@@ -630,13 +640,15 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicAndFollowingPosts(w h
 // FIND ALL PUBLIC OR FOLLOWING AND NOT DELETED POSTS WITH TAG - FOR REG USER S
 func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWriter, r *http.Request) {
 
+	id := r.URL.Query().Get("id") //logged in reg user id
 	tagName := r.URL.Query().Get("tagName") //tag id
 
 
 	var tagsId = handler.TagService.FindTagIdByTagName(tagName)
 	var postIds = handler.PostTagPostsService.FindAllPostIdsWithTagId(tagsId.ID)
-	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var posts = handler.SinglePostService.FindAllPublicPostsByIds(postIds, allValidUsers)
+
+	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
+	var posts = handler.SinglePostService.FindAllPublicPostsByIds(postIds, allUsers)
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
@@ -653,13 +665,15 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 // FIND ALL PUBLIC OR FOLLOWING NOT DELETED POSTS WITH LOCATION - FOR REG USER S
 func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.ResponseWriter, r *http.Request) {
 
+	id := r.URL.Query().Get("id") //logged in reg user id
 	//county,city,streetName,streetNumber
 	locationString := r.URL.Query().Get("locationString")
 
 	var location = handler.LocationService.FindLocationIdByLocationString(locationString)
 	var locationPosts = handler.SinglePostService.FindAllPostIdsWithLocationId(location.ID)
-	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var posts = handler.SinglePostService.FindAllPublicPosts(locationPosts, allValidUsers)
+
+	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
+	var posts = handler.SinglePostService.FindAllPublicAndFriendsPosts(locationPosts, allUsers)
 
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
