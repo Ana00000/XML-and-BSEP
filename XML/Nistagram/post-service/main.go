@@ -31,7 +31,9 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Post{}, &model.Activity{}, &model.Comment{}, &model.PostAlbum{}, &model.SinglePost{}, &model.PostCollection{})
+	db.AutoMigrate(&model.Post{}, &model.Activity{}, &model.Comment{},
+	               &model.PostAlbum{}, &model.SinglePost{}, &model.PostCollection{},
+	               &model.PostCollectionPosts{})
 	return db
 }
 
@@ -215,6 +217,9 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/update_post/", handlerPost.UpdatePost).Methods("POST")
 	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
 	router.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts).Methods("POST")
+
+	router.HandleFunc("/find_all_post_collections_for_reg", handlerPostCollection.FindAllPostCollectionsForUserRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_post_collection_posts_for_post", handlerPostCollectionPosts.FindAllPostCollectionPostsForPost).Methods("GET")
 
 	router.HandleFunc("/find_all_posts_for_not_reg", handlerSinglePost.FindAllPostsForUserNotRegisteredUser).Methods("GET")
 	router.HandleFunc("/find_all_posts_for_reg", handlerSinglePost.FindAllPostsForUserRegisteredUser).Methods("GET")
