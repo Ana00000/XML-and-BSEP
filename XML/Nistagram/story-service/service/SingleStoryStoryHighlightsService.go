@@ -25,3 +25,11 @@ func (service * SingleStoryStoryHighlightsService) FindAllSingleStoryStoryHighli
 	}
 	return nil
 }
+
+func (service * SingleStoryStoryHighlightsService) FindAllSingleStoryStoryHighlightsForStoryHighlight(storyHighlightId uuid.UUID) []model.SingleStoryStoryHighlights{
+	singleStoryStoryHighlights := service.Repo.FindAllSingleStoryStoryHighlightsForStoryHighlight(storyHighlightId)
+	if singleStoryStoryHighlights != nil {
+		return singleStoryStoryHighlights
+	}
+	return nil
+}

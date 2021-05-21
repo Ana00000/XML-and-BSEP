@@ -49,3 +49,16 @@ func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlig
 	}
 	w.WriteHeader(http.StatusBadRequest)
 }
+
+func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlightsForStoryHighlight(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	singleStoryStoryHighlights := handler.Service.FindAllSingleStoryStoryHighlightsForStoryHighlight(uuid.MustParse(id))
+	singleStoryStoryHighlightsJson, _ := json.Marshal(singleStoryStoryHighlights)
+	if singleStoryStoryHighlightsJson != nil {
+		w.WriteHeader(http.StatusCreated)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(singleStoryStoryHighlightsJson)
+	}
+	w.WriteHeader(http.StatusBadRequest)
+}

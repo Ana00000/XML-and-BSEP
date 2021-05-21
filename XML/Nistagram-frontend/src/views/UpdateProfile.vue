@@ -345,7 +345,6 @@ export default {
     },
     getStoryHighlight(item) {
       localStorage.setItem("selectedStoryHighlightId", item.id);
-      localStorage.setItem("selectedStoryHighlightTitle", item.title);
 
       window.location.href = "http://localhost:8081/storiesOfStoryHighlight";
     },
