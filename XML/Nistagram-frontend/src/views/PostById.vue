@@ -116,7 +116,7 @@
           :key="item.id"
           class="space-bottom"
         >
-          <v-card class="mx-auto">
+          <v-card class="mx-auto" v-on:click="getCollection(item)">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{ item.title }}</v-list-item-subtitle>
@@ -125,6 +125,7 @@
           </v-card>
         </v-flex>
       </v-layout>
+      <v-btn color="info mb-5" v-on:click="addPostToCollection"> Add </v-btn>
     </v-container>
   </div>
 </template>
@@ -144,6 +145,7 @@ export default {
     likeabilityStatus: null,
     isHiddenCollections: true,
     postCollections: [],
+    postCollectionId: null,
   }),
   mounted() {
     this.init();
@@ -508,6 +510,28 @@ export default {
           console.log(response);
           this.isHiddenRemoveDislike = true;
           alert("You have removed dislike for this post.");
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    getCollection(item) {
+      this.postCollectionId = item.id;
+    },
+    addPostToCollection() {
+      if (this.postCollectionId == null) {
+        alert("You have not selected collection.");
+        return;
+      }
+
+      this.$http
+        .post("http://localhost:8084/post_collection_posts/", {
+          post_collection_id: this.postCollectionId,
+          single_post_id: localStorage.getItem("selectedPostId"),
+        })
+        .then((response) => {
+          console.log(response.data);
+          alert("You have added this post to your collection.");
         })
         .catch((er) => {
           console.log(er.response.data);
