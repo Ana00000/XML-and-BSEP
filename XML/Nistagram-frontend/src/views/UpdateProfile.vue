@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container fluid class="container mt-6">
+    <v-container fluid class="container mt-1">
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
@@ -320,6 +320,14 @@ export default {
     },
     createStoryHighlight() {
       if (!this.validTitle()) return;
+
+      for (var i = 0; i < this.highlightedStories.length; i++) {
+        if (this.title == this.highlightedStories[i].title) {
+          alert("You have already created highlighted story with this name!");
+          this.title = "";
+          return;
+        }
+      }
 
       this.$http
         .post("http://localhost:8086/story_highlight/", {
