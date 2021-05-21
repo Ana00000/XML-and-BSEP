@@ -23,11 +23,11 @@ func (handler *PostCollectionHandler) CreatePostCollection(w http.ResponseWriter
 		return
 	}
 
+	id := uuid.New()
 	postCollection := model.PostCollection{
-		ID: uuid.UUID{},
+		ID: id,
 		Title: postCollectionDTO.Title,
 		UserID: postCollectionDTO.UserID,
-		//Posts: nil,
 	}
 
 	err = handler.Service.CreatePostCollection(&postCollection)

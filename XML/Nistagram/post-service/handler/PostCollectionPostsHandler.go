@@ -23,8 +23,9 @@ func (handler *PostCollectionPostsHandler) CreatePostCollectionPosts(w http.Resp
 		return
 	}
 
+	id := uuid.New()
 	postCollectionPosts := model.PostCollectionPosts{
-		ID:               uuid.UUID{},
+		ID:               id,
 		PostCollectionId: postCollectionPostsDTO.PostCollectionId,
 		SinglePostId:     postCollectionPostsDTO.SinglePostId,
 	}

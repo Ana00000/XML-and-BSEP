@@ -86,6 +86,11 @@ const routes = [
     component: () => import('../views/CreateStoryAlbum.vue')
   },
   {
+    path: '/createCollection',
+    name: 'CreateCollection',
+    component: () => import('../views/CreateCollection.vue')
+  },
+  {
     path: '/friendsPosts',
     name: 'FriendsPosts',
     component: () => import('../views/FriendsPosts.vue')
