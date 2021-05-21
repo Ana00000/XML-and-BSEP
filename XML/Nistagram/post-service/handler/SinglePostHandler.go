@@ -665,9 +665,10 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 // FIND ALL PUBLIC OR FOLLOWING NOT DELETED POSTS WITH LOCATION - FOR REG USER S
 func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.ResponseWriter, r *http.Request) {
 
-	id := r.URL.Query().Get("id") //logged in reg user id
+
 	//county,city,streetName,streetNumber
 	locationString := r.URL.Query().Get("locationString")
+	id := r.URL.Query().Get("id") //logged in reg user id
 
 	var location = handler.LocationService.FindLocationIdByLocationString(locationString)
 	var locationPosts = handler.SinglePostService.FindAllPostIdsWithLocationId(location.ID)

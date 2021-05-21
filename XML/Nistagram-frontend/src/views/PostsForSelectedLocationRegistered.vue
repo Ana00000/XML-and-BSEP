@@ -59,7 +59,7 @@
 
 <script>
 export default {
-  name: "PostsForSelectedTagRegistered",
+  name: "PostsForSelectedLocationRegistered",
   data: () => ({
     posts: [],
   }),
@@ -69,7 +69,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8084/find_all_posts_for_tag_reg_user?tagName="+localStorage.getItem("selectedTagName")+"&id=" + localStorage.getItem("userId"))
+        .get("http://localhost:8084/find_all_posts_for_location_reg_user?locationString="+localStorage.getItem("selectedLocationString")+"&id=" + localStorage.getItem("userId"))
         .then((response) => {
           this.posts = response.data;
         })
