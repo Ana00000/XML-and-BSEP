@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container grid-list-lg >
+    <v-container grid-list-lg>
       <div class="spacingOne" />
       <div class="title">
         <h1>Stories from story highlight</h1>
@@ -19,16 +19,25 @@
             </v-list-item>
 
             <v-list-item three-line v-if="item.type == 'VIDEO'">
-              <v-list-item-content> 
-               <video width="320" height="240" controls>
-                  <source :src="require(`../../../Media/${ item.path }`)" type="video/mp4">
+              <v-list-item-content>
+                <video width="320" height="240" controls>
+                  <source
+                    :src="require(`../../../Media/${item.path}`)"
+                    type="video/mp4"
+                  />
                 </video>
               </v-list-item-content>
             </v-list-item>
 
-             <v-list-item three-line v-if="item.type != 'VIDEO'">
-              <v-list-item-content> 
-                <img :src="require(`../../../Media/${ item.path }`)" alt class="icon" width="320" height="240"/>
+            <v-list-item three-line v-if="item.type != 'VIDEO'">
+              <v-list-item-content>
+                <img
+                  :src="require(`../../../Media/${item.path}`)"
+                  alt
+                  class="icon"
+                  width="320"
+                  height="240"
+                />
               </v-list-item-content>
             </v-list-item>
 
@@ -62,7 +71,6 @@ export default {
   name: "StoriesOfStoryHighlight",
   data: () => ({
     stories: [],
-    storyHighlightStories: [],
   }),
   mounted() {
     this.init();
@@ -70,16 +78,39 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8086/find_all_public_stories_reg?id=" + localStorage.getItem("userId"))
+        .get(
+          "http://localhost:8086/find_all_public_stories_reg?id=" +
+            localStorage.getItem("userId")
+        )
         .then((response) => {
           this.stories = response.data;
         })
         .catch(console.log);
 
-        this.$http
-        .get("http://localhost:8086/find_all_single_story_story_highlights_for_story_highlight?id=" + localStorage.getItem("selectedStoryHighlightId"))
+      this.$http
+        .get(
+          "http://localhost:8086/find_all_single_story_story_highlights_for_story_highlight?id=" +
+            localStorage.getItem("selectedStoryHighlightId")
+        )
         .then((response) => {
-            this.storyHighlightStories = response.data;
+          var allStories = [];
+          for (var i = 0; i < response.data.length; i++) {
+            if (!allStories.includes(response.data[i].single_story_id)) {
+              allStories.push(response.data[i].single_story_id);
+            }
+          }
+
+          for (var j = 0; j < allStories.length; j++) {
+            this.$http
+              .get(
+                "http://localhost:8086/find_single_story_for_id?id=" +
+                  allStories[j]
+              )
+              .then((response) => {
+                console.log(response.data);
+              })
+              .catch(console.log);
+          }
         })
         .catch(console.log);
     },

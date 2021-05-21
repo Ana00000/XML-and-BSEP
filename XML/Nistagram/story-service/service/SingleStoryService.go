@@ -93,3 +93,8 @@ func (service *SingleStoryService) FindAllStoriesForLoggedUser(userId uuid.UUID)
 	}
 	return nil
 }
+
+func (service * SingleStoryService) FindSingleStoryForId(storyId uuid.UUID) model.SingleStory{
+	singleStory := service.Repo.FindSingleStoryForId(storyId)
+	return singleStory
+}

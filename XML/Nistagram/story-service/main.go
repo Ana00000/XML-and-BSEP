@@ -184,6 +184,7 @@ func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.S
 	router.HandleFunc("/story_highlight/", handlerStoryHighlight.CreateStoryHighlight).Methods("POST")
 	router.HandleFunc("/single_story_story_highlights/",handlerSingleStoryStoryHighlights.CreateSingleStoryStoryHighlights).Methods("POST")
 
+	router.HandleFunc("/find_single_story_for_id", handlerSingleStory.FindSingleStoryForId).Methods("GET")
 	router.HandleFunc("/find_all_story_highlights_for_user", handlerStoryHighlight.FindAllStoryHighlightsForUser).Methods("GET")
 	router.HandleFunc("/find_all_single_story_story_highlights_for_story", handlerSingleStoryStoryHighlights.FindAllSingleStoryStoryHighlightsForStory).Methods("GET")
 	router.HandleFunc("/find_all_single_story_story_highlights_for_story_highlight", handlerSingleStoryStoryHighlights.FindAllSingleStoryStoryHighlightsForStoryHighlight).Methods("GET")
