@@ -342,6 +342,41 @@ func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWrite
 }
 
 
+// FIND SELECTED POST FROM LOGGEDIN USER BY ID (ONLY IF NOT DELETED)
+func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id") //post id
+	logId := r.URL.Query().Get("logId") //loged user id
+
+	var post = handler.SinglePostService.FindByID(uuid.MustParse(id))
+	if post == nil {
+		fmt.Println("User not found")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if post.UserID != uuid.MustParse(logId){
+			//POSTMAN CHECK
+			fmt.Println("Post doesnt belong to user")
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+	}
+
+	var contents = handler.PostContentService.FindAllContentsForPost(post)
+	var locations = handler.LocationService.FindAllLocationsForPost(post)
+	var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
+
+	var postDTO = handler.CreatePostDTO(post,contents,locations,tags)
+
+	postJson, _ := json.Marshal(postDTO)
+	w.Write(postJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}
+
+
 
 //DTOS
 
