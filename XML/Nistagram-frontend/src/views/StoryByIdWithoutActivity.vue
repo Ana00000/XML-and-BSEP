@@ -62,10 +62,38 @@
           </v-card>
         </v-flex>
 
-        <v-btn color="info mb-5" v-on:click="addToStoryHighlight" class="addButton">
+        <v-btn
+          color="info mb-5"
+          v-on:click="addToStoryHighlight"
+          class="addButton"
+        >
           Add to story highlight
         </v-btn>
       </v-layout>
+
+      <v-container grid-list-lg>
+        <div class="spacingOne" />
+        <v-card-title class="justify-center">
+          <h1 class="display-1">My Highlighted Stories</h1>
+        </v-card-title>
+        <div class="spacingTwo" />
+        <v-layout row>
+          <v-flex
+            lg4
+            v-for="item in highlightedStories"
+            :key="item.id"
+            class="space-bottom"
+          >
+            <v-card class="mx-auto" v-on:click="getStoryHighlight(item)">
+              <v-list-item three-line>
+                <v-list-item-content>
+                  <v-list-item-subtitle>{{ item.title }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
     </v-container>
   </div>
 </template>
@@ -75,6 +103,8 @@ export default {
   name: "StoryByIdWithoutActivity",
   data: () => ({
     story: null,
+    highlightedStoryId: null,
+    highlightedStories: [],
   }),
   mounted() {
     this.init();
@@ -92,9 +122,38 @@ export default {
           this.story = response.data;
         })
         .catch(console.log);
-    },
-    addToStoryHighlight(){
 
+      this.$http
+        .get(
+          "http://localhost:8086/find_all_story_highlights_for_user?id=" +
+            localStorage.getItem("userId")
+        )
+        .then((response) => {
+          this.highlightedStories = response.data;
+        })
+        .catch(console.log);
+    },
+    getStoryHighlight(item) {
+      this.highlightedStoryId = item.id;
+    },
+    addToStoryHighlight() {
+      if (this.highlightedStoryId == null) {
+        alert("You have not selected story highlight.");
+        return;
+      }
+
+      this.$http
+        .post("http://localhost:8086/single_story_story_highlights/", {
+          story_highlight_id: this.highlightedStoryId,
+          single_story_id: localStorage.getItem("mySelectedStoryId"),
+        })
+        .then((response) => {
+          console.log(response.data);
+          alert("You have added this story to selected story highlight.");
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
     },
   },
 };
