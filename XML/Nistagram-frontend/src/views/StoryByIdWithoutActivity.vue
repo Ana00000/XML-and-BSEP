@@ -11,7 +11,9 @@
           <v-card class="card">
             <v-list-item three-line>
               <v-list-item-content>
-                <v-list-item-subtitle>{{ story.description }}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{
+                  story.description
+                }}</v-list-item-subtitle>
                 <v-list-item-title>{{ story.tags }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -57,9 +59,12 @@
                 }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-
           </v-card>
         </v-flex>
+
+        <v-btn color="info mb-5" v-on:click="addToStoryHighlight" class="addButton">
+          Add to story highlight
+        </v-btn>
       </v-layout>
     </v-container>
   </div>
@@ -88,6 +93,9 @@ export default {
         })
         .catch(console.log);
     },
+    addToStoryHighlight(){
+
+    },
   },
 };
 </script>
@@ -107,5 +115,10 @@ export default {
 
 .card {
   margin-left: 20%;
+}
+
+.addButton {
+  margin-top: 2%;
+  margin-left: 43%;
 }
 </style>
