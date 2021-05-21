@@ -147,6 +147,29 @@ export default {
             ) {
               alert("You have already liked this post!");
               this.isHiddenRemoveLike = false;
+              this.likeActivityId = this.activities[i].id;
+              return;
+            } else if (
+              this.activities[i].user_id ==
+                localStorage.getItem("selectedUserId") &&
+              (this.activities[i].liked_status == 1 ||
+              this.activities[i].liked_status == 2)
+            ) {
+              this.likeActivityId = this.activities[i].id;
+              this.$http
+                .post("http://localhost:8084/update_activity/", {
+                  id: this.likeActivityId,
+                  likedStatus: 0,
+                  IsFavorite: false,
+                })
+                .then((response) => {
+                  console.log(response);
+                  this.isHiddenRemoveLike = false;
+                  alert("You have liked this post.");
+                })
+                .catch((er) => {
+                  console.log(er.response.data);
+                });
               return;
             }
           }
@@ -223,14 +246,14 @@ export default {
             ) {
               alert("You have already favorited this post!");
               this.isHiddenRemoveFavorite = false;
-              this.favoriteActivityId =  this.activities[i].id;
+              this.favoriteActivityId = this.activities[i].id;
               return;
             } else if (
               this.activities[i].user_id ==
                 localStorage.getItem("selectedUserId") &&
               this.activities[i].is_favorite == false
             ) {
-              this.favoriteActivityId =  this.activities[i].id;
+              this.favoriteActivityId = this.activities[i].id;
               this.$http
                 .post("http://localhost:8084/update_activity/", {
                   id: this.favoriteActivityId,
@@ -280,11 +303,11 @@ export default {
             if (
               this.activities[i].user_id ==
                 localStorage.getItem("selectedUserId") &&
-              (this.activities[i].is_favorite == true  ||
-              this.activities[i].is_favorite == false)
+              (this.activities[i].is_favorite == true ||
+                this.activities[i].is_favorite == false)
             ) {
-              this.favoriteActivityId =  this.activities[i].id;
-            } 
+              this.favoriteActivityId = this.activities[i].id;
+            }
           }
         })
         .catch(console.log);
@@ -304,6 +327,48 @@ export default {
           console.log(response);
           this.isHiddenRemoveFavorite = true;
           alert("You have removed favorite for this post.");
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    removeLike() {
+      this.$http
+        .get(
+          "http://localhost:8084/find_all_activities_for_post?id=" +
+            localStorage.getItem("selectedPostId")
+        )
+        .then((response) => {
+          this.activities = response.data;
+          for (var i = 0; i < this.activities.length; i++) {
+            if (
+              this.activities[i].user_id ==
+                localStorage.getItem("selectedUserId") &&
+              (this.activities[i].liked_status == 0 ||
+                this.activities[i].liked_status == 1 ||
+                this.activities[i].liked_status == 2)
+            ) {
+              this.likeActivityId = this.activities[i].id;
+            }
+          }
+        })
+        .catch(console.log);
+
+      if (this.likeActivityId == null) {
+        alert("You have not liked this post.");
+        return;
+      }
+
+      this.$http
+        .post("http://localhost:8084/update_activity/", {
+          id: this.likeActivityId,
+          likedStatus: 2,
+          IsFavorite: false,
+        })
+        .then((response) => {
+          console.log(response);
+          this.isHiddenRemoveLike = true;
+          alert("You have removed like for this post.");
         })
         .catch((er) => {
           console.log(er.response.data);
