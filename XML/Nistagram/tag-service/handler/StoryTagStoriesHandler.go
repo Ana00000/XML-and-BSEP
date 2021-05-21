@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"net/http"
 	_ "strconv"
 )
@@ -25,7 +25,7 @@ func (handler *StoryTagStoriesHandler) CreateStoryTagStories(w http.ResponseWrit
 
 	storyTagStories := model.StoryTagStories{
 		ID:         uuid.UUID{},
-		StoryTagId: storyTagStoriesDTO.StoryTagId,
+		TagId: storyTagStoriesDTO.TagId,
 		StoryId:    storyTagStoriesDTO.StoryId,
 	}
 

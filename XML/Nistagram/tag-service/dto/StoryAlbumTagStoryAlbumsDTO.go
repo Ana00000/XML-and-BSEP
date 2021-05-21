@@ -3,6 +3,6 @@ package dto
 import "github.com/google/uuid"
 
 type StoryAlbumTagStoryAlbumsDTO struct {
-	StoryAlbumTagId uuid.UUID `json:"storyAlbumTagId"`
-	StoryAlbumId uuid.UUID `json:"storyAlbumId"`
+	TagId uuid.UUID `json:"tag_id"`
+	StoryAlbumId uuid.UUID `json:"story_album_id"`
 }

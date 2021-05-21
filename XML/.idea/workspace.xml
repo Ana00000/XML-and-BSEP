@@ -2,8 +2,52 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Nistagram/tag-service/model/TagType.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/repository/CommentRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/repository/CommentRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/CommentTagCommentsDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/dto/CommentTagCommentsDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/CommentTagDTO.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/PostAlbumTagDTO.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/PostAlbumTagPostAlbumsDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/dto/PostAlbumTagPostAlbumsDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/PostTagDTO.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/PostTagPostsDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/dto/PostTagPostsDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/StoryAlbumTagDTO.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/StoryAlbumTagStoryAlbumsDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/dto/StoryAlbumTagStoryAlbumsDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/StoryTagDTO.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/StoryTagStoriesDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/dto/StoryTagStoriesDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/dto/TagDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/dto/TagDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/CommentTagCommentsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/CommentTagCommentsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/CommentTagHandler.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostAlbumTagHandler.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostAlbumTagPostAlbumsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostAlbumTagPostAlbumsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostTagHandler.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostTagPostsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostTagPostsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryAlbumTagHandler.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryAlbumTagStoryAlbumsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryAlbumTagStoryAlbumsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryTagHandler.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryTagStoriesHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryTagStoriesHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/TagHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/TagHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/CommentTag.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/CommentTagComments.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/model/CommentTagComments.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/PostAlbumTag.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/PostAlbumTagPostAlbums.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/model/PostAlbumTagPostAlbums.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/PostTag.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/PostTagPosts.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/model/PostTagPosts.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/StoryAlbumTag.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/StoryAlbumTagStoryAlbums.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/model/StoryAlbumTagStoryAlbums.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/StoryTag.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/StoryTagStories.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/model/StoryTagStories.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/model/Tag.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/model/Tag.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/CommentTagRepository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/PostAlbumTagRepository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/PostTagRepository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/StoryAlbumTagRepository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/StoryTagRepository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/CommentTagService.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/PostAlbumTagService.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/PostTagService.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/StoryAlbumTagService.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/StoryTagService.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
