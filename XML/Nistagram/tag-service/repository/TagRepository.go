@@ -17,7 +17,6 @@ func (repo * TagRepository) CreateTag(tag *model.Tag) error {
 	return nil
 }
 
-
 func (repo *TagRepository) FindTagNameById(ID uuid.UUID) string{
 	tag := &model.Tag{}
 	if repo.Database.First(&tag, "id = ?", ID).RowsAffected == 0 {
@@ -33,10 +32,9 @@ func (repo *TagRepository) FindAll() []model.Tag {
 }
 
 
-//FindAllPostsByTagName
-func (repo *TagRepository) FindTagIdByTagName(tagName string) *model.Tag {
+func (repo *TagRepository) FindTagByName(name string) *model.Tag {
 	tag := &model.Tag{}
-	if repo.Database.First(&tag, "name = ?", tagName).RowsAffected == 0 {
+	if repo.Database.First(&tag, "name = ?", name).RowsAffected == 0 {
 		return nil
 	}
 	return tag
