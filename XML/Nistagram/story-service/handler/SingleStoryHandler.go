@@ -359,6 +359,7 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 		storyDTO.StoryId = stories[i].ID
 		storyDTO.Description = stories[i].Description
 		storyDTO.CreationDate = stories[i].CreationDate
+		storyDTO.UserId = stories[i].UserId
 
 
 

@@ -1,14 +1,18 @@
 <template>
   <div>
+    <div class="spacingOne" />
+      <div class="title">
+        <h1>My Media</h1>
+      </div>
     <v-container grid-list-lg>
       <div class="spacingOne" />
       <div class="title">
-        <h1>Stories</h1>
+        <h2>Stories</h2>
       </div>
       <div class="spacingTwo" />
       <v-layout row>
         <v-flex lg4 v-for="item in stories" :key="item.id" class="space-bottom">
-          <v-card class="mx-auto">
+          <v-card class="mx-auto" v-on:click="getMyStory(item)">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{
@@ -67,12 +71,12 @@
     <v-container grid-list-lg>
       <div class="spacingOne" />
       <div class="title">
-        <h1>Posts</h1>
+        <h2>Posts</h2>
       </div>
       <div class="spacingTwo" />
       <v-layout row>
         <v-flex lg4 v-for="item in posts" :key="item.id" class="space-bottom">
-          <v-card class="mx-auto" v-on:click="getPost(item)">
+          <v-card class="mx-auto" v-on:click="getMyPost(item)">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{
@@ -132,7 +136,7 @@
 
 <script>
 export default {
-  name: "SelectedUser",
+  name: "MyMedia",
   data: () => ({
     posts: [],
     stories: [],
@@ -150,7 +154,7 @@ export default {
     getPosts() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_posts_for_reg?id=" +
+          "http://localhost:8084/find_all_posts_for_logged_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -161,7 +165,7 @@ export default {
     getStories() {
       this.$http
         .get(
-          "http://localhost:8086/find_all_stories_for_reg?id=" +
+          "http://localhost:8086/find_all_stories_for_logged_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -169,14 +173,18 @@ export default {
         })
         .catch(console.log);
     },
-    getPost(item) {
-      localStorage.setItem("selectedPostDescription", item.description);
-      localStorage.setItem("selectedPostTags", item.tags);
-      localStorage.setItem("selectedPostPath", item.path);
-      localStorage.setItem("selectedPostType", item.type);
+    getMyPost(item) {
+      localStorage.setItem("mySelectedUserId", item.user_id);
+      localStorage.setItem("mySelectedPostId", item.post_id);
 
       window.location.href = "http://localhost:8081/postByIdWithoutActivity";
     },
+    getMyStory(item){
+      localStorage.setItem("mySelectedUserId", item.user_id);
+      localStorage.setItem("mySelectedStoryId", item.story_id);
+
+      window.location.href = "http://localhost:8081/storyByIdWithoutActivity";
+    }
   },
 };
 </script>
