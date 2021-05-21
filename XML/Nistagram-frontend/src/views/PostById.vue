@@ -102,7 +102,6 @@
     >
       Remove Favorite
     </v-btn>
-
   </div>
 </template>
 
@@ -118,6 +117,7 @@ export default {
     isHiddenRemoveLike: true,
     isHiddenRemoveDislike: true,
     isHiddenRemoveFavorite: true,
+    likeabilityStatus: null,
   }),
   mounted() {
     this.init();
@@ -170,6 +170,7 @@ export default {
                 .then((response) => {
                   console.log(response);
                   this.isHiddenRemoveLike = false;
+                  this.isHiddenRemoveDislike = true;
                   alert("You have liked this post.");
                 })
                 .catch((er) => {
@@ -189,6 +190,7 @@ export default {
             .then((response) => {
               this.likeActivityId = response.data;
               this.isHiddenRemoveLike = false;
+              this.isHiddenRemoveDislike = true;
               alert("You have liked this post.");
             })
             .catch((er) => {
@@ -231,6 +233,7 @@ export default {
                 .then((response) => {
                   console.log(response);
                   this.isHiddenRemoveDislike = false;
+                  this.isHiddenRemoveLike = true;
                   alert("You have disliked this post.");
                 })
                 .catch((er) => {
@@ -250,6 +253,7 @@ export default {
             .then((response) => {
               this.dislikeActivityId = response.data;
               this.isHiddenRemoveDislike = false;
+              this.isHiddenRemoveLike = true;
               alert("You have disliked this post.");
             })
             .catch((er) => {
@@ -275,6 +279,7 @@ export default {
               alert("You have already favorited this post!");
               this.isHiddenRemoveFavorite = false;
               this.favoriteActivityId = this.activities[i].id;
+              this.likeabilityStatus = this.activities[i].liked_status;
               return;
             } else if (
               this.activities[i].user_id ==
@@ -282,10 +287,11 @@ export default {
               this.activities[i].is_favorite == false
             ) {
               this.favoriteActivityId = this.activities[i].id;
+              this.likeabilityStatus = this.activities[i].liked_status;
               this.$http
                 .post("http://localhost:8084/update_activity/", {
                   id: this.favoriteActivityId,
-                  likedStatus: 2,
+                  likedStatus: this.likeabilityStatus,
                   IsFavorite: true,
                 })
                 .then((response) => {
@@ -305,7 +311,7 @@ export default {
             .post("http://localhost:8084/activity/", {
               postID: localStorage.getItem("selectedPostId"),
               userID: localStorage.getItem("selectedUserId"),
-              likedStatus: 2,
+              likedStatus: this.likeabilityStatus,
               IsFavorite: true,
             })
             .then((response) => {
@@ -335,6 +341,7 @@ export default {
                 this.activities[i].is_favorite == false)
             ) {
               this.favoriteActivityId = this.activities[i].id;
+              this.likeabilityStatus = this.activities[i].liked_status;
             }
           }
         })
@@ -343,12 +350,14 @@ export default {
       if (this.favoriteActivityId == null) {
         alert("You have not favorited this post.");
         return;
+      } else if (this.likeabilityStatus == null) {
+        this.likeabilityStatus = 2;
       }
 
       this.$http
         .post("http://localhost:8084/update_activity/", {
           id: this.favoriteActivityId,
-          likedStatus: 2,
+          likedStatus: this.likeabilityStatus,
           IsFavorite: false,
         })
         .then((response) => {
@@ -372,11 +381,18 @@ export default {
             if (
               this.activities[i].user_id ==
                 localStorage.getItem("selectedUserId") &&
-              (this.activities[i].liked_status == 0 ||
-                this.activities[i].liked_status == 1 ||
-                this.activities[i].liked_status == 2)
+              this.activities[i].liked_status == 0
             ) {
               this.likeActivityId = this.activities[i].id;
+            } else if (
+              this.activities[i].user_id ==
+                localStorage.getItem("selectedUserId") &&
+              (this.activities[i].liked_status == 1 ||
+                this.activities[i].liked_status == 2)
+            ) {
+              this.isHiddenRemoveLike = true;
+              alert("You have not liked this post.");
+              return;
             }
           }
         })
@@ -414,11 +430,18 @@ export default {
             if (
               this.activities[i].user_id ==
                 localStorage.getItem("selectedUserId") &&
-              (this.activities[i].liked_status == 0 ||
-                this.activities[i].liked_status == 1 ||
-                this.activities[i].liked_status == 2)
+              this.activities[i].liked_status == 0
             ) {
               this.dislikeActivityId = this.activities[i].id;
+            } else if (
+              this.activities[i].user_id ==
+                localStorage.getItem("selectedUserId") &&
+              (this.activities[i].liked_status == 0 ||
+                this.activities[i].liked_status == 2)
+            ) {
+              this.isHiddenRemoveDislike = true;
+              alert("You have not disliked this post.");
+              return;
             }
           }
         })
