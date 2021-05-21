@@ -39,3 +39,11 @@ func (repo *TagRepository) FindTagByName(name string) *model.Tag {
 	}
 	return tag
 }
+
+func (repo *TagRepository) FindTagByType(tagType string) *model.Tag {
+	tag := &model.Tag{}
+	if repo.Database.First(&tag, "tag_type = ?", tagType).RowsAffected == 0 {
+		return nil
+	}
+	return tag
+}
