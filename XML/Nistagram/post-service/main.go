@@ -221,6 +221,8 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/find_all_public_posts_not_reg/", handlerSinglePost.FindAllPublicPostsNotRegisteredUser).Methods("GET")
 	router.HandleFunc("/find_all_public_posts_reg", handlerSinglePost.FindAllPublicPostsRegisteredUser).Methods("GET")
 
+	router.HandleFunc("/find_all_posts_for_logged_user", handlerSinglePost.FindAllPostsForLoggedUser).Methods("GET")
+
 	log.Fatal(http.ListenAndServe(":8084", cors(router)))
 }
 

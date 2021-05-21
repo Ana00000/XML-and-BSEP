@@ -56,12 +56,14 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	err = handler.PostService.CreatePost(&singlePost.Post)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	singlePostIDJson, _ := json.Marshal(singlePost.ID)
@@ -79,6 +81,7 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 	if  checkIfValid == false {
 		fmt.Println("User NOT valid")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	fmt.Println("User IS valid")
@@ -86,23 +89,15 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 	if profileSettings.UserVisibility == settingsModel.PRIVATE_VISIBILITY{
 		fmt.Println("User IS PRIVATE")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	//finds all posts
 	var posts = handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id))
-	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
-
-	//finds all conents
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
-
-
-	//finds all locations
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-
-	//find all tags
 	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
 
-	//creates a list of dtos
 	var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
 
@@ -122,6 +117,7 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 	if  checkIfValid == false {
 		fmt.Println("User NOT valid")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(uuid.MustParse(id))
@@ -132,19 +128,10 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), uuid.MustParse(id))
 		if checkIfFollowing == true{
 			var posts = handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id))
-			//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
-
-			//finds all conents
 			var contents = handler.PostContentService.FindAllContentsForPosts(posts)
-
-
-			//finds all locations
 			var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-
-			//find all tags
 			var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
 
-			//creates a list of dtos
 			var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
 			postsJson, _ := json.Marshal(postsDTOS)
@@ -156,22 +143,16 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 
 			fmt.Println("Not following private user")
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 	}else{
 		var posts = handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id))
 		//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
 
-		//finds all conents
 		var contents = handler.PostContentService.FindAllContentsForPosts(posts)
-
-
-		//finds all locations
 		var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-
-		//find all tags
 		var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
 
-		//creates a list of dtos
 		var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
 		postsJson, _ := json.Marshal(postsDTOS)
@@ -187,9 +168,6 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
-
-	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
-
 	// returns only valid users
 	var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
 
@@ -198,18 +176,10 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 
 	// returns NOT DELETED POSTS from valid following users
 	var posts = handler.SinglePostService.FindAllFollowingPosts(followings)
-
-	//finds all conents
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
-
-
-	//finds all locations
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-
-	//find all tags
 	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
 
-	//creates a list of dtos
 	var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
 	postsJson, _ := json.Marshal(postsDTOS)
@@ -229,21 +199,16 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 	if post == nil {
 		fmt.Println("User not found")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(post.UserID)
 	if profileSettings.UserVisibility == settingsModel.PUBLIC_VISIBILITY{
 		// EVERYONE CAN SELECT THIS POST
-		//finds all conents
+
 		var contents = handler.PostContentService.FindAllContentsForPost(post)
-
-		//finds all locations
 		var locations = handler.LocationService.FindAllLocationsForPost(post)
-
-		//find all tags
 		var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
-
-		//creates a list of dtos
 		var postDTO = handler.CreatePostDTO(post,contents,locations,tags)
 
 		postJson, _ := json.Marshal(postDTO)
@@ -255,6 +220,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 		// FOR POSTMAN CHECK (should redirect)
 		fmt.Println("Profile is private")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 
@@ -273,21 +239,17 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 	if post == nil {
 		fmt.Println("User not found")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(post.UserID)
 	if profileSettings.UserVisibility == settingsModel.PUBLIC_VISIBILITY{
 		// EVERYONE CAN SELECT THIS POST
-		//finds all conents
+
 		var contents = handler.PostContentService.FindAllContentsForPost(post)
-
-		//finds all locations
 		var locations = handler.LocationService.FindAllLocationsForPost(post)
-
-		//find all tags
 		var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
 
-		//creates a list of dtos
 		var postDTO = handler.CreatePostDTO(post,contents,locations,tags)
 
 		postJson, _ := json.Marshal(postDTO)
@@ -299,18 +261,11 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 		// CHECK IF LOGID FOLLOWING POST USERID
 		var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), post.UserID)
 		if checkIfFollowing == true{
-
-			//finds all conents
 			var contents = handler.PostContentService.FindAllContentsForPost(post)
-
-			//finds all locations
 			var locations = handler.LocationService.FindAllLocationsForPost(post)
-
-			//find all tags
 			var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
-
-			//creates a list of dtos
 			var postDTO = handler.CreatePostDTO(post,contents,locations,tags)
+
 			postJson, _ := json.Marshal(postDTO)
 			w.Write(postJson)
 
@@ -319,6 +274,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 		}else{
 			fmt.Println("Not following private user")
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 	}
 
@@ -329,23 +285,11 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 
 	// returns only VALID users
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	// returns all PUBLIC users
 	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
-
-	// returns all POSTS of public and valid users
 	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
-	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
-
-	//finds all conents
 	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
-
-	//finds all locations
 	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
-
-	//find all tags
 	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
-
-	//creates a list of dtos
 	var postsDTOS = handler.CreatePostsDTOList(publicValidPosts,contents,locations,tags)
 
 	postJson, _ := json.Marshal(postsDTOS)
@@ -364,23 +308,12 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	// returns only VALID users but loggedIn user
 	var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
 
-	// returns all PUBLIC users
 	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
-
-	// returns all POSTS of public and valid users
 	var publicValidPosts = handler.SinglePostService.FindAllPublicPostsNotRegisteredUser(allPublicUsers)
-
-
-	//finds all conents
 	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
-
-	//finds all locations
 	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
-
-	//find all tags
 	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
 
-	//creates a list of dtos
 	var postsDTOS = handler.CreatePostsDTOList(publicValidPosts,contents,locations,tags)
 
 	postJson, _ := json.Marshal(postsDTOS)
@@ -389,6 +322,28 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+// all posts (EXCEPT DELETED) for my current logged in user
+func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var posts = handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id))
+	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
+	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+
+	var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
+
+	postsJson, _ := json.Marshal(postsDTOS)
+	w.Write(postsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}
+
+
+
+//DTOS
 
 func (handler *SinglePostHandler) CreatePostsDTOList(posts []model.SinglePost, contents []contentModel.SinglePostContent, locations []locationModel.Location, tags []tagsModel.PostTagPosts) []dto.SelectedPostDTO {
 	var listOfPostsDTOs []dto.SelectedPostDTO
@@ -484,20 +439,3 @@ func (handler *SinglePostHandler) CreatePostDTO(posts *model.SinglePost, content
 
 }
 
-// all posts (EXCEPT DELETED) for my current logged in user
-func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-
-	var posts = handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id))
-	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
-	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
-
-	var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
-
-	postsJson, _ := json.Marshal(postsDTOS)
-	w.Write(postsJson)
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-
-}
