@@ -88,6 +88,7 @@ export default {
                 { title: 'Create Story', path: '/createStory' },
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'My Media', path: '/myMedia' },
                 { title: 'Follow Requests', path: '/followRequests' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' }
             ]
@@ -109,6 +110,7 @@ export default {
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'My Media', path: '/myMedia' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' }
             ]
             }
@@ -129,6 +131,7 @@ export default {
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'My Media', path: '/myMedia' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' }
             ]
             
