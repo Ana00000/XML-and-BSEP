@@ -55,7 +55,7 @@ func (repo *SinglePostRepository) FindAllFollowingPosts(followings []userModel.C
 	return allFollowingPosts
 }
 
-func (repo *SinglePostRepository) FindAllPublicPostsNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.SinglePost {
+func (repo *SinglePostRepository) FindAllPublicAndFriendsPostsValid(allValidUsers []userModel.ClassicUser) []model.SinglePost {
 	var allPosts = repo.FindAllPosts()
 	var allPublicPosts []model.SinglePost
 
@@ -88,7 +88,7 @@ func (repo *SinglePostRepository) FindAllPostsByIds(postsIds []uuid.UUID) []mode
 
 //FindAllPublicPostsByIds
 func (repo *SinglePostRepository) FindAllPublicPostsByIds(postsIds []uuid.UUID, allValidUsers []userModel.ClassicUser) []model.SinglePost {
-	var allPosts = repo.FindAllPublicPostsNotRegisteredUser(allValidUsers)
+	var allPosts = repo.FindAllPublicAndFriendsPostsValid(allValidUsers)
 	var allTagPosts []model.SinglePost
 
 	for i:=0; i<len(allPosts);i++{
@@ -116,9 +116,10 @@ func (repo *SinglePostRepository) FindAllPostIdsWithLocationId(locationId uuid.U
 	return allPostsWithLocation
 }
 
+//FindAllPublicAndFriendsPostsByIds
 //FindAllPublicPosts
-func (repo *SinglePostRepository) FindAllPublicPosts(posts []model.SinglePost, allValidUsers []userModel.ClassicUser) []model.SinglePost {
-	var allPosts = repo.FindAllPublicPostsNotRegisteredUser(allValidUsers)
+func (repo *SinglePostRepository) FindAllPublicAndFriendsPosts(posts []model.SinglePost, allValidUsers []userModel.ClassicUser) []model.SinglePost {
+	var allPosts = repo.FindAllPublicAndFriendsPostsValid(allValidUsers)
 	var allPublicPostsForList []model.SinglePost
 
 	for i:=0; i<len(allPosts);i++{
@@ -131,3 +132,21 @@ func (repo *SinglePostRepository) FindAllPublicPosts(posts []model.SinglePost, a
 
 	return allPublicPostsForList
 }
+
+func (repo *SinglePostRepository) FindAllPostsForUsers(users []userModel.ClassicUser) []model.SinglePost {
+	var allPosts = repo.FindAllPosts()
+	var allFollowingPosts []model.SinglePost
+
+	for i:= 0; i< len(allPosts); i++{
+		for j := 0; j < len(users); j++{
+			if (allPosts[i].UserID == users[j].ID) && (allPosts[i].IsDeleted == false){
+				allFollowingPosts = append(allFollowingPosts, allPosts[i])
+			}
+		}
+	}
+	return allFollowingPosts
+}
+
+
+
+

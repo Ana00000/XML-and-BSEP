@@ -40,8 +40,8 @@ func (service *SinglePostService) FindAllFollowingPosts(followings []userModel.C
 	return nil
 }
 
-func (service *SinglePostService) FindAllPublicPostsNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.SinglePost {
-	posts := service.Repo.FindAllPublicPostsNotRegisteredUser(allValidUsers)
+func (service *SinglePostService) FindAllPublicAndFriendsPostsValid(allValidUsers []userModel.ClassicUser) []model.SinglePost {
+	posts := service.Repo.FindAllPublicAndFriendsPostsValid(allValidUsers)
 	if posts != nil {
 		return posts
 	}
@@ -72,8 +72,16 @@ func (service *SinglePostService) FindAllPostIdsWithLocationId(locationId uuid.U
 	return nil
 }
 
-func (service *SinglePostService) FindAllPublicPosts(postsList []model.SinglePost, alValidUsers []userModel.ClassicUser) []model.SinglePost {
-	posts := service.Repo.FindAllPublicPosts(postsList, alValidUsers)
+func (service *SinglePostService) FindAllPublicAndFriendsPosts(postsList []model.SinglePost, alValidUsers []userModel.ClassicUser) []model.SinglePost {
+	posts := service.Repo.FindAllPublicAndFriendsPosts(postsList, alValidUsers)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
+
+func (service *SinglePostService) FindAllPostsForUsers(users []userModel.ClassicUser) []model.SinglePost {
+	posts := service.Repo.FindAllPostsForUsers(users)
 	if posts != nil {
 		return posts
 	}

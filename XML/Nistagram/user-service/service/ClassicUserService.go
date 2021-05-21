@@ -73,3 +73,11 @@ func (service *ClassicUserService) FinAllValidUsers() []model.ClassicUser {
 	}
 	return nil
 }
+
+func (service *ClassicUserService) FindAllUsersByFollowingIds(userIds []model.ClassicUserFollowings) []model.ClassicUser {
+	users := service.Repo.FindAllUsersByFollowingIds(userIds)
+	if users != nil {
+		return users
+	}
+	return nil
+}

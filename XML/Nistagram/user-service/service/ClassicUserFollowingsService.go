@@ -36,3 +36,11 @@ func (service * ClassicUserFollowingsService) CheckIfFollowingPostStory(followin
 	return service.Repo.CheckIfFollowingPostStory(followingUserId, classicUserId)
 
 }
+
+func (service *ClassicUserFollowingsService) FindAllUserWhoFollowUserId(ID uuid.UUID, allValidUsers []model.ClassicUser) []model.ClassicUserFollowings {
+	followings := service.Repo.FindAllUserWhoFollowUserId(ID, allValidUsers)
+	if followings != nil {
+		return followings
+	}
+	return nil
+}

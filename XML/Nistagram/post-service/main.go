@@ -210,6 +210,8 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/find_all_activities_for_post", handlerActivity.FindAllActivitiesForPost).Methods("GET")
 
 	router.HandleFunc("/comment/", handlerComment.CreateComment).Methods("POST")
+	router.HandleFunc("/find_all_comments_for_post", handlerComment.FindAllCommentsForPost).Methods("GET")
+	router.HandleFunc("/find_all_user_comments", handlerComment.FindAllUserComments).Methods("GET")
 	router.HandleFunc("/update_post/", handlerPost.UpdatePost).Methods("POST")
 	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
 	router.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts).Methods("POST")
@@ -232,6 +234,15 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	//metoda koja se poziva kada neregistrovani user pretrazi tag pa klikne na njega - prikazuju se svi PUBLIC, NOT DELETED postovi sa tim tagom
 	router.HandleFunc("/find_all_posts_for_tag", handlerSinglePost.FindAllPostsForTag).Methods("GET")
 	router.HandleFunc("/find_all_posts_for_location", handlerSinglePost.FindAllPostsForLocation).Methods("GET")
+
+	//SEARCH FOR REGISTERED USER
+	router.HandleFunc("/find_all_tags_for_public_and_friends_posts", handlerSinglePost.FindAllTagsForPublicAndFollowingPosts).Methods("GET")
+	router.HandleFunc("/find_all_locations_for_public_friends_posts", handlerSinglePost.FindAllLocationsForPublicAndFollowingPosts).Methods("GET")
+
+	//metoda koja se poziva kada neregistrovani user pretrazi tag pa klikne na njega - prikazuju se svi PUBLIC, NOT DELETED postovi sa tim tagom
+	router.HandleFunc("/find_all_posts_for_tag_reg_user", handlerSinglePost.FindAllPostsForTagRegUser).Methods("GET")
+	router.HandleFunc("/find_all_posts_for_location_reg_user", handlerSinglePost.FindAllPostsForLocationRegUser).Methods("GET")
+
 
 	log.Fatal(http.ListenAndServe(":8084", cors(router)))
 }

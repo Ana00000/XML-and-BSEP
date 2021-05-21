@@ -24,13 +24,8 @@ func (service *TagService) FindTagNameById(ID uuid.UUID) string {
 	return tag
 }
 
-
-//FindAllPostsByTagId
-func (service *TagService) FindTagIdByTagName(tagName string) *model.Tag {
-	tag := service.Repo.FindTagIdByTagName(tagName)
-
-	if tag == nil{
-		return nil
-	}
+func (service *TagService) FindTagByName(name string) *model.Tag {
+	tag := service.Repo.FindTagByName(name)
 	return tag
 }
+

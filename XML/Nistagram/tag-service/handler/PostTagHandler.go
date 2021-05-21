@@ -24,24 +24,43 @@ func (handler *PostTagHandler) CreatePostTag(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	id := uuid.New()
-	postTag := model.PostTag{
-		Tag: model.Tag{
-			ID:   id,
-			Name: postTagDTO.Name,
-		},
-	}
+	var findTag = handler.TagService.FindTagByName(postTagDTO.Name)
+	var postTag model.PostTag
 
-	err = handler.Service.CreatePostTag(&postTag)
-	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusExpectationFailed)
-	}
+	if findTag == nil {
+		id := uuid.New()
+		postTag = model.PostTag{
+			Tag: model.Tag{
+				ID:   id,
+				Name: postTagDTO.Name,
+			},
+		}
 
-	err = handler.TagService.CreateTag(&postTag.Tag)
-	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusExpectationFailed)
+		if err := handler.Service.CreatePostTag(&postTag); err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
+
+		if err := handler.TagService.CreateTag(&postTag.Tag); err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
+	} else {
+		id := uuid.New()
+		postTag = model.PostTag{
+			Tag: model.Tag{
+				ID:   id,
+				Name: findTag.Name,
+			},
+		}
+
+		if err := handler.Service.CreatePostTag(&postTag); err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
 	}
 
 	postTagIDJson, _ := json.Marshal(postTag.ID)
