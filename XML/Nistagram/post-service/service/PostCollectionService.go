@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
 )
@@ -13,6 +14,14 @@ func (service * PostCollectionService) CreatePostCollection(postCollection *mode
 	err := service.Repo.CreatePostCollection(postCollection)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (service * PostCollectionService) FindAllPostCollectionsForUserRegisteredUser(postCollectionUserId uuid.UUID) []model.PostCollection{
+	postCollections := service.Repo.FindAllPostCollectionsForUserRegisteredUser(postCollectionUserId)
+	if postCollections != nil {
+		return postCollections
 	}
 	return nil
 }

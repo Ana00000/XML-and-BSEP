@@ -102,6 +102,31 @@
     >
       Remove Favorite
     </v-btn>
+
+    <v-container grid-list-lg v-if="!isHiddenCollections">
+      <div class="spacingOne" />
+      <v-card-title class="justify-center">
+        <h1 class="display-1">My Collections</h1>
+      </v-card-title>
+      <div class="spacingTwo" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in postCollections"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card class="mx-auto" v-on:click="getCollection(item)">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{ item.title }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+      <v-btn color="info mb-5" v-on:click="addPostToCollection"> Add </v-btn>
+    </v-container>
   </div>
 </template>
 
@@ -118,12 +143,25 @@ export default {
     isHiddenRemoveDislike: true,
     isHiddenRemoveFavorite: true,
     likeabilityStatus: null,
+    isHiddenCollections: true,
+    postCollections: [],
+    postCollectionId: null,
   }),
   mounted() {
     this.init();
   },
   methods: {
     init() {
+      this.$http
+        .get(
+          "http://localhost:8084/find_all_post_collections_for_reg?id=" +
+            localStorage.getItem("userId")
+        )
+        .then((response) => {
+          this.postCollections = response.data;
+        })
+        .catch(console.log);
+
       this.$http
         .get(
           "http://localhost:8084/find_selected_post_for_logged_user?id=" +
@@ -276,7 +314,10 @@ export default {
                 localStorage.getItem("selectedUserId") &&
               this.activities[i].is_favorite == true
             ) {
-              alert("You have already favorited this post!");
+              alert(
+                "You have already favorited this post!You can add this post to your collections now."
+              );
+              this.isHiddenCollections = false;
               this.isHiddenRemoveFavorite = false;
               this.favoriteActivityId = this.activities[i].id;
               this.likeabilityStatus = this.activities[i].liked_status;
@@ -297,7 +338,10 @@ export default {
                 .then((response) => {
                   console.log(response);
                   this.isHiddenRemoveFavorite = false;
-                  alert("You have favorited this post.");
+                  alert(
+                    "You have favorited this post.You can add this post to your collections now."
+                  );
+                  this.isHiddenCollections = false;
                 })
                 .catch((er) => {
                   console.log(er.response.data);
@@ -317,7 +361,10 @@ export default {
             .then((response) => {
               this.favoriteActivityId = response.data;
               this.isHiddenRemoveFavorite = false;
-              alert("You have favorited this post.");
+              alert(
+                "You have favorited this post.You can add this post to your collections now."
+              );
+              this.isHiddenCollections = false;
             })
             .catch((er) => {
               console.log(er.response.data);
@@ -363,6 +410,7 @@ export default {
         .then((response) => {
           console.log(response);
           this.isHiddenRemoveFavorite = true;
+          this.isHiddenCollections = true;
           alert("You have removed favorite for this post.");
         })
         .catch((er) => {
@@ -466,6 +514,42 @@ export default {
         .catch((er) => {
           console.log(er.response.data);
         });
+    },
+    getCollection(item) {
+      this.postCollectionId = item.id;
+    },
+    addPostToCollection() {
+      if (this.postCollectionId == null) {
+        alert("You have not selected collection.");
+        return;
+      }
+
+      this.$http
+        .get(
+          "http://localhost:8084/find_all_post_collection_posts_for_post?id=" +
+            localStorage.getItem("selectedPostId")
+        )
+        .then((response) => {
+          for (var i = 0; i < response.data.length; i++) {
+            if (this.postCollectionId == response.data[i].post_collection_id) {
+              alert("You have already added this post to selected collection.");
+              return;
+            }
+          }
+          this.$http
+            .post("http://localhost:8084/post_collection_posts/", {
+              post_collection_id: this.postCollectionId,
+              single_post_id: localStorage.getItem("selectedPostId"),
+            })
+            .then((response) => {
+              console.log(response.data);
+              alert("You have added this post to your collection.");
+            })
+            .catch((er) => {
+              console.log(er.response.data);
+            });
+        })
+        .catch(console.log);
     },
   },
 };

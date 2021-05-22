@@ -93,6 +93,9 @@ export default {
                 { title: 'Search Users', path: '/searchUsers' },
                 { title: 'Search Locations', path: '/searchLocationsRegistered' },
                 { title: 'Search Tags', path: '/searchTagsRegistered' },
+                { title: 'Create Post Album', path: '/createPostAlbum' },
+                { title: 'Create Story Album', path: '/createStoryAlbum' },
+                { title: 'My Collections', path: '/myCollections' },
             ]
 
             }else{
@@ -110,6 +113,7 @@ export default {
                 { title: 'Create Story', path: '/createStory' },
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
+                { title: 'My Collections', path: '/myCollections' },
                 { title: 'Update Profile', path: '/updateProfile' },
                 { title: 'My Media', path: '/myMedia' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' },
@@ -127,12 +131,13 @@ export default {
                 { title: 'Public Stories', path: '/publicStoriesAll' },
                 { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
                 { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
-                { title: 'HighlightedStories', path: '/highlightedStories' },
+                { title: 'Highlighted Stories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
                 { title: 'Create Story', path: '/createStory' },
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
+                { title: 'My Collections', path: '/myCollections' },
                 { title: 'Update Profile', path: '/updateProfile' },
                 { title: 'My Media', path: '/myMedia' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' },
