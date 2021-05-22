@@ -592,9 +592,12 @@ func (handler *SinglePostHandler) MergePublicAndFollowingUsers(allPublicUsers []
 func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []userModel.ClassicUser {
 
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
+	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(id, allValidUsers)
 
-	var allFollowings = handler.ClassicUserFollowingsService.FindAllUserWhoFollowUserId(id, allValidUsers) //moj user je classic user
+
+	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsersButLoggedIn)
+
+	var allFollowings = handler.ClassicUserFollowingsService.FindAllUserWhoFollowUserId(id, allValidUsersButLoggedIn) //moj user je classic user
 	var allFollowingUsers = handler.ClassicUserService.FindAllUsersByFollowingIds(allFollowings)
 
 	// ALL PUBLIC AND FRIENDS USERS EXCEPT LOGGED
@@ -604,13 +607,40 @@ func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []u
 	return allUsers
 }
 
+func (handler *SinglePostHandler) FindAllValidUsersButLoggedIn(id uuid.UUID, allValidUsers []userModel.ClassicUser) []userModel.ClassicUser {
+
+	allUsers, myUser := handler.FindMyUserById(id, allValidUsers)
+
+	for i := 0; i < len(allValidUsers); i++ {
+		_, found := Find(allValidUsers, myUser)
+
+		if !found {
+			allUsers = append(allUsers, myUser)
+		}
+	}
+
+	return allUsers
+}
+
+func (handler *SinglePostHandler) FindMyUserById(id uuid.UUID, allValidUsers []userModel.ClassicUser) ([]userModel.ClassicUser, userModel.ClassicUser) {
+	var allUsers []userModel.ClassicUser
+	var myUser userModel.ClassicUser
+	for i := 0; i < len(allValidUsers); i++ {
+		if allValidUsers[i].ID == id {
+			myUser = allValidUsers[i]
+		}
+	}
+	return allUsers, myUser
+}
+
 // SEARCH TAGS FOR REGISTERED USER - FIND ALL TAGS ON PUBLIC AND FOLLOWING POSTS
 func (handler *SinglePostHandler) FindAllTagsForPublicAndFollowingPosts(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id") //logged in reg user id
 
 	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
-	var allPosts = handler.SinglePostService.FindAllPostsForUsers(allUsers)
+	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(uuid.MustParse(id), allUsers)
+	var allPosts = handler.SinglePostService.FindAllPostsForUsers(allValidUsersButLoggedIn)
 	var tags = handler.PostTagPostsService.FindAllTagsForPosts(allPosts)
 
 	tagsJson, _ := json.Marshal(tags)
@@ -627,7 +657,8 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicAndFollowingPosts(w h
 	id := r.URL.Query().Get("id") //logged in reg user id
 
 	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
-	var allPosts = handler.SinglePostService.FindAllPostsForUsers(allUsers)
+	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(uuid.MustParse(id), allUsers)
+	var allPosts = handler.SinglePostService.FindAllPostsForUsers(allValidUsersButLoggedIn)
 
 	var locations = handler.LocationService.FindAllLocationsForPosts(allPosts)
 
@@ -648,7 +679,8 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 	var postIds = handler.PostTagPostsService.FindAllPostIdsWithTagId(tag.ID)
 
 	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
-	var posts = handler.SinglePostService.FindAllPublicPostsByIds(postIds, allUsers)
+	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(uuid.MustParse(id), allUsers)
+	var posts = handler.SinglePostService.FindAllPublicPostsByIds(postIds, allValidUsersButLoggedIn)
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
@@ -674,7 +706,8 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 	var locationPosts = handler.SinglePostService.FindAllPostIdsWithLocationId(location.ID)
 
 	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
-	var posts = handler.SinglePostService.FindAllPublicAndFriendsPosts(locationPosts, allUsers)
+	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(uuid.MustParse(id), allUsers)
+	var posts = handler.SinglePostService.FindAllPublicAndFriendsPosts(locationPosts, allValidUsersButLoggedIn)
 
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)

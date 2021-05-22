@@ -2,16 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Media/245542461Capture.PNG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/246960563mind.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/347099862IMG-20191103-WA0011.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/355600019mind.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/766164647mind.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/components/NavigationBar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/components/NavigationBar.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/router/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/handler/SingleStoryHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/handler/SingleStoryHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/PostTagPostsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/repository/PostTagPostsRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/PostTagPostsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/service/PostTagPostsService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

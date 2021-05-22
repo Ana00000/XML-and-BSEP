@@ -53,7 +53,7 @@ func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.Si
 	for i:=0;i<len(allPosts);i++{
 		for j:=0; j<len(allTags);j++{
 			if allPosts[i].ID == allTags[j].PostId{
-				tags = append(tags, repo.FindTagById(allTags[j].PostTagId))
+				tags = append(tags, repo.FindTagById(allTags[j].TagId))
 			}
 		}
 

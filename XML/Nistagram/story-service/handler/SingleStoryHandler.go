@@ -389,7 +389,7 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 		var listOfTags []string
 		for p := 0; p < len(tags); p++ {
 			if tags[p].StoryId == stories[i].ID {
-				listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].StoryTagId))
+				listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
 			}
 		}
 
@@ -437,7 +437,7 @@ func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, cont
 	var listOfTags []string
 	for p := 0; p < len(tags); p++ {
 		if tags[p].StoryId == story.ID {
-			listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].StoryTagId))
+			listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
 
 		}
 	}
