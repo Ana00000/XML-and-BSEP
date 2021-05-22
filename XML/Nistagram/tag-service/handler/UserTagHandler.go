@@ -79,7 +79,7 @@ func (handler *UserTagHandler) FindAllTaggableUsersPost(w http.ResponseWriter, r
 		fmt.Println("User post taggable: ", userProfileSettings.IsPostTaggable)
 		if userProfileSettings.IsPostTaggable {
 			user := handler.ClassicUserService.FindById(userId)
-			if !user.IsDeleted {
+			if !user.IsDeleted && user.IsConfirmed {
 				allTaggableUsersPost = append(allTaggableUsersPost, *user)
 			}
 		}
@@ -105,7 +105,7 @@ func (handler *UserTagHandler) FindAllTaggableUsersStory(w http.ResponseWriter, 
 		fmt.Println("User story taggable: ", userProfileSettings.IsPostTaggable)
 		if userProfileSettings.IsStoryTaggable {
 			user := handler.ClassicUserService.FindById(userId)
-			if !user.IsDeleted {
+			if !user.IsDeleted && user.IsConfirmed {
 				allTaggableUsersStory = append(allTaggableUsersStory, *user)
 			}
 		}
@@ -130,7 +130,7 @@ func (handler *UserTagHandler) FindAllTaggableUsersComment(w http.ResponseWriter
 		fmt.Println("User comment taggable: ", userProfileSettings.IsPostTaggable)
 		if userProfileSettings.IsCommentTaggable {
 			user := handler.ClassicUserService.FindById(userId)
-			if !user.IsDeleted {
+			if !user.IsDeleted && user.IsConfirmed {
 				allTaggableUsersComment = append(allTaggableUsersComment, *user)
 			}
 		}

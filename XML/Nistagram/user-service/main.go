@@ -12,6 +12,8 @@ import (
 	requestsService "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
 	settingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
+	tagRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
+	tagService "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
@@ -41,6 +43,24 @@ func initDB() *gorm.DB{
 
 func initPasswordUtil() *util.PasswordUtil{
 	return &util.PasswordUtil { }
+}
+
+//USER-TAG
+func initUserTagRepo(database *gorm.DB) *tagRepository.UserTagRepository{
+	return &tagRepository.UserTagRepository { Database: database }
+}
+
+func initUserTagService(repo *tagRepository.UserTagRepository) *tagService.UserTagService{
+	return &tagService.UserTagService { Repo: repo }
+}
+
+//TAG
+func initTagRepo(database *gorm.DB) *tagRepository.TagRepository{
+	return &tagRepository.TagRepository { Database: database }
+}
+
+func initTagService(repo *tagRepository.TagRepository) *tagService.TagService{
+	return &tagService.TagService { Repo: repo }
 }
 
 //USER
@@ -126,7 +146,7 @@ func initRegisteredUserService(repo *repository.RegisteredUserRepository) *servi
 	return &service.RegisteredUserService { Repo: repo }
 }
 
-func initRegisteredUserHandler(registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService,  settingsService *settingsService.ProfileSettingsService, validator *validator.Validate, passwordUtil *util.PasswordUtil) *handler.RegisteredUserHandler{
+func initRegisteredUserHandler(registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService,  settingsService *settingsService.ProfileSettingsService, validator *validator.Validate, passwordUtil *util.PasswordUtil, userTagService *tagService.UserTagService, tagService *tagService.TagService) *handler.RegisteredUserHandler{
 	return &handler.RegisteredUserHandler{
 		registeredUserService,
 		userService,
@@ -135,6 +155,8 @@ func initRegisteredUserHandler(registeredUserService *service.RegisteredUserServ
 		settingsService,
 		validator,
 		passwordUtil,
+		userTagService,
+		tagService,
 	}
 
 }
@@ -147,13 +169,15 @@ func initAgentService(repo *repository.AgentRepository) *service.AgentService{
 	return &service.AgentService { Repo: repo }
 }
 
-func initAgentHandler(agentService *service.AgentService, userService *service.UserService, classicUserService *service.ClassicUserService, validator *validator.Validate, passwordUtil *util.PasswordUtil) *handler.AgentHandler{
+func initAgentHandler(agentService *service.AgentService, userService *service.UserService, classicUserService *service.ClassicUserService, validator *validator.Validate, passwordUtil *util.PasswordUtil, userTagService *tagService.UserTagService, tagService *tagService.TagService) *handler.AgentHandler{
 	return &handler.AgentHandler{
 		AgentService: agentService,
 		UserService: userService,
 		ClassicUserService: classicUserService,
 		Validator: validator,
 		PasswordUtil: passwordUtil,
+		UserTagService: userTagService,
+		TagService: tagService,
 	}
 }
 
@@ -301,6 +325,7 @@ func main() {
 	rbac.Add(roleRegisteredUser)
 
 	database := initDB()
+	userTagRepo	:= initUserTagRepo(database)
 	userRepo := initUserRepo(database)
 	registeredUserRepo := initRegisteredUserRepo(database)
 	adminRepo := initAdminRepo(database)
@@ -315,6 +340,9 @@ func main() {
 	requestsRepo := initRequestsRepo(database)
 	classicUserCloseFriendsRepo := initClassicUserCloseFriendsRepo(database)
 
+	tagRepository := initTagRepo(database)
+	tagService := initTagService(tagRepository)
+	userTagService := initUserTagService(userTagRepo)
 	userService := initUserService(userRepo)
 	registeredUserService := initRegisteredUserService(registeredUserRepo)
 	confirmationTokenService := initConfirmationTokenService(confirmationTokenRepo)
@@ -333,8 +361,8 @@ func main() {
 	passwordUtil := initPasswordUtil()
 	userHandler := initUserHandler(userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo, validator, passwordUtil)
 	adminHandler := initAdminHandler(adminService, userService, validator, passwordUtil)
-	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService,settingsService,validator, passwordUtil)
-	agentHandler := initAgentHandler(agentService, userService, classicUserService, validator, passwordUtil)
+	registeredUserHandler := initRegisteredUserHandler(registeredUserService, userService, classicUserService,confirmationTokenService,settingsService,validator, passwordUtil, userTagService, tagService)
+	agentHandler := initAgentHandler(agentService, userService, classicUserService, validator, passwordUtil, userTagService, tagService)
 	confirmationTokenHandler := initConfirmationTokenHandler(confirmationTokenService,userService,registeredUserService,classicUserService)
 	classicUserCampaignsHandler := initClassicUserCampaignsHandler(classicUserCampaignsService)
 	classicUserFollowersHandler := initClassicUserFollowersHandler(classicUserFollowersService)
