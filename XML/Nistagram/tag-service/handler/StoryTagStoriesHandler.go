@@ -37,3 +37,16 @@ func (handler *StoryTagStoriesHandler) CreateStoryTagStories(w http.ResponseWrit
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+func (handler *StoryTagStoriesHandler) FindStoryTagStoriesForStoryId(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	storyTagStories := handler.Service.FindStoryTagStoriesForStoryId(uuid.MustParse(id))
+	storyTagStoriesJson, _ := json.Marshal(storyTagStories)
+	if storyTagStoriesJson != nil {
+		w.WriteHeader(http.StatusCreated)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(storyTagStoriesJson)
+	}
+	w.WriteHeader(http.StatusBadRequest)
+}

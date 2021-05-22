@@ -28,7 +28,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item three-line v-if="item.type != 1">
+            <v-list-item three-line v-if="item.type == 0">
               <v-list-item-content>
                 <img
                   :src="require(`../../../Media/${item.path}`)"
@@ -133,7 +133,20 @@ export default {
         streetName: location.streetName,
         streetNumber: location.streetNumber,
       });
-      console.log(this.stories);
+
+      this.$http
+        .get(
+          "http://localhost:8082/find_story_tag_stories_for_story_id?id=" +
+            story.id
+        )
+        .then((response) => {
+          var storyTagIds = [];
+          for (var i = 0; i < response.data.length; i++) {
+            storyTagIds.push(response.data[i].story_tag_id);
+          }
+          console.log(storyTagIds);
+        })
+        .catch(console.log);
     },
   },
 };

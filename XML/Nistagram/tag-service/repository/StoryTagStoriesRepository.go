@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"gorm.io/gorm"
@@ -50,4 +51,10 @@ func (repo *StoryTagStoriesRepository) FindAllTagsForStory(story *storyModel.Sin
 	}
 
 	return tags
+}
+
+func (repo * StoryTagStoriesRepository) FindStoryTagStoriesForStoryId(storyId uuid.UUID) []model.StoryTagStories{
+	var storyTagStories []model.StoryTagStories
+	repo.Database.Select("*").Where("story_id = ?", storyId).Find(&storyTagStories)
+	return storyTagStories
 }
