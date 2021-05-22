@@ -87,3 +87,16 @@ func (handler *SingleStoryContentHandler) Upload(writer http.ResponseWriter, req
 	pathJson, _ := json.Marshal(tempFile.Name())
 	writer.Write(pathJson)
 }
+
+func (handler *SingleStoryContentHandler) FindSingleStoryContentForStoryId(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	singleStoryContent := handler.Service.FindSingleStoryContentForStoryId(uuid.MustParse(id))
+	singleStoryContentJson, _ := json.Marshal(singleStoryContent)
+	if singleStoryContentJson != nil {
+		w.WriteHeader(http.StatusCreated)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(singleStoryContentJson)
+	}
+	w.WriteHeader(http.StatusBadRequest)
+}

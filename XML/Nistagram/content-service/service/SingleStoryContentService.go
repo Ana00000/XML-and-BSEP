@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/repository"
 	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
@@ -32,4 +33,9 @@ func (service *SingleStoryContentService) FindAllContentsForStory(story *storyMo
 		return stories
 	}
 	return nil
+}
+
+func (service * SingleStoryContentService) FindSingleStoryContentForStoryId(storyId uuid.UUID) model.SingleStoryContent{
+	singleStoryContent := service.Repo.FindSingleStoryContentForStoryId(storyId)
+	return singleStoryContent
 }

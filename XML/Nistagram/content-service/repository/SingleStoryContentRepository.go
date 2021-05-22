@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"gorm.io/gorm"
@@ -50,4 +51,10 @@ func (repo *SingleStoryContentRepository) FindAllContentsForStory(story *storyMo
 	}
 
 	return contents
+}
+
+func (repo * SingleStoryContentRepository) FindSingleStoryContentForStoryId(storyId uuid.UUID) model.SingleStoryContent{
+	var singleStoryContent model.SingleStoryContent
+	repo.Database.Select("*").Where("single_story_id = ?", storyId).Find(&singleStoryContent)
+	return singleStoryContent
 }
