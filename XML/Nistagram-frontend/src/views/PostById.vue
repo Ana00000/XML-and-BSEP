@@ -103,6 +103,30 @@
       Remove Favorite
     </v-btn>
 
+
+     <v-container grid-list-lg>
+      <div class="spacingOne" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in allPostComments"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card
+            class="mx-auto"
+          >
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{ item.text }}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{ item.user_id}}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+
     <v-container grid-list-lg v-if="!isHiddenCollections">
       <div class="spacingOne" />
       <v-card-title class="justify-center">
@@ -146,6 +170,7 @@ export default {
     isHiddenCollections: true,
     postCollections: [],
     postCollectionId: null,
+    allPostComments: [],
   }),
   mounted() {
     this.init();
@@ -171,6 +196,16 @@ export default {
         )
         .then((response) => {
           this.post = response.data;
+        })
+        .catch(console.log);
+
+        this.$http
+        .get(
+          "http://localhost:8084/find_all_comments_for_post?id=" +
+            localStorage.getItem("selectedPostId")
+        )
+        .then((response) => {
+          this.allPostComments = response.data;
         })
         .catch(console.log);
     },

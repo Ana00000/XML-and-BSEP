@@ -3,12 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/dto/CommentContentDTO.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/CommentContentHandler.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/model/CommentContent.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/repository/CommentContentRepository.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/service/CommentContentService.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/dto/CommentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/dto/CommentDTO.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/CommentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/CommentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/model/Comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/model/Comment.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

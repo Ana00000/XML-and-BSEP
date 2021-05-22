@@ -8,9 +8,10 @@ import (
 
 type Comment struct {
 	ID uuid.UUID `json:"id"`
-	CreationDate time.Time `json:"creationDate" gorm:"not null"`
-	UserID uuid.UUID `json:"userID" gorm:"not null"`
-	PostID uuid.UUID `json:"postID" gorm:"not null"`
+	CreationDate time.Time `json:"creation_date" gorm:"not null"`
+	UserID uuid.UUID `json:"user_id" gorm:"not null"`
+	PostID uuid.UUID `json:"post_id" gorm:"not null"`
+	Text string `json:"text" gorm:"not null"`
 }
 
 func (comment *Comment) BeforeCreate(scope *gorm.DB) error {
