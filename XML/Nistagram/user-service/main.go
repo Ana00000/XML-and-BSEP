@@ -9,10 +9,6 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/mikespook/gorbac"
-	requestsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/repository"
-	requestsService "github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
-	settingsRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
-	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
@@ -273,11 +269,15 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	router.HandleFunc("/find_selected_user_by_id", classicUserHandler.FindSelectedUserById).Methods("GET")
 	router.HandleFunc("/accept_follow_request/", classicUserFollowingsHandler.AcceptFollowerRequest).Methods("POST")
 	router.HandleFunc("/find_all_public_users/", classicUserHandler.FindAllPublicUsers).Methods("GET")
-
+	router.HandleFunc("/find_all_valid_users/", classicUserHandler.FindAllValidUsers).Methods("GET")
 	router.HandleFunc("/create_close_friend/", classicUserCloseFriendsHandler.CreateClassicUserCloseFriend).Methods("POST")
-
+	router.HandleFunc("/check_if_user_valid/{userID}", classicUserHandler.CheckIfUserValid).Methods("GET")
 	router.HandleFunc("/find_all_mutual_followers_for_user", classicUserFollowersHandler.FindAllMutualFollowerForUser).Methods("GET")
-
+	router.HandleFunc("/dto/find_all_classic_users_but_logged_in", classicUserHandler.FindAllUsersButLoggedInDTOs).Methods("GET")
+	router.HandleFunc("/check_if_following_post_story/{id}/{logId}", classicUserFollowingsHandler.CheckIfFollowingPostStory).Methods("GET")
+	router.HandleFunc("/check_if_close_friend/{id}/{logId}", classicUserCloseFriendsHandler.CheckIfCloseFriend).Methods("GET")
+	router.HandleFunc("/find_all_valid_followings_for_user/{id}", classicUserFollowingsHandler.FindAllValidFollowingsForUser).Methods("GET")
+	//FindAllValidFollowingsForUser
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
@@ -314,8 +314,6 @@ func main() {
 	classicUserFollowersRepo := initClassicUserFollowersRepo(database)
 	classicUserFollowingsRepo := initClassicUserFollowingsRepo(database)
 	recoveryPasswordTokenRepo := initRecoveryPasswordTokenRepo(database)
-	settingsRepo := initSettingsRepo(database)
-	requestsRepo := initRequestsRepo(database)
 	classicUserCloseFriendsRepo := initClassicUserCloseFriendsRepo(database)
 
 	userService := initUserService(userRepo)
@@ -328,8 +326,6 @@ func main() {
 	classicUserFollowersService := initClassicUserFollowersService(classicUserFollowersRepo)
 	classicUserFollowingsService := initClassicUserFollowingsService(classicUserFollowingsRepo)
 	recoveryPasswordTokenService := initRecoveryPasswordTokenService(recoveryPasswordTokenRepo)
-	settingsService := initSettingsService(settingsRepo)
-	requestsService := initRequestsService(requestsRepo)
 	classicUserCloseFriendsService := initClassicUserCloseFriendsService(classicUserCloseFriendsRepo)
 
 
@@ -341,9 +337,9 @@ func main() {
 	confirmationTokenHandler := initConfirmationTokenHandler(confirmationTokenService,userService,registeredUserService,classicUserService)
 	classicUserCampaignsHandler := initClassicUserCampaignsHandler(classicUserCampaignsService)
 	classicUserFollowersHandler := initClassicUserFollowersHandler(classicUserFollowersService)
-	classicUserFollowingsHandler := initClassicUserFollowingsHandler(classicUserFollowingsService, classicUserFollowersService, requestsService )
-	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(recoveryPasswordTokenService,classicUserService,registeredUserService,userService, validator)
-	classicUserHandler := initClassicUserHandler(classicUserService, settingsService, classicUserFollowingsService, requestsService)
+	classicUserFollowingsHandler := initClassicUserFollowingsHandler(classicUserFollowingsService, classicUserFollowersService)
+	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(recoveryPasswordTokenService,userService, validator)
+	classicUserHandler := initClassicUserHandler(classicUserService, classicUserFollowingsService)
 	classicUserCloseFriendsHandler := initClassicUserCloseFriendsHandler(classicUserCloseFriendsService, classicUserFollowersService)
 	handleFunc(userHandler, confirmationTokenHandler, adminHandler,classicUserHandler, agentHandler,registeredUserHandler,classicUserCampaignsHandler,classicUserFollowingsHandler,classicUserFollowersHandler,recoveryPasswordTokenHandler, classicUserCloseFriendsHandler)
 

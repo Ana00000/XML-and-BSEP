@@ -152,6 +152,7 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	if user.UserType == model.ADMIN {
@@ -159,28 +160,33 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 	} else if user.UserType == model.AGENT {
 		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID, salt, password)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 		err = handler.AgentService.UpdateAgentPassword(user.ID, salt, password)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 	} else {
 		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID, salt, password)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 		err = handler.RegisteredUserService.UpdateRegisteredUserPassword(user.ID, salt, password)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 	}
 

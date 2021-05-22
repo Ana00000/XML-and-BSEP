@@ -3,8 +3,8 @@ package repository
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"gorm.io/gorm"
 )
 
@@ -50,10 +50,10 @@ func (repo * ProfileSettingsRepository) FindProfileSettingByUserId(userId uuid.U
 	return profileSetting
 }
 
-func (repo * ProfileSettingsRepository) FindAllPublicUsers(allValidUsers []userModel.ClassicUser) []userModel.ClassicUser {
+func (repo * ProfileSettingsRepository) FindAllPublicUsers(allValidUsers []dto.ClassicUserDTO) []dto.ClassicUserDTO {
 
 	var publicProfileSettings = repo.FindAllProfileSettingsForPublicUsers()
-	var listOfPublicUsers []userModel.ClassicUser
+	var listOfPublicUsers []dto.ClassicUserDTO
 
 	for i:=0; i<len(allValidUsers); i++{
 		for j:=0; j<len(publicProfileSettings);j++{

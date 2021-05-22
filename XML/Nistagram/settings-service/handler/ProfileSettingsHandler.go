@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"net/http"
-	"settings-service/dto"
 	_ "strconv"
 )
 
@@ -77,6 +77,7 @@ func (handler *ProfileSettingsHandler) FindProfileSettingByUserId(w http.Respons
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(profileSettingsDTOJson)
+		return
 	}
 	w.WriteHeader(http.StatusNotFound)
 }
@@ -94,6 +95,29 @@ func (handler *ProfileSettingsHandler) FindProfileSettingsForPublicUsers(w http.
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(dataJson)
+	}
+	w.WriteHeader(http.StatusNotFound)
+}
+
+func (handler *ProfileSettingsHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Request) {
+	var classicUsersDTO []dto.ClassicUserDTO
+	if err := json.NewDecoder(r.Body).Decode(&classicUsersDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
+	var classicUsers = handler.Service.FindAllPublicUsers(classicUsersDTO)
+	/*if classicUsers == nil {
+		fmt.Println("Ne postoji!")
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}*/
+
+	dataJson, _ := json.Marshal(classicUsers)
+	if dataJson != nil {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(dataJson)
+		return
 	}
 	w.WriteHeader(http.StatusNotFound)
 }

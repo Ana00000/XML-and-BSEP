@@ -21,14 +21,14 @@
             <v-list-item three-line v-if="item.type == 'VIDEO'">
               <v-list-item-content> 
                <video width="320" height="240" controls>
-                  <source :src="require(`../../../Media/${ item.path }`)" type="video/mp4">
+                  <source :src="require(`/app/public/uploads/${ item.path }`)" type="video/mp4">
                 </video>
               </v-list-item-content>
             </v-list-item>
 
              <v-list-item three-line v-if="item.type != 'VIDEO'">
               <v-list-item-content> 
-                <img :src="require(`../../../Media/${ item.path }`)" alt class="icon" width="320" height="240"/>
+                <img :src="require(`/app/public/uploads/${ item.path }`)" alt class="icon" width="320" height="240"/>
               </v-list-item-content>
             </v-list-item>
 
@@ -61,7 +61,8 @@
 export default {
   name: "PublicStoriesAllForNotRegistered",
   data: () => ({
-    stories: []
+    stories: [],
+    publicPath: process.env.VUE_APP_BASE_URL,
   }),
   mounted() {
     this.init();
@@ -69,7 +70,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8086/find_all_public_stories_not_reg/")
+        .get("http://localhost:8080/api/story/find_all_public_stories_not_reg/")
         .then((response) => {
           this.stories = response.data;
         })

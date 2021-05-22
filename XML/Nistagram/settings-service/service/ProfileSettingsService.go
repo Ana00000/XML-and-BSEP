@@ -2,9 +2,9 @@ package service
 
 import (
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/repository"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 )
 
 type ProfileSettingsService struct {
@@ -40,7 +40,7 @@ func (service *ProfileSettingsService) FindProfileSettingByUserId(id uuid.UUID) 
 	return user
 }
 
-func (service * ProfileSettingsService) FindAllPublicUsers(allValidUsers []userModel.ClassicUser) []userModel.ClassicUser{
+func (service * ProfileSettingsService) FindAllPublicUsers(allValidUsers []dto.ClassicUserDTO) []dto.ClassicUserDTO{
 	publicUsers := service.Repo.FindAllPublicUsers(allValidUsers)
 	if publicUsers != nil {
 		return publicUsers

@@ -92,16 +92,19 @@ func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request)
 	if err := handler.AgentService.CreateAgent(&agent); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	if err := handler.ClassicUserService.CreateClassicUser(&agent.ClassicUser); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	if err := handler.UserService.CreateUser(&agent.ClassicUser.User); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 	
 	w.WriteHeader(http.StatusCreated)

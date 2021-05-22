@@ -66,7 +66,7 @@
             style="display: none"
           ></iframe>
           <form
-            action="http://localhost:8080/api/content/uploadPostMedia/"
+            action="http://localhost:8083/uploadPostMedia/"
             enctype="multipart/form-data"
             method="post"
             v-if="!isHiddenContent"

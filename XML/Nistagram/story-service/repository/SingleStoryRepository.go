@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"gorm.io/gorm"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 	"time"
 )
 
@@ -45,7 +45,7 @@ func (repo *SingleStoryRepository) FindByID(ID uuid.UUID) *model.SingleStory {
 }
 
 // tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
-func (repo *SingleStoryRepository) FindAllPublicStoriesNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.SingleStory {
+func (repo *SingleStoryRepository) FindAllPublicStoriesNotRegisteredUser(allValidUsers []dto.ClassicUserDTO) []model.SingleStory {
 	var allStories = repo.FindAllStories()
 	var allPublicStories []model.SingleStory
 	var notExpiredStories []model.SingleStory
@@ -162,7 +162,7 @@ func (repo *SingleStoryRepository) FindAllStoriesForUserPublic(userId uuid.UUID)
 }
 
 // FIND ALL NOT DELETED VALID STORIES THAT LOGGED IN USER FOLLOWS
-func (repo *SingleStoryRepository) FindAllFollowingStories(followings []userModel.ClassicUserFollowings) []model.SingleStory {
+func (repo *SingleStoryRepository) FindAllFollowingStories(followings []dto.ClassicUserFollowingsDTO) []model.SingleStory {
 	var allStories = repo.FindAllStories()
 	var allFollowingStories []model.SingleStory
 	var notExpiredStories []model.SingleStory

@@ -82,6 +82,7 @@ func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w ht
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	SendRecoveryPasswordMail(user, recoveryPasswordToken.RecoveryPasswordToken)

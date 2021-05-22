@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"net/http"
 	_ "strconv"
 )
@@ -57,6 +57,70 @@ func (handler *LocationHandler) FindByID(w http.ResponseWriter, r *http.Request)
 	}
 
 	locationJson, _ := json.Marshal(location)
+	w.Write(locationJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *LocationHandler) FindAllLocationsForStories(w http.ResponseWriter, r *http.Request) {
+	var singleStoriesDTO []dto.SingleStoryDTO
+	err := json.NewDecoder(r.Body).Decode(&singleStoriesDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var locations = handler.Service.FindAllLocationsForStories(singleStoriesDTO)
+
+	locationJson, _ := json.Marshal(locations)
+	w.Write(locationJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *LocationHandler) FindAllLocationsForStory(w http.ResponseWriter, r *http.Request) {
+	var singleStoryDTO dto.SingleStoryDTO
+	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var locations = handler.Service.FindAllLocationsForStory(&singleStoryDTO)
+
+	locationJson, _ := json.Marshal(locations)
+	w.Write(locationJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *LocationHandler) FindAllLocationsForPosts(w http.ResponseWriter, r *http.Request) {
+	var singlePostsDTO []dto.SinglePostDTO
+	err := json.NewDecoder(r.Body).Decode(&singlePostsDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var locations = handler.Service.FindAllLocationsForPosts(singlePostsDTO)
+
+	locationJson, _ := json.Marshal(locations)
+	w.Write(locationJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *LocationHandler) FindAllLocationsForPost(w http.ResponseWriter, r *http.Request) {
+	var singlePostDTO dto.SinglePostDTO
+	err := json.NewDecoder(r.Body).Decode(&singlePostDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var locations = handler.Service.FindAllLocationsForPost(&singlePostDTO)
+
+	locationJson, _ := json.Marshal(locations)
 	w.Write(locationJson)
 
 	w.WriteHeader(http.StatusOK)

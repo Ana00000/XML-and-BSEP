@@ -3,8 +3,8 @@ package repository
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"gorm.io/gorm"
 )
 
@@ -32,16 +32,15 @@ func (repo *SinglePostRepository) FindByID(ID uuid.UUID) *model.SinglePost {
 	return post
 }
 
-// USED WHEN CLICKING ON A SELECTED USER (YOU CAN SELECT FROM A LIST OF ONLY VALID USERS)
+// FindAllPostsForUser USED WHEN CLICKING ON A SELECTED USER (YOU CAN SELECT FROM A LIST OF ONLY VALID USERS)
 func (repo *SinglePostRepository) FindAllPostsForUser(userId uuid.UUID) []model.SinglePost {
 	var posts []model.SinglePost
 	repo.Database.Select("*").Where("user_id = ? and is_deleted = ?", userId, false).Find(&posts)
 	return posts
 }
 
-
-// FIND ALL NOT DELETED VALID POSTS THAT LOGGED IN USER FOLLOWS
-func (repo *SinglePostRepository) FindAllFollowingPosts(followings []userModel.ClassicUserFollowings) []model.SinglePost {
+// FindAllFollowingPosts FIND ALL NOT DELETED VALID POSTS THAT LOGGED IN USER FOLLOWS
+func (repo *SinglePostRepository) FindAllFollowingPosts(followings []dto.ClassicUserFollowingsFullDTO) []model.SinglePost {
 	var allPosts = repo.FindAllPosts()
 	var allFollowingPosts []model.SinglePost
 
@@ -55,7 +54,7 @@ func (repo *SinglePostRepository) FindAllFollowingPosts(followings []userModel.C
 	return allFollowingPosts
 }
 
-func (repo *SinglePostRepository) FindAllPublicPostsNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.SinglePost {
+func (repo *SinglePostRepository) FindAllPublicPostsNotRegisteredUser(allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
 	var allPosts = repo.FindAllPosts()
 	var allPublicPosts []model.SinglePost
 

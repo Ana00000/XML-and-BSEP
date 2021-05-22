@@ -127,16 +127,19 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	if err := handler.RegisteredUserService.CreateRegisteredUser(&registeredUser); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	if err := handler.ClassicUserService.CreateClassicUser(&registeredUser.ClassicUser); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	if err := handler.UserService.CreateUser(&registeredUser.ClassicUser.User); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	fmt.Println(registeredUser.ClassicUser.User.ID)
@@ -152,6 +155,7 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	if err := handler.ConfirmationTokenService.CreateConfirmationToken(&confirmationToken); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	SendConfirmationMail(registeredUser.ClassicUser.User, confirmationToken.ConfirmationToken)
@@ -164,10 +168,12 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	if err != nil || resp.StatusCode == 404 {
 		print("Failed creating profile settings for user")
 		w.WriteHeader(http.StatusFailedDependency)
+		return
 	}
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 

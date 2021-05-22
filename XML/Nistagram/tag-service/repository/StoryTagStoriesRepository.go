@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"gorm.io/gorm"
 )
@@ -24,7 +24,7 @@ func (repo *StoryTagStoriesRepository) FindAll() []model.StoryTagStories {
 }
 
 
-func (repo *StoryTagStoriesRepository) FindAllTagsForStories(allStories []storyModel.SingleStory) []model.StoryTagStories {
+func (repo *StoryTagStoriesRepository) FindAllTagsForStories(allStories []dto.SingleStoryDTO) []model.StoryTagStories {
 	var tags []model.StoryTagStories
 	var allTags = repo.FindAll()
 
@@ -39,7 +39,7 @@ func (repo *StoryTagStoriesRepository) FindAllTagsForStories(allStories []storyM
 	return tags
 }
 
-func (repo *StoryTagStoriesRepository) FindAllTagsForStory(story *storyModel.SingleStory) []model.StoryTagStories {
+func (repo *StoryTagStoriesRepository) FindAllTagsForStory(story *dto.SingleStoryDTO) []model.StoryTagStories {
 	var tags []model.StoryTagStories
 	var allTags = repo.FindAll()
 

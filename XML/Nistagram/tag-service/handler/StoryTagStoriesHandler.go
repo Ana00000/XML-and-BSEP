@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"net/http"
 	_ "strconv"
 )
@@ -34,6 +34,40 @@ func (handler *StoryTagStoriesHandler) CreateStoryTagStories(w http.ResponseWrit
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *StoryTagStoriesHandler) FindAllTagsForStory(w http.ResponseWriter, r *http.Request) {
+	var singleStoryDTO dto.SingleStoryDTO
+	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var tags = handler.Service.FindAllTagsForStory(&singleStoryDTO)
+
+	contentsForStoriesJson, _ := json.Marshal(tags)
+	w.Write(contentsForStoriesJson)
+
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *StoryTagStoriesHandler) FindAllTagsForStories(w http.ResponseWriter, r *http.Request) {
+	var singleStoriesDTO []dto.SingleStoryDTO
+	err := json.NewDecoder(r.Body).Decode(&singleStoriesDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var tags = handler.Service.FindAllTagsForStories(singleStoriesDTO)
+
+	contentsForStoriesJson, _ := json.Marshal(tags)
+	w.Write(contentsForStoriesJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

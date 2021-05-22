@@ -130,6 +130,7 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 	router.HandleFunc("/profile_settings_rejected_message_profiles/", handlerProfileSettingsRejectedMessageProfiles.CreateProfileSettingsRejectedMessageProfiles).Methods("POST")
 	router.HandleFunc("/find_profile_settings_by_user_id/{userID}", handlerProfileSettings.FindProfileSettingByUserId).Methods("GET")
 	router.HandleFunc("/find_all_for_public_users/", handlerProfileSettings.FindProfileSettingsForPublicUsers).Methods("GET")
+	router.HandleFunc("/find_all_public_users/", handlerProfileSettings.FindAllPublicUsers).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }

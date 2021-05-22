@@ -1,9 +1,9 @@
 package service
 
 import (
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/repository"
-	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 )
 
 type SingleStoryContentService struct {
@@ -18,7 +18,7 @@ func (service * SingleStoryContentService) CreateSingleStoryContent(singleStoryC
 	return nil
 }
 
-func (service *SingleStoryContentService) FindAllContentsForStories(allStories []storyModel.SingleStory) []model.SingleStoryContent {
+func (service *SingleStoryContentService) FindAllContentsForStories(allStories []dto.SingleStoryDTO) []model.SingleStoryContent {
 	stories := service.Repo.FindAllContentsForStories(allStories)
 	if stories != nil {
 		return stories
@@ -26,7 +26,7 @@ func (service *SingleStoryContentService) FindAllContentsForStories(allStories [
 	return nil
 }
 
-func (service *SingleStoryContentService) FindAllContentsForStory(story *storyModel.SingleStory) []model.SingleStoryContent {
+func (service *SingleStoryContentService) FindAllContentsForStory(story *dto.SingleStoryDTO) []model.SingleStoryContent {
 	stories := service.Repo.FindAllContentsForStory(story)
 	if stories != nil {
 		return stories

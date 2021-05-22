@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
@@ -15,6 +16,22 @@ import (
 type ClassicUserCloseFriendsHandler struct {
 	ClassicUserCloseFriendsService * service.ClassicUserCloseFriendsService
 	ClassicUserFollowersService * service.ClassicUserFollowersService
+}
+
+func (handler *ClassicUserCloseFriendsHandler) CheckIfCloseFriend(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	logId :=vars["logId"]
+
+	var check = handler.ClassicUserCloseFriendsService.CheckIfCloseFriend(uuid.MustParse(id), uuid.MustParse(logId))
+
+	var returnValue = ReturnValueBool{ReturnValue: check}
+
+	returnValueJson, _ := json.Marshal(returnValue)
+	w.Write(returnValueJson)
+
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
 }
 
 

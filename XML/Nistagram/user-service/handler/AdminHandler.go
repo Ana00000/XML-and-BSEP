@@ -88,6 +88,7 @@ func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")

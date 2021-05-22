@@ -39,8 +39,10 @@ services:
     volumes:
       - ./Nistagram-frontend:/Nistagram-frontend
       - node_modules:/Nistagram-frontend/node_modules
+      - "./content-images:/app/public/uploads"
     environment:
       FRONTEND_PORT: 8081
+      BASE_URL: '/app/public/uploads'
     depends_on:
       - gateway
     networks:
@@ -84,6 +86,7 @@ services:
       PASSWORD: root
       DBNAME: contentdb
       DBPORT: 5432
+      BASE_URL: '/app/public/uploads'
     depends_on:
       - db
     volumes:
@@ -146,6 +149,16 @@ services:
       PASSWORD: root
       DBNAME: postdb
       DBPORT: 5432
+      SETTINGS_SERVICE_DOMAIN: settings-service
+      SETTINGS_SERVICE_PORT: 8088
+      TAG_SERVICE_DOMAIN: tag-service
+      TAG_SERVICE_PORT: 8090
+      USER_SERVICE_DOMAIN: user-service
+      USER_SERVICE_PORT: 8091
+      CONTENT_SERVICE_DOMAIN: content-service
+      CONTENT_SERVICE_PORT: 8083
+      LOCATION_SERVICE_DOMAIN: location-service
+      LOCATION_SERVICE_PORT: 8084
     depends_on:
       - db
 
@@ -206,6 +219,16 @@ services:
       PASSWORD: root
       DBNAME: storydb
       DBPORT: 5432
+      SETTINGS_SERVICE_DOMAIN: settings-service
+      SETTINGS_SERVICE_PORT: 8088
+      TAG_SERVICE_DOMAIN: tag-service
+      TAG_SERVICE_PORT: 8090
+      USER_SERVICE_DOMAIN: user-service
+      USER_SERVICE_PORT: 8091
+      CONTENT_SERVICE_DOMAIN: content-service
+      CONTENT_SERVICE_PORT: 8083
+      LOCATION_SERVICE_DOMAIN: location-service
+      LOCATION_SERVICE_PORT: 8084
     depends_on:
       - db
 

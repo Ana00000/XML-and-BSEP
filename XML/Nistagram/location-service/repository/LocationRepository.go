@@ -3,9 +3,8 @@ package repository
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
-	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
-	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"gorm.io/gorm"
 )
 
@@ -32,7 +31,7 @@ func (repo *LocationRepository) FindAll() []model.Location {
 }
 
 
-func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []postsModel.SinglePost) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []dto.SinglePostDTO) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 
@@ -47,7 +46,7 @@ func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []postsModel.S
 	return locations
 }
 
-func (repo *LocationRepository) FindAllLocationsForPost(post *postsModel.SinglePost) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForPost(post *dto.SinglePostDTO) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 
@@ -61,7 +60,7 @@ func (repo *LocationRepository) FindAllLocationsForPost(post *postsModel.SingleP
 	return locations
 }
 
-func (repo *LocationRepository) FindAllLocationsForStories(allStories []storyModel.SingleStory) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForStories(allStories []dto.SingleStoryDTO) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 
@@ -76,7 +75,7 @@ func (repo *LocationRepository) FindAllLocationsForStories(allStories []storyMod
 	return locations
 }
 
-func (repo *LocationRepository) FindAllLocationsForStory(story *storyModel.SingleStory) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForStory(story *dto.SingleStoryDTO) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 

@@ -2,10 +2,9 @@ package service
 
 import (
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/repository"
-	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
-	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 )
 
 type LocationService struct {
@@ -25,7 +24,7 @@ func (service *LocationService) FindByID(ID uuid.UUID) *model.Location {
 	return location
 }
 
-func (service *LocationService) FindAllLocationsForPosts(allPosts []postsModel.SinglePost) []model.Location {
+func (service *LocationService) FindAllLocationsForPosts(allPosts []dto.SinglePostDTO) []model.Location {
 	locations := service.Repo.FindAllLocationsForPosts(allPosts)
 	if locations != nil {
 		return locations
@@ -33,7 +32,7 @@ func (service *LocationService) FindAllLocationsForPosts(allPosts []postsModel.S
 	return nil
 }
 
-func (service *LocationService) FindAllLocationsForPost(post *postsModel.SinglePost) []model.Location {
+func (service *LocationService) FindAllLocationsForPost(post *dto.SinglePostDTO) []model.Location {
 	locations := service.Repo.FindAllLocationsForPost(post)
 	if locations != nil {
 		return locations
@@ -41,7 +40,7 @@ func (service *LocationService) FindAllLocationsForPost(post *postsModel.SingleP
 	return nil
 }
 
-func (service *LocationService) FindAllLocationsForStories(allStories []storyModel.SingleStory) []model.Location {
+func (service *LocationService) FindAllLocationsForStories(allStories []dto.SingleStoryDTO) []model.Location {
 	locations := service.Repo.FindAllLocationsForStories(allStories)
 	if locations != nil {
 		return locations
@@ -49,7 +48,7 @@ func (service *LocationService) FindAllLocationsForStories(allStories []storyMod
 	return nil
 }
 
-func (service *LocationService) FindAllLocationsForStory(story *storyModel.SingleStory) []model.Location {
+func (service *LocationService) FindAllLocationsForStory(story *dto.SingleStoryDTO) []model.Location {
 	locations := service.Repo.FindAllLocationsForStory(story)
 	if locations != nil {
 		return locations

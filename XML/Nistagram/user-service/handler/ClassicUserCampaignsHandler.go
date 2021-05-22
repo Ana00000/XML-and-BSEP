@@ -32,6 +32,7 @@ func (handler *ClassicUserCampaignsHandler) CreateClassicUserCampaigns(w http.Re
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")

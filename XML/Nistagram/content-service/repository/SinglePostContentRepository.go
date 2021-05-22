@@ -2,8 +2,8 @@ package repository
 
 import (
 	"fmt"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
-	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"gorm.io/gorm"
 )
 
@@ -24,7 +24,7 @@ func (repo *SinglePostContentRepository) FindAll() []model.SinglePostContent {
 }
 
 
-func (repo *SinglePostContentRepository) FindAllContentsForPosts(allPosts []postsModel.SinglePost) []model.SinglePostContent {
+func (repo *SinglePostContentRepository) FindAllContentsForPosts(allPosts []dto.SinglePostDTO) []model.SinglePostContent {
 	var contents []model.SinglePostContent
 	var allContents = repo.FindAll()
 
@@ -40,7 +40,7 @@ func (repo *SinglePostContentRepository) FindAllContentsForPosts(allPosts []post
 	return contents
 }
 
-func (repo *SinglePostContentRepository) FindAllContentsForPost(post *postsModel.SinglePost) []model.SinglePostContent {
+func (repo *SinglePostContentRepository) FindAllContentsForPost(post *dto.SinglePostDTO) []model.SinglePostContent {
 	var contents []model.SinglePostContent
 	var allContents = repo.FindAll()
 

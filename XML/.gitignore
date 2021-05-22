@@ -1,4 +1,5 @@
 # Default ignored files
+\Nistagram-frontend\node_modules
 /shelf/
 /.idea/workspace.xml
 # Datasource local storage ignored files

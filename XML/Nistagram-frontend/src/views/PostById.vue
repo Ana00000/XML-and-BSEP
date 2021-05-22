@@ -20,7 +20,7 @@
               <v-list-item-content>
                 <video width="320" height="440" controls>
                   <source
-                    :src="require(`../../../Media/${path}`)"
+                    :src="require(`/app/public/uploads/${path}`)"
                     type="video/mp4"
                   />
                 </video>
@@ -30,7 +30,7 @@
             <v-list-item three-line v-if="type != 'VIDEO'">
               <v-list-item-content>
                 <img
-                  :src="require(`../../../Media/${path}`)"
+                  :src="require(`/app/public/uploads/${path}`)"
                   alt
                   class="icon"
                   width="320"
@@ -56,6 +56,7 @@
 export default {
   name: "PostById",
   data: () => ({
+    publicPath: process.env.VUE_APP_BASE_URL,
     description: "",
     tags: [],
     path: "",

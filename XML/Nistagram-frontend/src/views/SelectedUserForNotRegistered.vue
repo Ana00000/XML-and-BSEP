@@ -60,14 +60,14 @@
             <v-list-item three-line v-if="item.type == 'VIDEO'">
               <v-list-item-content> 
                <video width="320" height="240" controls>
-                  <source :src="require(`../../../Media/${ item.path }`)" type="video/mp4">
+                  <source :src="require(`/app/public/uploads/${ item.path }`)" type="video/mp4">
                 </video>
               </v-list-item-content>
             </v-list-item>
 
              <v-list-item three-line v-if="item.type != 'VIDEO'">
               <v-list-item-content> 
-                <img :src="require(`../../../Media/${ item.path }`)" alt class="icon" width="320" height="240"/>
+                <img :src="require(`/app/public/uploads/${ item.path }`)" alt class="icon" width="320" height="240"/>
               </v-list-item-content>
             </v-list-item>
 
@@ -115,14 +115,14 @@
             <v-list-item three-line v-if="item.type == 'VIDEO'">
               <v-list-item-content> 
                <video width="320" height="240" controls>
-                  <source :src="require(`../../../Media/${ item.path }`)" type="video/mp4">
+                  <source :src="require(`/app/public/uploads/${ item.path }`)" type="video/mp4">
                 </video>
               </v-list-item-content>
             </v-list-item>
 
              <v-list-item three-line v-if="item.type != 'VIDEO'">
               <v-list-item-content> 
-                <img :src="require(`../../../Media/${ item.path }`)" alt class="icon" width="320" height="240"/>
+                <img :src="require(`/app/public/uploads/${ item.path }`)" alt class="icon" width="320" height="240"/>
               </v-list-item-content>
             </v-list-item>
 
@@ -156,6 +156,7 @@
 export default {
   name: "SelectedUserForNotRegistered",
   data: () => ({
+    publicPath: process.env.VUE_APP_BASE_URL,
     username: null,
     firstName: null,
     lastName: null,
@@ -176,7 +177,7 @@ export default {
     getUser() {
       this.$http
         .get(
-          "http://localhost:8080/find_selected_user_by_id?id=" +
+          "http://localhost:8080/api/user/find_selected_user_by_id?id=" +
             this.selectedUser +
             "&logId=" +
             this.logId
@@ -187,14 +188,14 @@ export default {
         .catch(console.log("Didn't set user info!"));
 
         this.$http
-        .get("http://localhost:8084/find_all_posts_for_not_reg?id=" + this.selectedUser)
+        .get("http://localhost:8080/api/post/find_all_posts_for_not_reg?id=" + this.selectedUser)
         .then((response) => {
           this.posts = response.data;
         })
         .catch(console.log);
 
         this.$http
-        .get("http://localhost:8086/find_all_stories_for_not_reg?id=" + this.selectedUser)
+        .get("http://localhost:8080/api/story/find_all_stories_for_not_reg?id=" + this.selectedUser)
         .then((response) => {
           this.stories = response.data;
         })

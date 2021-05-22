@@ -75,6 +75,11 @@ func handleFunc(handler *handler.LocationHandler){
 
 	router.HandleFunc("/", handler.CreateLocation).Methods("POST")
 	router.HandleFunc("/find_location_by_id", handler.FindByID).Methods("GET")
+	router.HandleFunc("/find_locations_for_stories/", handler.FindAllLocationsForStories).Methods("POST")
+	router.HandleFunc("/find_locations_for_story/", handler.FindAllLocationsForStory).Methods("POST")
+
+	router.HandleFunc("/find_locations_for_posts/", handler.FindAllLocationsForPosts).Methods("POST")
+	router.HandleFunc("/find_locations_for_post/", handler.FindAllLocationsForPost).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }

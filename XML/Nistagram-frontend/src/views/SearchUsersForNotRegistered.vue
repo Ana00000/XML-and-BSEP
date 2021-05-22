@@ -77,6 +77,7 @@ export default {
     users: [],
     usersCopy: [],
     selectedUser: null,
+    publicPath: process.env.VUE_APP_BASE_URL,
   }),
   mounted() {
     this.init();
@@ -84,7 +85,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8080/find_all_public_users/")
+        .get("http://localhost:8080/api/user/find_all_public_users/")
         .then((resp) => {
           this.users = resp.data;
           this.usersCopy = resp.data;

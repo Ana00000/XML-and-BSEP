@@ -22,7 +22,7 @@
               <v-list-item-content>
                 <video width="320" height="240" controls>
                   <source
-                    :src="require(`../../../Media/${item.path}`)"
+                    :src="require(`/app/public/uploads/${item.path}`)"
                     type="video/mp4"
                   />
                 </video>
@@ -32,7 +32,7 @@
             <v-list-item three-line v-if="item.type != 'VIDEO'">
               <v-list-item-content>
                 <img
-                  :src="require(`../../../Media/${item.path}`)"
+                  :src="require(`/app/public/uploads/${item.path}`)"
                   alt
                   class="icon"
                   width="320"
@@ -67,10 +67,14 @@
 </template>
 
 <script>
+
+
+
 export default {
   name: "FriendsPosts",
   data: () => ({
     posts: [],
+    publicPath: process.env.VUE_APP_BASE_URL,
   }),
   mounted() {
     this.init();
@@ -79,7 +83,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_following_posts?id=" +
+          "http://localhost:8080/api/post/find_all_following_posts?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {

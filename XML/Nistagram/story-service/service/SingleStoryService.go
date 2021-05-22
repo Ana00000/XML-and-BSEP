@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/repository"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 )
 
 type SingleStoryService struct {
@@ -40,7 +40,7 @@ func (service *SingleStoryService) FindAllStoriesForUserNotReg(ID uuid.UUID) []m
 	return nil
 }
 
-func (service *SingleStoryService) FindAllPublicStoriesNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.SingleStory {
+func (service *SingleStoryService) FindAllPublicStoriesNotRegisteredUser(allValidUsers []dto.ClassicUserDTO) []model.SingleStory {
 	stories := service.Repo.FindAllPublicStoriesNotRegisteredUser(allValidUsers)
 	if stories != nil {
 		return stories
@@ -83,7 +83,7 @@ func (service *SingleStoryService) FindAllStoriesForUserPublic(ID uuid.UUID) []m
 }
 
 // FIND ALL NOT DELETED VALID STORIES THAT LOGGED IN USER FOLLOWS
-func (service *SingleStoryService) FindAllFollowingStories(followings []userModel.ClassicUserFollowings) []model.SingleStory {
+func (service *SingleStoryService) FindAllFollowingStories(followings []dto.ClassicUserFollowingsDTO) []model.SingleStory {
 	stories := service.Repo.FindAllFollowingStories(followings)
 	if stories != nil {
 		return stories

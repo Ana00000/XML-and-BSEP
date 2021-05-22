@@ -1,7 +1,7 @@
 package service
 
 import (
-	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
 )
@@ -18,7 +18,7 @@ func (service * StoryTagStoriesService) CreateStoryTagStories(storyTagStories *m
 	return nil
 }
 
-func (service *StoryTagStoriesService) FindAllTagsForStories(allStories []storyModel.SingleStory) []model.StoryTagStories {
+func (service *StoryTagStoriesService) FindAllTagsForStories(allStories []dto.SingleStoryDTO) []model.StoryTagStories {
 	tags := service.Repo.FindAllTagsForStories(allStories)
 	if tags != nil {
 		return tags
@@ -26,7 +26,7 @@ func (service *StoryTagStoriesService) FindAllTagsForStories(allStories []storyM
 	return nil
 }
 
-func (service *StoryTagStoriesService) FindAllTagsForStory(story *storyModel.SingleStory) []model.StoryTagStories {
+func (service *StoryTagStoriesService) FindAllTagsForStory(story *dto.SingleStoryDTO) []model.StoryTagStories {
 	tags := service.Repo.FindAllTagsForStory(story)
 	if tags != nil {
 		return tags

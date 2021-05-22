@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -37,6 +38,7 @@ func (handler *ClassicUserFollowingsHandler) CreateClassicUserFollowing(w http.R
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	classicUserFollower := model.ClassicUserFollowers{
@@ -49,12 +51,54 @@ func (handler *ClassicUserFollowingsHandler) CreateClassicUserFollowing(w http.R
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+type ReturnValueBool struct {
+	ReturnValue bool `json:"return_value"`
+}
+
+func (handler *ClassicUserFollowingsHandler) FindAllValidFollowingsForUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var classicUserDTO []dto.ClassicUserDTO
+	err := json.NewDecoder(r.Body).Decode(&classicUserDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var validFollowingsForUser = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id),convertListClassicUserDTOToListClassicUser(classicUserDTO))
+
+	returnValueJson, _ := json.Marshal(convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(validFollowingsForUser))
+	w.Write(returnValueJson)
+
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *ClassicUserFollowingsHandler) CheckIfFollowingPostStory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	logId :=vars["logId"]
+
+	var check = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), uuid.MustParse(id))
+
+	var returnValue = ReturnValueBool{ReturnValue: check}
+
+	returnValueJson, _ := json.Marshal(returnValue)
+	w.Write(returnValueJson)
+
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
 
 func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.ResponseWriter, r *http.Request) {
 	var followRequestDTO dto.FollowRequestDTO
@@ -70,6 +114,7 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	if err!=nil{
 		fmt.Println("Wrong cast response body to FollowRequestForUserDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	// UPDATE REQUEST - ACCEPTED
@@ -83,6 +128,7 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	if err != nil || resp.StatusCode == 400 {
 		print("Failed creating profile settings for user")
 		w.WriteHeader(http.StatusFailedDependency)
+		return
 	}
 
 
@@ -97,6 +143,7 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	// CREATE FOLLOWING
@@ -110,9 +157,27 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(classicUserFollowings []model.ClassicUserFollowings) []dto.ClassicUserFollowingsFullDTO{
+	var classicUserFollowingsDTO []dto.ClassicUserFollowingsFullDTO
+	for i := 0; i < len(classicUserFollowings); i++ {
+		classicUserFollowingsDTO = append(classicUserFollowingsDTO, convertClassicUserFollowingsToClassicUserFollowingsDTO(classicUserFollowings[i]))
+	}
+	return classicUserFollowingsDTO
+}
+
+func convertClassicUserFollowingsToClassicUserFollowingsDTO(classicUserFollowings model.ClassicUserFollowings) dto.ClassicUserFollowingsFullDTO{
+	var classicUserFollowingsFullDTO = dto.ClassicUserFollowingsFullDTO{
+		ID:              classicUserFollowings.ID,
+		ClassicUserId:   classicUserFollowings.ClassicUserId,
+		FollowingUserId: classicUserFollowings.FollowingUserId,
+	}
+	return classicUserFollowingsFullDTO
 }

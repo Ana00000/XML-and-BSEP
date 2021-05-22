@@ -201,6 +201,7 @@ func handleFunc(handlerTag *handler.TagHandler, handlerPostTag *handler.PostTagH
 	)
 
 	router.HandleFunc("/tag/", handlerTag.CreateTag).Methods("POST")
+	router.HandleFunc("/get_tag_name_by_id/{id}", handlerTag.FindTagNameById).Methods("GET")
 	router.HandleFunc("/post_tag/", handlerPostTag.CreatePostTag).Methods("POST")
 	router.HandleFunc("/story_tag/", handlerStoryTag.CreateStoryTag).Methods("POST")
 	router.HandleFunc("/comment_tag/", handlerCommentTag.CreateCommentTag).Methods("POST")
@@ -211,6 +212,12 @@ func handleFunc(handlerTag *handler.TagHandler, handlerPostTag *handler.PostTagH
 	router.HandleFunc("/post_album_tag_post_albums/", handlerPostAlbumTagPostAlbums.CreatePostAlbumTagPostAlbums).Methods("POST")
 	router.HandleFunc("/story_album_tag/", handlerStoryAlbumTag.CreateStoryAlbumTag).Methods("POST")
 	router.HandleFunc("/story_album_tag_story_albums/", handlerStoryAlbumTagStoryAlbums.CreateStoryAlbumTagStoryAlbums).Methods("POST")
+	router.HandleFunc("/find_all_tags_for_stories/", handlerStoryTagStories.FindAllTagsForStories).Methods("POST")
+	router.HandleFunc("/find_all_tags_for_story/", handlerStoryTagStories.FindAllTagsForStory).Methods("POST")
+
+	router.HandleFunc("/find_all_tags_for_posts/", handlerPostTagPosts.FindAllTagsForPosts).Methods("POST")
+	router.HandleFunc("/find_all_tags_for_post/", handlerPostTagPosts.FindAllTagsForPost).Methods("POST")
+
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }

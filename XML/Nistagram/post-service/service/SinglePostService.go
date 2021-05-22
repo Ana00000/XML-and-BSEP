@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 )
 
 type SinglePostService struct {
@@ -32,7 +32,7 @@ func (service *SinglePostService) FindAllPostsForUser(ID uuid.UUID) []model.Sing
 	return nil
 }
 
-func (service *SinglePostService) FindAllFollowingPosts(followings []userModel.ClassicUserFollowings) []model.SinglePost {
+func (service *SinglePostService) FindAllFollowingPosts(followings []dto.ClassicUserFollowingsFullDTO) []model.SinglePost {
 	posts := service.Repo.FindAllFollowingPosts(followings)
 	if posts != nil {
 		return posts
@@ -40,7 +40,7 @@ func (service *SinglePostService) FindAllFollowingPosts(followings []userModel.C
 	return nil
 }
 
-func (service *SinglePostService) FindAllPublicPostsNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.SinglePost {
+func (service *SinglePostService) FindAllPublicPostsNotRegisteredUser(allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
 	posts := service.Repo.FindAllPublicPostsNotRegisteredUser(allValidUsers)
 	if posts != nil {
 		return posts

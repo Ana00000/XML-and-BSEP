@@ -173,6 +173,12 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 	router.HandleFunc("/uploadPostAlbumMedia/", handlerPostAlbumContent.Upload).Methods("POST")
 	router.HandleFunc("/uploadStoryMedia/", handlerSingleStoryContent.Upload).Methods("POST")
 	router.HandleFunc("/uploadStoryAlbumMedia/", handlerStoryAlbumContent.Upload).Methods("POST")
+	router.HandleFunc("/find_all_contents_for_stories/", handlerSingleStoryContent.FindAllContentsForStories).Methods("POST")
+	router.HandleFunc("/find_all_contents_for_story/", handlerSingleStoryContent.FindAllContentsForStory).Methods("POST")
+
+	router.HandleFunc("/find_all_contents_for_posts/", handlerSinglePostContent.FindAllContentsForPosts).Methods("POST")
+	router.HandleFunc("/find_all_contents_for_post/", handlerSinglePostContent.FindAllContentsForPost).Methods("POST")
+
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
