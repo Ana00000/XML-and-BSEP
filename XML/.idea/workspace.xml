@@ -2,47 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Media/018434780Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/080050481Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/288722143Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/432775299Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/551827240Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/664070761Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/681173933Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/727219718Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/858625204Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/861232794Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/916430514Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/954708071Shortest_Video_on_Youtube.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/367614023Shortest_Video_on_Youtube.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/963411706Shortest_Video_on_Youtube.mp4" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/026579356Screenshot (62).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/028095487Screenshot (63).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/050484050Shortest_Video_on_Youtube.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/052966264Screenshot (62).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/062689210Shortest_Video_on_Youtube.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/080256465Shortest_Video_on_Youtube.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/150618761Shortest_Video_on_Youtube.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/159455082Screenshot (63).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/188408839Shortest_Video_on_Youtube.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/245542461Capture.PNG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/246960563mind.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/264313281Screenshot (63).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/347099862IMG-20191103-WA0011.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/355600019mind.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/433870141Screenshot (62).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/538500860Shortest_Video_on_Youtube.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/538734483Screenshot (62).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/576656939Shortest_Video_on_Youtube.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/605957078Screenshot (63).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/638871671Screenshot (63).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/682697899Shortest_Video_on_Youtube.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/766164647mind.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/789622868Screenshot (63).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media/906682267Screenshot (63).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/UserTagHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/UserTagHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoriesOfStoryHighlight.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoriesOfStoryHighlight.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/TagHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/TagHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/UserTagRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/repository/UserTagRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/TagRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/repository/TagRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/TagService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/service/TagService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,11 +89,11 @@
       <directory value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
-    <configuration name="go build main.go (5)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build main.go (4)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
+      <filePath value="$PROJECT_DIR$/Nistagram/story-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
       <method v="2" />
@@ -143,9 +111,9 @@
       <list>
         <item itemvalue="Go Build.go build main.go" />
         <item itemvalue="Go Build.go build main.go (3)" />
-        <item itemvalue="Go Build.go build main.go (2)" />
         <item itemvalue="Go Build.go build main.go (1)" />
-        <item itemvalue="Go Build.go build main.go (5)" />
+        <item itemvalue="Go Build.go build main.go (4)" />
+        <item itemvalue="Go Build.go build main.go (2)" />
       </list>
     </recent_temporary>
   </component>
