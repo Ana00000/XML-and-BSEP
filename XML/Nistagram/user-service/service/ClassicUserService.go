@@ -81,3 +81,9 @@ func (service *ClassicUserService) FindAllUsersByFollowingIds(userIds []model.Cl
 	}
 	return nil
 }
+
+func (service *ClassicUserService) FindById(userId uuid.UUID) *model.ClassicUser {
+	user := service.Repo.FindById(userId)
+	return user
+}
+

@@ -422,7 +422,7 @@ func (handler *SinglePostHandler) CreatePostsDTOList(posts []model.SinglePost, c
 		var listOfTags []string
 		for p := 0; p < len(tags); p++ {
 			if tags[p].PostId == posts[i].ID {
-				listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].PostTagId))
+				listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
 			}
 		}
 
@@ -470,7 +470,7 @@ func (handler *SinglePostHandler) CreatePostDTO(posts *model.SinglePost, content
 	var listOfTags []string
 	for p := 0; p < len(tags); p++ {
 		if tags[p].PostId == posts.ID {
-			listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].PostTagId))
+			listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
 
 		}
 	}
