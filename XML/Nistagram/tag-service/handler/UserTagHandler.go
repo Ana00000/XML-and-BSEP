@@ -8,7 +8,6 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
@@ -101,7 +100,7 @@ func (handler *UserTagHandler) FindAllTaggableUsersPost(w http.ResponseWriter, r
 
 func (handler *UserTagHandler) FindAllTaggableUsersStory(w http.ResponseWriter, r *http.Request) {
 	var allUserTags []model.UserTag
-	var allTaggableUsersStory []userModel.ClassicUser
+	var userAllTags []model.UserTag
 
 	allUserTags = handler.Service.FindAll()
 
@@ -113,20 +112,20 @@ func (handler *UserTagHandler) FindAllTaggableUsersStory(w http.ResponseWriter, 
 		if userProfileSettings.IsStoryTaggable {
 			user := handler.ClassicUserService.FindById(userId)
 			if !user.IsDeleted && user.IsConfirmed {
-				allTaggableUsersStory = append(allTaggableUsersStory, *user)
+				userAllTags = append(userAllTags, userTags)
 			}
 		}
 	}
 
-	allTaggableUsersStoryJson, _ := json.Marshal(allTaggableUsersStory)
-	w.Write(allTaggableUsersStoryJson)
+	userAllTagsJson, _ := json.Marshal(userAllTags)
+	w.Write(userAllTagsJson)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
 
 func (handler *UserTagHandler) FindAllTaggableUsersComment(w http.ResponseWriter, r *http.Request) {
 	var allUserTags []model.UserTag
-	var allTaggableUsersComment []userModel.ClassicUser
+	var userAllTags []model.UserTag
 
 	allUserTags = handler.Service.FindAll()
 
@@ -138,13 +137,13 @@ func (handler *UserTagHandler) FindAllTaggableUsersComment(w http.ResponseWriter
 		if userProfileSettings.IsCommentTaggable {
 			user := handler.ClassicUserService.FindById(userId)
 			if !user.IsDeleted && user.IsConfirmed {
-				allTaggableUsersComment = append(allTaggableUsersComment, *user)
+				userAllTags = append(userAllTags, userTags)
 			}
 		}
 	}
 
-	allTaggableUsersCommentJson, _ := json.Marshal(allTaggableUsersComment)
-	w.Write(allTaggableUsersCommentJson)
+	userAllTagsJson, _ := json.Marshal(userAllTags)
+	w.Write(userAllTagsJson)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }

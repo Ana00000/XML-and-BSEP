@@ -95,7 +95,7 @@
           label="Tag name"
           v-model="tagName"
           prepend-icon="mdi-address-circle"
-          v-if="!isHiddenTag"
+          v-if="!isHiddenTag && selectedTagType === 'HASH_TAG'"
         />
         <v-select
           class="typeCombo"
