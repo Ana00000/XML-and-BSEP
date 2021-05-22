@@ -228,17 +228,19 @@ export default {
     allUserTags: [],
     userTag: null,
     isVisibleTags: false,
+    userId: null,
   }),
   mounted() {
     this.init();
   },
   methods: {
     init() {
+      this.userId = localStorage.getItem("userId");
       this.$http
         .get("http://localhost:8082/find_all_taggable_users_post/")
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
-            if (response.data[i].tag_type == 0) {
+            if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
               this.allUserTags.push(response.data[i]);
             }
           }
