@@ -25,7 +25,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Content{}, &model.AdvertisementContent{},&model.CommentContent{},&model.PostAlbumContent{},&model.SinglePostContent{},&model.SingleStoryContent{},&model.MessageContent{},&model.StoryAlbumContent{})
+	db.AutoMigrate(&model.Content{}, &model.AdvertisementContent{},&model.PostAlbumContent{},&model.SinglePostContent{},&model.SingleStoryContent{},&model.MessageContent{},&model.StoryAlbumContent{})
 	return db
 }
 
@@ -101,18 +101,6 @@ func initSinglePostContentHandler(service *service.SinglePostContentService, con
 	return &handler.SinglePostContentHandler { Service: service, ContentService: contentService }
 }
 
-func initCommentContentRepo(database *gorm.DB) *repository.CommentContentRepository{
-	return &repository.CommentContentRepository { Database: database }
-}
-
-func initCommentContentService(repo *repository.CommentContentRepository) *service.CommentContentService{
-	return &service.CommentContentService { Repo: repo }
-}
-
-func initCommentContentHandler(service *service.CommentContentService) *handler.CommentContentHandler{
-	return &handler.CommentContentHandler { Service: service }
-}
-
 func initMessageContentRepo(database *gorm.DB) *repository.MessageContentRepository{
 	return &repository.MessageContentRepository { Database: database }
 }
@@ -128,7 +116,7 @@ func initMessageContentHandler(service *service.MessageContentService) *handler.
 func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementContent *handler.AdvertisementContentHandler,
 	handlerPostAlbumContent *handler.PostAlbumContentHandler, handlerSinglePostContent *handler.SinglePostContentHandler,
 	handlerStoryAlbumContent *handler.StoryAlbumContentHandler, handlerSingleStoryContent *handler.SingleStoryContentHandler,
-	handlerCommentContent *handler.CommentContentHandler, handlerMessageContent *handler.MessageContentHandler){
+	handlerMessageContent *handler.MessageContentHandler){
 
 	mux := http.NewServeMux()
 
@@ -138,7 +126,6 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 	mux.HandleFunc("/advertisement_content/", handlerAdvertisementContent.CreateAdvertisementContent)
 	mux.HandleFunc("/post_album_content/", handlerPostAlbumContent.CreatePostAlbumContent)
 	mux.HandleFunc("/story_album_content/", handlerStoryAlbumContent.CreateStoryAlbumContent)
-	mux.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent)
 	mux.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent)
 
 	mux.HandleFunc("/uploadPostMedia/", handlerSinglePostContent.Upload)
@@ -180,12 +167,8 @@ func main() {
 	serviceSingleStoryContent := initSingleStoryContentService(repoSingleStoryContent)
 	handlerSingleStoryContent := initSingleStoryContentHandler(serviceSingleStoryContent, serviceContent)
 
-	repoCommentContent := initCommentContentRepo(database)
-	serviceCommentContent := initCommentContentService(repoCommentContent)
-	handlerCommentContent := initCommentContentHandler(serviceCommentContent)
-
 	repoMessageContent := initMessageContentRepo(database)
 	serviceMessageContent := initMessageContentService(repoMessageContent)
 	handlerMessageContent := initMessageContentHandler(serviceMessageContent)
-	handleFunc(handlerContent, handlerAdvertisementContent,handlerPostAlbumContent,handlerSinglePostContent,handlerStoryAlbumContent,handlerSingleStoryContent,handlerCommentContent,handlerMessageContent)
+	handleFunc(handlerContent, handlerAdvertisementContent,handlerPostAlbumContent,handlerSinglePostContent,handlerStoryAlbumContent,handlerSingleStoryContent,handlerMessageContent)
 }
