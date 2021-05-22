@@ -14,48 +14,13 @@
                 <v-list-item-subtitle>{{
                   item.description
                 }}</v-list-item-subtitle>
-                <v-list-item-title>{{ item.tags }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-list-item three-line v-if="item.type == 'VIDEO'">
-              <v-list-item-content>
-                <video width="320" height="240" controls>
-                  <source
-                    :src="require(`../../../Media/${item.path}`)"
-                    type="video/mp4"
-                  />
-                </video>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-list-item three-line v-if="item.type != 'VIDEO'">
-              <v-list-item-content>
-                <img
-                  :src="require(`../../../Media/${item.path}`)"
-                  alt
-                  class="icon"
-                  width="320"
-                  height="240"
-                />
               </v-list-item-content>
             </v-list-item>
 
             <v-list-item three-line>
               <v-list-item-content>
-                <v-list-item-subtitle
-                  v-text="
-                    item.country +
-                    ' ' +
-                    item.city +
-                    ' ' +
-                    item.street_name +
-                    ' ' +
-                    item.street_number
-                  "
-                />
                 <v-list-item-subtitle>{{
-                  item.creation_date
+                  item.creationDate
                 }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -79,40 +44,35 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8086/find_all_public_stories_reg?id=" +
-            localStorage.getItem("userId")
-        )
-        .then((response) => {
-          this.stories = response.data;
-        })
-        .catch(console.log);
-
-      this.$http
-        .get(
           "http://localhost:8086/find_all_single_story_story_highlights_for_story_highlight?id=" +
             localStorage.getItem("selectedStoryHighlightId")
         )
         .then((response) => {
-          var allStories = [];
+          var allStoriesIds = [];
           for (var i = 0; i < response.data.length; i++) {
-            if (!allStories.includes(response.data[i].single_story_id)) {
-              allStories.push(response.data[i].single_story_id);
-            }
+            allStoriesIds.push(response.data[i].single_story_id);
           }
-
-          for (var j = 0; j < allStories.length; j++) {
+          
+          for (var j = 0; j < allStoriesIds.length; j++) {
             this.$http
               .get(
                 "http://localhost:8086/find_single_story_for_id?id=" +
-                  allStories[j]
+                  allStoriesIds[j]
               )
               .then((response) => {
-                console.log(response.data);
+                this.setStory(response.data);
               })
               .catch(console.log);
           }
         })
         .catch(console.log);
+    },
+    setStory(story) {
+      this.stories.push({
+        description: story.description,
+        creationDate: story.creationDate,
+      });
+      console.log(this.stories);
     },
   },
 };
@@ -124,7 +84,7 @@ export default {
 }
 
 .title {
-  margin-left: 44%;
+  margin-left: 37%;
 }
 
 .spacingTwo {
