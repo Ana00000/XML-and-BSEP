@@ -14,6 +14,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	classicUserRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
 	classicUserService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
+	"gopkg.in/go-playground/validator.v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -114,14 +115,18 @@ func initStoryAlbumTagStoryAlbumsServices(repo *repository.StoryAlbumTagStoryAlb
 	return &service.StoryAlbumTagStoryAlbumsService { Repo: repo }
 }
 
-func initTagHandler(service *service.TagService) *handler.TagHandler{
-	return &handler.TagHandler { Service: service }
+func initTagHandler(service *service.TagService, validator *validator.Validate) *handler.TagHandler{
+	return &handler.TagHandler {
+		Service: service,
+		Validator: validator,
+	}
 }
 
-func initUserTagHandler(service *service.UserTagService, tagService * service.TagService, profileSettingsService *profileSettingsService.ProfileSettingsService, classicUserService *classicUserService.ClassicUserService) *handler.UserTagHandler{
+func initUserTagHandler(service *service.UserTagService, tagService * service.TagService, validator *validator.Validate, profileSettingsService *profileSettingsService.ProfileSettingsService, classicUserService *classicUserService.ClassicUserService) *handler.UserTagHandler{
 	return &handler.UserTagHandler {
 		Service: service,
 		TagService: tagService,
+		Validator: validator,
 		ProfileSettingsService: profileSettingsService,
 		ClassicUserService: classicUserService,
 	}
@@ -179,10 +184,11 @@ func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagH
 
 func main() {
 	database := initDB()
+	validator := validator.New()
 
 	repoTag := initTagRepo(database)
 	serviceTag := initTagServices(repoTag)
-	handlerTag := initTagHandler(serviceTag)
+	handlerTag := initTagHandler(serviceTag, validator)
 
 	repoProfileSettings := initProfileSettingsRepo(database)
 	settingsService := initProfileSettingsService(repoProfileSettings)
@@ -192,7 +198,7 @@ func main() {
 
 	repoUserTag := initUserTagRepo(database)
 	serviceUserTag := initUserTagServices(repoUserTag)
-	handlerUserTag := initUserTagHandler(serviceUserTag, serviceTag, settingsService, serviceClassicUser)
+	handlerUserTag := initUserTagHandler(serviceUserTag, serviceTag, validator, settingsService, serviceClassicUser)
 
 	repoPostTagPosts := initPostTagPostsRepo(database)
 	servicePostTagPosts := initPostTagPostsServices(repoPostTagPosts)

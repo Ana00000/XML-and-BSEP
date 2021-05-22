@@ -10,12 +10,14 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
+	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 )
 
 type UserTagHandler struct {
 	Service *service.UserTagService
 	TagService *service.TagService
+	Validator *validator.Validate
 	ProfileSettingsService *profileSettingsService.ProfileSettingsService
 	ClassicUserService *userService.ClassicUserService
 }
@@ -24,6 +26,11 @@ func (handler *UserTagHandler) CreateUserTag(w http.ResponseWriter, r *http.Requ
 	var userTagDTO dto.UserTagDTO
 	if err := json.NewDecoder(r.Body).Decode(&userTagDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest) // 400
+		return
+	}
+
+	if err := handler.Validator.Struct(&userTagDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 

@@ -7,18 +7,25 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
+	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	_ "strconv"
 )
 
 type TagHandler struct {
 	Service * service.TagService
+	Validator *validator.Validate
 }
 
 func (handler *TagHandler) CreateTag(w http.ResponseWriter, r *http.Request) {
 	var tagDTO dto.TagDTO
 	if err := json.NewDecoder(r.Body).Decode(&tagDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest) // 400
+		return
+	}
+
+	if err := handler.Validator.Struct(&tagDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 
