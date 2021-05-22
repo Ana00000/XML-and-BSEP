@@ -6,6 +6,8 @@ import (
 	"github.com/google/uuid"
 	settingsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
 	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
+	tagModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+	tagSerivce "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -18,13 +20,15 @@ import (
 )
 
 type RegisteredUserHandler struct {
-	RegisteredUserService * service. RegisteredUserService
-	UserService * service.UserService
-	ClassicUserService * service.ClassicUserService
-	ConfirmationTokenService * service.ConfirmationTokenService
-	ProfileSettingsService * settingsService.ProfileSettingsService
+	RegisteredUserService    *service.RegisteredUserService
+	UserService              *service.UserService
+	ClassicUserService       *service.ClassicUserService
+	ConfirmationTokenService *service.ConfirmationTokenService
+	ProfileSettingsService   *settingsService.ProfileSettingsService
 	Validator                *validator.Validate
 	PasswordUtil             *util.PasswordUtil
+	UserTagService           *tagSerivce.UserTagService
+	TagService               *tagSerivce.TagService
 }
 
 func SendConfirmationMail(user model.User, token uuid.UUID) {
@@ -85,7 +89,7 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 
 	if validPassword {
 		salt, password = handler.PasswordUtil.GeneratePasswordWithSalt(registeredUserDTO.Password)
-	}else {
+	} else {
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
@@ -128,16 +132,41 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	if err := handler.RegisteredUserService.CreateRegisteredUser(&registeredUser); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	if err := handler.ClassicUserService.CreateClassicUser(&registeredUser.ClassicUser); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	if err := handler.UserService.CreateUser(&registeredUser.ClassicUser.User); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	tagId := uuid.New()
+	userTag := tagModel.UserTag{
+		Tag : tagModel.Tag{
+			ID: tagId,
+			Name: registeredUser.Username,
+			TagType: tagModel.USER_TAG,
+		},
+		UserId: userId,
+	}
+
+	if err := handler.UserTagService.CreateUserTag(&userTag); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if err := handler.TagService.CreateTag(&userTag.Tag); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	fmt.Println(registeredUser.ClassicUser.User.ID)
@@ -153,26 +182,26 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	if err := handler.ConfirmationTokenService.CreateConfirmationToken(&confirmationToken); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	SendConfirmationMail(registeredUser.ClassicUser.User, confirmationToken.ConfirmationToken)
 
-	profileSettings:= settingsModel.ProfileSettings{
-		ID:                uuid.New(),
-		UserId:            userId,
-		UserVisibility:       settingsModel.PUBLIC_VISIBILITY,
+	profileSettings := settingsModel.ProfileSettings{
+		ID:                  uuid.New(),
+		UserId:              userId,
+		UserVisibility:      settingsModel.PUBLIC_VISIBILITY,
 		MessageApprovalType: settingsModel.PUBLIC,
-		IsPostTaggable: true,
-		IsStoryTaggable: true,
-		IsCommentTaggable: true,
-
+		IsPostTaggable:      true,
+		IsStoryTaggable:     true,
+		IsCommentTaggable:   true,
 	}
 	err := handler.ProfileSettingsService.CreateProfileSettings(&profileSettings)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
-
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")

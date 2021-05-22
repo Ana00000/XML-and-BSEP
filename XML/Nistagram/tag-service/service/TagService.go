@@ -18,7 +18,6 @@ func (service * TagService) CreateTag(tag *model.Tag) error {
 	return nil
 }
 
-
 func (service *TagService) FindTagNameById(ID uuid.UUID) string {
 	tag := service.Repo.FindTagNameById(ID)
 	return tag
@@ -29,3 +28,15 @@ func (service *TagService) FindTagByName(name string) *model.Tag {
 	return tag
 }
 
+func (service *TagService) FindTagByType(tagType string) *model.Tag {
+	tag := service.Repo.FindTagByType(tagType)
+	return tag
+}
+
+func (service *TagService) FindAll() []model.Tag {
+	tags := service.Repo.FindAll()
+	if tags != nil {
+		return tags
+	}
+	return nil
+}

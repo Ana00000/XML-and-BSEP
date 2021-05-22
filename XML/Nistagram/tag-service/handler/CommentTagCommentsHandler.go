@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"net/http"
 	_ "strconv"
 )
@@ -25,7 +25,7 @@ func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.Respon
 
 	commentTagComments := model.CommentTagComments{
 		ID:          uuid.UUID{},
-		CommentTagId: 		commentTagCommentsDTO.CommentTagId,
+		TagId: 		commentTagCommentsDTO.TagId,
 		CommentId: commentTagCommentsDTO.CommentId,
 	}
 
@@ -34,6 +34,8 @@ func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.Respon
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

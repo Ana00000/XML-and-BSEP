@@ -19,8 +19,16 @@ func (service * PostTagPostsService) CreatePostTagPosts(postTagPosts *model.Post
 	return nil
 }
 
+func (service *PostTagPostsService) FindAllTagsForPostsTagPosts(allPosts []postsModel.SinglePost) []model.PostTagPosts {
+	tags := service.Repo.FindAllTagsForPostsTagPosts(allPosts)
+	if tags != nil {
+		return tags
+	}
+	return nil
+}
 
-func (service *PostTagPostsService) FindAllTagsForPosts(allPosts []postsModel.SinglePost) []model.PostTagPosts {
+
+func (service *PostTagPostsService) FindAllTagsForPosts(allPosts []postsModel.SinglePost) []model.Tag {
 	tags := service.Repo.FindAllTagsForPosts(allPosts)
 	if tags != nil {
 		return tags

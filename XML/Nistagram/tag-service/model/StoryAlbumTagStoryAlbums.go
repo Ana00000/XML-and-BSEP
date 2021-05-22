@@ -7,8 +7,8 @@ import (
 
 type StoryAlbumTagStoryAlbums struct {
 	ID uuid.UUID `json:"id"`
-	StoryAlbumTagId uuid.UUID `json:"storyAlbumTagId" gorm:"not null"`
-	StoryAlbumId uuid.UUID `json:"storyAlbumId" gorm:"not null"`
+	TagId uuid.UUID `json:"tag_id" gorm:"not null"`
+	StoryAlbumId uuid.UUID `json:"story_album_id" gorm:"not null"`
 }
 
 func(storyAlbumTagStoryAlbums * StoryAlbumTagStoryAlbums) BeforeCreate(scope *gorm.DB) error {

@@ -26,7 +26,7 @@ func (handler *StoryAlbumTagStoryAlbumsHandler) CreateStoryAlbumTagStoryAlbums(w
 	id := uuid.New()
 	storyAlbumTagStoryAlbums := model.StoryAlbumTagStoryAlbums{
 		ID:        			id,
-		StoryAlbumTagId: 	storyAlbumTagStoryAlbumsDTO.StoryAlbumTagId,
+		TagId: 	storyAlbumTagStoryAlbumsDTO.TagId,
 		StoryAlbumId:    	storyAlbumTagStoryAlbumsDTO.StoryAlbumId,
 	}
 

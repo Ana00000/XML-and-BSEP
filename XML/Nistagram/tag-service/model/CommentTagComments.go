@@ -7,7 +7,7 @@ import (
 
 type CommentTagComments struct {
 	ID uuid.UUID `json:"id"`
-	CommentTagId uuid.UUID `json:"comment_tag_id" gorm:"not null"`
+	TagId uuid.UUID `json:"tag_id" gorm:"not null"`
 	CommentId uuid.UUID `json:"comment_id" gorm:"not null"`
 }
 

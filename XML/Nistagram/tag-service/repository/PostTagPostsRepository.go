@@ -24,8 +24,14 @@ func (repo *PostTagPostsRepository) FindAll() []model.PostTagPosts {
 	return tags
 }
 
+func (repo *PostTagPostsRepository) FindTagById(ID uuid.UUID) model.Tag{
+	var tag model.Tag
+	repo.Database.Select("*").Where("id=?", ID).Find(&tag)
+	return tag
+}
 
-func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.SinglePost) []model.PostTagPosts {
+//FindAllTagsForPostsTagPosts
+func (repo *PostTagPostsRepository) FindAllTagsForPostsTagPosts(allPosts []postsModel.SinglePost) []model.PostTagPosts {
 	var tags []model.PostTagPosts
 	var allTags = repo.FindAll()
 
@@ -33,6 +39,21 @@ func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.Si
 		for j:=0; j<len(allTags);j++{
 			if allPosts[i].ID == allTags[j].PostId{
 				tags = append(tags, allTags[j])
+			}
+		}
+
+	}
+	return tags
+}
+
+func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.SinglePost) []model.Tag {
+	var tags []model.Tag
+	var allTags = repo.FindAll()
+
+	for i:=0;i<len(allPosts);i++{
+		for j:=0; j<len(allTags);j++{
+			if allPosts[i].ID == allTags[j].PostId{
+				tags = append(tags, repo.FindTagById(allTags[j].TagId))
 			}
 		}
 
@@ -58,7 +79,7 @@ func (repo *PostTagPostsRepository) FindAllPostIdsWithTagId(tagId uuid.UUID) []u
 	var allPosts = repo.FindAll()
 
 	for i:=0; i <len(allPosts);i++{
-		if allPosts[i].PostTagId == tagId{
+		if allPosts[i].PostId == tagId{
 			postIds = append(postIds, allPosts[i].PostId)
 		}
 	}

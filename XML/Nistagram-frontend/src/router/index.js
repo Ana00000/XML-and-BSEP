@@ -169,7 +169,48 @@ const routes = [
     path: '/storiesOfStoryHighlight',
     name: 'StoriesOfStoryHighlight',
     component: () => import('../views/StoriesOfStoryHighlight.vue')
+  },
+  {
+    path: '/searchTagsNotRegistered',
+    name: 'SearchTagsNotRegistered',
+    component: () => import('../views/SearchTagsNotRegistered.vue')
+  },
+  {
+    path: '/searchTagsRegistered',
+    name: 'SearchTagsRegistered',
+    component: () => import('../views/SearchTagsRegistered.vue')
+  },
+  {
+    path: '/searchLocationsNotRegistered',
+    name: 'SearchLocationsNotRegistered',
+    component: () => import('../views/SearchLocationsNotRegistered.vue')
+  },
+  {
+    path: '/searchLocationsRegistered',
+    name: 'SearchLocationsRegistered',
+    component: () => import('../views/SearchLocationsRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedTagNotRegistered',
+    name: 'PostsForSelectedTagNotRegistered',
+    component: () => import('../views/PostsForSelectedTagNotRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedTagRegistered',
+    name: 'PostsForSelectedTagRegistered',
+    component: () => import('../views/PostsForSelectedTagRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedLocationNotRegistered',
+    name: 'PostsForSelectedLocationNotRegistered',
+    component: () => import('../views/PostsForSelectedLocationNotRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedLocationRegistered',
+    name: 'PostsForSelectedLocationRegistered',
+    component: () => import('../views/PostsForSelectedLocationRegistered.vue')
   }
+  
 ]
 
 const router = new VueRouter({
