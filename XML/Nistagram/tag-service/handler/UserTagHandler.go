@@ -73,7 +73,7 @@ func (handler *UserTagHandler) CreateUserTag(w http.ResponseWriter, r *http.Requ
 
 func (handler *UserTagHandler) FindAllTaggableUsersPost(w http.ResponseWriter, r *http.Request) {
 	var allUserTags []model.UserTag
-	var allTaggableUsersPost []userModel.ClassicUser
+	var userAllTags []model.UserTag
 
 	allUserTags = handler.Service.FindAll()
 
@@ -87,15 +87,15 @@ func (handler *UserTagHandler) FindAllTaggableUsersPost(w http.ResponseWriter, r
 		if userProfileSettings.IsPostTaggable {
 			user := handler.ClassicUserService.FindById(userId)
 			if !user.IsDeleted && user.IsConfirmed {
-				allTaggableUsersPost = append(allTaggableUsersPost, *user)
+				userAllTags = append(userAllTags, userTags)
 			}
 		}
 	}
 
-	allTaggableUsersPostJson, _ := json.Marshal(allTaggableUsersPost)
+	userAllTagsJson, _ := json.Marshal(userAllTags)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(allTaggableUsersPostJson)
+	w.Write(userAllTagsJson)
 
 }
 

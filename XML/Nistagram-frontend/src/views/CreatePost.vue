@@ -73,13 +73,22 @@
             target="dummyframe"
             class="uploadButton"
           >
-          <template v-if="selectedType === 'PICTURE'">
-            <input id="pic" type="file" accept="image/*" name="myPostFile" />
-          </template>
-          <template v-else>
-            <input id="vid" type="file" accept="video/*, .mp4" name="myPostFile" />
-          </template>
-          <input type="submit" value=" <- Upload file" v-on:click="ValidteType"/>
+            <template v-if="selectedType === 'PICTURE'">
+              <input id="pic" type="file" accept="image/*" name="myPostFile" />
+            </template>
+            <template v-else>
+              <input
+                id="vid"
+                type="file"
+                accept="video/*, .mp4"
+                name="myPostFile"
+              />
+            </template>
+            <input
+              type="submit"
+              value=" <- Upload file"
+              v-on:click="ValidteType"
+            />
           </form>
         </v-form>
         <v-text-field
@@ -87,6 +96,18 @@
           v-model="tagName"
           prepend-icon="mdi-address-circle"
           v-if="!isHiddenTag"
+        />
+        <v-select
+          class="typeCombo"
+          v-model="selectedTagType"
+          v-on:click="checkTag"
+          v-if="!isHiddenTag"
+          hint="Choose your tag type."
+          :items="tagTypes"
+          item-text="state"
+          :label="label2"
+          return-object
+          single-line
         />
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
@@ -143,6 +164,29 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+    <v-container grid-list-lg>
+      <div class="spacingOne" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in allUserTags"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card
+            class="mx-auto"
+            v-on:click="getTag(item)"
+            v-if="isVisibleTags"
+          >
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{ item.name }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
     <div class="spacing" />
   </div>
 </template>
@@ -178,8 +222,29 @@ export default {
     postTagId: null,
     kljuc: null,
     extension: "",
+    tagTypes: ["USER_TAG", "HASH_TAG"],
+    selectedTagType: "HASH_TAG",
+    label2: "Tag type",
+    allUserTags: [],
+    userTag: null,
+    isVisibleTags: false,
   }),
+  mounted() {
+    this.init();
+  },
   methods: {
+    init() {
+      this.$http
+        .get("http://localhost:8082/find_all_taggable_users_post/")
+        .then((response) => {
+          for (var i = 0; i < response.data.length; i++) {
+            if (response.data[i].tag_type == 0) {
+              this.allUserTags.push(response.data[i]);
+            }
+          }
+        })
+        .catch(console.log);
+    },
     addLocation() {
       if (
         !this.validLongitude() ||
@@ -197,28 +262,37 @@ export default {
       this.isHiddenDescriptionButton = false;
       this.isHiddenDescription = false;
     },
-    GetExtension(pathFile){
+    GetExtension(pathFile) {
       console.log(pathFile);
       let out = pathFile.split("\\");
-      let fileName = out[out.length-1];
+      let fileName = out[out.length - 1];
       let dotSplit = fileName.split(".");
-      this.extension = dotSplit[dotSplit.length-1];
+      this.extension = dotSplit[dotSplit.length - 1];
       console.log(this.extension);
     },
     ValidteType() {
       let pathFile = "";
-      if (this.selectedType === 'PICTURE') {
-        pathFile = document.getElementById('pic').value;
+      if (this.selectedType === "PICTURE") {
+        pathFile = document.getElementById("pic").value;
         this.GetExtension(pathFile);
         console.log(this.extension);
-        if (this.extension === "PNG" || this.extension === "png" || this.extension === "JPG" || this.extension === "jpg" || this.extension === "jpeg" || this.extension === "JPEG") {
+        if (
+          this.extension === "PNG" ||
+          this.extension === "png" ||
+          this.extension === "JPG" ||
+          this.extension === "jpg" ||
+          this.extension === "jpeg" ||
+          this.extension === "JPEG"
+        ) {
           this.isVisibleContentButton = true;
         } else {
           this.isVisibleContentButton = false;
-          alert("Please, choose a picture in a correct format e.g. png, jpg or jpeg.");
+          alert(
+            "Please, choose a picture in a correct format e.g. png, jpg or jpeg."
+          );
         }
       } else {
-        pathFile = document.getElementById('vid').value;
+        pathFile = document.getElementById("vid").value;
         this.GetExtension(pathFile);
         console.log(this.extension);
         if (this.extension === "mp4" || this.extension === "MP4") {
@@ -315,24 +389,28 @@ export default {
       window.location.href = "http://localhost:8081/";
     },
     addTag() {
-      if (!this.validTag()) return;
-
-      this.$http
-        .post("http://localhost:8082/post_tag/", {
-          name: this.tagName,
-        })
-        .then((response) => {
-          this.postTagId = response.data;
-          this.createPostTagPosts();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+      if (this.selectedTagType == "USER_TAG") {
+        this.createPostUserTagPosts();
+      } else {
+        if (!this.validTag()) return;
+        this.$http
+          .post("http://localhost:8082/tag/", {
+            name: this.tagName,
+            tag_type: this.selectedTagType,
+          })
+          .then((response) => {
+            this.postTagId = response.data;
+            this.createPostTagPosts();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      }
     },
     createPostTagPosts() {
       this.$http
         .post("http://localhost:8082/post_tag_posts/", {
-          post_tag_id: this.postTagId,
+          tag_id: this.postTagId,
           post_id: this.postId,
         })
         .then((response) => {
@@ -342,6 +420,28 @@ export default {
         .catch((er) => {
           console.log(er.response.data);
         });
+    },
+    createPostUserTagPosts() {
+      this.$http
+        .post("http://localhost:8082/post_tag_posts/", {
+          tag_id: this.userTag.id,
+          post_id: this.postId,
+        })
+        .then((response) => {
+          console.log(response.data);
+          alert("Tag is created! Add more tags or finish creation.");
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    checkTag() {
+      if (this.selectedTagType == "USER_TAG") {
+        this.isVisibleTags = true;
+      }
+    },
+    getTag(item) {
+      this.userTag = item;
     },
     validLongitude() {
       if (this.longitude.length < 2) {
