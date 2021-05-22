@@ -107,6 +107,12 @@ export default {
         })
         .catch(console.log);
     },
+    getMyStory(item){
+      localStorage.setItem("mySelectedUserId", item.user_id);
+      localStorage.setItem("mySelectedStoryId", item.story_id);
+
+      window.location.href = "http://localhost:8081/storyByIdWithoutActivity";
+    }
   },
 };
 </script>
