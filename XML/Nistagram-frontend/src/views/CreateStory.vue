@@ -351,7 +351,7 @@ export default {
       if (!this.validTag()) return;
 
       this.$http
-        .post("http://localhost:8082/story_tag/", {
+        .post("http://localhost:8082/tag/", {
           name: this.tagName,
         })
         .then((response) => {

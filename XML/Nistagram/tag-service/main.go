@@ -177,6 +177,7 @@ func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagH
 	router.HandleFunc("/post_album_tag_post_albums/", handlerPostAlbumTagPostAlbums.CreatePostAlbumTagPostAlbums).Methods("POST")
 	router.HandleFunc("/story_album_tag_story_albums/", handlerStoryAlbumTagStoryAlbums.CreateStoryAlbumTagStoryAlbums).Methods("POST")
 
+	router.HandleFunc("/find_tag_id", handlerTag.FindTagForId).Methods("GET")
 	router.HandleFunc("/find_story_tag_stories_for_story_id", handlerStoryTagStories.FindStoryTagStoriesForStoryId).Methods("GET")
 
 
