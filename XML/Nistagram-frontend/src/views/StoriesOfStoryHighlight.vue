@@ -42,6 +42,17 @@
 
             <v-list-item three-line>
               <v-list-item-content>
+                <v-list-item-subtitle
+                  v-text="
+                    item.country +
+                    ' ' +
+                    item.city +
+                    ' ' +
+                    item.streetName +
+                    ' ' +
+                    item.streetNumber
+                  "
+                />
                 <v-list-item-subtitle>{{
                   item.creationDate
                 }}</v-list-item-subtitle>
@@ -98,15 +109,31 @@ export default {
               this.allStoriesIds[j]
           )
           .then((response) => {
-            this.stories.push({
-              description: story.description,
-              creationDate: story.creationDate,
-              path: response.data.path,
-              type: response.data.type,
-            });
+            this.setStoryContent(story, response.data);
           })
           .catch(console.log);
       }
+    },
+    setStoryContent(story, content) {
+      this.$http
+        .get("http://localhost:8083/find_location_by_id?id=" + story.locationId)
+        .then((response) => {
+          this.setLocationWithContent(story, content, response.data);
+        })
+        .catch(console.log);
+    },
+    setLocationWithContent(story, content, location) {
+      this.stories.push({
+        description: story.description,
+        creationDate: story.creationDate,
+        path: content.path,
+        type: content.type,
+        country: location.country,
+        city: location.city,
+        streetName: location.streetName,
+        streetNumber: location.streetNumber,
+      });
+      console.log(this.stories);
     },
   },
 };
