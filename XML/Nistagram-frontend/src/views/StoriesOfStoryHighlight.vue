@@ -3,12 +3,12 @@
     <v-container grid-list-lg>
       <div class="spacingOne" />
       <div class="title">
-        <h1>Stories from story highlight</h1>
+        <h2>Stories from highlight</h2>
       </div>
       <div class="spacingTwo" />
       <v-layout row>
         <v-flex lg4 v-for="item in stories" :key="item.id" class="space-bottom">
-          <v-card class="mx-auto">
+          <v-card class="mx-auto" v-on:click="getMyStory(item)">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{
@@ -18,7 +18,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item three-line v-if="item.type == 1">
+            <v-list-item three-line v-if="item.type == 'VIDEO'">
               <v-list-item-content>
                 <video width="320" height="240" controls>
                   <source
@@ -29,7 +29,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item three-line v-if="item.type == 0">
+            <v-list-item three-line v-if="item.type != 'VIDEO'">
               <v-list-item-content>
                 <img
                   :src="require(`../../../Media/${item.path}`)"
@@ -49,13 +49,13 @@
                     ' ' +
                     item.city +
                     ' ' +
-                    item.streetName +
+                    item.street_name +
                     ' ' +
-                    item.streetNumber
+                    item.street_number
                   "
                 />
                 <v-list-item-subtitle>{{
-                  item.creationDate
+                  item.creation_date
                 }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -71,6 +71,7 @@ export default {
   name: "StoriesOfStoryHighlight",
   data: () => ({
     stories: [],
+    logId: null,
     allStoriesIds: [],
   }),
   mounted() {
@@ -87,94 +88,52 @@ export default {
           for (var i = 0; i < response.data.length; i++) {
             this.allStoriesIds.push(response.data[i].single_story_id);
           }
-
-          for (var j = 0; j < this.allStoriesIds.length; j++) {
-            this.$http
-              .get(
-                "http://localhost:8086/find_single_story_for_id?id=" +
-                  this.allStoriesIds[j]
-              )
-              .then((response) => {
-                this.setStory(response.data);
-              })
-              .catch(console.log);
-          }
+          this.getStories();
         })
         .catch(console.log);
     },
-    setStory(story) {
-      for (var j = 0; j < this.allStoriesIds.length; j++) {
-        this.$http
-          .get(
-            "http://localhost:8085/find_single_story_content_for_story_id?id=" +
-              this.allStoriesIds[j]
-          )
-          .then((response) => {
-            this.setStoryContent(story, response.data);
-          })
-          .catch(console.log);
-      }
-    },
-    setStoryContent(story, content) {
-      this.$http
-        .get("http://localhost:8083/find_location_by_id?id=" + story.locationId)
-        .then((response) => {
-          this.setLocationWithContent(story, content, response.data);
-        })
-        .catch(console.log);
-    },
-    setLocationWithContent(story, content, location) {
+    getStories() {
       this.$http
         .get(
-          "http://localhost:8082/find_story_tag_stories_for_story_id?id=" +
-            story.id
+          "http://localhost:8086/find_all_stories_for_logged_user?id=" +
+            localStorage.getItem("userId")
         )
         .then((response) => {
-          var tags = "";
           for (var i = 0; i < response.data.length; i++) {
-            this.$http
-              .get(
-                "http://localhost:8082/find_story_tag_for_id?id=" +
-                  response.data[i].story_tag_id
-              )
-              .then((r) => {
-                tags += r.data.name + " ";
-
-                for (var j = 0; j < this.stories.length; j++) {
-                  if (this.stories[j].id == story.id) {
-                    return;
-                  }
-                }
-
-                this.stories.push({
-                  id: story.id,
-                  description: story.description,
-                  creationDate: story.creationDate,
-                  path: content.path,
-                  type: content.type,
-                  country: location.country,
-                  city: location.city,
-                  streetName: location.streetName,
-                  streetNumber: location.streetNumber,
-                  tags: tags,
-                });
-              })
-              .catch(console.log);
+            if (this.allStoriesIds.includes(response.data[i].story_id)) {
+              this.stories.push(response.data[i]);
+            }
           }
         })
         .catch(console.log);
     },
+    getMyStory(item){
+      localStorage.setItem("mySelectedUserId", item.user_id);
+      localStorage.setItem("mySelectedStoryId", item.story_id);
+
+      window.location.href = "http://localhost:8081/storyByIdWithoutActivity";
+    }
   },
 };
 </script>
 
 <style scoped>
+.combo {
+  width: 25%;
+  margin-left: 42%;
+}
+
+.center {
+  margin-left: 50%;
+  padding: 10px;
+}
+
 .spacingOne {
   height: 50px;
 }
 
 .title {
-  margin-left: 37%;
+  margin-left: 44%;
 }
 
 .spacingTwo {
