@@ -166,24 +166,24 @@ const routes = [
     component: () => import('../views/AddCloseFriends.vue')
   },
   {
-    path: '/searchTagsNotReg',
-    name: 'SearchTagsNotReg',
-    component: () => import('../views/SearchTagsNotReg.vue')
+    path: '/searchTagsNotRegistered',
+    name: 'SearchTagsNotRegistered',
+    component: () => import('../views/SearchTagsNotRegistered.vue')
   },
   {
-    path: '/searchTagsReg',
-    name: 'SearchTagsReg',
-    component: () => import('../views/SearchTagsReg.vue')
+    path: '/searchTagsRegistered',
+    name: 'SearchTagsRegistered',
+    component: () => import('../views/SearchTagsRegistered.vue')
   },
   {
-    path: '/searchLocationsNotReg',
-    name: 'SearchLocationsNotReg',
-    component: () => import('../views/SearchLocationsNotReg.vue')
+    path: '/searchLocationsNotRegistered',
+    name: 'SearchLocationsNotRegistered',
+    component: () => import('../views/SearchLocationsNotRegistered.vue')
   },
   {
-    path: '/searchLocationsReg',
-    name: 'SearchLocationsReg',
-    component: () => import('../views/SearchLocationsReg.vue')
+    path: '/searchLocationsRegistered',
+    name: 'SearchLocationsRegistered',
+    component: () => import('../views/SearchLocationsRegistered.vue')
   },
   {
     path: '/postsForSelectedTagNotRegistered',

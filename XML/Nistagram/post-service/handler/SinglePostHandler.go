@@ -97,7 +97,7 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 	var posts = handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id))
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts)
 
 	var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
@@ -131,7 +131,7 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 			var posts = handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id))
 			var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 			var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-			var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+			var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts)
 
 			var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
@@ -152,7 +152,7 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 
 		var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 		var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-		var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+		var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts)
 
 		var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
@@ -179,7 +179,7 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 	var posts = handler.SinglePostService.FindAllFollowingPosts(followings)
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts)
 
 	var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
@@ -290,7 +290,7 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 	var publicValidPosts = handler.SinglePostService.FindAllPublicAndFriendsPostsValid(allPublicUsers)
 	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(publicValidPosts)
 	var postsDTOS = handler.CreatePostsDTOList(publicValidPosts,contents,locations,tags)
 
 	postJson, _ := json.Marshal(postsDTOS)
@@ -313,7 +313,7 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	var publicValidPosts = handler.SinglePostService.FindAllPublicAndFriendsPostsValid(allPublicUsers)
 	var contents = handler.PostContentService.FindAllContentsForPosts(publicValidPosts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(publicValidPosts)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(publicValidPosts)
 
 	var postsDTOS = handler.CreatePostsDTOList(publicValidPosts,contents,locations,tags)
 
@@ -331,7 +331,7 @@ func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWrite
 	var posts = handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id))
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts)
 
 	var postsDTOS = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
@@ -526,7 +526,7 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts)
 
 	var postDTO = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
@@ -550,7 +550,7 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts)
 
 	var postDTO = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
@@ -652,7 +652,7 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts)
 
 	var postDTO = handler.CreatePostsDTOList(posts,contents,locations,tags)
 
@@ -679,7 +679,7 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 
 	var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	var locations = handler.LocationService.FindAllLocationsForPosts(posts)
-	var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+	var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts)
 
 	var postDTO = handler.CreatePostsDTOList(posts,contents,locations,tags)
 

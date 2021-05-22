@@ -91,8 +91,8 @@ export default {
                 { title: 'Follow Requests', path: '/followRequests' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' },
                 { title: 'Search Users', path: '/searchUsers' },
-                { title: 'Search Locations', path: '/searchLocationsReg' },
-                { title: 'Search Tags', path: '/searchTagsReg' },
+                { title: 'Search Locations', path: '/searchLocationsRegistered' },
+                { title: 'Search Tags', path: '/searchTagsRegistered' },
             ]
 
             }else{
@@ -114,8 +114,8 @@ export default {
                 { title: 'My Media', path: '/myMedia' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' },
                 { title: 'Search Users', path: '/searchUsers' },
-                { title: 'Search Locations', path: '/searchLocationsReg' },
-                { title: 'Search Tags', path: '/searchTagsReg' },
+                { title: 'Search Locations', path: '/searchLocationsRegistered' },
+                { title: 'Search Tags', path: '/searchTagsRegistered' },
             ]
             }
         } else if (this.userType == 2) {   // AGENT
@@ -137,8 +137,8 @@ export default {
                 { title: 'My Media', path: '/myMedia' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' },
                 { title: 'Search users', path: '/searchUsers' },
-                { title: 'Search Locations', path: '/searchLocationsReg' },
-                { title: 'Search Tags', path: '/searchTagsReg' },
+                { title: 'Search Locations', path: '/searchLocationsRegistered' },
+                { title: 'Search Tags', path: '/searchTagsRegistered' },
             ]
             
            
@@ -148,8 +148,8 @@ export default {
                 { title: 'Public Posts', path: '/publicPostsAllForNotRegistered' },
                 { title: 'Public Stories', path: '/publicStoriesAllForNotRegistered' },
                 { title: 'Search users', path: '/searchUsersForNotRegistered' },
-                { title: 'Search Locations', path: '/searchLocationsNotReg' },
-                { title: 'Search Tags', path: '/searchTagsNotReg' },
+                { title: 'Search Locations', path: '/searchLocationsNotRegistered' },
+                { title: 'Search Tags', path: '/searchTagsNotRegistered' },
             ]
         }
     },
