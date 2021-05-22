@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
 )
@@ -15,4 +16,9 @@ func (service * StoryTagService) CreateStoryTag(storyTag *model.StoryTag) error 
 		return err
 	}
 	return nil
+}
+
+func (service * StoryTagService) FindStoryTagForId(storyId uuid.UUID) model.StoryTag{
+	storyTag := service.Repo.FindStoryTagForId(storyId)
+	return storyTag
 }

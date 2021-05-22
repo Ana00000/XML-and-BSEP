@@ -14,6 +14,7 @@
                 <v-list-item-subtitle>{{
                   item.description
                 }}</v-list-item-subtitle>
+                <v-list-item-title>{{ item.tags }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
 
@@ -123,28 +124,43 @@ export default {
         .catch(console.log);
     },
     setLocationWithContent(story, content, location) {
-      this.stories.push({
-        description: story.description,
-        creationDate: story.creationDate,
-        path: content.path,
-        type: content.type,
-        country: location.country,
-        city: location.city,
-        streetName: location.streetName,
-        streetNumber: location.streetNumber,
-      });
-
       this.$http
         .get(
           "http://localhost:8082/find_story_tag_stories_for_story_id?id=" +
             story.id
         )
         .then((response) => {
-          var storyTagIds = [];
+          var tags = "";
           for (var i = 0; i < response.data.length; i++) {
-            storyTagIds.push(response.data[i].story_tag_id);
+            this.$http
+              .get(
+                "http://localhost:8082/find_story_tag_for_id?id=" +
+                  response.data[i].story_tag_id
+              )
+              .then((r) => {
+                tags += r.data.name + " ";
+
+                for (var j = 0; j < this.stories.length; j++) {
+                  if (this.stories[j].id == story.id) {
+                    return;
+                  }
+                }
+
+                this.stories.push({
+                  id: story.id,
+                  description: story.description,
+                  creationDate: story.creationDate,
+                  path: content.path,
+                  type: content.type,
+                  country: location.country,
+                  city: location.city,
+                  streetName: location.streetName,
+                  streetNumber: location.streetNumber,
+                  tags: tags,
+                });
+              })
+              .catch(console.log);
           }
-          console.log(storyTagIds);
         })
         .catch(console.log);
     },
