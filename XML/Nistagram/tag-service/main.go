@@ -12,6 +12,8 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
+	classicUserRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/repository"
+	classicUserService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -34,6 +36,15 @@ func initDB() *gorm.DB{
 	return db
 }
 
+
+// CLASSIC USER
+func initClassicUserRepo(database *gorm.DB) *classicUserRepository.ClassicUserRepository{
+	return &classicUserRepository.ClassicUserRepository { Database: database }
+}
+
+func initClassicUserService(repo *classicUserRepository.ClassicUserRepository) *classicUserService.ClassicUserService{
+	return &classicUserService.ClassicUserService{ Repo: repo }
+}
 
 // SETTINGS
 func initProfileSettingsRepo(database *gorm.DB) *profileSettingsRepository.ProfileSettingsRepository{
@@ -107,11 +118,12 @@ func initTagHandler(service *service.TagService) *handler.TagHandler{
 	return &handler.TagHandler { Service: service }
 }
 
-func initUserTagHandler(service *service.UserTagService, tagService * service.TagService, profileSettingsService *profileSettingsService.ProfileSettingsService) *handler.UserTagHandler{
+func initUserTagHandler(service *service.UserTagService, tagService * service.TagService, profileSettingsService *profileSettingsService.ProfileSettingsService, classicUserService *classicUserService.ClassicUserService) *handler.UserTagHandler{
 	return &handler.UserTagHandler {
 		Service: service,
 		TagService: tagService,
 		ProfileSettingsService: profileSettingsService,
+		ClassicUserService: classicUserService,
 	}
 }
 
@@ -173,11 +185,14 @@ func main() {
 	handlerTag := initTagHandler(serviceTag)
 
 	repoProfileSettings := initProfileSettingsRepo(database)
-	profileSettingsService := initProfileSettingsService(repoProfileSettings)
+	settingsService := initProfileSettingsService(repoProfileSettings)
+
+	repoClassicUser := initClassicUserRepo(database)
+	serviceClassicUser := initClassicUserService(repoClassicUser)
 
 	repoUserTag := initUserTagRepo(database)
 	serviceUserTag := initUserTagServices(repoUserTag)
-	handlerUserTag := initUserTagHandler(serviceUserTag, serviceTag, profileSettingsService)
+	handlerUserTag := initUserTagHandler(serviceUserTag, serviceTag, settingsService, serviceClassicUser)
 
 	repoPostTagPosts := initPostTagPostsRepo(database)
 	servicePostTagPosts := initPostTagPostsServices(repoPostTagPosts)

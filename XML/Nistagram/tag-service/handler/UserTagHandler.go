@@ -8,6 +8,8 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
+	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 )
 
@@ -15,6 +17,7 @@ type UserTagHandler struct {
 	Service *service.UserTagService
 	TagService *service.TagService
 	ProfileSettingsService *profileSettingsService.ProfileSettingsService
+	ClassicUserService *userService.ClassicUserService
 }
 
 func (handler *UserTagHandler) CreateUserTag(w http.ResponseWriter, r *http.Request) {
@@ -63,43 +66,48 @@ func (handler *UserTagHandler) CreateUserTag(w http.ResponseWriter, r *http.Requ
 
 func (handler *UserTagHandler) FindAllTaggableUsersPost(w http.ResponseWriter, r *http.Request) {
 	var allUserTags []model.UserTag
-	var allTaggableUsersPost []model.UserTag
+	var allTaggableUsersPost []userModel.ClassicUser
 
 	allUserTags = handler.Service.FindAll()
 
+	fmt.Print(len(allUserTags))
+
 	for _,userTags := range allUserTags {
 		var userId = userTags.UserId
-		fmt.Println("The is userId", userId)
-
+		fmt.Println("The is user ID: ", userId)
 		var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
-
-		fmt.Println("The is userId", userProfileSettings.UserVisibility)
-
-		fmt.Println("The is userId", userProfileSettings.IsPostTaggable)
+		fmt.Println("User post taggable: ", userProfileSettings.IsPostTaggable)
 		if userProfileSettings.IsPostTaggable {
-			allTaggableUsersPost = append(allTaggableUsersPost, userTags)
+			user := handler.ClassicUserService.FindById(userId)
+			if !user.IsDeleted {
+				allTaggableUsersPost = append(allTaggableUsersPost, *user)
+			}
 		}
 	}
 
 	allTaggableUsersPostJson, _ := json.Marshal(allTaggableUsersPost)
-	w.Write(allTaggableUsersPostJson)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.Write(allTaggableUsersPostJson)
 
 }
 
 func (handler *UserTagHandler) FindAllTaggableUsersStory(w http.ResponseWriter, r *http.Request) {
 	var allUserTags []model.UserTag
-	var allTaggableUsersStory []model.UserTag
+	var allTaggableUsersStory []userModel.ClassicUser
 
 	allUserTags = handler.Service.FindAll()
 
 	for _,userTags := range allUserTags {
-		userId := userTags.UserId
-		fmt.Println("The is userId", userId)
-		userProfileSettings :=  handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
-		if userProfileSettings.IsStoryTaggable == true {
-			allTaggableUsersStory = append(allTaggableUsersStory, userTags)
+		var userId = userTags.UserId
+		fmt.Println("The is user ID: ", userId)
+		var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
+		fmt.Println("User story taggable: ", userProfileSettings.IsPostTaggable)
+		if userProfileSettings.IsStoryTaggable {
+			user := handler.ClassicUserService.FindById(userId)
+			if !user.IsDeleted {
+				allTaggableUsersStory = append(allTaggableUsersStory, *user)
+			}
 		}
 	}
 
@@ -111,16 +119,20 @@ func (handler *UserTagHandler) FindAllTaggableUsersStory(w http.ResponseWriter, 
 
 func (handler *UserTagHandler) FindAllTaggableUsersComment(w http.ResponseWriter, r *http.Request) {
 	var allUserTags []model.UserTag
-	var allTaggableUsersComment []model.UserTag
+	var allTaggableUsersComment []userModel.ClassicUser
 
 	allUserTags = handler.Service.FindAll()
 
 	for _,userTags := range allUserTags {
-		userId := userTags.UserId
-		fmt.Println("The is userId", userId)
-		userProfileSettings :=  handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
-		if userProfileSettings.IsCommentTaggable == true {
-			allTaggableUsersComment = append(allTaggableUsersComment, userTags)
+		var userId = userTags.UserId
+		fmt.Println("The is user ID: ", userId)
+		var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
+		fmt.Println("User comment taggable: ", userProfileSettings.IsPostTaggable)
+		if userProfileSettings.IsCommentTaggable {
+			user := handler.ClassicUserService.FindById(userId)
+			if !user.IsDeleted {
+				allTaggableUsersComment = append(allTaggableUsersComment, *user)
+			}
 		}
 	}
 
