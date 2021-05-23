@@ -254,3 +254,26 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	// returns only valid users
+	var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+
+	// retuns only valid FOLLOWINGS
+	var followings = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), allValidUsers)
+
+	// returns NOT DELETED POST ALBUMS from valid following users
+	var postAlbums = handler.Service.FindAllFollowingPostAlbums(followings)
+	var contents = handler.PostAlbumContentService.FindAllContentsForPostAlbums(postAlbums)
+	var locations = handler.LocationService.FindAllLocationsForPostAlbums(postAlbums)
+	var tags = handler.PostAlbumTagPostAlbumsService.FindAllTagsForPostAlbumTagPostAlbums(postAlbums)
+	var postAlbumsDTOS = handler.CreatePostAlbumsDTOList(postAlbums,contents,locations,tags)
+
+	postAlbumsJson, _ := json.Marshal(postAlbumsDTOS)
+	w.Write(postAlbumsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}

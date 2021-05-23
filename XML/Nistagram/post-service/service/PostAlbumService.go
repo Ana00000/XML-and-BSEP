@@ -39,3 +39,11 @@ func (service *PostAlbumService) FindAllPublicAndFriendsPostAlbumsValid(allValid
 	}
 	return nil
 }
+
+func (service *PostAlbumService) FindAllFollowingPostAlbums(followings []userModel.ClassicUserFollowings) []model.PostAlbum {
+	postAlbums := service.Repo.FindAllFollowingPostAlbums(followings)
+	if postAlbums != nil {
+		return postAlbums
+	}
+	return nil
+}

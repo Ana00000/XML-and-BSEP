@@ -52,3 +52,18 @@ func (repo *PostAlbumRepository) FindAllPublicAndFriendsPostAlbumsValid(allValid
 
 	return allPublicPostAlbums
 }
+
+// FIND ALL NOT DELETED VALID POST ALBUMS THAT LOGGED IN USER FOLLOWS
+func (repo *PostAlbumRepository) FindAllFollowingPostAlbums(followings []userModel.ClassicUserFollowings) []model.PostAlbum {
+	var allPostAlbums = repo.FindAllPostAlbums()
+	var allFollowingPostAlbums []model.PostAlbum
+
+	for i:= 0; i< len(allPostAlbums); i++{
+		for j := 0; j < len(followings); j++{
+			if (allPostAlbums[i].UserID == followings[j].FollowingUserId) && (allPostAlbums[i].IsDeleted == false){
+				allFollowingPostAlbums = append(allFollowingPostAlbums, allPostAlbums[i])
+			}
+		}
+	}
+	return allFollowingPostAlbums
+}
