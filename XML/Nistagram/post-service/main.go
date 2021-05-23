@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/go-playground/validator"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	contentRepository "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/repository"
@@ -90,8 +91,11 @@ func initActivityHandler(service *service.ActivityService) *handler.ActivityHand
 	return &handler.ActivityHandler{ Service: service }
 }
 
-func initCommentHandler(service *service.CommentService) *handler.CommentHandler{
-	return &handler.CommentHandler{ Service: service }
+func initCommentHandler(service *service.CommentService, validate *validator.Validate) *handler.CommentHandler{
+	return &handler.CommentHandler{
+		Service: service,
+		Validator: validate,
+	}
 }
 
 func initPostHandler(postService *service.PostService) *handler.PostHandler{
@@ -254,6 +258,7 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 
 func main() {
 	database := initDB()
+	validator := validator.New()
 	repoPostCollectionPosts := initPostCollectionPostsRepo(database)
 	servicePostCollectionPosts := initPostCollectionPostsServices(repoPostCollectionPosts)
 	handlerPostCollectionPosts := initPostCollectionPostsHandler(servicePostCollectionPosts)
@@ -287,7 +292,7 @@ func main() {
 	serviceTag := initTagService(repoTag)
 
 	handlerActivity := initActivityHandler(serviceActivity)
-	handlerComment := initCommentHandler(serviceComment)
+	handlerComment := initCommentHandler(serviceComment, validator)
 	handlerPost := initPostHandler(servicePost)
 	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)

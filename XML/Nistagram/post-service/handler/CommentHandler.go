@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-playground/validator"
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
@@ -12,15 +13,19 @@ import (
 )
 
 type CommentHandler struct {
-	Service * service.CommentService
+	Service   *service.CommentService
+	Validator *validator.Validate
 }
 
 func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 	var commentDTO dto.CommentDTO
-	err := json.NewDecoder(r.Body).Decode(&commentDTO)
-
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&commentDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest) // 400
+		return
+	}
+
+	if err := handler.Validator.Struct(&commentDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 
@@ -28,16 +33,16 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 	creationDate, _ := time.Parse(layout, commentDTO.CreationDate)
 
 	comment := model.Comment{
-		ID: uuid.UUID{},
+		ID:           uuid.UUID{},
 		CreationDate: creationDate,
-		UserID: commentDTO.UserID,
-		PostID: commentDTO.PostID,
-		Text: commentDTO.Text,
+		UserID:       commentDTO.UserID,
+		PostID:       commentDTO.PostID,
+		Text:         commentDTO.Text,
 	}
 
-	if err = handler.Service.CreateComment(&comment); err != nil {
+	if err := handler.Service.CreateComment(&comment); err != nil {
 		fmt.Println(err)
-		w.WriteHeader(http.StatusExpectationFailed)
+		w.WriteHeader(http.StatusExpectationFailed) // 417
 		return
 	}
 
