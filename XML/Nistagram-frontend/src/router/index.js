@@ -166,6 +166,11 @@ const routes = [
     component: () => import('../views/PostAlbumByIdWithoutActivity.vue')
   },
   {
+    path: '/storyAlbumByIdWithoutActivity',
+    name: 'StoryAlbumByIdWithoutActivity',
+    component: () => import('../views/StoryAlbumByIdWithoutActivity.vue')
+  },
+  {
     path: '/addCloseFriends',
     name: 'AddCloseFriends',
     component: () => import('../views/AddCloseFriends.vue')
