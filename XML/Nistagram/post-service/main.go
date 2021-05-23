@@ -246,6 +246,7 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/find_all_public_posts_reg", handlerSinglePost.FindAllPublicPostsRegisteredUser).Methods("GET")
 
 	router.HandleFunc("/find_all_public_album_posts_reg", handlerPostAlbum.FindAllPublicAlbumPostsRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_public_album_posts_not_reg/", handlerPostAlbum.FindAllPublicAlbumPostsNotRegisteredUser).Methods("GET")
 
 	router.HandleFunc("/find_all_album_posts_for_logged_user", handlerPostAlbum.FindAllAlbumPostsForLoggedUser).Methods("GET")
 	router.HandleFunc("/find_selected_post_album_for_logged_user", handlerPostAlbum.FindSelectedPostAlbumByIdForLoggedUser).Methods("GET")

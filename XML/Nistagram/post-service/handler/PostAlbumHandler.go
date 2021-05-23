@@ -237,3 +237,20 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
+
+	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
+	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
+	var publicValidAlbumPosts = handler.Service.FindAllPublicAndFriendsPostAlbumsValid(allPublicUsers)
+	var contents = handler.PostAlbumContentService.FindAllContentsForPostAlbums(publicValidAlbumPosts)
+	var locations = handler.LocationService.FindAllLocationsForPostAlbums(publicValidAlbumPosts)
+	var tags = handler.PostAlbumTagPostAlbumsService.FindAllTagsForPostAlbumTagPostAlbums(publicValidAlbumPosts)
+	var postAlbumsDTOS = handler.CreatePostAlbumsDTOList(publicValidAlbumPosts,contents,locations,tags)
+
+	postAlbumsJson, _ := json.Marshal(postAlbumsDTOS)
+	w.Write(postAlbumsJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
