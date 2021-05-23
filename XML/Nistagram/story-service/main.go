@@ -84,8 +84,8 @@ func initStoryHandler(service *service.StoryService) *handler.StoryHandler{
 	return &handler.StoryHandler { Service: service }
 }
 
-func initStoryAlbumHandler(service *service.StoryAlbumService, storyService * service.StoryService) *handler.StoryAlbumHandler{
-	return &handler.StoryAlbumHandler { Service: service, StoryService: storyService }
+func initStoryAlbumHandler(service *service.StoryAlbumService, storyService *service.StoryService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, storyAlbumContentService *contentService.StoryAlbumContentService,locationService *locationService.LocationService, storyAlbumTagStoryAlbumsService *tagsService.StoryAlbumTagStoryAlbumsService,tagService *tagsService.TagService) *handler.StoryAlbumHandler{
+	return &handler.StoryAlbumHandler{ Service: service, StoryService: storyService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings, StoryAlbumContentService: storyAlbumContentService, LocationService: locationService, StoryAlbumTagStoryAlbumsService: storyAlbumTagStoryAlbumsService, TagService: tagService }
 }
 
 func initSingleStoryHandler(singleStoryService *service.SingleStoryService, storyService *service.StoryService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, storyContentService *contentService.SingleStoryContentService,locationService *locationService.LocationService, storyTagStoriesService *tagsService.StoryTagStoriesService,tagService *tagsService.TagService) *handler.SingleStoryHandler{
@@ -164,6 +164,23 @@ func initTagService(repo *tagsRepository.TagRepository) *tagsService.TagService{
 	return &tagsService.TagService{ Repo: repo }
 }
 
+// STORY ALBUM
+func initStoryAlbumContentRepo(database *gorm.DB) *contentRepository.StoryAlbumContentRepository{
+	return &contentRepository.StoryAlbumContentRepository{ Database: database }
+}
+
+func initStoryAlbumContentService(repo *contentRepository.StoryAlbumContentRepository) *contentService.StoryAlbumContentService{
+	return &contentService.StoryAlbumContentService{ Repo: repo }
+}
+
+// STORY ALBUM TAG STORY ALBUMS
+func initStoryAlbumTagStoryAlbumsRepo(database *gorm.DB) *tagsRepository.StoryAlbumTagStoryAlbumsRepository{
+	return &tagsRepository.StoryAlbumTagStoryAlbumsRepository{ Database: database }
+}
+
+func initStoryAlbumTagStoryAlbumsService(repo *tagsRepository.StoryAlbumTagStoryAlbumsRepository) *tagsService.StoryAlbumTagStoryAlbumsService{
+	return &tagsService.StoryAlbumTagStoryAlbumsService{ Repo: repo }
+}
 
 func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.StoryAlbumHandler, handlerStoryHighlight *handler.StoryHighlightHandler,
 	handlerSingleStoryStoryHighlights *handler.SingleStoryStoryHighlightsHandler,handlerSingleStory *handler.SingleStoryHandler){
@@ -192,6 +209,8 @@ func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.S
 	// NOT REGISTERED USER
 	router.HandleFunc("/find_all_stories_for_not_reg", handlerSingleStory.FindAllStoriesForUserNotRegisteredUser).Methods("GET") // kada neregistrovani user otvori PUBLIC usera sa spiska i onda na njegovom profilu vidi PUBLIC i NOT EXPIRED STORIJE
 	router.HandleFunc("/find_all_public_stories_not_reg/", handlerSingleStory.FindAllPublicStoriesNotRegisteredUser).Methods("GET") // tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
+
+	router.HandleFunc("/find_all_album_stories_for_logged_user", handlerStoryAlbum.FindAllAlbumStoriesForLoggedUser).Methods("GET")
 
 
 	// REGISTERED USER
@@ -230,8 +249,13 @@ func main() {
 	handlerStory := initStoryHandler(serviceStory)
 
 	repoStoryAlbum := initStoryAlbumRepo(database)
+	repoStoryAlbumContent := initStoryAlbumContentRepo(database)
+	repoStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsRepo(database)
 	serviceStoryAlbum := initStoryAlbumServices(repoStoryAlbum)
-	handlerStoryAlbum := initStoryAlbumHandler(serviceStoryAlbum, serviceStory)
+	serviceStoryAlbumContent := initStoryAlbumContentService(repoStoryAlbumContent)
+	serviceStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsService(repoStoryAlbumTagStoryAlbums)
+	handlerStoryAlbum := initStoryAlbumHandler(serviceStoryAlbum, serviceStory, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, serviceStoryAlbumContent, serviceLocation, serviceStoryAlbumTagStoryAlbums, serviceTag)
+
 
 	repoSingleStory := initSingleStoryRepo(database)
 	serviceSingleStory := initSingleStoryServices(repoSingleStory)
