@@ -169,6 +169,7 @@
                     src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
                   ></v-img>
                 </v-list-item-avatar>
+
                 <!--
                 <v-list-item-avatar color="grey darken-3">
                   <v-img
@@ -178,6 +179,7 @@
                   ></v-img>
                 </v-list-item-avatar>
                 -->
+                
                 <v-list-item-content>
                   <v-list-item-title>{{ item.user_id }}</v-list-item-title>
                 </v-list-item-content>
