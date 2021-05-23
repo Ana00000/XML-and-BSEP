@@ -66,3 +66,35 @@ func (service *LocationService) FindAllLocationsForStory(story *storyModel.Singl
 func (service *LocationService) FindLocationIdByLocationString(locationString string) model.Location {
 	return service.Repo.FindLocationIdByLocationString(locationString)
 }
+
+func (service *LocationService) FindAllLocationsForPostAlbums(albums []postsModel.PostAlbum) []model.Location {
+	locations := service.Repo.FindAllLocationsForPostAlbums(albums)
+	if locations != nil {
+		return locations
+	}
+	return nil
+}
+
+func (service *LocationService) FindAllLocationsForPostAlbum(album *postsModel.PostAlbum) []model.Location {
+	locations := service.Repo.FindAllLocationsForPostAlbum(album)
+	if locations != nil {
+		return locations
+	}
+	return nil
+}
+
+func (service *LocationService) FindAllLocationsForStoryAlbums(albums []storyModel.StoryAlbum) []model.Location {
+	locations := service.Repo.FindAllLocationsForStoryAlbums(albums)
+	if locations != nil {
+		return locations
+	}
+	return nil
+}
+
+func (service *LocationService) FindAllLocationsForStoryAlbum(album *storyModel.StoryAlbum) []model.Location {
+	locations := service.Repo.FindAllLocationsForStoryAlbum(album)
+	if locations != nil {
+		return locations
+	}
+	return nil
+}

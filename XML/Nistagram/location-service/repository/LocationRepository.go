@@ -132,3 +132,59 @@ func (repo *LocationRepository) FindLocationIdByLocationString(locationString st
 	return location
 
 }
+
+func (repo *LocationRepository) FindAllLocationsForPostAlbums(albums []postsModel.PostAlbum) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for i:=0;i<len(albums);i++{
+		for j:=0; j<len(allLocations);j++{
+			if albums[i].LocationId == allLocations[j].ID{
+				locations = append(locations, allLocations[j])
+			}
+		}
+
+	}
+	return locations
+}
+
+func (repo *LocationRepository) FindAllLocationsForPostAlbum(album *postsModel.PostAlbum) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for j:=0; j<len(allLocations);j++{
+		if album.LocationId == allLocations[j].ID{
+			locations = append(locations, allLocations[j])
+		}
+	}
+
+	return locations
+}
+
+func (repo *LocationRepository) FindAllLocationsForStoryAlbums(albums []storyModel.StoryAlbum) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for i:=0;i<len(albums);i++{
+		for j:=0; j<len(allLocations);j++{
+			if albums[i].LocationId == allLocations[j].ID{
+				locations = append(locations, allLocations[j])
+			}
+		}
+
+	}
+	return locations
+}
+
+func (repo *LocationRepository) FindAllLocationsForStoryAlbum(album *storyModel.StoryAlbum) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for j:=0; j<len(allLocations);j++{
+		if album.LocationId == allLocations[j].ID{
+			locations = append(locations, allLocations[j])
+		}
+	}
+
+	return locations
+}

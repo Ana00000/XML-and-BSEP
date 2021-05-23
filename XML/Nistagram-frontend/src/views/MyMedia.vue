@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="spacingOne" />
-      <div class="title">
-        <h1>My Media</h1>
-      </div>
+    <div class="title">
+      <h1>My Media</h1>
+    </div>
     <v-container grid-list-lg>
       <div class="spacingOne" />
       <div class="title">
@@ -131,6 +131,88 @@
         </v-flex>
       </v-layout>
     </v-container>
+
+    <v-container grid-list-lg>
+      <div class="spacingOne" />
+      <div class="title">
+        <h2>Album Posts</h2>
+      </div>
+      <div class="spacingTwo" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in albumPosts"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card class="mx-auto" v-on:click="getMyAlbumPosts(item)">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{
+                  item.description
+                }}</v-list-item-subtitle>
+                <v-list-item-title>{{ item.tags }}</v-list-item-title>
+                <v-list-item-subtitle
+                  v-text="
+                    item.country +
+                    ' ' +
+                    item.city +
+                    ' ' +
+                    item.street_name +
+                    ' ' +
+                    item.street_number
+                  "
+                />
+                <v-list-item-subtitle>{{
+                  item.creation_date
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+
+    <v-container grid-list-lg>
+      <div class="spacingOne" />
+      <div class="title">
+        <h2>Album Stories</h2>
+      </div>
+      <div class="spacingTwo" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in albumStories"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card class="mx-auto" v-on:click="getMyAlbumStories(item)">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{
+                  item.description
+                }}</v-list-item-subtitle>
+                <v-list-item-title>{{ item.tags }}</v-list-item-title>
+                <v-list-item-subtitle
+                  v-text="
+                    item.country +
+                    ' ' +
+                    item.city +
+                    ' ' +
+                    item.street_name +
+                    ' ' +
+                    item.street_number
+                  "
+                />
+                <v-list-item-subtitle>{{
+                  item.creation_date
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
@@ -141,6 +223,8 @@ export default {
     posts: [],
     stories: [],
     logId: null,
+    albumPosts: [],
+    albumStories: [],
   }),
   mounted() {
     this.logId = localStorage.getItem("userId");
@@ -150,6 +234,8 @@ export default {
     init() {
       this.getPosts();
       this.getStories();
+      this.getPostAlbums();
+      this.getStoryAlbums();
     },
     getPosts() {
       this.$http
@@ -173,18 +259,54 @@ export default {
         })
         .catch(console.log);
     },
+    getPostAlbums() {
+      this.$http
+        .get(
+          "http://localhost:8084/find_all_album_posts_for_logged_user?id=" +
+            localStorage.getItem("userId")
+        )
+        .then((response) => {
+          this.albumPosts = response.data;
+        })
+        .catch(console.log);
+    },
+    getStoryAlbums() {
+      this.$http
+        .get(
+          "http://localhost:8086/find_all_album_stories_for_logged_user?id=" +
+            localStorage.getItem("userId")
+        )
+        .then((response) => {
+          this.albumStories = response.data;
+        })
+        .catch(console.log);
+    },
     getMyPost(item) {
       localStorage.setItem("mySelectedUserId", item.user_id);
       localStorage.setItem("mySelectedPostId", item.post_id);
 
       window.location.href = "http://localhost:8081/postByIdWithoutActivity";
     },
-    getMyStory(item){
+    getMyStory(item) {
       localStorage.setItem("mySelectedUserId", item.user_id);
       localStorage.setItem("mySelectedStoryId", item.story_id);
 
       window.location.href = "http://localhost:8081/storyByIdWithoutActivity";
-    }
+    },
+    getMyAlbumPosts(item) {
+      localStorage.setItem("mySelectedUserId", item.user_id);
+      localStorage.setItem("mySelectedPostAlbumId", item.post_album_id);
+
+      window.location.href =
+        "http://localhost:8081/postAlbumByIdWithoutActivity";
+    },
+    getMyAlbumStories(item) {
+      localStorage.setItem("mySelectedUserId", item.user_id);
+      localStorage.setItem("mySelectedStoryAlbumId", item.story_album_id);
+
+      window.location.href =
+        "http://localhost:8081/storyAlbumByIdWithoutActivity";
+    },
   },
 };
 </script>

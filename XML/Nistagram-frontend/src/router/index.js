@@ -121,16 +121,6 @@ const routes = [
     component: () => import('../views/PublicStoriesAllForNotRegistered.vue')
   },
   {
-    path: '/publicPostAlbumsAll',
-    name: 'PublicPostAlbumsAll',
-    component: () => import('../views/PublicPostAlbumsAll.vue')
-  },
-  {
-    path: '/publicStoryAlbumsAll',
-    name: 'PublicStoryAlbumsAll',
-    component: () => import('../views/PublicStoryAlbumsAll.vue')
-  },
-  {
     path: '/reactedPosts',
     name: 'ReactedPosts',
     component: () => import('../views/ReactedPosts.vue')
@@ -159,6 +149,16 @@ const routes = [
     path: '/storyByIdWithoutActivity',
     name: 'StoryByIdWithoutActivity',
     component: () => import('../views/StoryByIdWithoutActivity.vue')
+  },
+  {
+    path: '/postAlbumByIdWithoutActivity',
+    name: 'PostAlbumByIdWithoutActivity',
+    component: () => import('../views/PostAlbumByIdWithoutActivity.vue')
+  },
+  {
+    path: '/storyAlbumByIdWithoutActivity',
+    name: 'StoryAlbumByIdWithoutActivity',
+    component: () => import('../views/StoryAlbumByIdWithoutActivity.vue')
   },
   {
     path: '/addCloseFriends',

@@ -24,7 +24,6 @@ import (
 type SingleStoryHandler struct {
 	SingleStoryService * service.SingleStoryService
 	StoryService * service.StoryService
-
 	ClassicUserService * userService.ClassicUserService
 	ClassicUserFollowingsService * userService.ClassicUserFollowingsService
 	ProfileSettings *settingsService.ProfileSettingsService
@@ -32,7 +31,6 @@ type SingleStoryHandler struct {
 	LocationService *locationService.LocationService
 	StoryTagStoriesService *tagsService.StoryTagStoriesService
 	TagService *tagsService.TagService
-
 	ClassicUserCloseFriendsService * userService.ClassicUserCloseFriendsService
 }
 
