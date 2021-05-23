@@ -39,3 +39,12 @@ func (service *StoryAlbumService) FindAllPublicAlbumStoriesNotRegisteredUser(use
 	}
 	return nil
 }
+
+// FIND ALL NOT DELETED VALID STORY ALBUMS THAT LOGGED IN USER FOLLOWS
+func (service *StoryAlbumService) FindAllFollowingStoryAlbums(followings []userModel.ClassicUserFollowings) []model.StoryAlbum {
+	storyAlbums := service.Repo.FindAllFollowingStoryAlbums(followings)
+	if storyAlbums != nil {
+		return storyAlbums
+	}
+	return nil
+}

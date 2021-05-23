@@ -65,3 +65,30 @@ func (repo *StoryAlbumRepository) FindAllPublicAlbumStoriesNotRegisteredUser(all
 
 	return notExpiredStoryAlbums
 }
+
+// FIND ALL NOT DELETED VALID STORY ALBUMS THAT LOGGED IN USER FOLLOWS
+func (repo *StoryAlbumRepository) FindAllFollowingStoryAlbums(followings []userModel.ClassicUserFollowings) []model.StoryAlbum {
+	var allStoryAlbums = repo.FindAllStoryAlbums()
+	var allFollowingStoryAlbums []model.StoryAlbum
+	var notExpiredStoryAlbums []model.StoryAlbum
+
+	for i:= 0; i< len(allStoryAlbums); i++{
+		for j := 0; j < len(followings); j++{
+			if (allStoryAlbums[i].UserId == followings[j].FollowingUserId) && (allStoryAlbums[i].IsDeleted == false){
+				allFollowingStoryAlbums = append(allFollowingStoryAlbums, allStoryAlbums[i])
+			}
+		}
+	}
+
+	for i:=0; i< len(allFollowingStoryAlbums); i++{
+		if time.Now().After(allFollowingStoryAlbums[i].CreationDate.Add(60 * time.Second)){
+			// PASSED TIME SHOULD SET STORY ALBUM AS EXPIRED
+			//allFollowingStoryAlbums[i].IsExpired = true
+			repo.Database.Model(&model.StoryAlbum{}).Where("id = ?", allFollowingStoryAlbums[i].ID).Update("is_expired", true)
+			repo.Database.Model(&model.Story{}).Where("id = ?", allFollowingStoryAlbums[i].ID).Update("is_expired", true)
+		} else{
+			notExpiredStoryAlbums = append(notExpiredStoryAlbums, allFollowingStoryAlbums[i])
+		}
+	}
+	return notExpiredStoryAlbums
+}

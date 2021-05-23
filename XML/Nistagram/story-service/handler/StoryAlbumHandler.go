@@ -30,6 +30,7 @@ type StoryAlbumHandler struct {
 	LocationService *locationService.LocationService
 	StoryAlbumTagStoryAlbumsService *tagsService.StoryAlbumTagStoryAlbumsService
 	TagService *tagsService.TagService
+	ClassicUserCloseFriendsService * userService.ClassicUserCloseFriendsService
 }
 
 func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *http.Request) {
@@ -252,6 +253,41 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesNotRegisteredUser(w h
 	storyAlbumsJson, _ := json.Marshal(storyAlbumsDTOS)
 	w.Write(storyAlbumsJson)
 
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+// returns all VALID story albums from FOLLOWING users (FOR HOMEPAGE)
+func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+	var followings = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), allValidUsers)
+	var allValidStoryAlbums []model.StoryAlbum
+	var storyAlbums = handler.Service.FindAllFollowingStoryAlbums(followings)
+
+	for i:=0; i<len(storyAlbums);i++{
+		if storyAlbums[i].Type == model.PUBLIC || storyAlbums[i].Type == model.ALL_FRIENDS{
+
+			allValidStoryAlbums = append(allValidStoryAlbums, storyAlbums[i])
+
+		}else if storyAlbums[i].Type == model.CLOSE_FRIENDS{
+
+			var checkIfCloseFriend = handler.ClassicUserCloseFriendsService.CheckIfCloseFriend(storyAlbums[i].UserId, uuid.MustParse(id))
+			if checkIfCloseFriend == true{
+
+				allValidStoryAlbums = append(allValidStoryAlbums, storyAlbums[i])
+			}
+		}
+	}
+
+	var contents = handler.StoryAlbumContentService.FindAllContentsForStoryAlbums(storyAlbums)
+	var locations = handler.LocationService.FindAllLocationsForStoryAlbums(storyAlbums)
+	var tags = handler.StoryAlbumTagStoryAlbumsService.FindAllTagsForStoryAlbumTagStoryAlbums(storyAlbums)
+	var storyAlbumsDTOS = handler.CreateStoryAlbumsDTOList(storyAlbums,contents,locations,tags)
+
+	storyAlbumsJson, _ := json.Marshal(storyAlbumsDTOS)
+	w.Write(storyAlbumsJson)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
