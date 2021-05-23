@@ -25,3 +25,8 @@ func (service *PostAlbumService) FindAllAlbumPostsForUser(ID uuid.UUID) []model.
 	}
 	return nil
 }
+
+func (service *PostAlbumService) FindByID(ID uuid.UUID) *model.PostAlbum {
+	postAlbum := service.Repo.FindByID(ID)
+	return postAlbum
+}

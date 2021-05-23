@@ -68,3 +68,11 @@ func (service *LocationService) FindAllLocationsForPostAlbums(albums []postsMode
 	}
 	return nil
 }
+
+func (service *LocationService) FindAllLocationsForPostAlbum(album *postsModel.PostAlbum) []model.Location {
+	locations := service.Repo.FindAllLocationsForPostAlbum(album)
+	if locations != nil {
+		return locations
+	}
+	return nil
+}

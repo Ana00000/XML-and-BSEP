@@ -22,3 +22,11 @@ func (repo *PostAlbumRepository) FindAllAlbumPostsForUser(userId uuid.UUID) []mo
 	repo.Database.Select("*").Where("user_id = ? and is_deleted = ?", userId, false).Find(&postAlbums)
 	return postAlbums
 }
+
+func (repo *PostAlbumRepository) FindByID(ID uuid.UUID) *model.PostAlbum {
+	postAlbum := &model.PostAlbum{}
+	if repo.Database.First(&postAlbum, "id = ? and is_deleted = ?", ID, false).RowsAffected == 0 {
+		return nil
+	}
+	return postAlbum
+}

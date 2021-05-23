@@ -127,3 +127,16 @@ func (repo *LocationRepository) FindAllLocationsForPostAlbums(albums []postsMode
 	}
 	return locations
 }
+
+func (repo *LocationRepository) FindAllLocationsForPostAlbum(album *postsModel.PostAlbum) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for j:=0; j<len(allLocations);j++{
+		if album.LocationId == allLocations[j].ID{
+			locations = append(locations, allLocations[j])
+		}
+	}
+
+	return locations
+}

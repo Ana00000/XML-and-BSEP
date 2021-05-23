@@ -38,3 +38,16 @@ func (repo *PostAlbumContentRepository) FindAllContentsForPostAlbums(albums []po
 
 	return contents
 }
+
+func (repo *PostAlbumContentRepository) FindAllContentsForPostAlbum(album *postsModel.PostAlbum) []model.PostAlbumContent {
+	var contents []model.PostAlbumContent
+	var allContents = repo.FindAll()
+
+	for j:=0; j<len(allContents);j++{
+		if album.ID == allContents[j].PostAlbumId{
+			contents = append(contents, allContents[j])
+		}
+	}
+
+	return contents
+}

@@ -134,3 +134,84 @@ func (handler *PostAlbumHandler) CreatePostAlbumsDTOList(albums []model.PostAlbu
 	return listOfPostAlbumsDTOs
 
 }
+
+func (handler *PostAlbumHandler) FindSelectedPostAlbumByIdForLoggedUser(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id") //post album id
+	logId := r.URL.Query().Get("logId") //loged user id
+
+	var postAlbum = handler.Service.FindByID(uuid.MustParse(id))
+	if postAlbum == nil {
+		fmt.Println("User not found")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if postAlbum.IsDeleted == true{
+		fmt.Println("Deleted post album")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if postAlbum.UserID != uuid.MustParse(logId){
+		fmt.Println("Post album doesnt belong to user")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	var contents = handler.PostAlbumContentService.FindAllContentsForPostAlbum(postAlbum)
+	var locations = handler.LocationService.FindAllLocationsForPostAlbum(postAlbum)
+	var tags = handler.PostAlbumTagPostAlbumsService.FindAllTagsForPostAlbum(postAlbum)
+
+	var postAlbumDTO = handler.CreatePostAlbumDTO(postAlbum,contents,locations,tags)
+
+	postAlbumJson, _ := json.Marshal(postAlbumDTO)
+	w.Write(postAlbumJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}
+
+func (handler *PostAlbumHandler) CreatePostAlbumDTO(album *model.PostAlbum, contents []contentModel.PostAlbumContent, locations []locationModel.Location, tags []tagModel.PostAlbumTagPostAlbums) dto.SelectedPostAlbumDTO {
+	var postAlbumDTO dto.SelectedPostAlbumDTO
+
+	postAlbumDTO.PostAlbumId = album.ID
+	postAlbumDTO.Description = album.Description
+	postAlbumDTO.CreationDate = album.CreationDate
+
+
+	for j := 0; j < len(contents); j++ {
+		if contents[j].PostAlbumId == album.ID {
+			postAlbumDTO.Path = append(postAlbumDTO.Path, contents[j].Path)
+
+			if contents[j].Type == contentModel.VIDEO {
+				postAlbumDTO.Type = append(postAlbumDTO.Type, "VIDEO")
+			} else if contents[j].Type == contentModel.PICTURE {
+				postAlbumDTO.Type = append(postAlbumDTO.Type, "PICTURE")
+			}
+		}
+	}
+
+	for k := 0; k < len(locations); k++ {
+		if locations[k].ID == album.LocationId {
+			postAlbumDTO.LocationId = locations[k].ID
+			postAlbumDTO.City = locations[k].City
+			postAlbumDTO.Country = locations[k].Country
+			postAlbumDTO.StreetName = locations[k].StreetName
+			postAlbumDTO.StreetNumber = locations[k].StreetNumber
+		}
+	}
+
+	var listOfTags []string
+	for p := 0; p < len(tags); p++ {
+		if tags[p].PostAlbumId == album.ID {
+			listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
+
+		}
+	}
+
+	postAlbumDTO.Tags = listOfTags
+
+	return postAlbumDTO
+}

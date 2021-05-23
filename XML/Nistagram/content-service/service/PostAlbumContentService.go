@@ -25,3 +25,11 @@ func (service *PostAlbumContentService) FindAllContentsForPostAlbums(allPostAlbu
 	}
 	return nil
 }
+
+func (service *PostAlbumContentService) FindAllContentsForPostAlbum(album *postsModel.PostAlbum) []model.PostAlbumContent {
+	contents := service.Repo.FindAllContentsForPostAlbum(album)
+	if contents != nil {
+		return contents
+	}
+	return nil
+}

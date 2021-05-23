@@ -247,6 +247,7 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 
 
 	router.HandleFunc("/find_all_album_posts_for_logged_user", handlerPostAlbum.FindAllAlbumPostsForLoggedUser).Methods("GET")
+	router.HandleFunc("/find_selected_post_album_for_logged_user", handlerPostAlbum.FindSelectedPostAlbumByIdForLoggedUser).Methods("GET")
 	router.HandleFunc("/find_all_posts_for_logged_user", handlerSinglePost.FindAllPostsForLoggedUser).Methods("GET")
 	router.HandleFunc("/find_selected_post_for_logged_user", handlerSinglePost.FindSelectedPostByIdForLoggedUser).Methods("GET")
 
