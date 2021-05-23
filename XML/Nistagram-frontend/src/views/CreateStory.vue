@@ -106,7 +106,19 @@
           label="Tag name"
           v-model="tagName"
           prepend-icon="mdi-address-circle"
+          v-if="!isHiddenTag && selectedTagType === 'HASH_TAG'"
+        />
+        <v-select
+          class="typeCombo"
+          v-model="selectedTagType"
+          v-on:click="checkTag"
           v-if="!isHiddenTag"
+          hint="Choose your tag type."
+          :items="tagTypes"
+          item-text="state"
+          :label="label3"
+          return-object
+          single-line
         />
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
@@ -163,6 +175,29 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+    <v-container grid-list-lg>
+      <div class="spacingOne" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in allUserTags"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card
+            class="mx-auto"
+            v-on:click="getTag(item)"
+            v-if="isVisibleTags"
+          >
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{ item.name }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
     <div class="spacing" />
   </div>
 </template>
@@ -187,6 +222,9 @@ export default {
     types: ["PICTURE", "VIDEO"],
     selectedType: "PICTURE",
     label1: "Type",
+    label3: "Tag type",
+    tagTypes: ["USER_TAG", "HASH_TAG"],
+    selectedTagType: "HASH_TAG",
     storyId: null,
     isHiddenLocationButton: false,
     isHiddenLocation: false,
@@ -200,8 +238,28 @@ export default {
     isValidStoryDescription: false,
     storyTagId: null,
     extension: "",
+    isVisibleTags: false,
+    allUserTags: [],
+    userTag: null,
+    userId: null,
   }),
+  mounted() {
+    this.init();
+  },
   methods: {
+    init() {
+        this.userId = localStorage.getItem("userId");
+        this.$http
+        .get("http://localhost:8082/find_all_taggable_users_story/")
+        .then((response) => {
+          for (var i = 0; i < response.data.length; i++) {
+            if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
+              this.allUserTags.push(response.data[i]);
+            }
+          }
+        })
+        .catch(console.log);
+    },
     addLocation() {
       if (
         !this.validLongitude() ||
@@ -348,25 +406,28 @@ export default {
       window.location.href = "http://localhost:8081/";
     },
     addTag() {
-      if (!this.validTag()) return;
-
-      this.$http
-        .post("http://localhost:8082/story_tag/", {
-          name: this.tagName,
-        })
-        .then((response) => {
-          this.storyTagId = response.data;
-          this.createStoryTagStories();
-        })
-        .catch((er) => {
-          console.log(er.response.data);
-        });
+      if (this.selectedTagType == "USER_TAG") {
+        this.createStoryUserTagStories();
+      } else {
+         if (!this.validTag()) return;
+         this.$http
+          .post("http://localhost:8082/tag/", {
+            name: this.tagName,
+            tag_type: this.selectedTagType,
+          })
+          .then((response) => {
+            this.storyTagId = response.data;
+            this.createStoryTagStories();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      }
     },
     createStoryTagStories() {
-      console.log(this.storyTagId);
       this.$http
         .post("http://localhost:8082/story_tag_stories/", {
-          story_tag_id: this.storyTagId,
+          tag_id: this.storyTagId,
           story_id: this.storyId,
         })
         .then((response) => {
@@ -376,6 +437,28 @@ export default {
         .catch((er) => {
           console.log(er.response.data);
         });
+    },
+    createStoryUserTagStories() {
+      this.$http
+        .post("http://localhost:8082/story_tag_stories/", {
+          tag_id: this.userTag.id,
+          story_id: this.storyId,
+        })
+        .then((response) => {
+          console.log(response.data);
+          alert("Tag is created! Add more tags or finish creation.");
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    checkTag() {
+      if (this.selectedTagType == "USER_TAG") {
+        this.isVisibleTags = true;
+      }
+    },
+    getTag(item) {
+      this.userTag = item;
     },
     validLongitude() {
       if (this.longitude.length < 2) {

@@ -40,3 +40,8 @@ func (service *TagService) FindAll() []model.Tag {
 	}
 	return nil
 }
+
+func (service * TagService) FindTagForId(tagId uuid.UUID) model.Tag{
+	tag := service.Repo.FindTagForId(tagId)
+	return tag
+}

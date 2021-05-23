@@ -47,3 +47,9 @@ func (repo *TagRepository) FindTagByType(tagType string) *model.Tag {
 	}
 	return tag
 }
+
+func (repo * TagRepository) FindTagForId(tagId uuid.UUID) model.Tag{
+	var tag model.Tag
+	repo.Database.Select("*").Where("id = ?", tagId).Find(&tag)
+	return tag
+}
