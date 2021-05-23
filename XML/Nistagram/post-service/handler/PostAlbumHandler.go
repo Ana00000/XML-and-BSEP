@@ -215,3 +215,25 @@ func (handler *PostAlbumHandler) CreatePostAlbumDTO(album *model.PostAlbum, cont
 
 	return postAlbumDTO
 }
+
+func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id")
+
+	// returns only VALID users but loggedIn user
+	var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+
+	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
+	var publicValidAlbumPosts = handler.Service.FindAllPublicAndFriendsPostAlbumsValid(allPublicUsers)
+	var contents = handler.PostAlbumContentService.FindAllContentsForPostAlbums(publicValidAlbumPosts)
+	var locations = handler.LocationService.FindAllLocationsForPostAlbums(publicValidAlbumPosts)
+	var tags = handler.PostAlbumTagPostAlbumsService.FindAllTagsForPostAlbumTagPostAlbums(publicValidAlbumPosts)
+
+	var postAlbumsDTOS = handler.CreatePostAlbumsDTOList(publicValidAlbumPosts,contents,locations,tags)
+
+	postAlbumsJson, _ := json.Marshal(postAlbumsDTOS)
+	w.Write(postAlbumsJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}

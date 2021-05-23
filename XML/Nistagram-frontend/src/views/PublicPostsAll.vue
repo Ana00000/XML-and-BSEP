@@ -140,7 +140,7 @@ export default {
     getPostAlbums() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_album_posts_for_logged_user?id=" +
+          "http://localhost:8084/find_all_public_album_posts_reg?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
