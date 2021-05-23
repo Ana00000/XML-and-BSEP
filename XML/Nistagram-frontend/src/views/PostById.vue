@@ -90,6 +90,10 @@
       Remove dislike
     </v-btn>
 
+    <v-btn color="info mb-5" v-on:click="setVisibleCommentTextArea" class="commentButton">
+      Add comment
+    </v-btn>
+
     <v-btn color="info mb-5" v-on:click="favoritePost" class="favoriteButton">
       Favorite
     </v-btn>
@@ -103,8 +107,22 @@
       Remove Favorite
     </v-btn>
 
+    <template>
+      <v-container>
+        <v-textarea class="textArea" v-if="!isHiddenComment"  v-model="text" solo name="input-5-4" label="Add Comment"></v-textarea>
+      </v-container>
+    </template>
 
-     <v-container grid-list-lg>
+
+    <v-btn color="info mb-10" v-if="!isHiddenComment" v-on:click="createComment" class="addCommentButton">
+      Add
+    </v-btn>
+
+    <v-btn color="info mb-10" v-if="!isHiddenComment" v-on:click="cancleComment" class="cancelCommentButton">
+      Cancel
+    </v-btn>
+
+    <v-container grid-list-lg>
       <div class="spacingOne" />
       <v-layout row>
         <v-flex
@@ -113,13 +131,11 @@
           :key="item.id"
           class="space-bottom"
         >
-          <v-card
-            class="mx-auto"
-          >
+          <v-card class="mx-auto">
             <v-list-item three-line>
               <v-list-item-content>
                 <v-list-item-subtitle>{{ item.text }}</v-list-item-subtitle>
-                <v-list-item-subtitle>{{ item.user_id}}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{ item.user_id }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-card>
@@ -168,9 +184,12 @@ export default {
     isHiddenRemoveFavorite: true,
     likeabilityStatus: null,
     isHiddenCollections: true,
+    isHiddenComment: true,
     postCollections: [],
     postCollectionId: null,
     allPostComments: [],
+    creationDate: "",
+    text: "",
   }),
   mounted() {
     this.init();
@@ -199,7 +218,7 @@ export default {
         })
         .catch(console.log);
 
-        this.$http
+      this.$http
         .get(
           "http://localhost:8084/find_all_comments_for_post?id=" +
             localStorage.getItem("selectedPostId")
@@ -586,6 +605,30 @@ export default {
         })
         .catch(console.log);
     },
+    setVisibleCommentTextArea() {
+      this.isHiddenComment = false;
+    },
+    createComment() {
+      console.log(this.text);
+      console.log(this.post);
+
+      /* {
+      if (!this.validComment())  
+          return;
+      */
+      this.$http
+        .post("http://localhost:8084/comment/", {
+          creation_date: "2021-05-23T12:31:26.371Z",
+          user_id: localStorage.getItem("userId"),
+          post_id: this.post.post_id,
+          text: this.text,
+        })
+    },
+    cancleComment() {
+      console.log("Cancel comment");
+      this.text = "";
+      this.isHiddenComment = true;
+    }
   },
 };
 </script>
@@ -609,7 +652,7 @@ export default {
 
 .likeButton {
   width: 120px;
-  margin-left: 20%;
+  margin-left: 30%;
 }
 
 .removeLikeButton {
@@ -627,6 +670,11 @@ export default {
   margin-left: 3%;
 }
 
+.commentButton {
+  width: 180px;
+  margin-left: 3%;
+}
+
 .favoriteButton {
   width: 120px;
   margin-left: 3%;
@@ -636,4 +684,21 @@ export default {
   width: 190px;
   margin-left: 3%;
 }
+
+.textArea {
+  margin-left: 20%;
+  width: 60%;
+}
+
+.addCommentButton {
+  width: 120px;
+  margin-left: 30%;
+}
+
+
+.cancelCommentButton {
+  width: 120px;
+  margin-left: 25%;
+}
+
 </style>

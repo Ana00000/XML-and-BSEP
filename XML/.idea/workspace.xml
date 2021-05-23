@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Media/065141742100_5271.JPG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/121266695Shortest_Video_on_Youtube.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/255422906small_img.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Media/53618648512322734_1178095638871553_6639571606958341049_o.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/dto/CommentDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/dto/CommentDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/CommentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/CommentHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +74,7 @@
       <kind value="FILE" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Nistagram/message-service/main.go" />
+      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go (3)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -81,7 +83,7 @@
       <kind value="FILE" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Nistagram/content-service/main.go" />
+      <filePath value="$PROJECT_DIR$/Nistagram/story-service/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go (4)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -90,7 +92,7 @@
       <kind value="FILE" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Nistagram/campaign-service/main.go" />
+      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -99,16 +101,16 @@
       <kind value="FILE" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Nistagram/location-service/main.go" />
+      <filePath value="$PROJECT_DIR$/Nistagram/tag-service/main.go" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Go Build.go build main.go (1)" />
-        <item itemvalue="Go Build.go build main.go (4)" />
-        <item itemvalue="Go Build.go build main.go (3)" />
-        <item itemvalue="Go Build.go build main.go" />
         <item itemvalue="Go Build.go build main.go (2)" />
+        <item itemvalue="Go Build.go build main.go" />
+        <item itemvalue="Go Build.go build main.go (3)" />
+        <item itemvalue="Go Build.go build main.go (4)" />
       </list>
     </recent_temporary>
   </component>
