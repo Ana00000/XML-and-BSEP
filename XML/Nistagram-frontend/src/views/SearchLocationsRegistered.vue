@@ -79,6 +79,7 @@ export default {
   data: () => ({
     searchInput: "",
     locations: [],
+    locationsIds: [],
     locationsCopy: [],
     selectedLocation: null,
     locationString: "",
@@ -93,6 +94,7 @@ export default {
         .then((resp) => {
           this.locations = resp.data;
           this.locationsCopy = resp.data;
+          console.log(resp.data)
         })
         .catch(console.log);
     },

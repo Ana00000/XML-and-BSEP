@@ -171,9 +171,17 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 
 	// returns only valid users
 	var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+	for i := 0; i < len(allValidUsers); i++ {
+		fmt.Println("FindAllFollowingPosts FindAllUsersButLoggedIn allValidUsers handler "+allValidUsers[i].Username)
+	}
+
 
 	// retuns only valid FOLLOWINGS
 	var followings = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), allValidUsers)
+	for i := 0; i < len(followings); i++ {
+		fmt.Println("FindAllFollowingPosts FindAllUsersButLoggedIn followings handler "+allValidUsers[i].Username)
+	}
+
 
 	// returns NOT DELETED POSTS from valid following users
 	var posts = handler.SinglePostService.FindAllFollowingPosts(followings)
@@ -565,7 +573,8 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 
 func Find(slice []userModel.ClassicUser, val userModel.ClassicUser) (int,bool){
 	for i, item := range slice{
-		if item == val{
+		if item.ID == val.ID{
+			fmt.Println("Pronasao ga u Find")
 			return i, true
 		}
 	}
@@ -576,8 +585,10 @@ func Find(slice []userModel.ClassicUser, val userModel.ClassicUser) (int,bool){
 func (handler *SinglePostHandler) MergePublicAndFollowingUsers(allPublicUsers []userModel.ClassicUser, allFollowingUsers []userModel.ClassicUser) []userModel.ClassicUser {
 	//merge public and following users
 	var allPublicAndFollowingUsers []userModel.ClassicUser
-	allPublicAndFollowingUsers = allPublicUsers
-
+	for i := 0; i < len(allPublicUsers); i++ {
+		fmt.Println(allPublicUsers[i].Username)
+		allPublicAndFollowingUsers = append(allPublicAndFollowingUsers, allPublicUsers[i])
+	}
 	for i := 0; i < len(allFollowingUsers); i++ {
 		_, found := Find(allPublicAndFollowingUsers, allFollowingUsers[i])
 
@@ -585,52 +596,57 @@ func (handler *SinglePostHandler) MergePublicAndFollowingUsers(allPublicUsers []
 			allPublicAndFollowingUsers = append(allPublicAndFollowingUsers, allFollowingUsers[i])
 		}
 	}
-
+	for i := 0; i < len(allPublicAndFollowingUsers); i++ {
+		fmt.Println(allPublicAndFollowingUsers[i].Username)
+	}
+	fmt.Println()
 	return allPublicAndFollowingUsers
 }
 
 func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []userModel.ClassicUser {
 
-	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(id, allValidUsers)
+	var allValidUsers = handler.ClassicUserService.FinAllValidUsers() //ok
+	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(id, allValidUsers)//ok
 
 
-	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsersButLoggedIn)
+	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsersButLoggedIn)//ok
 
 	var allFollowings = handler.ClassicUserFollowingsService.FindAllUserWhoFollowUserId(id, allValidUsersButLoggedIn) //moj user je classic user
 	var allFollowingUsers = handler.ClassicUserService.FindAllUsersByFollowingIds(allFollowings)
 
 	// ALL PUBLIC AND FRIENDS USERS EXCEPT LOGGED
 	var allUsers = handler.MergePublicAndFollowingUsers(allPublicUsers, allFollowingUsers)
-
+	fmt.Println("Duzina liste")
+	fmt.Println(len(allUsers))
 
 	return allUsers
 }
 
 func (handler *SinglePostHandler) FindAllValidUsersButLoggedIn(id uuid.UUID, allValidUsers []userModel.ClassicUser) []userModel.ClassicUser {
-
-	allUsers, myUser := handler.FindMyUserById(id, allValidUsers)
+	var allUsers []userModel.ClassicUser
+	myUser := handler.FindMyUserById(id, allValidUsers)
 
 	for i := 0; i < len(allValidUsers); i++ {
-		_, found := Find(allValidUsers, myUser)
-
+		found:= myUser.ID == allValidUsers[i].ID
 		if !found {
-			allUsers = append(allUsers, myUser)
+			fmt.Println(allValidUsers[i].ID.String()+" FindAllValidUsersButLoggedIn")
+			allUsers = append(allUsers, allValidUsers[i])
 		}
 	}
 
 	return allUsers
 }
 
-func (handler *SinglePostHandler) FindMyUserById(id uuid.UUID, allValidUsers []userModel.ClassicUser) ([]userModel.ClassicUser, userModel.ClassicUser) {
-	var allUsers []userModel.ClassicUser
+func (handler *SinglePostHandler) FindMyUserById(id uuid.UUID, allValidUsers []userModel.ClassicUser) userModel.ClassicUser {
+	//var allUsers []userModel.ClassicUser
 	var myUser userModel.ClassicUser
 	for i := 0; i < len(allValidUsers); i++ {
 		if allValidUsers[i].ID == id {
 			myUser = allValidUsers[i]
+			return myUser
 		}
 	}
-	return allUsers, myUser
+	return myUser
 }
 
 // SEARCH TAGS FOR REGISTERED USER - FIND ALL TAGS ON PUBLIC AND FOLLOWING POSTS
@@ -655,8 +671,9 @@ func (handler *SinglePostHandler) FindAllTagsForPublicAndFollowingPosts(w http.R
 func (handler *SinglePostHandler) FindAllLocationsForPublicAndFollowingPosts(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id") //logged in reg user id
-
+	fmt.Println(id)
 	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
+
 	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(uuid.MustParse(id), allUsers)
 	var allPosts = handler.SinglePostService.FindAllPostsForUsers(allValidUsersButLoggedIn)
 

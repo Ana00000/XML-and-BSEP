@@ -138,15 +138,22 @@ func (repo *SinglePostRepository) FindAllPostsForUsers(users []userModel.Classic
 	var allFollowingPosts []model.SinglePost
 
 	for i:= 0; i< len(allPosts); i++{
-		for j := 0; j < len(users); j++{
-			if (allPosts[i].UserID == users[j].ID) && (allPosts[i].IsDeleted == false){
-				allFollowingPosts = append(allFollowingPosts, allPosts[i])
-			}
+		if NotDeletedPostBelongUsers(allPosts[i], users){
+			fmt.Println("Pronadjen post koji pripada useru "+allPosts[i].UserID.String()+", sa opisom: "+allPosts[i].Description)
+			allFollowingPosts = append(allFollowingPosts, allPosts[i])
 		}
 	}
 	return allFollowingPosts
 }
 
+func NotDeletedPostBelongUsers(post model.SinglePost,users []userModel.ClassicUser) bool{
+	for i := 0; i < len(users); i++{
+		if (post.UserID == users[i].ID) && (!post.IsDeleted){
+			return true
+		}
+	}
+	return false
+}
 
 
 

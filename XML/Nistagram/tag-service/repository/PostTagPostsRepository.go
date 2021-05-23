@@ -52,7 +52,7 @@ func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.Si
 
 	for i:=0;i<len(allPosts);i++{
 		for j:=0; j<len(allTags);j++{
-			if allPosts[i].ID == allTags[j].PostId{
+			if allPosts[i].ID == allTags[j].PostId && !ExsistInListTags(repo.FindTagById(allTags[j].TagId),tags){
 				tags = append(tags, repo.FindTagById(allTags[j].TagId))
 			}
 		}
@@ -61,12 +61,32 @@ func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.Si
 	return tags
 }
 
+func ExsistInListPostTagPosts(postTagPosts model.PostTagPosts, allPostTagPosts []model.PostTagPosts) bool{
+	for i := 0; i < len(allPostTagPosts); i++ {
+		if allPostTagPosts[i].ID == postTagPosts.ID{
+			return true
+		}
+	}
+	return false
+}
+
+
+func ExsistInListTags(tag model.Tag, allTags []model.Tag) bool{
+	for i := 0; i < len(allTags); i++ {
+		if allTags[i].ID == tag.ID{
+			return true
+		}
+	}
+	return false
+}
+
+
 func (repo *PostTagPostsRepository) FindAllTagsForPost(post *postsModel.SinglePost) []model.PostTagPosts {
 	var tags []model.PostTagPosts
 	var allTags = repo.FindAll()
 
 	for j:=0; j<len(allTags);j++{
-			if post.ID == allTags[j].PostId{
+			if post.ID == allTags[j].PostId && !ExsistInListPostTagPosts(allTags[j],tags){
 				tags = append(tags, allTags[j])
 			}
 		}
@@ -79,7 +99,7 @@ func (repo *PostTagPostsRepository) FindAllPostIdsWithTagId(tagId uuid.UUID) []u
 	var allPosts = repo.FindAll()
 
 	for i:=0; i <len(allPosts);i++{
-		if allPosts[i].PostId == tagId{
+		if allPosts[i].TagId == tagId{
 			postIds = append(postIds, allPosts[i].PostId)
 		}
 	}

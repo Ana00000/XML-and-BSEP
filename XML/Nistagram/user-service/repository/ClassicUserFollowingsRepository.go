@@ -31,6 +31,12 @@ func (repo * ClassicUserFollowingsRepository) FindAllFollowingsForUser(userId uu
 	return followings
 }
 
+func (repo * ClassicUserFollowingsRepository) FindAllFollowingsPerUser(userId uuid.UUID) []model.ClassicUserFollowings{
+	var followings []model.ClassicUserFollowings
+	repo.Database.Select("*").Where("following_user_id = ?", userId).Find(&followings)
+	return followings
+}
+
 func (repo * ClassicUserFollowingsRepository) CheckFollowingStatus(classicUserId uuid.UUID, followingUserId uuid.UUID, followRequests []requestModel.FollowRequest) string{
 	var allFollowingForUser = repo.FindAllFollowingsForUser(classicUserId)
 
@@ -73,10 +79,17 @@ func (repo *ClassicUserFollowingsRepository) CheckIfFollowing(allFollowingForUse
 func (repo * ClassicUserFollowingsRepository) FindAllValidFollowingsForUser(userId uuid.UUID, allValidUsers []model.ClassicUser) []model.ClassicUserFollowings{
 	var followings  = repo.FindAllFollowingsForUser(userId)
 	var validFollowings []model.ClassicUserFollowings
-
+	for i := 0; i < len(followings); i++ {
+		fmt.Println("FindAllValidFollowingsForUser followings "+followings[i].ClassicUserId.String())
+	}
+	for i := 0; i < len(allValidUsers); i++ {
+		fmt.Println("FindAllValidFollowingsForUser allValidUsers "+allValidUsers[i].ID.String())
+	}
 	for i := 0; i < len(allValidUsers); i++{
 		for j :=0; j < len(followings); j++{
+
 			if allValidUsers[i].ID == followings[j].FollowingUserId{
+				fmt.Println("Unutar if-a "+allValidUsers[i].Username)
 				validFollowings = append(validFollowings, followings[j])
 			}
 		}
@@ -96,7 +109,7 @@ func (repo *ClassicUserFollowingsRepository) CheckIfFollowingPostStory(following
 
 func (repo * ClassicUserFollowingsRepository) FindAllUserWhoFollow(userId uuid.UUID) []model.ClassicUserFollowings{
 	var followings []model.ClassicUserFollowings
-	repo.Database.Select("*").Where("following_user_id = ?", userId).Find(&followings)
+	repo.Database.Select("*").Where("classic_user_id = ?", userId).Find(&followings)
 	return followings
 }
 
@@ -105,13 +118,25 @@ func (repo * ClassicUserFollowingsRepository) FindAllUserWhoFollowUserId(userId 
 	var validFollowings []model.ClassicUserFollowings
 
 	for i := 0; i < len(allValidUsers); i++{
-		for j :=0; j < len(followings); j++{
-			if allValidUsers[i].ID == followings[j].FollowingUserId{
-				validFollowings = append(validFollowings, followings[j])
-			}
+		classicUserFollowings, exist := ExsistInList(allValidUsers[i], followings)
+		if exist {
+			fmt.Println("Dodaje u listu")
+			validFollowings = append(validFollowings,classicUserFollowings)
 		}
 	}
 
 	return validFollowings
 
+}
+
+func ExsistInList(user model.ClassicUser,followings []model.ClassicUserFollowings) (model.ClassicUserFollowings, bool){
+	var classicUserFollowings model.ClassicUserFollowings
+	for i := 0; i < len(followings); i++ {
+
+		if user.ID == followings[i].FollowingUserId{
+			fmt.Println(followings[i].FollowingUserId.String()+" ExsistInList")
+			return followings[i], true
+		}
+	}
+	return classicUserFollowings, false
 }
