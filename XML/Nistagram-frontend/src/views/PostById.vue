@@ -152,6 +152,7 @@
         >
           <div class="spacingOne" />
           <v-card color="info" dark max-width="500">
+            
             <v-card-title>
               <span class="title text-xs-center font-weight-light">User comment</span>
             </v-card-title>
@@ -160,28 +161,22 @@
               {{ item.text }}
             </v-card-text>
 
-            <v-card-actions>
+            <v-card-actions  v-on:click="getUser(item.user_id)">
               <v-list-item class="grow">
-                <v-list-item-avatar color="grey darken-3">
-                  <v-img
+                <v-list-item-avatar v-model="gender" color="grey darken-3" id="avatar">
+                  <v-img v-if="gender == 'MALE'"
                     class="elevation-6"
                     alt=""
                     src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
                   ></v-img>
-                </v-list-item-avatar>
-
-                <!--
-                <v-list-item-avatar color="grey darken-3">
-                  <v-img
+                  <v-img v-if="gender == 'FEMALE'"
                     class="elevation-6"
                     alt=""
                     src="https://avataaars.io/"
                   ></v-img>
                 </v-list-item-avatar>
-                -->
-                
-                <v-list-item-content>
-                  <v-list-item-title>{{ item.user_id }}</v-list-item-title>
+                <v-list-item-content> 
+                  <v-list-item-title>{{ userName }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-card-actions>
@@ -237,7 +232,9 @@ export default {
     allPostComments: [],
     creationDate: "",
     text: "",
-  }),
+    userName: "",
+    gender: "", 
+   }),
   mounted() {
     this.init();
   },
@@ -275,7 +272,30 @@ export default {
         })
         .catch(console.log);
     },
-    likePost() {
+    getUser(user_id)
+    {
+        this.$http
+        .get("http://localhost:8080/find_user_by_id?id=" + user_id)
+        .then((response) => {
+          console.log(response.data);
+          this.userName = response.data.username;
+
+          if (response.data.gender == 0){
+            this.gender = "MALE";
+          }
+          else if (response.data.gender == 1)
+          {
+            this.gender = "FEMALE";
+          }
+          else
+          {
+            this.gender = "OTHER";
+          }
+           console.log(this.gender);
+        })
+        .catch(console.log);
+    },
+     likePost() {
       this.$http
         .get(
           "http://localhost:8084/find_all_activities_for_post?id=" +
