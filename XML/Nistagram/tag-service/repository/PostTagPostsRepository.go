@@ -79,7 +79,7 @@ func (repo *PostTagPostsRepository) FindAllPostIdsWithTagId(tagId uuid.UUID) []u
 	var allPosts = repo.FindAll()
 
 	for i:=0; i <len(allPosts);i++{
-		if allPosts[i].PostId == tagId{
+		if allPosts[i].TagId == tagId{
 			postIds = append(postIds, allPosts[i].PostId)
 		}
 	}

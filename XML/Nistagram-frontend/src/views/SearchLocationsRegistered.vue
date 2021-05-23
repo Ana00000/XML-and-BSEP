@@ -93,6 +93,7 @@ export default {
         .then((resp) => {
           this.locations = resp.data;
           this.locationsCopy = resp.data;
+          console.log(resp.data)
         })
         .catch(console.log);
     },

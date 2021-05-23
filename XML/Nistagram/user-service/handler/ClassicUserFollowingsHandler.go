@@ -76,8 +76,8 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	// CREATE FOLLOWER
 	classicUserFollowers := model.ClassicUserFollowers{
 		ID:               uuid.UUID{},
-		ClassicUserId: followRequestDTO.ClassicUserId,
-		FollowerUserId:   followRequestDTO.FollowerUserId,
+		ClassicUserId: followRequestDTO.FollowerUserId,
+		FollowerUserId:   followRequestDTO.ClassicUserId,
 	}
 
 	err = handler.ClassicUserFollowersService.CreateClassicUserFollowers(&classicUserFollowers)
@@ -89,8 +89,8 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	// CREATE FOLLOWING
 	classicUserFollowings := model.ClassicUserFollowings{
 		ID:               uuid.UUID{},
-		ClassicUserId:    followRequestDTO.FollowerUserId,
-		FollowingUserId:   followRequestDTO.ClassicUserId,
+		ClassicUserId:    followRequestDTO.ClassicUserId,
+		FollowingUserId:   followRequestDTO.FollowerUserId,
 	}
 
 	err = handler.ClassicUserFollowingsService.CreateClassicUserFollowings(&classicUserFollowings)

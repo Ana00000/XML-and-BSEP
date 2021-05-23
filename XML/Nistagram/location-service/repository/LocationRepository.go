@@ -48,6 +48,8 @@ func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []postsModel.S
 	return locations
 }
 
+
+
 func (repo *LocationRepository) FindAllLocationsForPost(post *postsModel.SinglePost) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()

@@ -107,7 +107,7 @@ func (repo *ClassicUserRepository) FindClassicUserByUserName(userName string) *m
 func (repo *ClassicUserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []model.ClassicUser {
 
 	var users []model.ClassicUser
-	repo.Database.Select("*").Where("id != ? and is_confirmed = ? and is_deleted = ? ", userId, true, false).Find(&users)
+	repo.Database.Select("*").Where("id != ? AND is_confirmed = ? AND is_deleted = ? ", userId, true, false).Find(&users)
 	return users
 }
 
@@ -135,7 +135,7 @@ func (repo *ClassicUserRepository) FindSpecificUser(id uuid.UUID) model.ClassicU
 
 	for i:=0; i<len(allUsers);i++{
 		if allUsers[i].ID == id{
-			myUser =  allUsers[i]
+			return allUsers[i]
 		}
  	}
 
@@ -147,7 +147,9 @@ func (repo *ClassicUserRepository) FindAllUsersByFollowingIds(userIds []model.Cl
 	var users []model.ClassicUser
 
 	for i:=0;i<len(userIds);i++{
+		fmt.Println(" user:" +userIds[i].FollowingUserId.String()+"  -   "+userIds[i].ClassicUserId.String())
 		user := repo.FindSpecificUser(userIds[i].FollowingUserId)
+		fmt.Println(" pronadjeni :" +user.Username)
 		users = append(users, user)
 	}
 	return users

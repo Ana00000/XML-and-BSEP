@@ -77,6 +77,7 @@ export default {
   },
   methods: {
     init() {
+      alert(localStorage.getItem("userId"));
       this.$http
         .get(
           "http://localhost:8084/find_all_following_posts?id=" +
