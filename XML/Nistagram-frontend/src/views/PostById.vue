@@ -90,7 +90,11 @@
       Remove dislike
     </v-btn>
 
-    <v-btn color="info mb-5" v-on:click="setVisibleCommentTextArea" class="commentButton">
+    <v-btn
+      color="info mb-5"
+      v-on:click="setVisibleCommentTextArea"
+      class="commentButton"
+    >
       Add comment
     </v-btn>
 
@@ -109,21 +113,36 @@
 
     <template>
       <v-container>
-        <v-textarea class="textArea" v-if="!isHiddenComment"  v-model="text" solo name="input-5-4" label="Add Comment"></v-textarea>
+        <v-textarea
+          class="textArea"
+          v-if="!isHiddenComment"
+          v-model="text"
+          solo
+          name="input-5-4"
+          label="Add Comment"
+        ></v-textarea>
       </v-container>
     </template>
 
-
-    <v-btn color="info mb-10" v-if="!isHiddenComment" v-on:click="createComment" class="addCommentButton">
+    <v-btn
+      color="info mb-10"
+      v-if="!isHiddenComment"
+      v-on:click="createComment"
+      class="addCommentButton"
+    >
       Add
     </v-btn>
 
-    <v-btn color="info mb-10" v-if="!isHiddenComment" v-on:click="cancleComment" class="cancelCommentButton">
+    <v-btn
+      color="info mb-10"
+      v-if="!isHiddenComment"
+      v-on:click="cancleComment"
+      class="cancelCommentButton"
+    >
       Cancel
     </v-btn>
 
     <v-container grid-list-lg>
-      <div class="spacingOne" />
       <v-layout row>
         <v-flex
           lg4
@@ -131,13 +150,39 @@
           :key="item.id"
           class="space-bottom"
         >
-          <v-card class="mx-auto">
-            <v-list-item three-line>
-              <v-list-item-content>
-                <v-list-item-subtitle>{{ item.text }}</v-list-item-subtitle>
-                <v-list-item-subtitle>{{ item.user_id }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
+          <div class="spacingOne" />
+          <v-card color="info" dark max-width="500">
+            <v-card-title>
+              <span class="title text-xs-center font-weight-light">User comment</span>
+            </v-card-title>
+
+            <v-card-text class="headline font-weight-bold">
+              {{ item.text }}
+            </v-card-text>
+
+            <v-card-actions>
+              <v-list-item class="grow">
+                <v-list-item-avatar color="grey darken-3">
+                  <v-img
+                    class="elevation-6"
+                    alt=""
+                    src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
+                  ></v-img>
+                </v-list-item-avatar>
+                <!--
+                <v-list-item-avatar color="grey darken-3">
+                  <v-img
+                    class="elevation-6"
+                    alt=""
+                    src="https://avataaars.io/"
+                  ></v-img>
+                </v-list-item-avatar>
+                -->
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.user_id }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-card-actions>
           </v-card>
         </v-flex>
       </v-layout>
@@ -609,21 +654,18 @@ export default {
       this.isHiddenComment = false;
     },
     createComment() {
-      
-      if (!this.validComment())  
-          return;
-      
+      if (!this.validComment()) return;
+
       var currentDate = new Date();
       var date = currentDate.toISOString();
       console.log(date);
 
-      this.$http
-        .post("http://localhost:8084/comment/", {
-          creation_date: date,
-          user_id: localStorage.getItem("userId"),
-          post_id: this.post.post_id,
-          text: this.text,
-        })
+      this.$http.post("http://localhost:8084/comment/", {
+        creation_date: date,
+        user_id: localStorage.getItem("userId"),
+        post_id: this.post.post_id,
+        text: this.text,
+      });
 
       this.isHiddenComment = true;
     },
@@ -632,7 +674,7 @@ export default {
       this.text = "";
       this.isHiddenComment = true;
     },
-    validComment(){
+    validComment() {
       if (this.text.length < 1) {
         alert("Your text should contain at least 1 character!");
         return false;
@@ -641,7 +683,7 @@ export default {
         return false;
       }
       return true;
-    }
+    },
   },
 };
 </script>
@@ -708,10 +750,8 @@ export default {
   margin-left: 30%;
 }
 
-
 .cancelCommentButton {
   width: 120px;
   margin-left: 25%;
 }
-
 </style>
