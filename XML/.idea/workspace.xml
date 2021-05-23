@@ -1,21 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryAlbumByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryAlbumByIdWithoutActivity.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/repository/StoryAlbumContentRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/repository/StoryAlbumContentRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/service/StoryAlbumContentService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/service/StoryAlbumContentService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/location-service/repository/LocationRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/repository/LocationRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/location-service/service/LocationService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/service/LocationService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/dto/SelectedStoryAlbumDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/dto/SelectedStoryAlbumDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/handler/StoryAlbumHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/handler/StoryAlbumHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/repository/StoryAlbumRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/repository/StoryAlbumRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/service/StoryAlbumService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/service/StoryAlbumService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/StoryAlbumTagStoryAlbumsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/repository/StoryAlbumTagStoryAlbumsRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/StoryAlbumTagStoryAlbumsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/service/StoryAlbumTagStoryAlbumsService.go" afterDir="false" />
-    </list>
+    <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

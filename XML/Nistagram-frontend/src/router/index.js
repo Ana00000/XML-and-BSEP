@@ -121,16 +121,6 @@ const routes = [
     component: () => import('../views/PublicStoriesAllForNotRegistered.vue')
   },
   {
-    path: '/publicPostAlbumsAll',
-    name: 'PublicPostAlbumsAll',
-    component: () => import('../views/PublicPostAlbumsAll.vue')
-  },
-  {
-    path: '/publicStoryAlbumsAll',
-    name: 'PublicStoryAlbumsAll',
-    component: () => import('../views/PublicStoryAlbumsAll.vue')
-  },
-  {
     path: '/reactedPosts',
     name: 'ReactedPosts',
     component: () => import('../views/ReactedPosts.vue')
