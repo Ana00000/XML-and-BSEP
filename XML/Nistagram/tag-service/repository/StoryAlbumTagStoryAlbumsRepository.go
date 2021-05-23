@@ -37,3 +37,16 @@ func (repo *StoryAlbumTagStoryAlbumsRepository) FindAllTagsForStoryAlbumTagStory
 	}
 	return tags
 }
+
+func (repo *StoryAlbumTagStoryAlbumsRepository) FindAllTagsForStoryAlbum(album *storyModel.StoryAlbum) []model.StoryAlbumTagStoryAlbums {
+	var tags []model.StoryAlbumTagStoryAlbums
+	var allTags = repo.FindAll()
+
+	for j:=0; j<len(allTags);j++{
+		if album.ID == allTags[j].StoryAlbumId{
+			tags = append(tags, allTags[j])
+		}
+	}
+
+	return tags
+}

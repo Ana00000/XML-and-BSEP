@@ -25,3 +25,11 @@ func (service *StoryAlbumContentService) FindAllContentsForStoryAlbums(allStoryA
 	}
 	return nil
 }
+
+func (service *StoryAlbumContentService) FindAllContentsForStoryAlbum(album *storyModel.StoryAlbum) []model.StoryAlbumContent {
+	contents := service.Repo.FindAllContentsForStoryAlbum(album)
+	if contents != nil {
+		return contents
+	}
+	return nil
+}

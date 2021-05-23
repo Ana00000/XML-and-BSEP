@@ -25,3 +25,11 @@ func (service *StoryAlbumTagStoryAlbumsService) FindAllTagsForStoryAlbumTagStory
 	}
 	return nil
 }
+
+func (service *StoryAlbumTagStoryAlbumsService) FindAllTagsForStoryAlbum(album *storyModel.StoryAlbum) []model.StoryAlbumTagStoryAlbums {
+	tags := service.Repo.FindAllTagsForStoryAlbum(album)
+	if tags != nil {
+		return tags
+	}
+	return nil
+}

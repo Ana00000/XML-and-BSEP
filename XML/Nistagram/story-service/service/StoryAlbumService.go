@@ -25,3 +25,8 @@ func (service *StoryAlbumService) FindAllAlbumStoriesForUser(ID uuid.UUID) []mod
 	}
 	return nil
 }
+
+func (service *StoryAlbumService) FindByID(ID uuid.UUID) *model.StoryAlbum {
+	storyAlbum := service.Repo.FindByID(ID)
+	return storyAlbum
+}

@@ -140,3 +140,82 @@ func (handler *StoryAlbumHandler) CreateStoryAlbumsDTOList(albums []model.StoryA
 
 	return listOfStoryAlbumsDTOs
 }
+
+func (handler *StoryAlbumHandler) FindSelectedStoryAlbumByIdForLoggedUser(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id") //story album id
+	logId := r.URL.Query().Get("logId") //loged user id
+
+	var storyAlbum = handler.Service.FindByID(uuid.MustParse(id))
+	if storyAlbum == nil {
+		fmt.Println("User not found")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if storyAlbum.IsDeleted == true{
+		fmt.Println("Deleted story album")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if storyAlbum.UserId != uuid.MustParse(logId){
+		fmt.Println("Story album doesnt belong to user")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	var contents = handler.StoryAlbumContentService.FindAllContentsForStoryAlbum(storyAlbum)
+	var locations = handler.LocationService.FindAllLocationsForStoryAlbum(storyAlbum)
+	var tags = handler.StoryAlbumTagStoryAlbumsService.FindAllTagsForStoryAlbum(storyAlbum)
+
+	var storyAlbumDTO = handler.CreateStoryAlbumDTO(storyAlbum,contents,locations,tags)
+
+	storyAlbumJson, _ := json.Marshal(storyAlbumDTO)
+	w.Write(storyAlbumJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}
+
+func (handler *StoryAlbumHandler) CreateStoryAlbumDTO(album *model.StoryAlbum, contents []contentModel.StoryAlbumContent, locations []locationModel.Location, tags []tagModel.StoryAlbumTagStoryAlbums) dto.SelectedStoryAlbumDTO {
+	var storyAlbumDTO dto.SelectedStoryAlbumDTO
+
+	storyAlbumDTO.StoryAlbumId = album.ID
+	storyAlbumDTO.Description = album.Description
+	storyAlbumDTO.CreationDate = album.CreationDate
+
+
+	for j := 0; j < len(contents); j++ {
+		if contents[j].StoryAlbumId == album.ID {
+			storyAlbumDTO.Path = append(storyAlbumDTO.Path, contents[j].Path)
+
+			if contents[j].Type == contentModel.VIDEO {
+				storyAlbumDTO.Type = append(storyAlbumDTO.Type, "VIDEO")
+			} else if contents[j].Type == contentModel.PICTURE {
+				storyAlbumDTO.Type = append(storyAlbumDTO.Type, "PICTURE")
+			}
+		}
+	}
+
+	for k := 0; k < len(locations); k++ {
+		if locations[k].ID == album.LocationId {
+			storyAlbumDTO.LocationId = locations[k].ID
+			storyAlbumDTO.City = locations[k].City
+			storyAlbumDTO.Country = locations[k].Country
+			storyAlbumDTO.StreetName = locations[k].StreetName
+			storyAlbumDTO.StreetNumber = locations[k].StreetNumber
+		}
+	}
+
+	var listOfTags []string
+	for p := 0; p < len(tags); p++ {
+		if tags[p].StoryAlbumId == album.ID {
+			listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
+		}
+	}
+
+	storyAlbumDTO.Tags = listOfTags
+	return storyAlbumDTO
+}

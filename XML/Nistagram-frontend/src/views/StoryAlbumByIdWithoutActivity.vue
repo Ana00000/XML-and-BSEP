@@ -88,13 +88,14 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8084/find_selected_story_album_for_logged_user?id=" +
+          "http://localhost:8086/find_selected_story_album_for_logged_user?id=" +
             localStorage.getItem("mySelectedStoryAlbumId") +
             "&logId=" +
             localStorage.getItem("mySelectedUserId")
         )
         .then((response) => {
           this.storyAlbum = response.data;
+          console.log(response.data)
           for (var i = 0; i < response.data.types.length; i++) {
             this.storyAlbumContents.push({
               type: response.data.types[i],

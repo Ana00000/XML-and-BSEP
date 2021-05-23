@@ -38,3 +38,16 @@ func (repo *StoryAlbumContentRepository) FindAllContentsForStoryAlbums(albums []
 
 	return contents
 }
+
+func (repo *StoryAlbumContentRepository) FindAllContentsForStoryAlbum(album *storyModel.StoryAlbum) []model.StoryAlbumContent {
+	var contents []model.StoryAlbumContent
+	var allContents = repo.FindAll()
+
+	for j:=0; j<len(allContents);j++{
+		if album.ID == allContents[j].StoryAlbumId{
+			contents = append(contents, allContents[j])
+		}
+	}
+
+	return contents
+}

@@ -22,3 +22,11 @@ func (repo *StoryAlbumRepository) FindAllAlbumStoriesForUser(userId uuid.UUID) [
 	repo.Database.Select("*").Where("user_id = ? and is_deleted = ?", userId, false).Find(&storyAlbums)
 	return storyAlbums
 }
+
+func (repo *StoryAlbumRepository) FindByID(ID uuid.UUID) *model.StoryAlbum {
+	storyAlbum := &model.StoryAlbum{}
+	if repo.Database.First(&storyAlbum, "id = ? and is_deleted = ?", ID, false).RowsAffected == 0 {
+		return nil
+	}
+	return storyAlbum
+}
