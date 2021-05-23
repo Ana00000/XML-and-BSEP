@@ -2,10 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Media/065141742100_5271.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/121266695Shortest_Video_on_Youtube.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/255422906small_img.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Media/53618648512322734_1178095638871553_6639571606958341049_o.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" afterDir="false" />
     </list>

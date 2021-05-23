@@ -609,25 +609,38 @@ export default {
       this.isHiddenComment = false;
     },
     createComment() {
-      console.log(this.text);
-      console.log(this.post);
-
-      /* {
+      
       if (!this.validComment())  
           return;
-      */
+      
+      var currentDate = new Date();
+      var date = currentDate.toISOString();
+      console.log(date);
+
       this.$http
         .post("http://localhost:8084/comment/", {
-          creation_date: "2021-05-23T12:31:26.371Z",
+          creation_date: date,
           user_id: localStorage.getItem("userId"),
           post_id: this.post.post_id,
           text: this.text,
         })
+
+      this.isHiddenComment = true;
     },
     cancleComment() {
       console.log("Cancel comment");
       this.text = "";
       this.isHiddenComment = true;
+    },
+    validComment(){
+      if (this.text.length < 1) {
+        alert("Your text should contain at least 1 character!");
+        return false;
+      } else if (this.text.length > 200) {
+        alert("Your text shouldn't contain more than 200 characters!");
+        return false;
+      }
+      return true;
     }
   },
 };
