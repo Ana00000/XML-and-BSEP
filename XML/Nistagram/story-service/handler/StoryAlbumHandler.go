@@ -238,3 +238,20 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
+
+	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
+	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
+	var publicValidAlbumStories = handler.Service.FindAllPublicAlbumStoriesNotRegisteredUser(allPublicUsers)
+	var contents = handler.StoryAlbumContentService.FindAllContentsForStoryAlbums(publicValidAlbumStories)
+	var locations = handler.LocationService.FindAllLocationsForStoryAlbums(publicValidAlbumStories)
+	var tags = handler.StoryAlbumTagStoryAlbumsService.FindAllTagsForStoryAlbumTagStoryAlbums(publicValidAlbumStories)
+	var storyAlbumsDTOS = handler.CreateStoryAlbumsDTOList(publicValidAlbumStories,contents,locations,tags)
+
+	storyAlbumsJson, _ := json.Marshal(storyAlbumsDTOS)
+	w.Write(storyAlbumsJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}

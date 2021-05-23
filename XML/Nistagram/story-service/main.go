@@ -212,7 +212,8 @@ func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.S
 
 	router.HandleFunc("/find_all_album_stories_for_logged_user", handlerStoryAlbum.FindAllAlbumStoriesForLoggedUser).Methods("GET")
 	router.HandleFunc("/find_selected_story_album_for_logged_user", handlerStoryAlbum.FindSelectedStoryAlbumByIdForLoggedUser).Methods("GET")
-	router.HandleFunc("/find_all_public_album_stories_reg", handlerStoryAlbum.FindAllPublicAlbumStoriesRegisteredUser).Methods("GET") // tab PUBLIC STORIES za reg usera - prikazuju se svi PUBLIC, NOT EXPIRED I OD PUBLIC USERA KOJI NISU ON!
+	router.HandleFunc("/find_all_public_album_stories_reg", handlerStoryAlbum.FindAllPublicAlbumStoriesRegisteredUser).Methods("GET") //
+	router.HandleFunc("/find_all_public_album_stories_not_reg/", handlerStoryAlbum.FindAllPublicAlbumStoriesNotRegisteredUser).Methods("GET") //
 
 
 	// REGISTERED USER
