@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/repository"
+	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 )
 
 type StoryAlbumService struct {
@@ -29,4 +30,12 @@ func (service *StoryAlbumService) FindAllAlbumStoriesForUser(ID uuid.UUID) []mod
 func (service *StoryAlbumService) FindByID(ID uuid.UUID) *model.StoryAlbum {
 	storyAlbum := service.Repo.FindByID(ID)
 	return storyAlbum
+}
+
+func (service *StoryAlbumService) FindAllPublicAlbumStoriesNotRegisteredUser(users []userModel.ClassicUser) []model.StoryAlbum {
+	storyAlbums := service.Repo.FindAllPublicAlbumStoriesNotRegisteredUser(users)
+	if storyAlbums != nil {
+		return storyAlbums
+	}
+	return nil
 }

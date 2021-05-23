@@ -134,11 +134,12 @@ export default {
     getStoryAlbums() {
       this.$http
         .get(
-          "http://localhost:8086/find_all_album_stories_for_logged_user?id=" +
+          "http://localhost:8086/find_all_public_album_stories_reg?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
           this.albumStories = response.data;
+          console.log(this.albumStories)
         })
         .catch(console.log);
     },

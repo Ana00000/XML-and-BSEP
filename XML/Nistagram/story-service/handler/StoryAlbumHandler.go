@@ -219,3 +219,22 @@ func (handler *StoryAlbumHandler) CreateStoryAlbumDTO(album *model.StoryAlbum, c
 	storyAlbumDTO.Tags = listOfTags
 	return storyAlbumDTO
 }
+
+func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id")
+
+	var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+	var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
+	var publicValidStoryAlbums = handler.Service.FindAllPublicAlbumStoriesNotRegisteredUser(allPublicUsers)
+	var contents = handler.StoryAlbumContentService.FindAllContentsForStoryAlbums(publicValidStoryAlbums)
+	var locations = handler.LocationService.FindAllLocationsForStoryAlbums(publicValidStoryAlbums)
+	var tags = handler.StoryAlbumTagStoryAlbumsService.FindAllTagsForStoryAlbumTagStoryAlbums(publicValidStoryAlbums)
+	var storyAlbumsDTOS = handler.CreateStoryAlbumsDTOList(publicValidStoryAlbums,contents,locations,tags)
+
+	storyAlbumsJson, _ := json.Marshal(storyAlbumsDTOS)
+	w.Write(storyAlbumsJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
