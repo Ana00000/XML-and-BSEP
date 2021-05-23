@@ -112,3 +112,18 @@ func (repo *LocationRepository) FindLocationIdByLocationString(locationString st
 	return location
 
 }
+
+func (repo *LocationRepository) FindAllLocationsForPostAlbums(albums []postsModel.PostAlbum) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for i:=0;i<len(albums);i++{
+		for j:=0; j<len(allLocations);j++{
+			if albums[i].LocationId == allLocations[j].ID{
+				locations = append(locations, allLocations[j])
+			}
+		}
+
+	}
+	return locations
+}

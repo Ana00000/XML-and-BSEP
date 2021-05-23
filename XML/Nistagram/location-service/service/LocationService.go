@@ -60,3 +60,11 @@ func (service *LocationService) FindAllLocationsForStory(story *storyModel.Singl
 func (service *LocationService) FindLocationIdByLocationString(locationString string) model.Location {
 	return service.Repo.FindLocationIdByLocationString(locationString)
 }
+
+func (service *LocationService) FindAllLocationsForPostAlbums(albums []postsModel.PostAlbum) []model.Location {
+	locations := service.Repo.FindAllLocationsForPostAlbums(albums)
+	if locations != nil {
+		return locations
+	}
+	return nil
+}

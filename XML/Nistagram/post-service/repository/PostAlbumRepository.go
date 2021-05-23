@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"fmt"
 	"gorm.io/gorm"
@@ -14,4 +15,10 @@ func (repo * PostAlbumRepository) CreatePostAlbum(postAlbum *model.PostAlbum) er
 	result := repo.Database.Create(postAlbum)
 	fmt.Println(result)
 	return nil
+}
+
+func (repo *PostAlbumRepository) FindAllAlbumPostsForUser(userId uuid.UUID) []model.PostAlbum {
+	var postAlbums []model.PostAlbum
+	repo.Database.Select("*").Where("user_id = ? and is_deleted = ?", userId, false).Find(&postAlbums)
+	return postAlbums
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
 )
@@ -13,6 +14,14 @@ func (service * PostAlbumService) CreatePostAlbum(postAlbum *model.PostAlbum) er
 	err := service.Repo.CreatePostAlbum(postAlbum)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (service *PostAlbumService) FindAllAlbumPostsForUser(ID uuid.UUID) []model.PostAlbum {
+	albumPosts := service.Repo.FindAllAlbumPostsForUser(ID)
+	if albumPosts != nil {
+		return albumPosts
 	}
 	return nil
 }

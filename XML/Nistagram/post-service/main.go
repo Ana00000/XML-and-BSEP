@@ -98,8 +98,8 @@ func initPostHandler(postService *service.PostService) *handler.PostHandler{
 	return &handler.PostHandler{ PostService: postService}
 }
 
-func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
-	return &handler.PostAlbumHandler{ Service: service, PostService: postService}
+func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, postAlbumContentService *contentService.PostAlbumContentService,locationService *locationService.LocationService, postAlbumTagPostAlbumsService *tagsService.PostAlbumTagPostAlbumsService,tagService *tagsService.TagService) *handler.PostAlbumHandler{
+	return &handler.PostAlbumHandler{ Service: service, PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings, PostAlbumContentService: postAlbumContentService, LocationService: locationService, PostAlbumTagPostAlbumsService: postAlbumTagPostAlbumsService, TagService: tagService }
 }
 
 func initPostCollectionHandler(service *service.PostCollectionService) *handler.PostCollectionHandler{
@@ -158,6 +158,15 @@ func initPostContentService(repo *contentRepository.SinglePostContentRepository)
 	return &contentService.SinglePostContentService{ Repo: repo }
 }
 
+// POST ALBUM
+func initPostAlbumContentRepo(database *gorm.DB) *contentRepository.PostAlbumContentRepository{
+	return &contentRepository.PostAlbumContentRepository{ Database: database }
+}
+
+func initPostAlbumContentService(repo *contentRepository.PostAlbumContentRepository) *contentService.PostAlbumContentService{
+	return &contentService.PostAlbumContentService{ Repo: repo }
+}
+
 // LOCATION
 func initLocationRepo(database *gorm.DB) *locationRepository.LocationRepository{
 	return &locationRepository.LocationRepository{ Database: database }
@@ -185,7 +194,14 @@ func initTagService(repo *tagsRepository.TagRepository) *tagsService.TagService{
 	return &tagsService.TagService{ Repo: repo }
 }
 
+// POST ALBUM TAG POST ALBUMS
+func initPostAlbumTagPostAlbumsRepo(database *gorm.DB) *tagsRepository.PostAlbumTagPostAlbumsRepository{
+	return &tagsRepository.PostAlbumTagPostAlbumsRepository{ Database: database }
+}
 
+func initPostAlbumTagPostAlbumsService(repo *tagsRepository.PostAlbumTagPostAlbumsRepository) *tagsService.PostAlbumTagPostAlbumsService{
+	return &tagsService.PostAlbumTagPostAlbumsService{ Repo: repo }
+}
 
 func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handler.CommentHandler, handlerPost *handler.PostHandler,
 	handlerPostAlbum *handler.PostAlbumHandler, handlerPostCollection *handler.PostCollectionHandler,
@@ -229,6 +245,8 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/find_all_public_posts_not_reg/", handlerSinglePost.FindAllPublicPostsNotRegisteredUser).Methods("GET")
 	router.HandleFunc("/find_all_public_posts_reg", handlerSinglePost.FindAllPublicPostsRegisteredUser).Methods("GET")
 
+
+	router.HandleFunc("/find_all_album_posts_for_logged_user", handlerPostAlbum.FindAllAlbumPostsForLoggedUser).Methods("GET")
 	router.HandleFunc("/find_all_posts_for_logged_user", handlerSinglePost.FindAllPostsForLoggedUser).Methods("GET")
 	router.HandleFunc("/find_selected_post_for_logged_user", handlerSinglePost.FindSelectedPostByIdForLoggedUser).Methods("GET")
 
@@ -268,8 +286,10 @@ func main() {
 	repoClassicUserFollowings := initClassicUserFollowingsRepo(database)
 	repoProfileSettings := initProfileSettingsRepo(database)
 	repoPostContent := initPostContentRepo(database)
+	repoPostAlbumContent := initPostAlbumContentRepo(database)
 	repoLocation := initLocationRepo(database)
 	repoPostTagPost := initPostTagPostRepo(database)
+	repoPostAlbumTagPostAlbums := initPostAlbumTagPostAlbumsRepo(database)
 	repoTag := initTagRepo(database)
 
 	serviceActivity := initActivityService(repoActivity)
@@ -282,14 +302,16 @@ func main() {
 	serviceClassicUserFollowings := initClassicUserFollowingsService(repoClassicUserFollowings)
 	serviceProfileSettings := initProfileSettingsService(repoProfileSettings)
 	servicePostContent := initPostContentService(repoPostContent)
+	servicePostAlbumContent := initPostAlbumContentService(repoPostAlbumContent)
 	serviceLocation := initLocationService(repoLocation)
 	servicePostTagPost := initPostTagPostService(repoPostTagPost)
+	servicePostAlbumTagPostAlbums := initPostAlbumTagPostAlbumsService(repoPostAlbumTagPostAlbums)
 	serviceTag := initTagService(repoTag)
 
 	handlerActivity := initActivityHandler(serviceActivity)
 	handlerComment := initCommentHandler(serviceComment)
 	handlerPost := initPostHandler(servicePost)
-	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
+	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, servicePostAlbumContent, serviceLocation, servicePostAlbumTagPostAlbums, serviceTag)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
 	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, servicePostContent, serviceLocation, servicePostTagPost, serviceTag)
 

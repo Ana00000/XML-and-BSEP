@@ -4,9 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	contentModel "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
+	contentService "github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
+	locationModel "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
+	locationService "github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
+	settingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
+	tagModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
+	tagsService "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
+	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 	"time"
 )
@@ -14,6 +22,13 @@ import (
 type PostAlbumHandler struct {
 	Service * service.PostAlbumService
 	PostService * service.PostService
+	ClassicUserService * userService.ClassicUserService
+	ClassicUserFollowingsService * userService.ClassicUserFollowingsService
+	ProfileSettings *settingsService.ProfileSettingsService
+	PostAlbumContentService *contentService.PostAlbumContentService
+	LocationService *locationService.LocationService
+	PostAlbumTagPostAlbumsService *tagsService.PostAlbumTagPostAlbumsService
+	TagService *tagsService.TagService
 }
 
 func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.Request) {
@@ -54,4 +69,68 @@ func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *PostAlbumHandler) FindAllAlbumPostsForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var albumPosts = handler.Service.FindAllAlbumPostsForUser(uuid.MustParse(id))
+	var contents = handler.PostAlbumContentService.FindAllContentsForPostAlbums(albumPosts)
+	var locations = handler.LocationService.FindAllLocationsForPostAlbums(albumPosts)
+	var tags = handler.PostAlbumTagPostAlbumsService.FindAllTagsForPostAlbumTagPostAlbums(albumPosts)
+	var albumPostsDTOS = handler.CreatePostAlbumsDTOList(albumPosts,contents,locations,tags)
+
+	albumPostsJson, _ := json.Marshal(albumPostsDTOS)
+	w.Write(albumPostsJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *PostAlbumHandler) CreatePostAlbumsDTOList(albums []model.PostAlbum, contents []contentModel.PostAlbumContent, locations []locationModel.Location, tags []tagModel.PostAlbumTagPostAlbums) []dto.SelectedPostAlbumDTO {
+	var listOfPostAlbumsDTOs []dto.SelectedPostAlbumDTO
+
+	for i := 0; i < len(albums); i++ {
+		var postAlbumDTO dto.SelectedPostAlbumDTO
+		postAlbumDTO.PostAlbumId = albums[i].ID
+		postAlbumDTO.Description = albums[i].Description
+		postAlbumDTO.CreationDate = albums[i].CreationDate
+		postAlbumDTO.UserId = albums[i].UserID
+
+		for j := 0; j < len(contents); j++ {
+			if contents[j].PostAlbumId == albums[i].ID {
+				postAlbumDTO.Path = append(postAlbumDTO.Path, contents[j].Path)
+
+				if contents[j].Type == contentModel.VIDEO {
+					postAlbumDTO.Type = append(postAlbumDTO.Type, "VIDEO")
+				} else if contents[j].Type == contentModel.PICTURE {
+					postAlbumDTO.Type = append(postAlbumDTO.Type, "PICTURE")
+				}
+			}
+		}
+
+		for k := 0; k < len(locations); k++ {
+			if locations[k].ID == albums[i].LocationId {
+				postAlbumDTO.LocationId = locations[k].ID
+				postAlbumDTO.City = locations[k].City
+				postAlbumDTO.Country = locations[k].Country
+				postAlbumDTO.StreetName = locations[k].StreetName
+				postAlbumDTO.StreetNumber = locations[k].StreetNumber
+			}
+		}
+
+		var listOfTags []string
+		for p := 0; p < len(tags); p++ {
+			if tags[p].PostAlbumId == albums[i].ID {
+				listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
+			}
+		}
+
+		postAlbumDTO.Tags = listOfTags
+
+		listOfPostAlbumsDTOs = append(listOfPostAlbumsDTOs, postAlbumDTO)
+
+	}
+
+	return listOfPostAlbumsDTOs
+
 }
