@@ -79,6 +79,7 @@ export default {
   data: () => ({
     searchInput: "",
     locations: [],
+    locationsIds: [],
     locationsCopy: [],
     selectedLocation: null,
     locationString: "",

@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/repository"
 	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
@@ -22,6 +23,11 @@ func (service * LocationService) CreateLocation(location *model.Location) error 
 
 func (service *LocationService) FindByID(ID uuid.UUID) *model.Location {
 	location := service.Repo.FindByID(ID)
+	return location
+}
+
+func (service *LocationService) FindByLocationDTO(locationDTO dto.LocationDTO) *model.Location {
+	location := service.Repo.FindByLocationDTO(locationDTO)
 	return location
 }
 

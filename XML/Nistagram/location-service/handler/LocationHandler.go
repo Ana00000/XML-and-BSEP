@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"net/http"
 	_ "strconv"
 )
@@ -22,7 +22,16 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
+	var foundLocation = handler.Service.FindByLocationDTO(locationDTO)
+	if foundLocation!=nil{
+		fmt.Println(foundLocation.StreetName)
+		locationIDJson, _ := json.Marshal(foundLocation.ID)
+		w.Write(locationIDJson)
+		w.WriteHeader(http.StatusAccepted)
+		w.Header().Set("Content-Type", "application/json")
+		return
+	}
+	fmt.Println("Nije pronasao lokaciju")
 	location := model.Location{
 		ID:          uuid.UUID{},
 		Longitude: locationDTO.Longitude,
@@ -32,6 +41,8 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 		StreetName:       locationDTO.StreetName,
 		StreetNumber:       locationDTO.StreetNumber,
 	}
+
+
 
 	err = handler.Service.CreateLocation(&location)
 	if err != nil {

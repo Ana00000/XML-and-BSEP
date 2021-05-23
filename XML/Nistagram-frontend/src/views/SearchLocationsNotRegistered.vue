@@ -79,6 +79,7 @@ export default {
   data: () => ({
     searchInput: "",
     locations: [],
+    locationsIds: [],
     locationsCopy: [],
     selectedLocation: null,
     locationString: "",
@@ -91,6 +92,7 @@ export default {
       this.$http
         .get("http://localhost:8084/find_all_locations_for_public_posts/")
         .then((resp) => {
+          //this.locations = resp.data;
           this.locations = resp.data;
           this.locationsCopy = resp.data;
         })

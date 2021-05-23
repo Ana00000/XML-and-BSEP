@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
@@ -32,6 +33,15 @@ func (repo *LocationRepository) FindAll() []model.Location {
 	return locations
 }
 
+func (repo *LocationRepository) FindByLocationDTO(locationDTO dto.LocationDTO) *model.Location {
+	location := &model.Location{}
+	if repo.Database.First(&location, "street_name=? and street_number=? and city=? and country=? and longitude=? and latitude=?", locationDTO.StreetName, locationDTO.StreetNumber, locationDTO.City, locationDTO.Country,locationDTO.Longitude,locationDTO.Latitude).RowsAffected == 0 {
+		return nil
+	}
+	fmt.Println(location)
+	return location
+}
+
 
 func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []postsModel.SinglePost) []model.Location {
 	var locations []model.Location
@@ -39,7 +49,7 @@ func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []postsModel.S
 
 	for i:=0;i<len(allPosts);i++{
 		for j:=0; j<len(allLocations);j++{
-			if allPosts[i].LocationId == allLocations[j].ID{
+			if allPosts[i].LocationId == allLocations[j].ID && !ExsistInList(allLocations[j],locations){
 				locations = append(locations, allLocations[j])
 			}
 		}
@@ -48,6 +58,14 @@ func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []postsModel.S
 	return locations
 }
 
+func ExsistInList(location model.Location, allLocations []model.Location) bool{
+	for i := 0; i < len(allLocations); i++ {
+		if allLocations[i].ID == location.ID{
+			return true
+		}
+	}
+	return false
+}
 
 
 func (repo *LocationRepository) FindAllLocationsForPost(post *postsModel.SinglePost) []model.Location {
@@ -55,7 +73,7 @@ func (repo *LocationRepository) FindAllLocationsForPost(post *postsModel.SingleP
 	var allLocations = repo.FindAll()
 
 	for j:=0; j<len(allLocations);j++{
-			if post.LocationId == allLocations[j].ID{
+			if post.LocationId == allLocations[j].ID && ExsistInList(allLocations[j],locations){
 				locations = append(locations, allLocations[j])
 			}
 		}
