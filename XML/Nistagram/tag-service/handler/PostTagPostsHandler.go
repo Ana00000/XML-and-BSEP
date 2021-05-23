@@ -30,8 +30,6 @@ func (handler *PostTagPostsHandler) CreatePostTagPosts(w http.ResponseWriter, r 
 		PostId:    postTagPostsDTO.PostId,
 	}
 
-
-
 	err = handler.Service.CreatePostTagPosts(&postTagPosts)
 	if err != nil {
 		fmt.Println(err)
