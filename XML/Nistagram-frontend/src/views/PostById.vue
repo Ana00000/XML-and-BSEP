@@ -90,6 +90,14 @@
       Remove dislike
     </v-btn>
 
+    <v-btn
+      color="info mb-5"
+      v-on:click="setVisibleCommentTextArea"
+      class="commentButton"
+    >
+      Add comment
+    </v-btn>
+
     <v-btn color="info mb-5" v-on:click="favoritePost" class="favoriteButton">
       Favorite
     </v-btn>
@@ -102,6 +110,82 @@
     >
       Remove Favorite
     </v-btn>
+
+    <template>
+      <v-container>
+        <v-textarea
+          class="textArea"
+          v-if="!isHiddenComment"
+          v-model="text"
+          solo
+          name="input-5-4"
+          label="Add Comment"
+        ></v-textarea>
+      </v-container>
+    </template>
+
+    <v-btn
+      color="info mb-10"
+      v-if="!isHiddenComment"
+      v-on:click="createComment"
+      class="addCommentButton"
+    >
+      Add
+    </v-btn>
+
+    <v-btn
+      color="info mb-10"
+      v-if="!isHiddenComment"
+      v-on:click="cancleComment"
+      class="cancelCommentButton"
+    >
+      Cancel
+    </v-btn>
+
+    <v-container grid-list-lg>
+      <v-layout row>
+        <v-flex lg4 v-for="item in allData" :key="item.id" class="space-bottom">
+          <div class="spacingOne" />
+          <v-card color="info" dark max-width="500">
+            <v-card-title>
+              <span class="title text-xs-center font-weight-light"
+                >User comment</span
+              >
+            </v-card-title>
+
+            <v-card-text class="headline font-weight-bold">
+              {{ item.text }}
+            </v-card-text>
+
+            <v-card-actions>
+              <v-list-item class="grow" v-if="!isHiddenUserName">
+                <v-list-item-avatar
+                  v-model="gender"
+                  color="grey darken-3"
+                  id="avatar"
+                >
+                  <v-img
+                    v-if="item.gender == 'MALE'"
+                    class="elevation-6"
+                    alt=""
+                    src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
+                  ></v-img>
+                  <v-img
+                    v-if="item.gender == 'FEMALE'"
+                    class="elevation-6"
+                    alt=""
+                    src="https://avataaars.io/"
+                  ></v-img>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.userName }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-card-actions>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
 
     <v-container grid-list-lg v-if="!isHiddenCollections">
       <div class="spacingOne" />
@@ -144,8 +228,16 @@ export default {
     isHiddenRemoveFavorite: true,
     likeabilityStatus: null,
     isHiddenCollections: true,
+    isHiddenComment: true,
+    isHiddenUserName: true,
     postCollections: [],
     postCollectionId: null,
+    allPostComments: [],
+    creationDate: "",
+    text: "",
+    userName: "",
+    gender: "",
+    allData: [],
   }),
   mounted() {
     this.init();
@@ -173,6 +265,46 @@ export default {
           this.post = response.data;
         })
         .catch(console.log);
+
+      this.$http
+        .get(
+          "http://localhost:8084/find_all_comments_for_post?id=" +
+            localStorage.getItem("selectedPostId")
+        )
+        .then((response) => {
+          this.allPostComments = response.data;
+          this.getData(response.data);
+        })
+        .catch(console.log);
+    },
+    getData(items) {
+      for (var i = 0; i < items.length; i++) {
+        this.getItem(items[i]);
+      }
+    },
+    getItem(item){
+      console.log(item);
+       this.$http
+          .get("http://localhost:8080/find_user_by_id?id=" + item.user_id)
+          .then((r) => {
+            this.userName = r.data.username;
+            if (r.data.gender == 0) {
+              this.gender = "MALE";
+            } else if (r.data.gender == 1) {
+              this.gender = "FEMALE";
+            } else {
+              this.gender = "OTHER";
+            }
+            this.allData.push({
+              id: r.data.id,
+              text: item.text,
+              gender: this.gender,
+              userName: this.userName,
+            });
+          })
+          .catch(console.log);
+
+        this.isHiddenUserName = false;
     },
     likePost() {
       this.$http
@@ -551,6 +683,40 @@ export default {
         })
         .catch(console.log);
     },
+    setVisibleCommentTextArea() {
+      this.isHiddenComment = false;
+    },
+    createComment() {
+      if (!this.validComment()) return;
+
+      var currentDate = new Date();
+      var date = currentDate.toISOString();
+      console.log(date);
+
+      this.$http.post("http://localhost:8084/comment/", {
+        creation_date: date,
+        user_id: localStorage.getItem("userId"),
+        post_id: this.post.post_id,
+        text: this.text,
+      });
+      this.text = "";
+      this.isHiddenComment = true;
+    },
+    cancleComment() {
+      console.log("Cancel comment");
+      this.text = "";
+      this.isHiddenComment = true;
+    },
+    validComment() {
+      if (this.text.length < 1) {
+        alert("Your text should contain at least 1 character!");
+        return false;
+      } else if (this.text.length > 200) {
+        alert("Your text shouldn't contain more than 200 characters!");
+        return false;
+      }
+      return true;
+    },
   },
 };
 </script>
@@ -574,7 +740,7 @@ export default {
 
 .likeButton {
   width: 120px;
-  margin-left: 20%;
+  margin-left: 30%;
 }
 
 .removeLikeButton {
@@ -592,6 +758,11 @@ export default {
   margin-left: 3%;
 }
 
+.commentButton {
+  width: 180px;
+  margin-left: 3%;
+}
+
 .favoriteButton {
   width: 120px;
   margin-left: 3%;
@@ -601,4 +772,20 @@ export default {
   width: 190px;
   margin-left: 3%;
 }
+
+.textArea {
+  margin-left: 20%;
+  width: 60%;
+}
+
+.addCommentButton {
+  width: 120px;
+  margin-left: 30%;
+}
+
+.cancelCommentButton {
+  width: 120px;
+  margin-left: 25%;
+}
+
 </style>
