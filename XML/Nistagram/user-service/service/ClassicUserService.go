@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
@@ -73,3 +74,18 @@ func (service *ClassicUserService) FinAllValidUsers() []model.ClassicUser {
 	}
 	return nil
 }
+
+func (service *ClassicUserService) FindAllUsersByFollowingIds(userIds []model.ClassicUserFollowings) []model.ClassicUser {
+	users := service.Repo.FindAllUsersByFollowingIds(userIds)
+	if users != nil {
+		fmt.Println("Pronadjeni korisnici")
+		return users
+	}
+	return nil
+}
+
+func (service *ClassicUserService) FindById(userId uuid.UUID) *model.ClassicUser {
+	user := service.Repo.FindById(userId)
+	return user
+}
+

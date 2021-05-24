@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"gorm.io/gorm"
 )
@@ -42,4 +43,10 @@ func (repo * ActivityRepository) FindAllActivitiesForPost(postId uuid.UUID) []mo
 	var allReactions []model.Activity
 	repo.Database.Select("*").Where("post_id = ?", postId).Find(&allReactions)
 	return allReactions
+}
+
+func (repo * ActivityRepository) UpdateActivity(activity *dto.ActivityDTO) error {
+	result := repo.Database.Model(&model.Activity{}).Where("id = ?", activity.ID).Update("liked_status", activity.LikedStatus).Update("is_favorite", activity.IsFavorite)
+	fmt.Print(result)
+	return nil
 }

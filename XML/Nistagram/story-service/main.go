@@ -95,8 +95,8 @@ func initStoryHandler(service *service.StoryService) *handler.StoryHandler{
 	return &handler.StoryHandler { Service: service }
 }
 
-func initStoryAlbumHandler(service *service.StoryAlbumService, storyService * service.StoryService) *handler.StoryAlbumHandler{
-	return &handler.StoryAlbumHandler { Service: service, StoryService: storyService }
+func initStoryAlbumHandler(service *service.StoryAlbumService, storyService *service.StoryService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, storyAlbumContentService *contentService.StoryAlbumContentService,locationService *locationService.LocationService, storyAlbumTagStoryAlbumsService *tagsService.StoryAlbumTagStoryAlbumsService,tagService *tagsService.TagService, classicUserCloseFriendsService *userService.ClassicUserCloseFriendsService) *handler.StoryAlbumHandler{
+	return &handler.StoryAlbumHandler{ Service: service, StoryService: storyService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings, StoryAlbumContentService: storyAlbumContentService, LocationService: locationService, StoryAlbumTagStoryAlbumsService: storyAlbumTagStoryAlbumsService, TagService: tagService, ClassicUserCloseFriendsService:  classicUserCloseFriendsService}
 }
 
 func initSingleStoryHandler(singleStoryService *service.SingleStoryService, storyService *service.StoryService) *handler.SingleStoryHandler{
@@ -130,17 +130,28 @@ func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.S
 	router.HandleFunc("/story_highlight/", handlerStoryHighlight.CreateStoryHighlight).Methods("POST")
 	router.HandleFunc("/single_story_story_highlights/",handlerSingleStoryStoryHighlights.CreateSingleStoryStoryHighlights).Methods("POST")
 
+	router.HandleFunc("/find_single_story_for_id", handlerSingleStory.FindSingleStoryForId).Methods("GET")
+	router.HandleFunc("/find_all_story_highlights_for_user", handlerStoryHighlight.FindAllStoryHighlightsForUser).Methods("GET")
+	router.HandleFunc("/find_all_single_story_story_highlights_for_story", handlerSingleStoryStoryHighlights.FindAllSingleStoryStoryHighlightsForStory).Methods("GET")
+	router.HandleFunc("/find_all_single_story_story_highlights_for_story_highlight", handlerSingleStoryStoryHighlights.FindAllSingleStoryStoryHighlightsForStoryHighlight).Methods("GET")
+
 	// NOT REGISTERED USER
 	router.HandleFunc("/find_all_stories_for_not_reg", handlerSingleStory.FindAllStoriesForUserNotRegisteredUser).Methods("GET") // kada neregistrovani user otvori PUBLIC usera sa spiska i onda na njegovom profilu vidi PUBLIC i NOT EXPIRED STORIJE
 	router.HandleFunc("/find_all_public_stories_not_reg/", handlerSingleStory.FindAllPublicStoriesNotRegisteredUser).Methods("GET") // tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
 
+	router.HandleFunc("/find_all_album_stories_for_logged_user", handlerStoryAlbum.FindAllAlbumStoriesForLoggedUser).Methods("GET")
+	router.HandleFunc("/find_selected_story_album_for_logged_user", handlerStoryAlbum.FindSelectedStoryAlbumByIdForLoggedUser).Methods("GET")
+	router.HandleFunc("/find_all_public_album_stories_reg", handlerStoryAlbum.FindAllPublicAlbumStoriesRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_public_album_stories_not_reg/", handlerStoryAlbum.FindAllPublicAlbumStoriesNotRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_following_story_albums", handlerStoryAlbum.FindAllFollowingStoryAlbums).Methods("GET")
 
 	// REGISTERED USER
 	router.HandleFunc("/find_all_public_stories_reg", handlerSingleStory.FindAllPublicStoriesRegisteredUser).Methods("GET") // tab PUBLIC STORIES za reg usera - prikazuju se svi PUBLIC, NOT EXPIRED I OD PUBLIC USERA KOJI NISU ON!
 	router.HandleFunc("/find_all_stories_for_reg", handlerSingleStory.FindAllStoriesForUserRegisteredUser).Methods("GET") // metoda koja se poziva kada registrovani user udje na profil nekog usera
 	router.HandleFunc("/find_all_following_stories", handlerSingleStory.FindAllFollowingStories).Methods("GET") // tab FOLLOWING stories znaci svi storiji koji su PUBLIC I ALL FRIENDS , CLOSE FRIENDS storiji za one usere kojima je ulogovani user close friend
-	router.HandleFunc("/find_selected_story_reg", handlerSingleStory.FindSelectedStoryByIdForRegisteredUsers).Methods("GET")//metoda koju ulogovani user poziva kada hoce da otvori svoj stori (kako bi ga dodao u HIGHLIGHTS)
 
+	router.HandleFunc("/find_selected_story_reg", handlerSingleStory.FindSelectedStoryByIdForRegisteredUsers).Methods("GET")//metoda koju ulogovani user poziva kada hoce da otvori svoj stori (kako bi ga dodao u HIGHLIGHTS)
+	router.HandleFunc("/find_all_stories_for_logged_user", handlerSingleStory.FindAllStoriesForLoggedUser).Methods("GET") // metoda koju ulogovani user poziva kada hoce da vidi sve svoje storije (znaci i expired samo da nisu deleted)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 
@@ -153,8 +164,14 @@ func main() {
 	handlerStory := initStoryHandler(serviceStory)
 
 	repoStoryAlbum := initStoryAlbumRepo(database)
+	repoStoryAlbumContent := initStoryAlbumContentRepo(database)
+	repoStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsRepo(database)
+	repoClassicUserCloseFriends := initClassicUserCloseFriendsRepo(database)
 	serviceStoryAlbum := initStoryAlbumServices(repoStoryAlbum)
-	handlerStoryAlbum := initStoryAlbumHandler(serviceStoryAlbum, serviceStory)
+	serviceStoryAlbumContent := initStoryAlbumContentService(repoStoryAlbumContent)
+	serviceStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsService(repoStoryAlbumTagStoryAlbums)
+	serviceClassicUserCloseFriends := initClassicUserCloseFriendsService(repoClassicUserCloseFriends)
+	handlerStoryAlbum := initStoryAlbumHandler(serviceStoryAlbum, serviceStory, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, serviceStoryAlbumContent, serviceLocation, serviceStoryAlbumTagStoryAlbums, serviceTag, serviceClassicUserCloseFriends)
 
 	repoSingleStory := initSingleStoryRepo(database)
 	serviceSingleStory := initSingleStoryServices(repoSingleStory)

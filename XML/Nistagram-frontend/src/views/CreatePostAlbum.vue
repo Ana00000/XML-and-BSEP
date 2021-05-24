@@ -106,14 +106,26 @@
             <template v-else>
               <input id="vid" type="file" accept="video/*, .mp4" name="myPostAlbumFile" />
             </template>
-            <input type="submit" value=" <- Upload file" v-on:click="ValidteType"/>
+            <input type="submit" value=" <- Upload file" v-on:click="ValidateType"/>
           </form>
         </v-form>
-        <v-text-field
+         <v-text-field
           label="Tag name"
           v-model="tagName"
           prepend-icon="mdi-address-circle"
+          v-if="!isHiddenTag && selectedTagType === 'HASH_TAG'"
+        />
+        <v-select
+          class="typeCombo"
+          v-model="selectedTagType"
+          v-on:click="checkTag"
           v-if="!isHiddenTag"
+          hint="Choose your tag type."
+          :items="tagTypes"
+          item-text="state"
+          :label="label2"
+          return-object
+          single-line
         />
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
@@ -184,6 +196,29 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+     <v-container grid-list-lg>
+      <div class="spacingOne" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in allUserTags"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card
+            class="mx-auto"
+            v-on:click="getTag(item)"
+            v-if="isVisibleTags"
+          >
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{ item.name }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
     <div class="spacing" />
   </div>
 </template>
@@ -220,8 +255,34 @@ export default {
     isHiddenAdditionalContentButton: true,
     isHiddenAdditionalContent: true,
     extension: "",
+     kljuc: null,
+    tagTypes: ["USER_TAG", "HASH_TAG"],
+    selectedTagType: "HASH_TAG",
+    label2: "Tag type",
+    allUserTags: [],
+    userTag: null,
+    isVisibleTags: false,
+    userId: null,
+    postId: null,
   }),
+  mounted() {
+    this.init();
+  },
   methods: {
+    init() {
+      this.userId = localStorage.getItem("userId");
+      this.$http
+        .get("http://localhost:8082/find_all_taggable_users_post/")
+        .then((response) => {
+          for (var i = 0; i < response.data.length; i++) {
+            if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
+              this.allUserTags.push(response.data[i]);
+            }
+          }
+          console.log(response.data);
+        })
+        .catch(console.log);
+    },
     addLocation() {
       if (
         !this.validLongitude() ||
@@ -267,6 +328,30 @@ export default {
           this.isVisibleContentButton = true;
         } else {
           this.isVisibleContentButton = false;
+          alert("Please, choose a video in a correct format mp4.");
+        }
+      }
+    },
+    ValidateType() {
+      let pathFile = "";
+      if (this.selectedType === 'PICTURE') {
+        pathFile = document.getElementById('pic').value;
+        this.GetExtension(pathFile);
+        console.log(this.extension);
+        if (this.extension === "PNG" || this.extension === "png" || this.extension === "JPG" || this.extension === "jpg" || this.extension === "jpeg" || this.extension === "JPEG") {
+          this.isHiddenAdditionalContentButton = false;
+        } else {
+          this.isHiddenAdditionalContentButton = true;
+          alert("Please, choose a picture in a correct format e.g. png, jpg or jpeg.");
+        }
+      } else {
+        pathFile = document.getElementById('vid').value;
+        this.GetExtension(pathFile);
+        console.log(this.extension);
+        if (this.extension === "mp4" || this.extension === "MP4") {
+          this.isHiddenAdditionalContentButton = false;
+        } else {
+          this.isHiddenAdditionalContentButton = true;
           alert("Please, choose a video in a correct format mp4.");
         }
       }
@@ -379,15 +464,49 @@ export default {
       window.location.href = "http://localhost:8081/";
     },
     addTag() {
-      if (!this.validTag()) return;
-
+      console.log(this.selectedTagType);
+       if (this.selectedTagType == "USER_TAG") {
+        if (this.userTag==null){
+          alert("Tag is not selected");
+          return;
+        }
+        this.createPostAlbumUserTagPostAlbums();
+      } else {
+        if (!this.validTag()) return;
+        this.$http
+          .post("http://localhost:8082/tag/", {
+            name: this.tagName,
+            tag_type: this.selectedTagType,
+          })
+          .then((response) => {
+            this.postAlbumTagId = response.data;
+            this.CreatePostAlbumTagPostAlbums();
+          })
+          .catch((er) => {
+            console.log(er.response.data);
+          });
+      }
+     
+    }, checkTag() {
+      if (this.selectedTagType == "USER_TAG") {
+        this.isVisibleTags = true;
+      }
+    },
+    getTag(item) {
+      this.userTag = item;
+    },
+    createPostAlbumUserTagPostAlbums() {
+      alert(this.userTag.id);
+      alert(this.postAlbumId);
       this.$http
-        .post("http://localhost:8080/api/tag/post_album_tag/", {
-          name: this.tagName,
+        .post("http://localhost:8080/api/tag/post_album_tag_post_albums/", {
+          tag_id: this.userTag.id,
+          postAlbumId: this.postAlbumId,
         })
         .then((response) => {
-          this.postAlbumTagId = response.data;
-          this.CreatePostAlbumTagPostAlbums();
+          console.log(response.data);
+          alert("Tag is created! Add more tags or finish creation.");
+          this.userTag= null;
         })
         .catch((er) => {
           console.log(er.response.data);
@@ -396,12 +515,13 @@ export default {
     CreatePostAlbumTagPostAlbums() {
       this.$http
         .post("http://localhost:8080/api/tag/post_album_tag_post_albums/", {
-          postAlbumTagId: this.postAlbumTagId,
+          tag_id: this.postAlbumTagId,
           postAlbumId: this.postAlbumId,
         })
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");
+          this.tagName =null;
         })
         .catch((er) => {
           console.log(er.response.data);

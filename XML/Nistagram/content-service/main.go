@@ -28,7 +28,7 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Content{}, &model.AdvertisementContent{},&model.CommentContent{},&model.PostAlbumContent{},&model.SinglePostContent{},&model.SingleStoryContent{},&model.MessageContent{},&model.StoryAlbumContent{})
+	db.AutoMigrate(&model.Content{}, &model.AdvertisementContent{},&model.PostAlbumContent{},&model.SinglePostContent{},&model.SingleStoryContent{},&model.MessageContent{},&model.StoryAlbumContent{})
 	return db
 }
 
@@ -123,18 +123,6 @@ func initSinglePostContentHandler(service *service.SinglePostContentService, con
 	return &handler.SinglePostContentHandler { Service: service, ContentService: contentService }
 }
 
-func initCommentContentRepo(database *gorm.DB) *repository.CommentContentRepository{
-	return &repository.CommentContentRepository { Database: database }
-}
-
-func initCommentContentService(repo *repository.CommentContentRepository) *service.CommentContentService{
-	return &service.CommentContentService { Repo: repo }
-}
-
-func initCommentContentHandler(service *service.CommentContentService) *handler.CommentContentHandler{
-	return &handler.CommentContentHandler { Service: service }
-}
-
 func initMessageContentRepo(database *gorm.DB) *repository.MessageContentRepository{
 	return &repository.MessageContentRepository { Database: database }
 }
@@ -150,7 +138,7 @@ func initMessageContentHandler(service *service.MessageContentService) *handler.
 func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementContent *handler.AdvertisementContentHandler,
 	handlerPostAlbumContent *handler.PostAlbumContentHandler, handlerSinglePostContent *handler.SinglePostContentHandler,
 	handlerStoryAlbumContent *handler.StoryAlbumContentHandler, handlerSingleStoryContent *handler.SingleStoryContentHandler,
-	handlerCommentContent *handler.CommentContentHandler, handlerMessageContent *handler.MessageContentHandler){
+	handlerMessageContent *handler.MessageContentHandler){
 
 	router := mux.NewRouter().StrictSlash(true)
 
@@ -178,6 +166,8 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 
 	router.HandleFunc("/find_all_contents_for_posts/", handlerSinglePostContent.FindAllContentsForPosts).Methods("POST")
 	router.HandleFunc("/find_all_contents_for_post/", handlerSinglePostContent.FindAllContentsForPost).Methods("POST")
+
+	router.HandleFunc("/find_single_story_content_for_story_id", handlerSingleStoryContent.FindSingleStoryContentForStoryId).Methods("GET")
 
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
@@ -210,12 +200,8 @@ func main() {
 	serviceSingleStoryContent := initSingleStoryContentService(repoSingleStoryContent)
 	handlerSingleStoryContent := initSingleStoryContentHandler(serviceSingleStoryContent, serviceContent)
 
-	repoCommentContent := initCommentContentRepo(database)
-	serviceCommentContent := initCommentContentService(repoCommentContent)
-	handlerCommentContent := initCommentContentHandler(serviceCommentContent)
-
 	repoMessageContent := initMessageContentRepo(database)
 	serviceMessageContent := initMessageContentService(repoMessageContent)
 	handlerMessageContent := initMessageContentHandler(serviceMessageContent)
-	handleFunc(handlerContent, handlerAdvertisementContent,handlerPostAlbumContent,handlerSinglePostContent,handlerStoryAlbumContent,handlerSingleStoryContent,handlerCommentContent,handlerMessageContent)
+	handleFunc(handlerContent, handlerAdvertisementContent,handlerPostAlbumContent,handlerSinglePostContent,handlerStoryAlbumContent,handlerSingleStoryContent,handlerMessageContent)
 }

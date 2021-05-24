@@ -3,7 +3,7 @@
     <v-container grid-list-lg>
       <div class="spacingOne" />
       <div class="title">
-        <h1>Friends Posts</h1>
+        <h2>Friends Posts</h2>
       </div>
       <div class="spacingTwo" />
       <v-layout row>
@@ -63,6 +63,47 @@
         </v-flex>
       </v-layout>
     </v-container>
+
+    <v-container grid-list-lg>
+      <div class="spacingOne" />
+      <div class="title">
+        <h2>Friends Album Posts</h2>
+      </div>
+      <div class="spacingTwo" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in albumPosts"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card class="mx-auto" v-on:click="getMyAlbumPosts(item)">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{
+                  item.description
+                }}</v-list-item-subtitle>
+                <v-list-item-title>{{ item.tags }}</v-list-item-title>
+                <v-list-item-subtitle
+                  v-text="
+                    item.country +
+                    ' ' +
+                    item.city +
+                    ' ' +
+                    item.street_name +
+                    ' ' +
+                    item.street_number
+                  "
+                />
+                <v-list-item-subtitle>{{
+                  item.creation_date
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
@@ -75,12 +116,14 @@ export default {
   data: () => ({
     posts: [],
     publicPath: process.env.VUE_APP_BASE_URL,
+    albumPosts: [],
   }),
   mounted() {
     this.init();
   },
   methods: {
     init() {
+      alert(localStorage.getItem("userId"));
       this.$http
         .get(
           "http://localhost:8080/api/post/find_all_following_posts?id=" +
@@ -91,14 +134,32 @@ export default {
           console.log(response.data);
         })
         .catch(console.log);
+
+      this.getPostAlbums();
     },
     getPost(item) {
-      localStorage.setItem("selectedPostDescription", item.description);
-      localStorage.setItem("selectedPostTags", item.tags);
-      localStorage.setItem("selectedPostPath", item.path);
-      localStorage.setItem("selectedPostType", item.type);
+      localStorage.setItem("selectedUserId", item.user_id);
+      localStorage.setItem("selectedPostId", item.post_id);
 
       window.location.href = "http://localhost:8081/postById";
+    },
+    getPostAlbums() {
+      this.$http
+        .get(
+          "http://localhost:8084/find_all_following_post_albums?id=" +
+            localStorage.getItem("userId")
+        )
+        .then((response) => {
+          this.albumPosts = response.data;
+        })
+        .catch(console.log);
+    },
+    getMyAlbumPosts(item) {
+      localStorage.setItem("mySelectedUserId", item.user_id);
+      localStorage.setItem("mySelectedPostAlbumId", item.post_album_id);
+
+      window.location.href =
+        "http://localhost:8081/postAlbumByIdWithoutActivity";
     },
   },
 };

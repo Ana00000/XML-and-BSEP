@@ -80,16 +80,19 @@ export default {
                 { title: 'Public Posts', path: '/publicPostsAll' },
                 { title: 'Friends Stories', path: '/friendsStories' },
                 { title: 'Public Stories', path: '/publicStoriesAll' },
-                { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
-                { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
-                { title: 'Highlighted Stories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
                 { title: 'Create Story', path: '/createStory' },
-                { title: 'Search users', path: '/searchUsers' },
                 { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'My Media', path: '/myMedia' },
                 { title: 'Follow Requests', path: '/followRequests' },
-                { title: 'Add Close Friends', path: '/addCloseFriends' }
+                { title: 'Add Close Friends', path: '/addCloseFriends' },
+                { title: 'Search Users', path: '/searchUsers' },
+                { title: 'Search Locations', path: '/searchLocationsRegistered' },
+                { title: 'Search Tags', path: '/searchTagsRegistered' },
+                { title: 'Create Post Album', path: '/createPostAlbum' },
+                { title: 'Create Story Album', path: '/createStoryAlbum' },
+                { title: 'My Collections', path: '/myCollections' },
             ]
 
             }else{
@@ -99,17 +102,18 @@ export default {
                 { title: 'Public Posts', path: '/publicPostsAll' },
                 { title: 'Friends Stories', path: '/friendsStories' },
                 { title: 'Public Stories', path: '/publicStoriesAll' },
-                { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
-                { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
-                { title: 'Highlighted Stories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
                 { title: 'Create Story', path: '/createStory' },
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
-                { title: 'Search users', path: '/searchUsers' },
+                { title: 'My Collections', path: '/myCollections' },
                 { title: 'Update Profile', path: '/updateProfile' },
-                { title: 'Add Close Friends', path: '/addCloseFriends' }
+                { title: 'My Media', path: '/myMedia' },
+                { title: 'Add Close Friends', path: '/addCloseFriends' },
+                { title: 'Search Users', path: '/searchUsers' },
+                { title: 'Search Locations', path: '/searchLocationsRegistered' },
+                { title: 'Search Tags', path: '/searchTagsRegistered' },
             ]
             }
         } else if (this.userType == 2) {   // AGENT
@@ -119,17 +123,18 @@ export default {
                 { title: 'Public Posts', path: '/publicPostsAll' },
                 { title: 'Friends Stories', path: '/friendsStories' },
                 { title: 'Public Stories', path: '/publicStoriesAll' },
-                { title: 'Public Post Albums', path: '/publicPostAlbumsAll' },
-                { title: 'Public Story Albums', path: '/publicStoryAlbumsAll' },
-                { title: 'HighlightedStories', path: '/highlightedStories' },
                 { title: 'Reacted Posts', path: '/reactedPosts' },
                 { title: 'Create Post', path: '/createPost' },
                 { title: 'Create Story', path: '/createStory' },
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
-                { title: 'Search users', path: '/searchUsers' },
+                { title: 'My Collections', path: '/myCollections' },
                 { title: 'Update Profile', path: '/updateProfile' },
-                { title: 'Add Close Friends', path: '/addCloseFriends' }
+                { title: 'My Media', path: '/myMedia' },
+                { title: 'Add Close Friends', path: '/addCloseFriends' },
+                { title: 'Search users', path: '/searchUsers' },
+                { title: 'Search Locations', path: '/searchLocationsRegistered' },
+                { title: 'Search Tags', path: '/searchTagsRegistered' },
             ]
             
            
@@ -139,6 +144,8 @@ export default {
                 { title: 'Public Posts', path: '/publicPostsAllForNotRegistered' },
                 { title: 'Public Stories', path: '/publicStoriesAllForNotRegistered' },
                 { title: 'Search users', path: '/searchUsersForNotRegistered' },
+                { title: 'Search Locations', path: '/searchLocationsNotRegistered' },
+                { title: 'Search Tags', path: '/searchTagsNotRegistered' },
             ]
         }
     },

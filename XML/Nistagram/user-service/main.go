@@ -60,6 +60,24 @@ func initPasswordUtil() *util.PasswordUtil{
 	return &util.PasswordUtil { }
 }
 
+//USER-TAG
+func initUserTagRepo(database *gorm.DB) *tagRepository.UserTagRepository{
+	return &tagRepository.UserTagRepository { Database: database }
+}
+
+func initUserTagService(repo *tagRepository.UserTagRepository) *tagService.UserTagService{
+	return &tagService.UserTagService { Repo: repo }
+}
+
+//TAG
+func initTagRepo(database *gorm.DB) *tagRepository.TagRepository{
+	return &tagRepository.TagRepository { Database: database }
+}
+
+func initTagService(repo *tagRepository.TagRepository) *tagService.TagService{
+	return &tagService.TagService { Repo: repo }
+}
+
 //USER
 func initUserRepo(database *gorm.DB) *repository.UserRepository{
 	return &repository.UserRepository { Database: database }
@@ -147,13 +165,15 @@ func initAgentService(repo *repository.AgentRepository) *service.AgentService{
 	return &service.AgentService { Repo: repo }
 }
 
-func initAgentHandler(agentService *service.AgentService, userService *service.UserService, classicUserService *service.ClassicUserService, validator *validator.Validate, passwordUtil *util.PasswordUtil) *handler.AgentHandler{
+func initAgentHandler(agentService *service.AgentService, userService *service.UserService, classicUserService *service.ClassicUserService, validator *validator.Validate, passwordUtil *util.PasswordUtil, userTagService *tagService.UserTagService, tagService *tagService.TagService) *handler.AgentHandler{
 	return &handler.AgentHandler{
 		AgentService: agentService,
 		UserService: userService,
 		ClassicUserService: classicUserService,
 		Validator: validator,
 		PasswordUtil: passwordUtil,
+		UserTagService: userTagService,
+		TagService: tagService,
 	}
 }
 
@@ -304,6 +324,7 @@ func main() {
 	rbac.Add(roleRegisteredUser)
 
 	database := initDB()
+	userTagRepo	:= initUserTagRepo(database)
 	userRepo := initUserRepo(database)
 	registeredUserRepo := initRegisteredUserRepo(database)
 	adminRepo := initAdminRepo(database)
@@ -316,6 +337,9 @@ func main() {
 	recoveryPasswordTokenRepo := initRecoveryPasswordTokenRepo(database)
 	classicUserCloseFriendsRepo := initClassicUserCloseFriendsRepo(database)
 
+	tagRepository := initTagRepo(database)
+	tagService := initTagService(tagRepository)
+	userTagService := initUserTagService(userTagRepo)
 	userService := initUserService(userRepo)
 	registeredUserService := initRegisteredUserService(registeredUserRepo)
 	confirmationTokenService := initConfirmationTokenService(confirmationTokenRepo)

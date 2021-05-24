@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
 )
@@ -18,8 +19,16 @@ func (service * PostTagPostsService) CreatePostTagPosts(postTagPosts *model.Post
 	return nil
 }
 
+func (service *PostTagPostsService) FindAllTagsForPostsTagPosts(allPosts []postsModel.SinglePost) []model.PostTagPosts {
+	tags := service.Repo.FindAllTagsForPostsTagPosts(allPosts)
+	if tags != nil {
+		return tags
+	}
+	return nil
+}
 
-func (service *PostTagPostsService) FindAllTagsForPosts(allPosts []dto.SinglePostDTO) []model.PostTagPosts {
+
+func (service *PostTagPostsService) FindAllTagsForPosts(allPosts []postsModel.SinglePost) []model.Tag {
 	tags := service.Repo.FindAllTagsForPosts(allPosts)
 	if tags != nil {
 		return tags
@@ -34,4 +43,14 @@ func (service *PostTagPostsService) FindAllTagsForPost(post *dto.SinglePostDTO) 
 	}
 	return nil
 }
+
+func (service *PostTagPostsService) FindAllPostIdsWithTagId(tagId uuid.UUID) []uuid.UUID {
+	postIds := service.Repo.FindAllPostIdsWithTagId(tagId)
+	if postIds != nil {
+		return postIds
+	}
+	return nil
+}
+
+
 

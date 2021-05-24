@@ -147,3 +147,16 @@ func convertListSingleStoriesContentToSingleStoriesContentForSingleStoryDTO(sing
 	}
 	return listSingleStoryContentForSingleStoryDTO
 }
+
+func (handler *SingleStoryContentHandler) FindSingleStoryContentForStoryId(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	singleStoryContent := handler.Service.FindSingleStoryContentForStoryId(uuid.MustParse(id))
+	singleStoryContentJson, _ := json.Marshal(singleStoryContent)
+	if singleStoryContentJson != nil {
+		w.WriteHeader(http.StatusCreated)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(singleStoryContentJson)
+	}
+	w.WriteHeader(http.StatusBadRequest)
+}

@@ -28,6 +28,7 @@ func (repo *ClassicUserRepository) FindById(id uuid.UUID) *model.ClassicUser {
 	return user
 }
 
+
 func (repo *ClassicUserRepository) UpdateClassicUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
 	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ? and is_deleted = ?", userId, false).Update("is_confirmed", isConfirmed)
 	fmt.Println(result.RowsAffected)
@@ -106,7 +107,7 @@ func (repo *ClassicUserRepository) FindClassicUserByUserName(userName string) *m
 func (repo *ClassicUserRepository) FindAllUsersButLoggedIn(userId uuid.UUID) []model.ClassicUser {
 
 	var users []model.ClassicUser
-	repo.Database.Select("*").Where("id != ? and is_confirmed = ? and is_deleted = ? ", userId, true, false).Find(&users)
+	repo.Database.Select("*").Where("id != ? AND is_confirmed = ? AND is_deleted = ? ", userId, true, false).Find(&users)
 	return users
 }
 
@@ -126,4 +127,30 @@ func (repo *ClassicUserRepository) CheckIfUserValid(userId uuid.UUID) bool {
 	}
 
 	return false
+}
+
+func (repo *ClassicUserRepository) FindSpecificUser(id uuid.UUID) model.ClassicUser {
+	var allUsers = repo.FindAllValidUsers()
+	var myUser model.ClassicUser
+
+	for i:=0; i<len(allUsers);i++{
+		if allUsers[i].ID == id{
+			return allUsers[i]
+		}
+ 	}
+
+ 	return myUser
+}
+
+func (repo *ClassicUserRepository) FindAllUsersByFollowingIds(userIds []model.ClassicUserFollowings) []model.ClassicUser {
+
+	var users []model.ClassicUser
+
+	for i:=0;i<len(userIds);i++{
+		fmt.Println(" user:" +userIds[i].FollowingUserId.String()+"  -   "+userIds[i].ClassicUserId.String())
+		user := repo.FindSpecificUser(userIds[i].FollowingUserId)
+		fmt.Println(" pronadjeni :" +user.Username)
+		users = append(users, user)
+	}
+	return users
 }

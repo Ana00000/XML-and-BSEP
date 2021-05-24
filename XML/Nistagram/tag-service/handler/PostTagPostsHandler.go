@@ -26,7 +26,7 @@ func (handler *PostTagPostsHandler) CreatePostTagPosts(w http.ResponseWriter, r 
 
 	postTagPosts := model.PostTagPosts{
 		ID:        uuid.UUID{},
-		PostTagId: postTagPostsDTO.PostTagId,
+		TagId: postTagPostsDTO.TagId,
 		PostId:    postTagPostsDTO.PostId,
 	}
 

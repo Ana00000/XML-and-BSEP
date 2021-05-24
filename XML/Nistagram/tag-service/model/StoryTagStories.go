@@ -7,7 +7,7 @@ import (
 
 type StoryTagStories struct {
 	ID uuid.UUID `json:"id"`
-	StoryTagId uuid.UUID `json:"story_tag_id" gorm:"not null"`
+	TagId uuid.UUID `json:"tag_id" gorm:"not null"`
 	StoryId uuid.UUID `json:"story_id" gorm:"not null"`
 }
 

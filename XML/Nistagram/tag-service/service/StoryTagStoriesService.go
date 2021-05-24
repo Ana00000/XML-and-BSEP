@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
 )
@@ -30,6 +31,14 @@ func (service *StoryTagStoriesService) FindAllTagsForStory(story *dto.SingleStor
 	tags := service.Repo.FindAllTagsForStory(story)
 	if tags != nil {
 		return tags
+	}
+	return nil
+}
+
+func (service * StoryTagStoriesService) FindStoryTagStoriesForStoryId(storyId uuid.UUID) []model.StoryTagStories{
+	storyTagStories := service.Repo.FindStoryTagStoriesForStoryId(storyId)
+	if storyTagStories != nil {
+		return storyTagStories
 	}
 	return nil
 }

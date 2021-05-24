@@ -40,8 +40,48 @@ func (service *SinglePostService) FindAllFollowingPosts(followings []dto.Classic
 	return nil
 }
 
-func (service *SinglePostService) FindAllPublicPostsNotRegisteredUser(allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
-	posts := service.Repo.FindAllPublicPostsNotRegisteredUser(allValidUsers)
+func (service *SinglePostService) FindAllPublicAndFriendsPostsValid(allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
+	posts := service.Repo.FindAllPublicAndFriendsPostsValid(allValidUsers)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
+
+func (service *SinglePostService) FindAllPostsByIds(postsIds []uuid.UUID) []model.SinglePost {
+	posts := service.Repo.FindAllPostsByIds(postsIds)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
+
+func (service *SinglePostService) FindAllPublicPostsByIds(postsIds []uuid.UUID, allValidUsers []userModel.ClassicUser) []model.SinglePost {
+	posts := service.Repo.FindAllPublicPostsByIds(postsIds,allValidUsers)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
+
+func (service *SinglePostService) FindAllPostIdsWithLocationId(locationId uuid.UUID) []model.SinglePost {
+	posts := service.Repo.FindAllPostIdsWithLocationId(locationId)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
+
+func (service *SinglePostService) FindAllPublicAndFriendsPosts(postsList []model.SinglePost, alValidUsers []userModel.ClassicUser) []model.SinglePost {
+	posts := service.Repo.FindAllPublicAndFriendsPosts(postsList, alValidUsers)
+	if posts != nil {
+		return posts
+	}
+	return nil
+}
+
+func (service *SinglePostService) FindAllPostsForUsers(users []userModel.ClassicUser) []model.SinglePost {
+	posts := service.Repo.FindAllPostsForUsers(users)
 	if posts != nil {
 		return posts
 	}

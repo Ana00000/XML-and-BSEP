@@ -54,7 +54,7 @@ func (repo *SinglePostRepository) FindAllFollowingPosts(followings []dto.Classic
 	return allFollowingPosts
 }
 
-func (repo *SinglePostRepository) FindAllPublicPostsNotRegisteredUser(allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
+func (repo *SinglePostRepository) FindAllPublicAndFriendsPostsValid(allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
 	var allPosts = repo.FindAllPosts()
 	var allPublicPosts []model.SinglePost
 
@@ -68,3 +68,91 @@ func (repo *SinglePostRepository) FindAllPublicPostsNotRegisteredUser(allValidUs
 
 	return allPublicPosts
 }
+
+//FindAllPostsByIds
+func (repo *SinglePostRepository) FindAllPostsByIds(postsIds []uuid.UUID) []model.SinglePost {
+	var allPosts = repo.FindAllPosts()
+	var allTagPosts []model.SinglePost
+
+	for i:=0; i<len(allPosts);i++{
+		for j:=0;j<len(postsIds);j++{
+			if allPosts[i].ID == postsIds[j] && allPosts[i].IsDeleted == false{
+				allTagPosts = append(allTagPosts, allPosts[i])
+			}
+		}
+	}
+
+	return allTagPosts
+}
+
+//FindAllPublicPostsByIds
+func (repo *SinglePostRepository) FindAllPublicPostsByIds(postsIds []uuid.UUID, allValidUsers []userModel.ClassicUser) []model.SinglePost {
+	var allPosts = repo.FindAllPublicAndFriendsPostsValid(allValidUsers)
+	var allTagPosts []model.SinglePost
+
+	for i:=0; i<len(allPosts);i++{
+		for j:=0;j<len(postsIds);j++{
+			if allPosts[i].ID == postsIds[j] && allPosts[i].IsDeleted == false{
+				allTagPosts = append(allTagPosts, allPosts[i])
+			}
+		}
+	}
+
+	return allTagPosts
+}
+
+//FindAllPostIdsWithLocationId
+func (repo *SinglePostRepository) FindAllPostIdsWithLocationId(locationId uuid.UUID) []model.SinglePost {
+	var allPosts = repo.FindAllPosts()
+	var allPostsWithLocation []model.SinglePost
+
+	for i:=0; i<len(allPosts);i++{
+		if allPosts[i].LocationId == locationId && allPosts[i].IsDeleted == false{
+			allPostsWithLocation = append(allPostsWithLocation, allPosts[i])
+		}
+	}
+
+	return allPostsWithLocation
+}
+
+//FindAllPublicAndFriendsPostsByIds
+//FindAllPublicPosts
+func (repo *SinglePostRepository) FindAllPublicAndFriendsPosts(posts []model.SinglePost, allValidUsers []userModel.ClassicUser) []model.SinglePost {
+	var allPosts = repo.FindAllPublicAndFriendsPostsValid(allValidUsers)
+	var allPublicPostsForList []model.SinglePost
+
+	for i:=0; i<len(allPosts);i++{
+		for j:=0;j<len(posts);j++{
+			if allPosts[i].ID == posts[j].ID{
+				allPublicPostsForList = append(allPublicPostsForList, allPosts[i])
+			}
+		}
+	}
+
+	return allPublicPostsForList
+}
+
+func (repo *SinglePostRepository) FindAllPostsForUsers(users []userModel.ClassicUser) []model.SinglePost {
+	var allPosts = repo.FindAllPosts()
+	var allFollowingPosts []model.SinglePost
+
+	for i:= 0; i< len(allPosts); i++{
+		if NotDeletedPostBelongUsers(allPosts[i], users){
+			fmt.Println("Pronadjen post koji pripada useru "+allPosts[i].UserID.String()+", sa opisom: "+allPosts[i].Description)
+			allFollowingPosts = append(allFollowingPosts, allPosts[i])
+		}
+	}
+	return allFollowingPosts
+}
+
+func NotDeletedPostBelongUsers(post model.SinglePost,users []userModel.ClassicUser) bool{
+	for i := 0; i < len(users); i++{
+		if (post.UserID == users[i].ID) && (!post.IsDeleted){
+			return true
+		}
+	}
+	return false
+}
+
+
+

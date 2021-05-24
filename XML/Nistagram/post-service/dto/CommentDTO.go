@@ -5,7 +5,8 @@ import (
 )
 
 type CommentDTO struct {
-	CreationDate string `json:"creationDate"`
-	UserID uuid.UUID `json:"userID"`
-	PostID uuid.UUID `json:"postID"`
+	CreationDate string `json:"creation_date" validate:"required"`
+	UserID uuid.UUID `json:"user_id" validate:"required"`
+	PostID uuid.UUID `json:"post_id" validate:"required"`
+	Text string `json:"text" validate:"required,min=1,max=200"`
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type LocationRepository struct {
@@ -30,6 +31,15 @@ func (repo *LocationRepository) FindAll() []model.Location {
 	return locations
 }
 
+func (repo *LocationRepository) FindByLocationDTO(locationDTO dto.LocationDTO) *model.Location {
+	location := &model.Location{}
+	if repo.Database.First(&location, "street_name=? and street_number=? and city=? and country=? and longitude=? and latitude=?", locationDTO.StreetName, locationDTO.StreetNumber, locationDTO.City, locationDTO.Country,locationDTO.Longitude,locationDTO.Latitude).RowsAffected == 0 {
+		return nil
+	}
+	fmt.Println(location)
+	return location
+}
+
 
 func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []dto.SinglePostDTO) []model.Location {
 	var locations []model.Location
@@ -37,7 +47,7 @@ func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []dto.SinglePo
 
 	for i:=0;i<len(allPosts);i++{
 		for j:=0; j<len(allLocations);j++{
-			if allPosts[i].LocationId == allLocations[j].ID{
+			if allPosts[i].LocationId == allLocations[j].ID && !ExsistInList(allLocations[j],locations){
 				locations = append(locations, allLocations[j])
 			}
 		}
@@ -46,16 +56,25 @@ func (repo *LocationRepository) FindAllLocationsForPosts(allPosts []dto.SinglePo
 	return locations
 }
 
+func ExsistInList(location model.Location, allLocations []model.Location) bool{
+	for i := 0; i < len(allLocations); i++ {
+		if allLocations[i].ID == location.ID{
+			return true
+		}
+	}
+	return false
+}
+
+
 func (repo *LocationRepository) FindAllLocationsForPost(post *dto.SinglePostDTO) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 
 	for j:=0; j<len(allLocations);j++{
-			if post.LocationId == allLocations[j].ID{
+			if post.LocationId == allLocations[j].ID && ExsistInList(allLocations[j],locations){
 				locations = append(locations, allLocations[j])
 			}
 		}
-
 
 	return locations
 }
@@ -85,6 +104,85 @@ func (repo *LocationRepository) FindAllLocationsForStory(story *dto.SingleStoryD
 		}
 	}
 
+
+	return locations
+}
+
+func (repo *LocationRepository) FindLocationIdByLocationString(locationString string) model.Location {
+	var locationStringParts = strings.Split(locationString, ",")
+
+	var country = locationStringParts[0]
+	var city = locationStringParts[1]
+	var streetName = locationStringParts[2]
+	var streetNumber = locationStringParts[3]
+
+
+	var location   = model.Location{}
+
+	var allLocations = repo.FindAll()
+
+	for i:=0; i<len(allLocations);i++{
+		if allLocations[i].Country == country && allLocations[i].City == city && allLocations[i].StreetName == streetName && allLocations[i].StreetNumber == streetNumber{
+			location =  allLocations[i]
+		}
+	}
+
+	return location
+
+}
+
+func (repo *LocationRepository) FindAllLocationsForPostAlbums(albums []postsModel.PostAlbum) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for i:=0;i<len(albums);i++{
+		for j:=0; j<len(allLocations);j++{
+			if albums[i].LocationId == allLocations[j].ID{
+				locations = append(locations, allLocations[j])
+			}
+		}
+
+	}
+	return locations
+}
+
+func (repo *LocationRepository) FindAllLocationsForPostAlbum(album *postsModel.PostAlbum) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for j:=0; j<len(allLocations);j++{
+		if album.LocationId == allLocations[j].ID{
+			locations = append(locations, allLocations[j])
+		}
+	}
+
+	return locations
+}
+
+func (repo *LocationRepository) FindAllLocationsForStoryAlbums(albums []storyModel.StoryAlbum) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for i:=0;i<len(albums);i++{
+		for j:=0; j<len(allLocations);j++{
+			if albums[i].LocationId == allLocations[j].ID{
+				locations = append(locations, allLocations[j])
+			}
+		}
+
+	}
+	return locations
+}
+
+func (repo *LocationRepository) FindAllLocationsForStoryAlbum(album *storyModel.StoryAlbum) []model.Location {
+	var locations []model.Location
+	var allLocations = repo.FindAll()
+
+	for j:=0; j<len(allLocations);j++{
+		if album.LocationId == allLocations[j].ID{
+			locations = append(locations, allLocations[j])
+		}
+	}
 
 	return locations
 }

@@ -41,6 +41,11 @@ const routes = [
     component: () => import('../views/UpdateProfile.vue')
   },
   {
+    path: '/myMedia',
+    name: 'MyMedia',
+    component: () => import('../views/MyMedia.vue')
+  },
+  {
     path: '/searchUsers',
     name: 'SearchUsers',
     component: () => import('../views/SearchUsers.vue')
@@ -81,6 +86,11 @@ const routes = [
     component: () => import('../views/CreateStoryAlbum.vue')
   },
   {
+    path: '/myCollections',
+    name: 'MyCollections',
+    component: () => import('../views/MyCollections.vue')
+  },
+  {
     path: '/friendsPosts',
     name: 'FriendsPosts',
     component: () => import('../views/FriendsPosts.vue')
@@ -111,21 +121,6 @@ const routes = [
     component: () => import('../views/PublicStoriesAllForNotRegistered.vue')
   },
   {
-    path: '/publicPostAlbumsAll',
-    name: 'PublicPostAlbumsAll',
-    component: () => import('../views/PublicPostAlbumsAll.vue')
-  },
-  {
-    path: '/publicStoryAlbumsAll',
-    name: 'PublicStoryAlbumsAll',
-    component: () => import('../views/PublicStoryAlbumsAll.vue')
-  },
-  {
-    path: '/highlightedStories',
-    name: 'HighlightedStories',
-    component: () => import('../views/HighlightedStories.vue')
-  },
-  {
     path: '/reactedPosts',
     name: 'ReactedPosts',
     component: () => import('../views/ReactedPosts.vue')
@@ -146,10 +141,76 @@ const routes = [
     component: () => import('../views/PostById.vue')
   },
   {
+    path: '/postByIdWithoutActivity',
+    name: 'PostByIdWithoutActivity',
+    component: () => import('../views/PostByIdWithoutActivity.vue')
+  },
+  {
+    path: '/storyByIdWithoutActivity',
+    name: 'StoryByIdWithoutActivity',
+    component: () => import('../views/StoryByIdWithoutActivity.vue')
+  },
+  {
+    path: '/postAlbumByIdWithoutActivity',
+    name: 'PostAlbumByIdWithoutActivity',
+    component: () => import('../views/PostAlbumByIdWithoutActivity.vue')
+  },
+  {
+    path: '/storyAlbumByIdWithoutActivity',
+    name: 'StoryAlbumByIdWithoutActivity',
+    component: () => import('../views/StoryAlbumByIdWithoutActivity.vue')
+  },
+  {
     path: '/addCloseFriends',
     name: 'AddCloseFriends',
     component: () => import('../views/AddCloseFriends.vue')
+  },
+  {
+    path: '/storiesOfStoryHighlight',
+    name: 'StoriesOfStoryHighlight',
+    component: () => import('../views/StoriesOfStoryHighlight.vue')
+  },
+  {
+    path: '/searchTagsNotRegistered',
+    name: 'SearchTagsNotRegistered',
+    component: () => import('../views/SearchTagsNotRegistered.vue')
+  },
+  {
+    path: '/searchTagsRegistered',
+    name: 'SearchTagsRegistered',
+    component: () => import('../views/SearchTagsRegistered.vue')
+  },
+  {
+    path: '/searchLocationsNotRegistered',
+    name: 'SearchLocationsNotRegistered',
+    component: () => import('../views/SearchLocationsNotRegistered.vue')
+  },
+  {
+    path: '/searchLocationsRegistered',
+    name: 'SearchLocationsRegistered',
+    component: () => import('../views/SearchLocationsRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedTagNotRegistered',
+    name: 'PostsForSelectedTagNotRegistered',
+    component: () => import('../views/PostsForSelectedTagNotRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedTagRegistered',
+    name: 'PostsForSelectedTagRegistered',
+    component: () => import('../views/PostsForSelectedTagRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedLocationNotRegistered',
+    name: 'PostsForSelectedLocationNotRegistered',
+    component: () => import('../views/PostsForSelectedLocationNotRegistered.vue')
+  },
+  {
+    path: '/postsForSelectedLocationRegistered',
+    name: 'PostsForSelectedLocationRegistered',
+    component: () => import('../views/PostsForSelectedLocationRegistered.vue')
   }
+  
 ]
 
 const router = new VueRouter({

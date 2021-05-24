@@ -758,7 +758,6 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 }
 
 // FIND SELECTED STORY BY ID (ONLY IF NOT DELETED)!
-
 func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
@@ -768,12 +767,14 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 	if story == nil {
 		fmt.Println("User not found")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	if story.IsDeleted == true{
 
 		fmt.Println("Deleted story")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 
 	}
 
@@ -783,6 +784,7 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 
 		fmt.Println("Unavailable story to this user")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 
 	}
 
@@ -860,6 +862,24 @@ type ReturnValueString struct {
 	ReturnValue string `json:"return_value"`
 }
 
+
+// all stories (EXCEPT DELETED) for my current logged in user (expired and not expired, public, all_friend, close friends)
+func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	var stories = handler.SingleStoryService.FindAllStoriesForLoggedUser(uuid.MustParse(id))
+	var contents = handler.StoryContentService.FindAllContentsForStories(stories)
+	var locations = handler.LocationService.FindAllLocationsForStories(stories)
+	var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
+	var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
+
+	storiesJson, _ := json.Marshal(storiesDTOS)
+	w.Write(storiesJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}
+
 //DTOS
 func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleStory, contents []dto.SingleStoryContentDTO, locations []dto.LocationDTO, tags []dto.StoryTagStoriesDTO) []dto.SelectedStoryDTO {
 	var listOfStoriesDTOs []dto.SelectedStoryDTO
@@ -869,6 +889,7 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 		storyDTO.StoryId = stories[i].ID
 		storyDTO.Description = stories[i].Description
 		storyDTO.CreationDate = stories[i].CreationDate
+		storyDTO.UserId = stories[i].UserId
 
 
 
@@ -894,7 +915,7 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 			if tags[p].StoryId == stories[i].ID {
 				//{id}
 				var  returnValueTagName ReturnValueString
-				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].StoryTagId.String())
+				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].TagId.String())
 				err := getJson(reqUrl, &returnValueTagName)
 				if err!=nil{
 					fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
@@ -944,7 +965,7 @@ func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, cont
 	for p := 0; p < len(tags); p++ {
 		if tags[p].StoryId == story.ID {
 			var  returnValueTagName ReturnValueString
-			reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].StoryTagId.String())
+			reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].TagId.String())
 			err := getJson(reqUrl, &returnValueTagName)
 			if err!=nil{
 				fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
@@ -1025,4 +1046,18 @@ func convertSingleStoryDTOToSingleStory(singleStoryDTO dto.SingleStoryFullDTO) m
 		},
 	}
 	return singleStory
+}
+
+
+func (handler *SingleStoryHandler) FindSingleStoryForId(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	singleStory := handler.SingleStoryService.FindSingleStoryForId(uuid.MustParse(id))
+	singleStoryJson, _ := json.Marshal(singleStory)
+	if singleStoryJson != nil {
+		w.WriteHeader(http.StatusCreated)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(singleStoryJson)
+	}
+	w.WriteHeader(http.StatusBadRequest)
 }

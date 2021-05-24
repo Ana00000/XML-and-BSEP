@@ -7,7 +7,7 @@ import (
 
 type PostTagPosts struct {
 	ID uuid.UUID `json:"id"`
-	PostTagId uuid.UUID `json:"post_tag_id" gorm:"not null"`
+	TagId uuid.UUID `json:"tag_id" gorm:"not null"`
 	PostId uuid.UUID `json:"post_id" gorm:"not null"`
 }
 

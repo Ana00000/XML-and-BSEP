@@ -24,6 +24,8 @@ type RegisteredUserHandler struct {
 	ConfirmationTokenService * service.ConfirmationTokenService
 	Validator                *validator.Validate
 	PasswordUtil             *util.PasswordUtil
+	UserTagService           *tagSerivce.UserTagService
+	TagService               *tagSerivce.TagService
 }
 
 func SendConfirmationMail(user model.User, token uuid.UUID) {
@@ -84,7 +86,7 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 
 	if validPassword {
 		salt, password = handler.PasswordUtil.GeneratePasswordWithSalt(registeredUserDTO.Password)
-	}else {
+	} else {
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
@@ -141,7 +143,31 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
+	///////////////////////////////    IZMJENITI     /////////////////////////////////////////
+	tagId := uuid.New()
+	userTag := tagModel.UserTag{
+		Tag : tagModel.Tag{
+			ID: tagId,
+			Name: registeredUser.Username,
+			TagType: tagModel.USER_TAG,
+		},
+		UserId: userId,
+	}
 
+	if err := handler.UserTagService.CreateUserTag(&userTag); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if err := handler.TagService.CreateTag(&userTag.Tag); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+	////////////////////// DO OVDJE /////////////////////////
+
+	
 	fmt.Println(registeredUser.ClassicUser.User.ID)
 	confirmationToken := model.ConfirmationToken{
 		ID:                uuid.New(),
@@ -175,7 +201,6 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")

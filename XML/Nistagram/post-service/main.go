@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-playground/validator"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/handler"
@@ -23,7 +24,9 @@ func initDB() *gorm.DB{
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Post{}, &model.Activity{}, &model.Comment{}, &model.PostAlbum{}, &model.SinglePost{}, &model.PostCollection{})
+	db.AutoMigrate(&model.Post{}, &model.Activity{}, &model.Comment{},
+	               &model.PostAlbum{}, &model.SinglePost{}, &model.PostCollection{},
+	               &model.PostCollectionPosts{})
 	return db
 }
 
@@ -98,16 +101,19 @@ func initActivityHandler(service *service.ActivityService) *handler.ActivityHand
 	return &handler.ActivityHandler{ Service: service }
 }
 
-func initCommentHandler(service *service.CommentService) *handler.CommentHandler{
-	return &handler.CommentHandler{ Service: service }
+func initCommentHandler(service *service.CommentService, validate *validator.Validate) *handler.CommentHandler{
+	return &handler.CommentHandler{
+		Service: service,
+		Validator: validate,
+	}
 }
 
 func initPostHandler(postService *service.PostService) *handler.PostHandler{
 	return &handler.PostHandler{ PostService: postService}
 }
 
-func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
-	return &handler.PostAlbumHandler{ Service: service, PostService: postService}
+func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, postAlbumContentService *contentService.PostAlbumContentService,locationService *locationService.LocationService, postAlbumTagPostAlbumsService *tagsService.PostAlbumTagPostAlbumsService,tagService *tagsService.TagService) *handler.PostAlbumHandler{
+	return &handler.PostAlbumHandler{ Service: service, PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings, PostAlbumContentService: postAlbumContentService, LocationService: locationService, PostAlbumTagPostAlbumsService: postAlbumTagPostAlbumsService, TagService: tagService }
 }
 
 func initPostCollectionHandler(service *service.PostCollectionService) *handler.PostCollectionHandler{
@@ -131,7 +137,6 @@ func initPostCollectionPostsHandler(service *service.PostCollectionPostsService)
 }
 
 
-
 func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handler.CommentHandler, handlerPost *handler.PostHandler,
 	handlerPostAlbum *handler.PostAlbumHandler, handlerPostCollection *handler.PostCollectionHandler,
 	handlerSinglePost *handler.SinglePostHandler, handlerPostCollectionPosts *handler.PostCollectionPostsHandler){
@@ -149,6 +154,7 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/post_album/", handlerPostAlbum.CreatePostAlbum).Methods("POST")
 	router.HandleFunc("/single_post/", handlerSinglePost.CreateSinglePost).Methods("POST")
 	router.HandleFunc("/activity/", handlerActivity.CreateActivity).Methods("POST")
+	router.HandleFunc("/update_activity/", handlerActivity.UpdateActivity).Methods("POST")
 
 	router.HandleFunc("/find_all_likes_for_post", handlerActivity.FindAllLikesForPost).Methods("GET")
 	router.HandleFunc("/find_all_dislikes_for_post", handlerActivity.FindAllDislikesForPost).Methods("GET")
@@ -156,9 +162,14 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/find_all_activities_for_post", handlerActivity.FindAllActivitiesForPost).Methods("GET")
 
 	router.HandleFunc("/comment/", handlerComment.CreateComment).Methods("POST")
+	router.HandleFunc("/find_all_comments_for_post", handlerComment.FindAllCommentsForPost).Methods("GET")
+	router.HandleFunc("/find_all_user_comments", handlerComment.FindAllUserComments).Methods("GET")
 	router.HandleFunc("/update_post/", handlerPost.UpdatePost).Methods("POST")
 	router.HandleFunc("/post_collection/", handlerPostCollection.CreatePostCollection).Methods("POST")
 	router.HandleFunc("/post_collection_posts/", handlerPostCollectionPosts.CreatePostCollectionPosts).Methods("POST")
+
+	router.HandleFunc("/find_all_post_collections_for_reg", handlerPostCollection.FindAllPostCollectionsForUserRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_post_collection_posts_for_post", handlerPostCollectionPosts.FindAllPostCollectionPostsForPost).Methods("GET")
 
 	router.HandleFunc("/find_all_posts_for_not_reg", handlerSinglePost.FindAllPostsForUserNotRegisteredUser).Methods("GET")
 	router.HandleFunc("/find_all_posts_for_reg", handlerSinglePost.FindAllPostsForUserRegisteredUser).Methods("GET")
@@ -168,11 +179,39 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/find_all_public_posts_not_reg/", handlerSinglePost.FindAllPublicPostsNotRegisteredUser).Methods("GET")
 	router.HandleFunc("/find_all_public_posts_reg", handlerSinglePost.FindAllPublicPostsRegisteredUser).Methods("GET")
 
+
+	router.HandleFunc("/find_all_public_album_posts_reg", handlerPostAlbum.FindAllPublicAlbumPostsRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_public_album_posts_not_reg/", handlerPostAlbum.FindAllPublicAlbumPostsNotRegisteredUser).Methods("GET")
+	router.HandleFunc("/find_all_following_post_albums", handlerPostAlbum.FindAllFollowingPostAlbums).Methods("GET")
+
+	router.HandleFunc("/find_all_album_posts_for_logged_user", handlerPostAlbum.FindAllAlbumPostsForLoggedUser).Methods("GET")
+	router.HandleFunc("/find_selected_post_album_for_logged_user", handlerPostAlbum.FindSelectedPostAlbumByIdForLoggedUser).Methods("GET")
+	router.HandleFunc("/find_all_posts_for_logged_user", handlerSinglePost.FindAllPostsForLoggedUser).Methods("GET")
+	router.HandleFunc("/find_selected_post_for_logged_user", handlerSinglePost.FindSelectedPostByIdForLoggedUser).Methods("GET")
+
+	//SEARCH FOR NOT REGISTERED USER
+	router.HandleFunc("/find_all_tags_for_public_posts/", handlerSinglePost.FindAllTagsForPublicPosts).Methods("GET")
+	router.HandleFunc("/find_all_locations_for_public_posts/", handlerSinglePost.FindAllLocationsForPublicPosts).Methods("GET")
+
+	//metoda koja se poziva kada neregistrovani user pretrazi tag pa klikne na njega - prikazuju se svi PUBLIC, NOT DELETED postovi sa tim tagom
+	router.HandleFunc("/find_all_posts_for_tag", handlerSinglePost.FindAllPostsForTag).Methods("GET")
+	router.HandleFunc("/find_all_posts_for_location", handlerSinglePost.FindAllPostsForLocation).Methods("GET")
+
+	//SEARCH FOR REGISTERED USER
+	router.HandleFunc("/find_all_tags_for_public_and_friends_posts", handlerSinglePost.FindAllTagsForPublicAndFollowingPosts).Methods("GET")
+	router.HandleFunc("/find_all_locations_for_public_friends_posts", handlerSinglePost.FindAllLocationsForPublicAndFollowingPosts).Methods("GET")
+
+	//metoda koja se poziva kada neregistrovani user pretrazi tag pa klikne na njega - prikazuju se svi PUBLIC, NOT DELETED postovi sa tim tagom
+	router.HandleFunc("/find_all_posts_for_tag_reg_user", handlerSinglePost.FindAllPostsForTagRegUser).Methods("GET")
+	router.HandleFunc("/find_all_posts_for_location_reg_user", handlerSinglePost.FindAllPostsForLocationRegUser).Methods("GET")
+
+
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
 func main() {
 	database := initDB()
+	validator := validator.New()
 	repoPostCollectionPosts := initPostCollectionPostsRepo(database)
 	servicePostCollectionPosts := initPostCollectionPostsServices(repoPostCollectionPosts)
 	handlerPostCollectionPosts := initPostCollectionPostsHandler(servicePostCollectionPosts)
@@ -192,9 +231,9 @@ func main() {
 	serviceSinglePost := initSinglePostService(repoSinglePost)
 
 	handlerActivity := initActivityHandler(serviceActivity)
-	handlerComment := initCommentHandler(serviceComment)
+	handlerComment := initCommentHandler(serviceComment, validator)
 	handlerPost := initPostHandler(servicePost)
-	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
+	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, servicePostAlbumContent, serviceLocation, servicePostAlbumTagPostAlbums, serviceTag)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
 	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost)
 

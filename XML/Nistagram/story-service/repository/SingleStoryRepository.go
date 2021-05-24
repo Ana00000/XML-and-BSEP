@@ -210,3 +210,8 @@ func (repo *SingleStoryRepository) FindAllStoriesForLoggedUser(userId uuid.UUID)
 	return stories
 }
 
+func (repo * SingleStoryRepository) FindSingleStoryForId(storyId uuid.UUID) model.SingleStory{
+	var singleStory model.SingleStory
+	repo.Database.Select("*").Where("id = ?", storyId).Find(&singleStory)
+	return singleStory
+}

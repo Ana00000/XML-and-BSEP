@@ -1,24 +1,39 @@
 <template>
   <div>
-    <v-container fluid class="container mt-6">
+    <v-container fluid class="container mt-1">
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="First name" v-model="firstName" color="indigo" v-bind:readonly="isReadOnly"/>
+          <v-text-field
+            label="First name"
+            v-model="firstName"
+            color="indigo"
+            v-bind:readonly="isReadOnly"
+          />
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="Last name" v-model="lastName" color="indigo" v-bind:readonly="isReadOnly"/>
+          <v-text-field
+            label="Last name"
+            v-model="lastName"
+            color="indigo"
+            v-bind:readonly="isReadOnly"
+          />
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="Email" v-model="email" color="indigo" v-bind:readonly="isReadOnly"/>
+          <v-text-field
+            label="Email"
+            v-model="email"
+            color="indigo"
+            v-bind:readonly="isReadOnly"
+          />
         </v-col>
       </v-row>
 
@@ -66,28 +81,48 @@
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="Username" v-model="username" color="indigo" v-bind:readonly="isReadOnly"/>
+          <v-text-field
+            label="Username"
+            v-model="username"
+            color="indigo"
+            v-bind:readonly="isReadOnly"
+          />
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="Website" v-model="website" color="indigo" v-bind:readonly="isReadOnly"/>
+          <v-text-field
+            label="Website"
+            v-model="website"
+            color="indigo"
+            v-bind:readonly="isReadOnly"
+          />
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="5" />
         <v-col cols="3">
-          <v-text-field label="Biography" v-model="biography" color="indigo" v-bind:readonly="isReadOnly"/>
+          <v-text-field
+            label="Biography"
+            v-model="biography"
+            color="indigo"
+            v-bind:readonly="isReadOnly"
+          />
         </v-col>
       </v-row>
 
       <div class="changeButton">
         <v-btn
           v-if="!isHiddenChange"
-          v-on:click="isHiddenUpdate = false, isHiddenChange = true, isHiddenCancel = false, isReadOnly = false"
+          v-on:click="
+            (isHiddenUpdate = false),
+              (isHiddenChange = true),
+              (isHiddenCancel = false),
+              (isReadOnly = false)
+          "
           color="info mb-5"
           x-large
           >Change</v-btn
@@ -113,7 +148,52 @@
           >Cancel</v-btn
         >
       </div>
-      </v-container>
+    </v-container>
+
+    <v-container grid-list-lg>
+      <div class="spacingOne" />
+      <v-card-title class="justify-center">
+        <h1 class="display-1">My Highlighted Stories</h1>
+      </v-card-title>
+      <div class="spacingTwo" />
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in highlightedStories"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card class="mx-auto" v-on:click="getStoryHighlight(item)">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{ item.title }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+
+    <v-card width="600" class="mx-auto mt-5" color="white">
+      <v-card-title class="justify-center">
+        <h1 class="display-1">Create Story Highlight</h1>
+      </v-card-title>
+      <v-card-text>
+        <v-form class="mx-auto ml-5 mr-5">
+          <v-text-field
+            label="Title"
+            v-model="title"
+            prepend-icon="mdi-address-circle"
+          />
+        </v-form>
+      </v-card-text>
+
+      <v-card-actions class="justify-center mb-5">
+        <v-btn color="info mb-5" v-on:click="createStoryHighlight">
+          Create
+        </v-btn>
+      </v-card-actions>
+    </v-card>
   </div>
 </template>
 
@@ -137,7 +217,9 @@ export default {
     isHiddenUpdate: true,
     isHiddenCancel: true,
     isReadOnly: true,
-    user: []
+    user: [],
+    highlightedStories: [],
+    title: "",
   }),
   mounted() {
     this.init();
@@ -148,6 +230,16 @@ export default {
       this.token = localStorage.getItem("token");
 
       this.$http
+        .get(
+          "http://localhost:8080/api/story/find_all_story_highlights_for_user?id=" +
+            localStorage.getItem("userId")
+        )
+        .then((response) => {
+          this.highlightedStories = response.data;
+        })
+        .catch(console.log);
+
+      this.$http
         .get("http://localhost:8080/api/user/find_user_by_id?id=" + this.id)
         .then((response) => {
           this.user = response.data;
@@ -156,31 +248,31 @@ export default {
         .catch(console.log);
     },
     setUserInfo(item) {
-      this.firstName = item.firstName
-      this.lastName = item.lastName
-      this.email = item.email
-      this.phoneNumber = item.phoneNumber
+      this.firstName = item.firstName;
+      this.lastName = item.lastName;
+      this.email = item.email;
+      this.phoneNumber = item.phoneNumber;
       if (this.user.gender == 0) {
-        this.selectedGender = "MALE"
-      } else if (this.user.gender == 1){
-        this.selectedGender = "FEMALE"
+        this.selectedGender = "MALE";
+      } else if (this.user.gender == 1) {
+        this.selectedGender = "FEMALE";
       } else {
-        this.selectedGender = "OTHER"
+        this.selectedGender = "OTHER";
       }
-      this.dateOfBirth = item.dateOfBirth
-      this.username = item.username
-      this.website = item.website
-      this.biography = item.biography
+      this.dateOfBirth = item.dateOfBirth;
+      this.username = item.username;
+      this.website = item.website;
+      this.biography = item.biography;
       if (this.user.userType == 0) {
-        this.userType = "ADMIN" 
+        this.userType = "ADMIN";
       } else if (this.user.userType == 1) {
-        this.userType = "REGISTERED_USER"
+        this.userType = "REGISTERED_USER";
       } else {
-        this.userType = "AGENT"
+        this.userType = "AGENT";
       }
     },
     cancelChanges() {
-      window.location.href = "http://localhost:8081/updateProfile"
+      window.location.href = "http://localhost:8081/updateProfile";
     },
     changeProfileInfo() {
       if (
@@ -192,34 +284,69 @@ export default {
         !this.validUsername() ||
         !this.validWebsite() ||
         !this.validBiography()
-      ) return;
-     
+      )
+        return;
+
       this.$http
-        .post("http://localhost:8080/api/user/update_user_profile_info/", {
-          id: this.id,
-          firstName: this.firstName,
-          lastName: this.lastName,
-          email: this.email,
-          phoneNumber: this.phoneNumber,
-          gender: this.selectedGender,
-          dateOfBirth: this.dateOfBirth,
-          username: this.username,
-          website: this.website,
-          biography: this.biography,
-          userType: this.userType
-        },{
+        .post(
+          "http://localhost:8080/api/user/update_user_profile_info/",
+          {
+            id: this.id,
+            firstName: this.firstName,
+            lastName: this.lastName,
+            email: this.email,
+            phoneNumber: this.phoneNumber,
+            gender: this.selectedGender,
+            dateOfBirth: this.dateOfBirth,
+            username: this.username,
+            website: this.website,
+            biography: this.biography,
+            userType: this.userType,
+          },
+          {
             headers: {
-              "Authorization": "Bearer " + this.token,
+              Authorization: "Bearer " + this.token,
             },
-        })
+          }
+        )
         .then((response) => {
-          console.log(response.data)
+          console.log(response.data);
           alert("Successfully updated profile informations!");
-          window.location.href = "http://localhost:8081/updateProfile"
+          window.location.href = "http://localhost:8081/updateProfile";
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         });
+    },
+    createStoryHighlight() {
+      if (!this.validTitle()) return;
+
+      for (var i = 0; i < this.highlightedStories.length; i++) {
+        if (this.title == this.highlightedStories[i].title) {
+          alert("You have already created highlighted story with this name!");
+          this.title = "";
+          return;
+        }
+      }
+
+      this.$http
+        .post("http://localhost:8086/story_highlight/", {
+          title: this.title,
+          userID: localStorage.getItem("userId"),
+        })
+        .then((response) => {
+          console.log(response);
+          alert("Successful creation of story highlight.");
+          window.location.href = "http://localhost:8081/updateProfile";
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    getStoryHighlight(item) {
+      localStorage.setItem("selectedStoryHighlightId", item.id);
+
+      window.location.href = "http://localhost:8081/storiesOfStoryHighlight";
     },
     validFirstName() {
       if (this.firstName.length < 2) {
@@ -266,7 +393,11 @@ export default {
       return true;
     },
     validEmail() {
-      if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.email)) {
+      if (
+        !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+          this.email
+        )
+      ) {
         alert("You have entered an invalid email address!");
         return false;
       } else if (this.email.length > 35) {
@@ -370,6 +501,19 @@ export default {
         return false;
       } else if (this.biography.length > 100) {
         alert("Your biography shouldn't contain more than 100 characters!");
+        return false;
+      }
+      return true;
+    },
+    validTitle() {
+      if (this.title.length < 2) {
+        alert("Your title should contain at least 2 characters!");
+        return false;
+      } else if (this.title.length > 30) {
+        alert("Your title shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.title.match(/[!@#$%^&*:'<>+-/\\"]/g)) {
+        alert("Your title shouldn't contain those special characters.");
         return false;
       }
       return true;

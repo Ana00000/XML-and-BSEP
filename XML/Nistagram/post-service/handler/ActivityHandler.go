@@ -36,6 +36,10 @@ func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Re
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	activityIDJson, _ := json.Marshal(activity.ID)
+	w.Write(activityIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -95,4 +99,23 @@ func (handler *ActivityHandler) FindAllActivitiesForPost(w http.ResponseWriter, 
 		w.Write(activitiesJson)
 	}
 	w.WriteHeader(http.StatusBadRequest)
+}
+
+func (handler *ActivityHandler) UpdateActivity(w http.ResponseWriter, r *http.Request) {
+	var activityDTO dto.ActivityDTO
+
+	err := json.NewDecoder(r.Body).Decode(&activityDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = handler.Service.UpdateActivity(&activityDTO)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 }
