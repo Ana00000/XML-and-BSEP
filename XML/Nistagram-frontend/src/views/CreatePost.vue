@@ -391,7 +391,12 @@ export default {
       window.location.href = "http://localhost:8081/";
     },
     addTag() {
+      
       if (this.selectedTagType == "USER_TAG") {
+        if (this.userTag==null){
+          alert("Tag is not selected");
+          return;
+        }
         this.createPostUserTagPosts();
       } else {
         if (!this.validTag()) return;
@@ -408,6 +413,7 @@ export default {
             console.log(er.response.data);
           });
       }
+      
     },
     createPostTagPosts() {
       this.$http
@@ -418,6 +424,7 @@ export default {
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");
+          this.tagName =null;
         })
         .catch((er) => {
           console.log(er.response.data);
@@ -432,6 +439,7 @@ export default {
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");
+          this.userTag =null
         })
         .catch((er) => {
           console.log(er.response.data);

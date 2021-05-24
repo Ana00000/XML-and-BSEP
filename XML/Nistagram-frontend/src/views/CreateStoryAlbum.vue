@@ -144,7 +144,7 @@
             <input
               type="submit"
               value=" <- Upload file"
-              v-on:click="ValidteType"
+              v-on:click="ValidateType"
             />
           </form>
         </v-form>
@@ -300,7 +300,6 @@ export default {
     kljuc: null,
     tagTypes: ["USER_TAG", "HASH_TAG"],
     selectedTagType: "HASH_TAG",
-    label2: "Tag type",
     allUserTags: [],
     userTag: null,
     isVisibleTags: false,
@@ -375,6 +374,39 @@ export default {
           this.isVisibleContentButton = true;
         } else {
           this.isVisibleContentButton = false;
+          alert("Please, choose a video in a correct format mp4.");
+        }
+      }
+    },
+    ValidateType() {
+      let pathFile = "";
+      if (this.selectedType === "PICTURE") {
+        pathFile = document.getElementById("pic").value;
+        this.GetExtension(pathFile);
+        console.log(this.extension);
+        if (
+          this.extension === "PNG" ||
+          this.extension === "png" ||
+          this.extension === "JPG" ||
+          this.extension === "jpg" ||
+          this.extension === "jpeg" ||
+          this.extension === "JPEG"
+        ) {
+          this.isHiddenAdditionalContentButton = false;
+        } else {
+          this.isHiddenAdditionalContentButton = true;
+          alert(
+            "Please, choose a picture in a correct format e.g. png, jpg or jpeg."
+          );
+        }
+      } else {
+        pathFile = document.getElementById("vid").value;
+        this.GetExtension(pathFile);
+        console.log(this.extension);
+        if (this.extension === "mp4" || this.extension === "MP4") {
+          this.isHiddenAdditionalContentButton = false;
+        } else {
+          this.isHiddenAdditionalContentButton = true;
           alert("Please, choose a video in a correct format mp4.");
         }
       }
@@ -490,6 +522,10 @@ export default {
     },
     addTag() {
        if (this.selectedTagType == "USER_TAG") {
+         if (this.userTag==null){
+          alert("Tag is not selected");
+          return;
+        }
         this.createStoryAlbumUserTagStoryAlbums();
       } else {
         if (!this.validTag()) return;
@@ -506,6 +542,7 @@ export default {
             console.log(er.response.data);
           });
       }
+      
     }, checkTag() {
       if (this.selectedTagType == "USER_TAG") {
         this.isVisibleTags = true;
@@ -517,12 +554,13 @@ export default {
     CreateStoryAlbumTagStoryAlbums() {
       this.$http
         .post("http://localhost:8082/story_album_tag_story_albums/", {
-          storyAlbumTagId: this.storyAlbumTagId,
-          storyAlbumId: this.storyAlbumId,
+          tag_id: this.storyAlbumTagId,
+          story_album_id: this.storyAlbumId,
         })
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");
+          this.tagName =null;
         })
         .catch((er) => {
           console.log(er.response.data);
@@ -537,6 +575,7 @@ export default {
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");
+          this.userTag =null;
         })
         .catch((er) => {
           console.log(er.response.data);

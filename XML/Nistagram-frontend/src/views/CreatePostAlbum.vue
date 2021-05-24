@@ -106,7 +106,7 @@
             <template v-else>
               <input id="vid" type="file" accept="video/*, .mp4" name="myPostAlbumFile" />
             </template>
-            <input type="submit" value=" <- Upload file" v-on:click="ValidteType"/>
+            <input type="submit" value=" <- Upload file" v-on:click="ValidateType"/>
           </form>
         </v-form>
          <v-text-field
@@ -265,6 +265,9 @@ export default {
     userId: null,
     postId: null,
   }),
+  mounted() {
+    this.init();
+  },
   methods: {
     init() {
       this.userId = localStorage.getItem("userId");
@@ -276,6 +279,7 @@ export default {
               this.allUserTags.push(response.data[i]);
             }
           }
+          console.log(response.data);
         })
         .catch(console.log);
     },
@@ -324,6 +328,30 @@ export default {
           this.isVisibleContentButton = true;
         } else {
           this.isVisibleContentButton = false;
+          alert("Please, choose a video in a correct format mp4.");
+        }
+      }
+    },
+    ValidateType() {
+      let pathFile = "";
+      if (this.selectedType === 'PICTURE') {
+        pathFile = document.getElementById('pic').value;
+        this.GetExtension(pathFile);
+        console.log(this.extension);
+        if (this.extension === "PNG" || this.extension === "png" || this.extension === "JPG" || this.extension === "jpg" || this.extension === "jpeg" || this.extension === "JPEG") {
+          this.isHiddenAdditionalContentButton = false;
+        } else {
+          this.isHiddenAdditionalContentButton = true;
+          alert("Please, choose a picture in a correct format e.g. png, jpg or jpeg.");
+        }
+      } else {
+        pathFile = document.getElementById('vid').value;
+        this.GetExtension(pathFile);
+        console.log(this.extension);
+        if (this.extension === "mp4" || this.extension === "MP4") {
+          this.isHiddenAdditionalContentButton = false;
+        } else {
+          this.isHiddenAdditionalContentButton = true;
           alert("Please, choose a video in a correct format mp4.");
         }
       }
@@ -436,7 +464,12 @@ export default {
       window.location.href = "http://localhost:8081/";
     },
     addTag() {
+      console.log(this.selectedTagType);
        if (this.selectedTagType == "USER_TAG") {
+        if (this.userTag==null){
+          alert("Tag is not selected");
+          return;
+        }
         this.createPostAlbumUserTagPostAlbums();
       } else {
         if (!this.validTag()) return;
@@ -453,6 +486,7 @@ export default {
             console.log(er.response.data);
           });
       }
+     
     }, checkTag() {
       if (this.selectedTagType == "USER_TAG") {
         this.isVisibleTags = true;
@@ -461,15 +495,18 @@ export default {
     getTag(item) {
       this.userTag = item;
     },
-    createStoryAlbumUserTagStoryAlbums() {
+    createPostAlbumUserTagPostAlbums() {
+      alert(this.userTag.id);
+      alert(this.postAlbumId);
       this.$http
         .post("http://localhost:8082/post_album_tag_post_albums/", {
           tag_id: this.userTag.id,
-          post_album_id: this.postAlbumId,
+          postAlbumId: this.postAlbumId,
         })
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");
+          this.userTag= null;
         })
         .catch((er) => {
           console.log(er.response.data);
@@ -478,12 +515,13 @@ export default {
     CreatePostAlbumTagPostAlbums() {
       this.$http
         .post("http://localhost:8082/post_album_tag_post_albums/", {
-          postAlbumTagId: this.postAlbumTagId,
+          tag_id: this.postAlbumTagId,
           postAlbumId: this.postAlbumId,
         })
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");
+          this.tagName =null;
         })
         .catch((er) => {
           console.log(er.response.data);

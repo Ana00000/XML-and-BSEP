@@ -26,7 +26,7 @@ func (handler *PostAlbumTagPostAlbumsHandler) CreatePostAlbumTagPostAlbums(w htt
 	id := uuid.New()
 	postAlbumTagPostAlbums := model.PostAlbumTagPostAlbums{
 		ID:        			id,
-		TagId: 	postAlbumTagPostAlbumsDTO.TagId,
+		TagId: 				postAlbumTagPostAlbumsDTO.TagId,
 		PostAlbumId:    	postAlbumTagPostAlbumsDTO.PostAlbumId,
 	}
 

@@ -79,13 +79,19 @@ func (handler *UserTagHandler) FindAllTaggableUsersPost(w http.ResponseWriter, r
 	fmt.Print(len(allUserTags))
 
 	for _,userTags := range allUserTags {
+		fmt.Println("UserTags: "+userTags.Name+" userId "+userTags.UserId.String())
 		var userId = userTags.UserId
 		fmt.Println("The is user ID: ", userId)
 		var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
+		fmt.Println("ID of userProfileSettings for user "+ userProfileSettings.UserId.String())
 		fmt.Println("User post taggable: ", userProfileSettings.IsPostTaggable)
 		if userProfileSettings.IsPostTaggable {
 			user := handler.ClassicUserService.FindById(userId)
+			fmt.Println("Username of user ",user.Username)
+			fmt.Println("User is deleted: ", user.IsDeleted)
+			fmt.Println("User is confirmed: ", user.IsConfirmed)
 			if !user.IsDeleted && user.IsConfirmed {
+				fmt.Println("Tag name: "+userTags.Name)
 				userAllTags = append(userAllTags, userTags)
 			}
 		}
