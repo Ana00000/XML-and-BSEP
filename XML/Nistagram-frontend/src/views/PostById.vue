@@ -699,7 +699,7 @@ export default {
         post_id: this.post.post_id,
         text: this.text,
       });
-
+      this.text = "";
       this.isHiddenComment = true;
     },
     cancleComment() {
@@ -787,4 +787,5 @@ export default {
   width: 120px;
   margin-left: 25%;
 }
+
 </style>
