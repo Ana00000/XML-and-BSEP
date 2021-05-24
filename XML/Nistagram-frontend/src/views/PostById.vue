@@ -144,39 +144,41 @@
 
     <v-container grid-list-lg>
       <v-layout row>
-        <v-flex
-          lg4
-          v-for="item in allPostComments"
-          :key="item.id"
-          class="space-bottom"
-        >
+        <v-flex lg4 v-for="item in allData" :key="item.id" class="space-bottom">
           <div class="spacingOne" />
           <v-card color="info" dark max-width="500">
-            
             <v-card-title>
-              <span class="title text-xs-center font-weight-light">User comment</span>
+              <span class="title text-xs-center font-weight-light"
+                >User comment</span
+              >
             </v-card-title>
 
             <v-card-text class="headline font-weight-bold">
               {{ item.text }}
             </v-card-text>
 
-            <v-card-actions  v-on:click="getUser(item.user_id)">
-              <v-list-item class="grow">
-                <v-list-item-avatar v-model="gender" color="grey darken-3" id="avatar">
-                  <v-img v-if="gender == 'MALE'"
+            <v-card-actions>
+              <v-list-item class="grow" v-if="!isHiddenUserName">
+                <v-list-item-avatar
+                  v-model="gender"
+                  color="grey darken-3"
+                  id="avatar"
+                >
+                  <v-img
+                    v-if="item.gender == 'MALE'"
                     class="elevation-6"
                     alt=""
                     src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
                   ></v-img>
-                  <v-img v-if="gender == 'FEMALE'"
+                  <v-img
+                    v-if="item.gender == 'FEMALE'"
                     class="elevation-6"
                     alt=""
                     src="https://avataaars.io/"
                   ></v-img>
                 </v-list-item-avatar>
-                <v-list-item-content> 
-                  <v-list-item-title>{{ userName }}</v-list-item-title>
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.userName }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-card-actions>
@@ -227,14 +229,16 @@ export default {
     likeabilityStatus: null,
     isHiddenCollections: true,
     isHiddenComment: true,
+    isHiddenUserName: true,
     postCollections: [],
     postCollectionId: null,
     allPostComments: [],
     creationDate: "",
     text: "",
     userName: "",
-    gender: "", 
-   }),
+    gender: "",
+    allData: [],
+  }),
   mounted() {
     this.init();
   },
@@ -269,33 +273,40 @@ export default {
         )
         .then((response) => {
           this.allPostComments = response.data;
+          this.getData(response.data);
         })
         .catch(console.log);
     },
-    getUser(user_id)
-    {
-        this.$http
-        .get("http://localhost:8080/find_user_by_id?id=" + user_id)
-        .then((response) => {
-          console.log(response.data);
-          this.userName = response.data.username;
+    getData(items) {
+      for (var i = 0; i < items.length; i++) {
+        this.getItem(items[i]);
+      }
+    },
+    getItem(item){
+      console.log(item);
+       this.$http
+          .get("http://localhost:8080/find_user_by_id?id=" + item.user_id)
+          .then((r) => {
+            this.userName = r.data.username;
+            if (r.data.gender == 0) {
+              this.gender = "MALE";
+            } else if (r.data.gender == 1) {
+              this.gender = "FEMALE";
+            } else {
+              this.gender = "OTHER";
+            }
+            this.allData.push({
+              id: r.data.id,
+              text: item.text,
+              gender: this.gender,
+              userName: this.userName,
+            });
+          })
+          .catch(console.log);
 
-          if (response.data.gender == 0){
-            this.gender = "MALE";
-          }
-          else if (response.data.gender == 1)
-          {
-            this.gender = "FEMALE";
-          }
-          else
-          {
-            this.gender = "OTHER";
-          }
-           console.log(this.gender);
-        })
-        .catch(console.log);
+        this.isHiddenUserName = false;
     },
-     likePost() {
+    likePost() {
       this.$http
         .get(
           "http://localhost:8084/find_all_activities_for_post?id=" +
