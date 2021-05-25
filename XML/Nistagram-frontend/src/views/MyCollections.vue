@@ -61,7 +61,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_post_collections_for_reg?id=" +
+          "http://localhost:8080/api/post/find_all_post_collections_for_reg?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -80,7 +80,7 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8084/post_collection/", {
+        .post("http://localhost:8080/api/post/post_collection/", {
           title: this.title,
           userID: localStorage.getItem("userId"),
         })

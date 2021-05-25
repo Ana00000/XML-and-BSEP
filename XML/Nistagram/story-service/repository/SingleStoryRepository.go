@@ -3,9 +3,9 @@ package repository
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"gorm.io/gorm"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 	"time"
 )
 
@@ -34,7 +34,7 @@ func (repo *SingleStoryRepository) FindByID(ID uuid.UUID) *model.SingleStory {
 		return nil
 	}
 
-	if time.Now().After(story.CreationDate.Add(60 * time.Second)){
+	if time.Now().After(story.CreationDate.Add(24 * time.Hour)){
 		// PASSED TIME SHOULD SET STORY AS EXPIRED
 		//stories[i].IsExpired = true
 		repo.Database.Model(&model.SingleStory{}).Where("id = ?", story.ID).Update("is_expired", true)
@@ -59,7 +59,7 @@ func (repo *SingleStoryRepository) FindAllPublicStoriesNotRegisteredUser(allVali
 	}
 
 	for i:=0; i< len(allPublicStories); i++{
-		if time.Now().After(allPublicStories[i].CreationDate.Add(60 * time.Second)){
+		if time.Now().After(allPublicStories[i].CreationDate.Add(24 * time.Hour)){
 			// PASSED TIME SHOULD SET STORY AS EXPIRED
 			//allPublicStories[i].IsExpired = true
 			repo.Database.Model(&model.SingleStory{}).Where("id = ?", allPublicStories[i].ID).Update("is_expired", true)
@@ -78,7 +78,7 @@ func (repo *SingleStoryRepository) FindAllStoriesForUserNotReg(userId uuid.UUID)
 	repo.Database.Select("*").Where("user_id = ? and is_deleted = ? and is_expired = ? and type = ?", userId, false, false, 2).Find(&stories)
 
 	for i:=0; i< len(stories); i++{
-		if time.Now().After(stories[i].CreationDate.Add(60 * time.Second)){
+		if time.Now().After(stories[i].CreationDate.Add(24 * time.Hour)){
 			// PASSED TIME SHOULD SET STORY AS EXPIRED
 			//stories[i].IsExpired = true
 			repo.Database.Model(&model.SingleStory{}).Where("id = ?", stories[i].ID).Update("is_expired", true)
@@ -100,7 +100,7 @@ func (repo *SingleStoryRepository) FindAllStoriesForUserCloseFriend(userId uuid.
 	repo.Database.Select("*").Where("user_id = ? and is_deleted = ? and is_expired = ?", userId, false, false).Find(&stories)
 
 	for i:=0; i< len(stories); i++{
-		if time.Now().After(stories[i].CreationDate.Add(60 * time.Second)){
+		if time.Now().After(stories[i].CreationDate.Add(24 * time.Hour)){
 			// PASSED TIME SHOULD SET STORY AS EXPIRED
 			//stories[i].IsExpired = true
 			repo.Database.Model(&model.SingleStory{}).Where("id = ?", stories[i].ID).Update("is_expired", true)
@@ -123,7 +123,7 @@ func (repo *SingleStoryRepository) FindAllStoriesForUserPublicAllFriends(userId 
 	repo.Database.Select("*").Where("user_id = ? and is_deleted = ? and is_expired = ?", userId, false, false).Find(&stories)
 
 	for i:=0; i< len(stories); i++{
-		if time.Now().After(stories[i].CreationDate.Add(60 * time.Second)){
+		if time.Now().After(stories[i].CreationDate.Add(24 * time.Hour)){
 			// PASSED TIME SHOULD SET STORY AS EXPIRED
 			//stories[i].IsExpired = true
 			repo.Database.Model(&model.SingleStory{}).Where("id = ?", stories[i].ID).Update("is_expired", true)
@@ -146,7 +146,7 @@ func (repo *SingleStoryRepository) FindAllStoriesForUserPublic(userId uuid.UUID)
 	repo.Database.Select("*").Where("user_id = ? and is_deleted = ? and is_expired = ?", userId, false, false).Find(&stories)
 
 	for i:=0; i< len(stories); i++{
-		if time.Now().After(stories[i].CreationDate.Add(60 * time.Second)){
+		if time.Now().After(stories[i].CreationDate.Add(24 * time.Hour)){
 			// PASSED TIME SHOULD SET STORY AS EXPIRED
 			//stories[i].IsExpired = true
 			repo.Database.Model(&model.SingleStory{}).Where("id = ?", stories[i].ID).Update("is_expired", true)
@@ -176,7 +176,7 @@ func (repo *SingleStoryRepository) FindAllFollowingStories(followings []dto.Clas
 	}
 
 	for i:=0; i< len(allFollowingStories); i++{
-		if time.Now().After(allFollowingStories[i].CreationDate.Add(60 * time.Second)){
+		if time.Now().After(allFollowingStories[i].CreationDate.Add(24 * time.Hour)){
 			// PASSED TIME SHOULD SET STORY AS EXPIRED
 			//allFollowingStories[i].IsExpired = true
 			repo.Database.Model(&model.SingleStory{}).Where("id = ?", allFollowingStories[i].ID).Update("is_expired", true)
@@ -199,7 +199,7 @@ func (repo *SingleStoryRepository) FindAllStoriesForLoggedUser(userId uuid.UUID)
 	repo.Database.Select("*").Where("user_id = ? and is_deleted = ?", userId, false).Find(&stories)
 
 	for i:=0; i< len(stories); i++{
-		if time.Now().After(stories[i].CreationDate.Add(60 * time.Second)){
+		if time.Now().After(stories[i].CreationDate.Add(24 * time.Hour)){
 			// PASSED TIME SHOULD SET STORY AS EXPIRED
 			//stories[i].IsExpired = true
 			repo.Database.Model(&model.SingleStory{}).Where("id = ?", stories[i].ID).Update("is_expired", true)

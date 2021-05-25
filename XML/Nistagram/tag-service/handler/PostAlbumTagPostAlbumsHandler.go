@@ -39,3 +39,37 @@ func (handler *PostAlbumTagPostAlbumsHandler) CreatePostAlbumTagPostAlbums(w htt
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+func (handler *PostAlbumTagPostAlbumsHandler) FindAllTagsForPostAlbumTagPostAlbums(w http.ResponseWriter, r *http.Request) {
+	var postAlbumFullDTO []dto.PostAlbumFullDTO
+	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var tags = handler.Service.FindAllTagsForPostAlbumTagPostAlbums(postAlbumFullDTO)
+
+	tagsForPostsJson, _ := json.Marshal(tags)
+	w.Write(tagsForPostsJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *PostAlbumTagPostAlbumsHandler) FindAllTagsForPostAlbum(w http.ResponseWriter, r *http.Request) {
+	var postAlbumFullDTO dto.PostAlbumFullDTO
+	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var tags = handler.Service.FindAllTagsForPostAlbum(&postAlbumFullDTO)
+
+	tagsForPostsJson, _ := json.Marshal(tags)
+	w.Write(tagsForPostsJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}

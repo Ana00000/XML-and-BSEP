@@ -330,7 +330,7 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8086/story_highlight/", {
+        .post("http://localhost:8080/api/story/story_highlight/", {
           title: this.title,
           userID: localStorage.getItem("userId"),
         })

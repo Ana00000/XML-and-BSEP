@@ -76,7 +76,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8084/find_all_tags_for_public_posts/")
+        .get("http://localhost:8080/api/post/find_all_tags_for_public_posts/")
         .then((resp) => {
           this.tags = resp.data;
           this.tagsCopy = resp.data;

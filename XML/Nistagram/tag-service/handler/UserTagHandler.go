@@ -4,21 +4,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	profileSettingsService "github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
-	userService "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
+	"os"
 )
 
 type UserTagHandler struct {
 	Service *service.UserTagService
 	TagService *service.TagService
 	Validator *validator.Validate
-	ProfileSettingsService *profileSettingsService.ProfileSettingsService
-	ClassicUserService *userService.ClassicUserService
 }
 
 func (handler *UserTagHandler) CreateUserTag(w http.ResponseWriter, r *http.Request) {
@@ -70,6 +67,16 @@ func (handler *UserTagHandler) CreateUserTag(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Content-Type", "application/json")
 }
 
+func getJson(url string, target interface{}) error {
+	r, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	return json.NewDecoder(r.Body).Decode(target)
+}
+
 func (handler *UserTagHandler) FindAllTaggableUsersPost(w http.ResponseWriter, r *http.Request) {
 	var allUserTags []model.UserTag
 	var userAllTags []model.UserTag
@@ -82,11 +89,28 @@ func (handler *UserTagHandler) FindAllTaggableUsersPost(w http.ResponseWriter, r
 		fmt.Println("UserTags: "+userTags.Name+" userId "+userTags.UserId.String())
 		var userId = userTags.UserId
 		fmt.Println("The is user ID: ", userId)
-		var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
+		//var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
+		var userProfileSettings dto.ProfileSettingsDTO
+		reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), userId)
+		err := getJson(reqUrl, &userProfileSettings)
+		if err!=nil{
+			fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
+
 		fmt.Println("ID of userProfileSettings for user "+ userProfileSettings.UserId.String())
 		fmt.Println("User post taggable: ", userProfileSettings.IsPostTaggable)
 		if userProfileSettings.IsPostTaggable {
-			user := handler.ClassicUserService.FindById(userId)
+			//user := handler.ClassicUserService.FindById(userId)
+			var user dto.ClassicUserFullDTO
+			reqUrl := fmt.Sprintf("http://%s:%s/find_classic_user_by_id/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), userId)
+			err := getJson(reqUrl, &user)
+			if err!=nil{
+				fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+				w.WriteHeader(http.StatusExpectationFailed)
+				return
+			}
 			fmt.Println("Username of user ",user.Username)
 			fmt.Println("User is deleted: ", user.IsDeleted)
 			fmt.Println("User is confirmed: ", user.IsConfirmed)
@@ -113,10 +137,26 @@ func (handler *UserTagHandler) FindAllTaggableUsersStory(w http.ResponseWriter, 
 	for _,userTags := range allUserTags {
 		var userId = userTags.UserId
 		fmt.Println("The is user ID: ", userId)
-		var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
+		//var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
+		var userProfileSettings dto.ProfileSettingsDTO
+		reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), userId)
+		err := getJson(reqUrl, &userProfileSettings)
+		if err!=nil{
+			fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
 		fmt.Println("User story taggable: ", userProfileSettings.IsPostTaggable)
 		if userProfileSettings.IsStoryTaggable {
-			user := handler.ClassicUserService.FindById(userId)
+			//user := handler.ClassicUserService.FindById(userId)
+			var user dto.ClassicUserFullDTO
+			reqUrl := fmt.Sprintf("http://%s:%s/find_classic_user_by_id/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), userId)
+			err := getJson(reqUrl, &user)
+			if err!=nil{
+				fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+				w.WriteHeader(http.StatusExpectationFailed)
+				return
+			}
 			if !user.IsDeleted && user.IsConfirmed {
 				userAllTags = append(userAllTags, userTags)
 			}
@@ -138,10 +178,26 @@ func (handler *UserTagHandler) FindAllTaggableUsersComment(w http.ResponseWriter
 	for _,userTags := range allUserTags {
 		var userId = userTags.UserId
 		fmt.Println("The is user ID: ", userId)
-		var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
+		//var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
+		var userProfileSettings dto.ProfileSettingsDTO
+		reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), userId)
+		err := getJson(reqUrl, &userProfileSettings)
+		if err!=nil{
+			fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
 		fmt.Println("User comment taggable: ", userProfileSettings.IsPostTaggable)
 		if userProfileSettings.IsCommentTaggable {
-			user := handler.ClassicUserService.FindById(userId)
+			//user := handler.ClassicUserService.FindById(userId)
+			var user dto.ClassicUserFullDTO
+			reqUrl := fmt.Sprintf("http://%s:%s/find_classic_user_by_id/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), userId)
+			err := getJson(reqUrl, &user)
+			if err!=nil{
+				fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+				w.WriteHeader(http.StatusExpectationFailed)
+				return
+			}
 			if !user.IsDeleted && user.IsConfirmed {
 				userAllTags = append(userAllTags, userTags)
 			}
@@ -154,3 +210,36 @@ func (handler *UserTagHandler) FindAllTaggableUsersComment(w http.ResponseWriter
 	w.Header().Set("Content-Type", "application/json")
 }
 
+func (handler *UserTagHandler) CreateUserTagForRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	var userTagDTO dto.UserTagFullDTO
+	if err := json.NewDecoder(r.Body).Decode(&userTagDTO); err != nil {
+		w.WriteHeader(http.StatusBadRequest) // 400
+		return
+	}
+
+	var userTag = model.UserTag{
+		Tag:    model.Tag{
+			ID:      userTagDTO.ID,
+			Name:    userTagDTO.Name,
+			TagType: model.USER_TAG,
+		},
+		UserId: uuid.UUID{},
+	}
+
+	if err := handler.Service.CreateUserTag(&userTag); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if err := handler.TagService.CreateTag(&userTag.Tag); err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	userAllTagsJson, _ := json.Marshal(userTag)
+	w.Write(userAllTagsJson)
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}

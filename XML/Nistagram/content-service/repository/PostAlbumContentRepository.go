@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"fmt"
-	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"gorm.io/gorm"
 )
 
@@ -23,7 +23,7 @@ func (repo *PostAlbumContentRepository) FindAll() []model.PostAlbumContent {
 	return contents
 }
 
-func (repo *PostAlbumContentRepository) FindAllContentsForPostAlbums(albums []postsModel.PostAlbum) []model.PostAlbumContent {
+func (repo *PostAlbumContentRepository) FindAllContentsForPostAlbums(albums []dto.PostAlbumFullDTO) []model.PostAlbumContent {
 	var contents []model.PostAlbumContent
 	var allContents = repo.FindAll()
 
@@ -39,7 +39,7 @@ func (repo *PostAlbumContentRepository) FindAllContentsForPostAlbums(albums []po
 	return contents
 }
 
-func (repo *PostAlbumContentRepository) FindAllContentsForPostAlbum(album *postsModel.PostAlbum) []model.PostAlbumContent {
+func (repo *PostAlbumContentRepository) FindAllContentsForPostAlbum(album *dto.PostAlbumFullDTO) []model.PostAlbumContent {
 	var contents []model.PostAlbumContent
 	var allContents = repo.FindAll()
 

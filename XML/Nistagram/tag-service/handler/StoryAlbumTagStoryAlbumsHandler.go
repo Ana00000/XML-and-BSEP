@@ -39,3 +39,37 @@ func (handler *StoryAlbumTagStoryAlbumsHandler) CreateStoryAlbumTagStoryAlbums(w
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+func (handler *StoryAlbumTagStoryAlbumsHandler) FindAllTagsForStoryAlbumTagStoryAlbums(w http.ResponseWriter, r *http.Request) {
+	var storyAlbumFullDTO []dto.StoryAlbumFullDTO
+	err := json.NewDecoder(r.Body).Decode(&storyAlbumFullDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var tags = handler.Service.FindAllTagsForStoryAlbumTagStoryAlbums(storyAlbumFullDTO)
+
+	tagsForPostsJson, _ := json.Marshal(tags)
+	w.Write(tagsForPostsJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *StoryAlbumTagStoryAlbumsHandler) FindAllTagsForStoryAlbum(w http.ResponseWriter, r *http.Request) {
+	var storyAlbumFullDTO dto.StoryAlbumFullDTO
+	err := json.NewDecoder(r.Body).Decode(&storyAlbumFullDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var tags = handler.Service.FindAllTagsForStoryAlbum(&storyAlbumFullDTO)
+
+	tagsForPostsJson, _ := json.Marshal(tags)
+	w.Write(tagsForPostsJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}

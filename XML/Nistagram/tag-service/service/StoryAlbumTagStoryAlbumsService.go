@@ -1,9 +1,9 @@
 package service
 
 import (
-	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 )
 
 type StoryAlbumTagStoryAlbumsService struct {
@@ -18,7 +18,7 @@ func (service * StoryAlbumTagStoryAlbumsService) CreateStoryAlbumTagStoryAlbums(
 	return nil
 }
 
-func (service *StoryAlbumTagStoryAlbumsService) FindAllTagsForStoryAlbumTagStoryAlbums(albums []storyModel.StoryAlbum) []model.StoryAlbumTagStoryAlbums {
+func (service *StoryAlbumTagStoryAlbumsService) FindAllTagsForStoryAlbumTagStoryAlbums(albums []dto.StoryAlbumFullDTO) []model.StoryAlbumTagStoryAlbums {
 	tags := service.Repo.FindAllTagsForStoryAlbumTagStoryAlbums(albums)
 	if tags != nil {
 		return tags
@@ -26,7 +26,7 @@ func (service *StoryAlbumTagStoryAlbumsService) FindAllTagsForStoryAlbumTagStory
 	return nil
 }
 
-func (service *StoryAlbumTagStoryAlbumsService) FindAllTagsForStoryAlbum(album *storyModel.StoryAlbum) []model.StoryAlbumTagStoryAlbums {
+func (service *StoryAlbumTagStoryAlbumsService) FindAllTagsForStoryAlbum(album *dto.StoryAlbumFullDTO) []model.StoryAlbumTagStoryAlbums {
 	tags := service.Repo.FindAllTagsForStoryAlbum(album)
 	if tags != nil {
 		return tags

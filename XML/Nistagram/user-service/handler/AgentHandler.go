@@ -1,17 +1,17 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	tagModel "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
-	tagSerivce "github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/util"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
+	"os"
 	_ "strconv"
 	"time"
 )
@@ -22,8 +22,6 @@ type AgentHandler struct {
 	ClassicUserService *service.ClassicUserService
 	Validator          *validator.Validate
 	PasswordUtil       *util.PasswordUtil
-	UserTagService     *tagSerivce.UserTagService
-	TagService         *tagSerivce.TagService
 }
 
 func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request) {
@@ -111,25 +109,21 @@ func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	tagId := uuid.New()
-	userTag := tagModel.UserTag{
-		Tag : tagModel.Tag{
-			ID: tagId,
-			Name: agent.Username,
-			TagType: tagModel.USER_TAG,
-		},
+	tagId:=uuid.New()
+	var userTag = dto.UserTagFullDTO{
+		ID:     tagId,
+		Name:   agent.Username,
 		UserId: agentId,
 	}
 
-	if err := handler.UserTagService.CreateUserTag(&userTag); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusExpectationFailed)
-		return
-	}
-
-	if err := handler.TagService.CreateTag(&userTag.Tag); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusExpectationFailed)
+	reqUrl := fmt.Sprintf("http://%s:%s/create_user_tag_for_registered_user/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
+	jsonOrders, _ := json.Marshal(userTag)
+	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	fmt.Println(string(jsonOrders))
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonOrders))
+	if err != nil || resp.StatusCode == 404 {
+		print("Failed creating profile settings for user")
+		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 

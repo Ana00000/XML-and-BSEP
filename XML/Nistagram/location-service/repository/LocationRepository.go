@@ -131,7 +131,7 @@ func (repo *LocationRepository) FindLocationIdByLocationString(locationString st
 
 }
 
-func (repo *LocationRepository) FindAllLocationsForPostAlbums(albums []postsModel.PostAlbum) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForPostAlbums(albums []dto.PostAlbumFullDTO) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 
@@ -146,7 +146,7 @@ func (repo *LocationRepository) FindAllLocationsForPostAlbums(albums []postsMode
 	return locations
 }
 
-func (repo *LocationRepository) FindAllLocationsForPostAlbum(album *postsModel.PostAlbum) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForPostAlbum(album *dto.PostAlbumFullDTO) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 
@@ -159,7 +159,7 @@ func (repo *LocationRepository) FindAllLocationsForPostAlbum(album *postsModel.P
 	return locations
 }
 
-func (repo *LocationRepository) FindAllLocationsForStoryAlbums(albums []storyModel.StoryAlbum) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForStoryAlbums(albums []dto.StoryAlbumFullDTO) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 
@@ -174,7 +174,7 @@ func (repo *LocationRepository) FindAllLocationsForStoryAlbums(albums []storyMod
 	return locations
 }
 
-func (repo *LocationRepository) FindAllLocationsForStoryAlbum(album *storyModel.StoryAlbum) []model.Location {
+func (repo *LocationRepository) FindAllLocationsForStoryAlbum(album *dto.StoryAlbumFullDTO) []model.Location {
 	var locations []model.Location
 	var allLocations = repo.FindAll()
 

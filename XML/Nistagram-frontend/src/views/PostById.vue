@@ -247,7 +247,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_post_collections_for_reg?id=" +
+          "http://localhost:8080/api/post/find_all_post_collections_for_reg?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -257,7 +257,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8084/find_selected_post_for_logged_user?id=" +
+          "http://localhost:8080/api/post/find_selected_post_for_logged_user?id=" +
             localStorage.getItem("selectedPostId") +
             "&logId=" +
             localStorage.getItem("selectedUserId")
@@ -269,10 +269,11 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8084/find_all_comments_for_post?id=" +
+          "http://localhost:8080/api/post/find_all_comments_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
+          console.log(response)
           this.allPostComments = response.data;
           this.getData(response.data);
         })
@@ -286,7 +287,7 @@ export default {
     getItem(item){
       console.log(item);
        this.$http
-          .get("http://localhost:8080/find_user_by_id?id=" + item.user_id)
+          .get("http://localhost:8080/api/user/find_user_by_id?id=" + item.user_id)
           .then((r) => {
             this.userName = r.data.username;
             if (r.data.gender == 0) {
@@ -310,7 +311,7 @@ export default {
     likePost() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_activities_for_post?id=" +
+          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -333,7 +334,7 @@ export default {
             ) {
               this.likeActivityId = this.activities[i].id;
               this.$http
-                .post("http://localhost:8084/update_activity/", {
+                .post("http://localhost:8080/api/post/update_activity/", {
                   id: this.likeActivityId,
                   likedStatus: 0,
                   IsFavorite: false,
@@ -352,7 +353,7 @@ export default {
           }
 
           this.$http
-            .post("http://localhost:8084/activity/", {
+            .post("http://localhost:8080/api/post/activity/", {
               postID: localStorage.getItem("selectedPostId"),
               userID: localStorage.getItem("selectedUserId"),
               likedStatus: 0,
@@ -373,7 +374,7 @@ export default {
     dislikePost() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_activities_for_post?id=" +
+          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -396,7 +397,7 @@ export default {
             ) {
               this.dislikeActivityId = this.activities[i].id;
               this.$http
-                .post("http://localhost:8084/update_activity/", {
+                .post("http://localhost:8080/api/post/update_activity/", {
                   id: this.dislikeActivityId,
                   likedStatus: 1,
                   IsFavorite: false,
@@ -415,7 +416,7 @@ export default {
           }
 
           this.$http
-            .post("http://localhost:8084/activity/", {
+            .post("http://localhost:8080/api/post/activity/", {
               postID: localStorage.getItem("selectedPostId"),
               userID: localStorage.getItem("selectedUserId"),
               likedStatus: 1,
@@ -436,7 +437,7 @@ export default {
     favoritePost() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_activities_for_post?id=" +
+          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -463,7 +464,7 @@ export default {
               this.favoriteActivityId = this.activities[i].id;
               this.likeabilityStatus = this.activities[i].liked_status;
               this.$http
-                .post("http://localhost:8084/update_activity/", {
+                .post("http://localhost:8080/api/post/update_activity/", {
                   id: this.favoriteActivityId,
                   likedStatus: this.likeabilityStatus,
                   IsFavorite: true,
@@ -485,7 +486,7 @@ export default {
           }
 
           this.$http
-            .post("http://localhost:8084/activity/", {
+            .post("http://localhost:8080/api/post/activity/", {
               postID: localStorage.getItem("selectedPostId"),
               userID: localStorage.getItem("selectedUserId"),
               likedStatus: this.likeabilityStatus,
@@ -508,7 +509,7 @@ export default {
     removeFavorite() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_activities_for_post?id=" +
+          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -535,7 +536,7 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8084/update_activity/", {
+        .post("http://localhost:8080/api/post/update_activity/", {
           id: this.favoriteActivityId,
           likedStatus: this.likeabilityStatus,
           IsFavorite: false,
@@ -553,7 +554,7 @@ export default {
     removeLike() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_activities_for_post?id=" +
+          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -585,7 +586,7 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8084/update_activity/", {
+        .post("http://localhost:8080/api/post/update_activity/", {
           id: this.likeActivityId,
           likedStatus: 2,
           IsFavorite: false,
@@ -602,7 +603,7 @@ export default {
     removeDislike() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_activities_for_post?id=" +
+          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -634,7 +635,7 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8084/update_activity/", {
+        .post("http://localhost:8080/api/post/update_activity/", {
           id: this.dislikeActivityId,
           likedStatus: 2,
           IsFavorite: false,
@@ -659,7 +660,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8084/find_all_post_collection_posts_for_post?id=" +
+          "http://localhost:8080/api/post/find_all_post_collection_posts_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -670,7 +671,7 @@ export default {
             }
           }
           this.$http
-            .post("http://localhost:8084/post_collection_posts/", {
+            .post("http://localhost:8080/api/post/post_collection_posts/", {
               post_collection_id: this.postCollectionId,
               single_post_id: localStorage.getItem("selectedPostId"),
             })
@@ -694,11 +695,18 @@ export default {
       var date = currentDate.toISOString();
       console.log(date);
 
-      this.$http.post("http://localhost:8084/comment/", {
+      this.$http.post("http://localhost:8080/api/post/comment/", {
         creation_date: date,
         user_id: localStorage.getItem("userId"),
         post_id: this.post.post_id,
         text: this.text,
+      }).then((response) => {
+        console.log(response.data);
+        alert("Successfully created comment.");
+        window.location.href = "http://localhost:8081/postById"
+      })
+      .catch((er) => {
+        console.log(er.response.data);
       });
       this.text = "";
       this.isHiddenComment = true;

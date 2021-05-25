@@ -120,13 +120,11 @@ func initTagHandler(service *service.TagService, validator *validator.Validate) 
 	}
 }
 
-func initUserTagHandler(service *service.UserTagService, tagService * service.TagService, validator *validator.Validate, profileSettingsService *profileSettingsService.ProfileSettingsService, classicUserService *classicUserService.ClassicUserService) *handler.UserTagHandler{
+func initUserTagHandler(service *service.UserTagService, tagService * service.TagService, validator *validator.Validate) *handler.UserTagHandler{
 	return &handler.UserTagHandler {
 		Service: service,
 		TagService: tagService,
 		Validator: validator,
-		ProfileSettingsService: profileSettingsService,
-		ClassicUserService: classicUserService,
 	}
 }
 
@@ -167,6 +165,7 @@ func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagH
 	router.HandleFunc("/tag/", handlerTag.CreateTag).Methods("POST")
 	router.HandleFunc("/get_tag_name_by_id/{id}", handlerTag.FindTagNameById).Methods("GET")
 	router.HandleFunc("/user_tag/", handlerUserTag.CreateUserTag).Methods("POST")
+	router.HandleFunc("/create_user_tag_for_registered_user/", handlerUserTag.CreateUserTagForRegisteredUser).Methods("POST")
 	router.HandleFunc("/find_all_taggable_users_post/", handlerUserTag.FindAllTaggableUsersPost).Methods("GET")
 	router.HandleFunc("/find_all_taggable_users_story/", handlerUserTag.FindAllTaggableUsersStory).Methods("GET")
 	router.HandleFunc("/find_all_taggable_users_comment/", handlerUserTag.FindAllTaggableUsersComment).Methods("GET")
@@ -175,6 +174,8 @@ func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagH
 	router.HandleFunc("/story_tag_stories/", handlerStoryTagStories.CreateStoryTagStories).Methods("POST")
 	router.HandleFunc("/post_album_tag_post_albums/", handlerPostAlbumTagPostAlbums.CreatePostAlbumTagPostAlbums).Methods("POST")
 	router.HandleFunc("/story_album_tag_story_albums/", handlerStoryAlbumTagStoryAlbums.CreateStoryAlbumTagStoryAlbums).Methods("POST")
+
+	router.HandleFunc("/get_tag_by_name/{name}", handlerTag.FindTagByName).Methods("GET")
 
 	router.HandleFunc("/find_tag_id", handlerTag.FindTagForId).Methods("GET")
 	router.HandleFunc("/find_story_tag_stories_for_story_id", handlerStoryTagStories.FindStoryTagStoriesForStoryId).Methods("GET")
@@ -185,6 +186,15 @@ func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagH
 	router.HandleFunc("/find_all_tags_for_posts/", handlerPostTagPosts.FindAllTagsForPosts).Methods("POST")
 	router.HandleFunc("/find_all_tags_for_post/", handlerPostTagPosts.FindAllTagsForPost).Methods("POST")
 
+	router.HandleFunc("/find_all_tags_for_post_tag_posts/", handlerPostTagPosts.FindAllTagsForPostsTagPosts).Methods("POST")
+
+	router.HandleFunc("/find_all_tags_for_post_album_tag_post_albums/", handlerPostAlbumTagPostAlbums.FindAllTagsForPostAlbumTagPostAlbums).Methods("POST")
+	router.HandleFunc("/find_all_tags_for_post_album/", handlerPostAlbumTagPostAlbums.FindAllTagsForPostAlbum).Methods("POST")
+	//FindPostIdsByTagId
+	router.HandleFunc("/find_post_ids_by_tag_id/{tagID}", handlerPostTagPosts.FindPostIdsByTagId).Methods("GET")
+
+	router.HandleFunc("/find_all_tags_for_story_album_tag_story_albums/",handlerStoryAlbumTagStoryAlbums.FindAllTagsForStoryAlbumTagStoryAlbums).Methods("POST")
+	router.HandleFunc("/find_all_tags_for_story_album/", handlerStoryAlbumTagStoryAlbums.FindAllTagsForStoryAlbum).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
@@ -197,15 +207,9 @@ func main() {
 	serviceTag := initTagServices(repoTag)
 	handlerTag := initTagHandler(serviceTag, validator)
 
-	repoProfileSettings := initProfileSettingsRepo(database)
-	settingsService := initProfileSettingsService(repoProfileSettings)
-
-	repoClassicUser := initClassicUserRepo(database)
-	serviceClassicUser := initClassicUserService(repoClassicUser)
-
 	repoUserTag := initUserTagRepo(database)
 	serviceUserTag := initUserTagServices(repoUserTag)
-	handlerUserTag := initUserTagHandler(serviceUserTag, serviceTag, validator, settingsService, serviceClassicUser)
+	handlerUserTag := initUserTagHandler(serviceUserTag, serviceTag, validator)
 
 	repoPostTagPosts := initPostTagPostsRepo(database)
 	servicePostTagPosts := initPostTagPostsServices(repoPostTagPosts)

@@ -95,8 +95,8 @@ func initStoryHandler(service *service.StoryService) *handler.StoryHandler{
 	return &handler.StoryHandler { Service: service }
 }
 
-func initStoryAlbumHandler(service *service.StoryAlbumService, storyService *service.StoryService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, storyAlbumContentService *contentService.StoryAlbumContentService,locationService *locationService.LocationService, storyAlbumTagStoryAlbumsService *tagsService.StoryAlbumTagStoryAlbumsService,tagService *tagsService.TagService, classicUserCloseFriendsService *userService.ClassicUserCloseFriendsService) *handler.StoryAlbumHandler{
-	return &handler.StoryAlbumHandler{ Service: service, StoryService: storyService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings, StoryAlbumContentService: storyAlbumContentService, LocationService: locationService, StoryAlbumTagStoryAlbumsService: storyAlbumTagStoryAlbumsService, TagService: tagService, ClassicUserCloseFriendsService:  classicUserCloseFriendsService}
+func initStoryAlbumHandler(service *service.StoryAlbumService, storyService *service.StoryService) *handler.StoryAlbumHandler{
+	return &handler.StoryAlbumHandler{ Service: service, StoryService: storyService}
 }
 
 func initSingleStoryHandler(singleStoryService *service.SingleStoryService, storyService *service.StoryService) *handler.SingleStoryHandler{
@@ -164,14 +164,8 @@ func main() {
 	handlerStory := initStoryHandler(serviceStory)
 
 	repoStoryAlbum := initStoryAlbumRepo(database)
-	repoStoryAlbumContent := initStoryAlbumContentRepo(database)
-	repoStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsRepo(database)
-	repoClassicUserCloseFriends := initClassicUserCloseFriendsRepo(database)
 	serviceStoryAlbum := initStoryAlbumServices(repoStoryAlbum)
-	serviceStoryAlbumContent := initStoryAlbumContentService(repoStoryAlbumContent)
-	serviceStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsService(repoStoryAlbumTagStoryAlbums)
-	serviceClassicUserCloseFriends := initClassicUserCloseFriendsService(repoClassicUserCloseFriends)
-	handlerStoryAlbum := initStoryAlbumHandler(serviceStoryAlbum, serviceStory, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, serviceStoryAlbumContent, serviceLocation, serviceStoryAlbumTagStoryAlbums, serviceTag, serviceClassicUserCloseFriends)
+	handlerStoryAlbum := initStoryAlbumHandler(serviceStoryAlbum, serviceStory)
 
 	repoSingleStory := initSingleStoryRepo(database)
 	serviceSingleStory := initSingleStoryServices(repoSingleStory)

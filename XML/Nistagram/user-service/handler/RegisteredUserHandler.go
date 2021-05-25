@@ -24,8 +24,6 @@ type RegisteredUserHandler struct {
 	ConfirmationTokenService * service.ConfirmationTokenService
 	Validator                *validator.Validate
 	PasswordUtil             *util.PasswordUtil
-	UserTagService           *tagSerivce.UserTagService
-	TagService               *tagSerivce.TagService
 }
 
 func SendConfirmationMail(user model.User, token uuid.UUID) {
@@ -143,29 +141,23 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	///////////////////////////////    IZMJENITI     /////////////////////////////////////////
-	tagId := uuid.New()
-	userTag := tagModel.UserTag{
-		Tag : tagModel.Tag{
-			ID: tagId,
-			Name: registeredUser.Username,
-			TagType: tagModel.USER_TAG,
-		},
+	tagId:=uuid.New()
+	var userTag = dto.UserTagFullDTO{
+		ID:     tagId,
+		Name:   registeredUser.Username,
 		UserId: userId,
 	}
 
-	if err := handler.UserTagService.CreateUserTag(&userTag); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusExpectationFailed)
+	reqUrl := fmt.Sprintf("http://%s:%s/create_user_tag_for_registered_user/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
+	jsonOrders, _ := json.Marshal(userTag)
+	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	fmt.Println(string(jsonOrders))
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonOrders))
+	if err != nil || resp.StatusCode == 404 {
+		print("Failed creating profile settings for user")
+		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
-
-	if err := handler.TagService.CreateTag(&userTag.Tag); err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusExpectationFailed)
-		return
-	}
-	////////////////////// DO OVDJE /////////////////////////
 
 	
 	fmt.Println(registeredUser.ClassicUser.User.ID)
@@ -186,19 +178,15 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 
 	SendConfirmationMail(registeredUser.ClassicUser.User, confirmationToken.ConfirmationToken)
 
-	reqUrl := fmt.Sprintf("http://%s:%s/profile_settings/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), userId)
-	jsonOrders, _ := json.Marshal(nil)
+
+	reqUrl = fmt.Sprintf("http://%s:%s/profile_settings/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), userId)
+	jsonOrders, _ = json.Marshal(nil)
 	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	fmt.Println(string(jsonOrders))
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonOrders))
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonOrders))
 	if err != nil || resp.StatusCode == 404 {
 		print("Failed creating profile settings for user")
 		w.WriteHeader(http.StatusFailedDependency)
-		return
-	}
-	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 

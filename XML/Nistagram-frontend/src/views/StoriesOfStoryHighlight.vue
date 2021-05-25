@@ -22,7 +22,7 @@
               <v-list-item-content>
                 <video width="320" height="240" controls>
                   <source
-                    :src="require(`../../../Media/${item.path}`)"
+                    :src="require(`/app/public/uploads/${item.path}`)"
                     type="video/mp4"
                   />
                 </video>
@@ -32,7 +32,7 @@
             <v-list-item three-line v-if="item.type != 'VIDEO'">
               <v-list-item-content>
                 <img
-                  :src="require(`../../../Media/${item.path}`)"
+                  :src="require(`/app/public/uploads/${item.path}`)"
                   alt
                   class="icon"
                   width="320"
@@ -81,7 +81,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8086/find_all_single_story_story_highlights_for_story_highlight?id=" +
+          "http://localhost:8080/api/story/find_all_single_story_story_highlights_for_story_highlight?id=" +
             localStorage.getItem("selectedStoryHighlightId")
         )
         .then((response) => {
@@ -95,7 +95,7 @@ export default {
     getStories() {
       this.$http
         .get(
-          "http://localhost:8086/find_all_stories_for_logged_user?id=" +
+          "http://localhost:8080/api/story/find_all_stories_for_logged_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {

@@ -1,7 +1,7 @@
 package service
 
 import (
-	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
 )
@@ -18,7 +18,7 @@ func (service * PostAlbumTagPostAlbumsService) CreatePostAlbumTagPostAlbums(post
 	return nil
 }
 
-func (service *PostAlbumTagPostAlbumsService) FindAllTagsForPostAlbumTagPostAlbums(albums []postsModel.PostAlbum) []model.PostAlbumTagPostAlbums {
+func (service *PostAlbumTagPostAlbumsService) FindAllTagsForPostAlbumTagPostAlbums(albums []dto.PostAlbumFullDTO) []model.PostAlbumTagPostAlbums {
 	tags := service.Repo.FindAllTagsForPostAlbumTagPostAlbums(albums)
 	if tags != nil {
 		return tags
@@ -26,7 +26,7 @@ func (service *PostAlbumTagPostAlbumsService) FindAllTagsForPostAlbumTagPostAlbu
 	return nil
 }
 
-func (service *PostAlbumTagPostAlbumsService) FindAllTagsForPostAlbum(album *postsModel.PostAlbum) []model.PostAlbumTagPostAlbums {
+func (service *PostAlbumTagPostAlbumsService) FindAllTagsForPostAlbum(album *dto.PostAlbumFullDTO) []model.PostAlbumTagPostAlbums {
 	tags := service.Repo.FindAllTagsForPostAlbum(album)
 	if tags != nil {
 		return tags

@@ -2,9 +2,9 @@ package service
 
 import (
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/repository"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 )
 
 type StoryAlbumService struct {
@@ -32,7 +32,7 @@ func (service *StoryAlbumService) FindByID(ID uuid.UUID) *model.StoryAlbum {
 	return storyAlbum
 }
 
-func (service *StoryAlbumService) FindAllPublicAlbumStoriesNotRegisteredUser(users []userModel.ClassicUser) []model.StoryAlbum {
+func (service *StoryAlbumService) FindAllPublicAlbumStoriesNotRegisteredUser(users []dto.ClassicUserDTO) []model.StoryAlbum {
 	storyAlbums := service.Repo.FindAllPublicAlbumStoriesNotRegisteredUser(users)
 	if storyAlbums != nil {
 		return storyAlbums
@@ -41,7 +41,7 @@ func (service *StoryAlbumService) FindAllPublicAlbumStoriesNotRegisteredUser(use
 }
 
 // FIND ALL NOT DELETED VALID STORY ALBUMS THAT LOGGED IN USER FOLLOWS
-func (service *StoryAlbumService) FindAllFollowingStoryAlbums(followings []userModel.ClassicUserFollowings) []model.StoryAlbum {
+func (service *StoryAlbumService) FindAllFollowingStoryAlbums(followings []dto.ClassicUserFollowingsDTO) []model.StoryAlbum {
 	storyAlbums := service.Repo.FindAllFollowingStoryAlbums(followings)
 	if storyAlbums != nil {
 		return storyAlbums

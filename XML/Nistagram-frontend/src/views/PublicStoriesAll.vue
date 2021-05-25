@@ -132,7 +132,7 @@ export default {
     getStoryAlbums() {
       this.$http
         .get(
-          "http://localhost:8086/find_all_public_album_stories_reg?id=" +
+          "http://localhost:8080/api/story/find_all_public_album_stories_reg?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {

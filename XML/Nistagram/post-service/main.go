@@ -112,8 +112,8 @@ func initPostHandler(postService *service.PostService) *handler.PostHandler{
 	return &handler.PostHandler{ PostService: postService}
 }
 
-func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService,classicUserService * userService.ClassicUserService, classicUserFollowingsService * userService.ClassicUserFollowingsService, profileSettings *settingsService.ProfileSettingsService, postAlbumContentService *contentService.PostAlbumContentService,locationService *locationService.LocationService, postAlbumTagPostAlbumsService *tagsService.PostAlbumTagPostAlbumsService,tagService *tagsService.TagService) *handler.PostAlbumHandler{
-	return &handler.PostAlbumHandler{ Service: service, PostService: postService, ClassicUserService: classicUserService, ClassicUserFollowingsService: classicUserFollowingsService, ProfileSettings: profileSettings, PostAlbumContentService: postAlbumContentService, LocationService: locationService, PostAlbumTagPostAlbumsService: postAlbumTagPostAlbumsService, TagService: tagService }
+func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
+	return &handler.PostAlbumHandler{ Service: service, PostService: postService}
 }
 
 func initPostCollectionHandler(service *service.PostCollectionService) *handler.PostCollectionHandler{
@@ -233,7 +233,7 @@ func main() {
 	handlerActivity := initActivityHandler(serviceActivity)
 	handlerComment := initCommentHandler(serviceComment, validator)
 	handlerPost := initPostHandler(servicePost)
-	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost, serviceClassicUser, serviceClassicUserFollowings, serviceProfileSettings, servicePostAlbumContent, serviceLocation, servicePostAlbumTagPostAlbums, serviceTag)
+	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
 	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
 	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost)
 

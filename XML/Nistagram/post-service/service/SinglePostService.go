@@ -2,9 +2,9 @@ package service
 
 import (
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 )
 
 type SinglePostService struct {
@@ -56,7 +56,7 @@ func (service *SinglePostService) FindAllPostsByIds(postsIds []uuid.UUID) []mode
 	return nil
 }
 
-func (service *SinglePostService) FindAllPublicPostsByIds(postsIds []uuid.UUID, allValidUsers []userModel.ClassicUser) []model.SinglePost {
+func (service *SinglePostService) FindAllPublicPostsByIds(postsIds []uuid.UUID, allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
 	posts := service.Repo.FindAllPublicPostsByIds(postsIds,allValidUsers)
 	if posts != nil {
 		return posts
@@ -72,7 +72,7 @@ func (service *SinglePostService) FindAllPostIdsWithLocationId(locationId uuid.U
 	return nil
 }
 
-func (service *SinglePostService) FindAllPublicAndFriendsPosts(postsList []model.SinglePost, alValidUsers []userModel.ClassicUser) []model.SinglePost {
+func (service *SinglePostService) FindAllPublicAndFriendsPosts(postsList []model.SinglePost, alValidUsers []dto.ClassicUserDTO) []model.SinglePost {
 	posts := service.Repo.FindAllPublicAndFriendsPosts(postsList, alValidUsers)
 	if posts != nil {
 		return posts
@@ -80,7 +80,7 @@ func (service *SinglePostService) FindAllPublicAndFriendsPosts(postsList []model
 	return nil
 }
 
-func (service *SinglePostService) FindAllPostsForUsers(users []userModel.ClassicUser) []model.SinglePost {
+func (service *SinglePostService) FindAllPostsForUsers(users []dto.ClassicUserDTO) []model.SinglePost {
 	posts := service.Repo.FindAllPostsForUsers(users)
 	if posts != nil {
 		return posts

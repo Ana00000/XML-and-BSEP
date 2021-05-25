@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 )
 
 type PostAlbumService struct {
@@ -32,7 +32,7 @@ func (service *PostAlbumService) FindByID(ID uuid.UUID) *model.PostAlbum {
 	return postAlbum
 }
 
-func (service *PostAlbumService) FindAllPublicAndFriendsPostAlbumsValid(allValidUsers []userModel.ClassicUser) []model.PostAlbum {
+func (service *PostAlbumService) FindAllPublicAndFriendsPostAlbumsValid(allValidUsers []dto.ClassicUserDTO) []model.PostAlbum {
 	postAlbums := service.Repo.FindAllPublicAndFriendsPostAlbumsValid(allValidUsers)
 	if postAlbums != nil {
 		return postAlbums
@@ -40,7 +40,7 @@ func (service *PostAlbumService) FindAllPublicAndFriendsPostAlbumsValid(allValid
 	return nil
 }
 
-func (service *PostAlbumService) FindAllFollowingPostAlbums(followings []userModel.ClassicUserFollowings) []model.PostAlbum {
+func (service *PostAlbumService) FindAllFollowingPostAlbums(followings []dto.ClassicUserFollowingsFullDTO) []model.PostAlbum {
 	postAlbums := service.Repo.FindAllFollowingPostAlbums(followings)
 	if postAlbums != nil {
 		return postAlbums

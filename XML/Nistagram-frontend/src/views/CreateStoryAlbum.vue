@@ -310,7 +310,7 @@ export default {
      init() {
       this.userId = localStorage.getItem("userId");
       this.$http
-        .get("http://localhost:8082/find_all_taggable_users_story/")
+        .get("http://localhost:8080/api/tag/find_all_taggable_users_story/")
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
             if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
@@ -530,7 +530,7 @@ export default {
       } else {
         if (!this.validTag()) return;
         this.$http
-          .post("http://localhost:8082/tag/", {
+          .post("http://localhost:8080/api/tag/tag/", {
             name: this.tagName,
             tag_type: this.selectedTagType,
           })

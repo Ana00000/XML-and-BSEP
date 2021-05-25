@@ -86,12 +86,13 @@ func (repo *SinglePostRepository) FindAllPostsByIds(postsIds []uuid.UUID) []mode
 }
 
 //FindAllPublicPostsByIds
-func (repo *SinglePostRepository) FindAllPublicPostsByIds(postsIds []uuid.UUID, allValidUsers []userModel.ClassicUser) []model.SinglePost {
+func (repo *SinglePostRepository) FindAllPublicPostsByIds(postsIds []uuid.UUID, allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
 	var allPosts = repo.FindAllPublicAndFriendsPostsValid(allValidUsers)
 	var allTagPosts []model.SinglePost
 
 	for i:=0; i<len(allPosts);i++{
 		for j:=0;j<len(postsIds);j++{
+			fmt.Println("REPO REPO REPO REPO REPO")
 			if allPosts[i].ID == postsIds[j] && allPosts[i].IsDeleted == false{
 				allTagPosts = append(allTagPosts, allPosts[i])
 			}
@@ -117,7 +118,7 @@ func (repo *SinglePostRepository) FindAllPostIdsWithLocationId(locationId uuid.U
 
 //FindAllPublicAndFriendsPostsByIds
 //FindAllPublicPosts
-func (repo *SinglePostRepository) FindAllPublicAndFriendsPosts(posts []model.SinglePost, allValidUsers []userModel.ClassicUser) []model.SinglePost {
+func (repo *SinglePostRepository) FindAllPublicAndFriendsPosts(posts []model.SinglePost, allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
 	var allPosts = repo.FindAllPublicAndFriendsPostsValid(allValidUsers)
 	var allPublicPostsForList []model.SinglePost
 
@@ -132,7 +133,7 @@ func (repo *SinglePostRepository) FindAllPublicAndFriendsPosts(posts []model.Sin
 	return allPublicPostsForList
 }
 
-func (repo *SinglePostRepository) FindAllPostsForUsers(users []userModel.ClassicUser) []model.SinglePost {
+func (repo *SinglePostRepository) FindAllPostsForUsers(users []dto.ClassicUserDTO) []model.SinglePost {
 	var allPosts = repo.FindAllPosts()
 	var allFollowingPosts []model.SinglePost
 
@@ -145,7 +146,7 @@ func (repo *SinglePostRepository) FindAllPostsForUsers(users []userModel.Classic
 	return allFollowingPosts
 }
 
-func NotDeletedPostBelongUsers(post model.SinglePost,users []userModel.ClassicUser) bool{
+func NotDeletedPostBelongUsers(post model.SinglePost,users []dto.ClassicUserDTO) bool{
 	for i := 0; i < len(users); i++{
 		if (post.UserID == users[i].ID) && (!post.IsDeleted){
 			return true

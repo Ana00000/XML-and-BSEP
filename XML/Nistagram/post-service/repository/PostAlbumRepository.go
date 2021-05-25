@@ -1,10 +1,10 @@
 package repository
 
 import (
-	"github.com/google/uuid"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"fmt"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"gorm.io/gorm"
 )
 
@@ -38,7 +38,7 @@ func (repo *PostAlbumRepository) FindAllPostAlbums() []model.PostAlbum {
 	return postAlbums
 }
 
-func (repo *PostAlbumRepository) FindAllPublicAndFriendsPostAlbumsValid(allValidUsers []userModel.ClassicUser) []model.PostAlbum {
+func (repo *PostAlbumRepository) FindAllPublicAndFriendsPostAlbumsValid(allValidUsers []dto.ClassicUserDTO) []model.PostAlbum {
 	var allPostAlbums = repo.FindAllPostAlbums()
 	var allPublicPostAlbums []model.PostAlbum
 
@@ -54,7 +54,7 @@ func (repo *PostAlbumRepository) FindAllPublicAndFriendsPostAlbumsValid(allValid
 }
 
 // FIND ALL NOT DELETED VALID POST ALBUMS THAT LOGGED IN USER FOLLOWS
-func (repo *PostAlbumRepository) FindAllFollowingPostAlbums(followings []userModel.ClassicUserFollowings) []model.PostAlbum {
+func (repo *PostAlbumRepository) FindAllFollowingPostAlbums(followings []dto.ClassicUserFollowingsFullDTO) []model.PostAlbum {
 	var allPostAlbums = repo.FindAllPostAlbums()
 	var allFollowingPostAlbums []model.PostAlbum
 

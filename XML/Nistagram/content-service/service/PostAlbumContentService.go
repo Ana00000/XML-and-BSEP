@@ -1,9 +1,9 @@
 package service
 
 import (
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/repository"
-	postsModel "github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 )
 
 type PostAlbumContentService struct {
@@ -18,7 +18,7 @@ func (service * PostAlbumContentService) CreatePostAlbumContent(postAlbumContent
 	return nil
 }
 
-func (service *PostAlbumContentService) FindAllContentsForPostAlbums(allPostAlbums []postsModel.PostAlbum) []model.PostAlbumContent {
+func (service *PostAlbumContentService) FindAllContentsForPostAlbums(allPostAlbums []dto.PostAlbumFullDTO) []model.PostAlbumContent {
 	postAlbums := service.Repo.FindAllContentsForPostAlbums(allPostAlbums)
 	if postAlbums != nil {
 		return postAlbums
@@ -26,7 +26,7 @@ func (service *PostAlbumContentService) FindAllContentsForPostAlbums(allPostAlbu
 	return nil
 }
 
-func (service *PostAlbumContentService) FindAllContentsForPostAlbum(album *postsModel.PostAlbum) []model.PostAlbumContent {
+func (service *PostAlbumContentService) FindAllContentsForPostAlbum(album *dto.PostAlbumFullDTO) []model.PostAlbumContent {
 	contents := service.Repo.FindAllContentsForPostAlbum(album)
 	if contents != nil {
 		return contents

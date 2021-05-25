@@ -59,6 +59,7 @@ func (handler *CommentHandler) FindAllCommentsForPost(w http.ResponseWriter, r *
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(commentsJson)
+		return
 	}
 	w.WriteHeader(http.StatusBadRequest)
 }

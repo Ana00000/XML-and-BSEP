@@ -25,9 +25,9 @@ type ReturnValueString struct {
 func (handler *TagHandler) FindTagNameById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	
+	fmt.Println("Dobijeni ID : "+id)
 	var tagName = handler.Service.FindTagNameById(uuid.MustParse(id))
-
+	fmt.Println("Dobijeni name : "+tagName)
 	returnValue := ReturnValueString{ReturnValue: tagName}
 
 	returnValueJson, _ := json.Marshal(returnValue)
@@ -100,6 +100,31 @@ func (handler *TagHandler) FindTagForId(w http.ResponseWriter, r *http.Request) 
 
 	tag := handler.Service.FindTagForId(uuid.MustParse(id))
 	tagJson, _ := json.Marshal(tag)
+	if tagJson != nil {
+		w.WriteHeader(http.StatusCreated)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(tagJson)
+	}
+	w.WriteHeader(http.StatusBadRequest)
+}
+
+func (handler *TagHandler) FindTagByName(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	name := vars["name"]
+
+	tag := handler.Service.FindTagByName(name)
+	tagType :=""
+	if tag.TagType==model.USER_TAG{
+		tagType="USER_TAG"
+	} else if tag.TagType==model.HASH_TAG{
+		tagType="HASH_TAG"
+	}
+	tagDTO := dto.TagFullDTO{
+		ID:      tag.ID,
+		Name:    tag.Name,
+		TagType: tagType,
+	}
+	tagJson, _ := json.Marshal(tagDTO)
 	if tagJson != nil {
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")

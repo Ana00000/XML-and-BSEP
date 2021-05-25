@@ -60,24 +60,6 @@ func initPasswordUtil() *util.PasswordUtil{
 	return &util.PasswordUtil { }
 }
 
-//USER-TAG
-func initUserTagRepo(database *gorm.DB) *tagRepository.UserTagRepository{
-	return &tagRepository.UserTagRepository { Database: database }
-}
-
-func initUserTagService(repo *tagRepository.UserTagRepository) *tagService.UserTagService{
-	return &tagService.UserTagService { Repo: repo }
-}
-
-//TAG
-func initTagRepo(database *gorm.DB) *tagRepository.TagRepository{
-	return &tagRepository.TagRepository { Database: database }
-}
-
-func initTagService(repo *tagRepository.TagRepository) *tagService.TagService{
-	return &tagService.TagService { Repo: repo }
-}
-
 //USER
 func initUserRepo(database *gorm.DB) *repository.UserRepository{
 	return &repository.UserRepository { Database: database }
@@ -165,15 +147,13 @@ func initAgentService(repo *repository.AgentRepository) *service.AgentService{
 	return &service.AgentService { Repo: repo }
 }
 
-func initAgentHandler(agentService *service.AgentService, userService *service.UserService, classicUserService *service.ClassicUserService, validator *validator.Validate, passwordUtil *util.PasswordUtil, userTagService *tagService.UserTagService, tagService *tagService.TagService) *handler.AgentHandler{
+func initAgentHandler(agentService *service.AgentService, userService *service.UserService, classicUserService *service.ClassicUserService, validator *validator.Validate, passwordUtil *util.PasswordUtil) *handler.AgentHandler{
 	return &handler.AgentHandler{
 		AgentService: agentService,
 		UserService: userService,
 		ClassicUserService: classicUserService,
 		Validator: validator,
 		PasswordUtil: passwordUtil,
-		UserTagService: userTagService,
-		TagService: tagService,
 	}
 }
 
@@ -275,6 +255,7 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	router.HandleFunc("/login/", userHandler.LogIn).Methods("POST")
 	router.HandleFunc("/update_user_profile_info/", userHandler.UpdateUserProfileInfo).Methods("POST")
 	router.HandleFunc("/find_user_by_id", userHandler.FindByID).Methods("GET")
+	router.HandleFunc("/find_classic_user_by_id/{userID}", classicUserHandler.FindClassicUserById).Methods("GET")
 	router.HandleFunc("/registered_admin/", adminHandler.CreateAdmin).Methods("POST")
 	router.HandleFunc("/agent/", agentHandler.CreateAgent).Methods("POST")
 	router.HandleFunc("/registered_user/", registeredUserHandler.CreateRegisteredUser).Methods("POST")
@@ -296,7 +277,9 @@ func handleFunc(userHandler *handler.UserHandler, confirmationTokenHandler *hand
 	router.HandleFunc("/dto/find_all_classic_users_but_logged_in", classicUserHandler.FindAllUsersButLoggedInDTOs).Methods("GET")
 	router.HandleFunc("/check_if_following_post_story/{id}/{logId}", classicUserFollowingsHandler.CheckIfFollowingPostStory).Methods("GET")
 	router.HandleFunc("/check_if_close_friend/{id}/{logId}", classicUserCloseFriendsHandler.CheckIfCloseFriend).Methods("GET")
-	router.HandleFunc("/find_all_valid_followings_for_user/{id}", classicUserFollowingsHandler.FindAllValidFollowingsForUser).Methods("GET")
+	router.HandleFunc("/find_all_valid_followings_for_user/{id}", classicUserFollowingsHandler.FindAllValidFollowingsForUser).Methods("POST")
+	router.HandleFunc("/find_all_user_who_follow_user_id/{id}", classicUserFollowingsHandler.FindAllUserWhoFollowUserId).Methods("POST")
+	router.HandleFunc("/find_all_users_by_following_ids/", classicUserHandler.FindAllUsersByFollowingIds).Methods("POST")
 	//FindAllValidFollowingsForUser
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
@@ -324,7 +307,6 @@ func main() {
 	rbac.Add(roleRegisteredUser)
 
 	database := initDB()
-	userTagRepo	:= initUserTagRepo(database)
 	userRepo := initUserRepo(database)
 	registeredUserRepo := initRegisteredUserRepo(database)
 	adminRepo := initAdminRepo(database)
@@ -337,9 +319,6 @@ func main() {
 	recoveryPasswordTokenRepo := initRecoveryPasswordTokenRepo(database)
 	classicUserCloseFriendsRepo := initClassicUserCloseFriendsRepo(database)
 
-	tagRepository := initTagRepo(database)
-	tagService := initTagService(tagRepository)
-	userTagService := initUserTagService(userTagRepo)
 	userService := initUserService(userRepo)
 	registeredUserService := initRegisteredUserService(registeredUserRepo)
 	confirmationTokenService := initConfirmationTokenService(confirmationTokenRepo)

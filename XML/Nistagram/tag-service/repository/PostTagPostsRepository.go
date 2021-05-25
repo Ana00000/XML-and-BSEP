@@ -2,8 +2,8 @@ package repository
 
 import (
 	"fmt"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"gorm.io/gorm"
 )
@@ -46,7 +46,7 @@ func (repo *PostTagPostsRepository) FindAllTagsForPostsTagPosts(allPosts []dto.S
 	return tags
 }
 
-func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []postsModel.SinglePost) []model.Tag {
+func (repo *PostTagPostsRepository) FindAllTagsForPosts(allPosts []dto.SinglePostDTO) []model.Tag {
 	var tags []model.Tag
 	var allTags = repo.FindAll()
 

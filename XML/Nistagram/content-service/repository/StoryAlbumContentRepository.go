@@ -2,8 +2,8 @@ package repository
 
 import (
 	"fmt"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
-	storyModel "github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"gorm.io/gorm"
 )
 
@@ -23,7 +23,7 @@ func (repo *StoryAlbumContentRepository) FindAll() []model.StoryAlbumContent {
 	return contents
 }
 
-func (repo *StoryAlbumContentRepository) FindAllContentsForStoryAlbums(albums []storyModel.StoryAlbum) []model.StoryAlbumContent {
+func (repo *StoryAlbumContentRepository) FindAllContentsForStoryAlbums(albums []dto.StoryAlbumFullDTO) []model.StoryAlbumContent {
 	var contents []model.StoryAlbumContent
 	var allContents = repo.FindAll()
 
@@ -39,7 +39,7 @@ func (repo *StoryAlbumContentRepository) FindAllContentsForStoryAlbums(albums []
 	return contents
 }
 
-func (repo *StoryAlbumContentRepository) FindAllContentsForStoryAlbum(album *storyModel.StoryAlbum) []model.StoryAlbumContent {
+func (repo *StoryAlbumContentRepository) FindAllContentsForStoryAlbum(album *dto.StoryAlbumFullDTO) []model.StoryAlbumContent {
 	var contents []model.StoryAlbumContent
 	var allContents = repo.FindAll()
 

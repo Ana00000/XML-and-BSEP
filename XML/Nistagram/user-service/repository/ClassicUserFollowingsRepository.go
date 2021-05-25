@@ -77,6 +77,8 @@ func (repo *ClassicUserFollowingsRepository) CheckIfFollowing(allFollowingForUse
 }
 
 func (repo * ClassicUserFollowingsRepository) FindAllValidFollowingsForUser(userId uuid.UUID, allValidUsers []model.ClassicUser) []model.ClassicUserFollowings{
+
+
 	var followings  = repo.FindAllFollowingsForUser(userId)
 	var validFollowings []model.ClassicUserFollowings
 	for i := 0; i < len(followings); i++ {

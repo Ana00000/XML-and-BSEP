@@ -90,7 +90,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8084/find_all_locations_for_public_posts/")
+        .get("http://localhost:8080/api/post/find_all_locations_for_public_posts/")
         .then((resp) => {
           //this.locations = resp.data;
           this.locations = resp.data;

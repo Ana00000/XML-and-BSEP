@@ -90,7 +90,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8084/find_all_locations_for_public_friends_posts?id="+localStorage.getItem("userId"))
+        .get("http://localhost:8080/api/post/find_all_locations_for_public_friends_posts?id="+localStorage.getItem("userId"))
         .then((resp) => {
           this.locations = resp.data;
           this.locationsCopy = resp.data;

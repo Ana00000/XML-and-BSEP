@@ -1,10 +1,10 @@
 package repository
 
 import (
-	"github.com/google/uuid"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"fmt"
-	userModel "github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
+	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"gorm.io/gorm"
 	"time"
 )
@@ -39,7 +39,7 @@ func (repo *StoryAlbumRepository) FindAllStoryAlbums() []model.StoryAlbum {
 	return storyAlbums
 }
 
-func (repo *StoryAlbumRepository) FindAllPublicAlbumStoriesNotRegisteredUser(allValidUsers []userModel.ClassicUser) []model.StoryAlbum {
+func (repo *StoryAlbumRepository) FindAllPublicAlbumStoriesNotRegisteredUser(allValidUsers []dto.ClassicUserDTO) []model.StoryAlbum {
 	var allStoryAlbums = repo.FindAllStoryAlbums()
 	var allPublicStoryAlbums []model.StoryAlbum
 	var notExpiredStoryAlbums []model.StoryAlbum
@@ -53,7 +53,7 @@ func (repo *StoryAlbumRepository) FindAllPublicAlbumStoriesNotRegisteredUser(all
 	}
 
 	for i:=0; i< len(allPublicStoryAlbums); i++{
-		if time.Now().After(allPublicStoryAlbums[i].CreationDate.Add(60 * time.Second)){
+		if time.Now().After(allPublicStoryAlbums[i].CreationDate.Add(24 * time.Hour)){
 			// PASSED TIME SHOULD SET STORY AS EXPIRED
 			//allPublicStories[i].IsExpired = true
 			repo.Database.Model(&model.StoryAlbum{}).Where("id = ?", allPublicStoryAlbums[i].ID).Update("is_expired", true)
@@ -67,7 +67,7 @@ func (repo *StoryAlbumRepository) FindAllPublicAlbumStoriesNotRegisteredUser(all
 }
 
 // FIND ALL NOT DELETED VALID STORY ALBUMS THAT LOGGED IN USER FOLLOWS
-func (repo *StoryAlbumRepository) FindAllFollowingStoryAlbums(followings []userModel.ClassicUserFollowings) []model.StoryAlbum {
+func (repo *StoryAlbumRepository) FindAllFollowingStoryAlbums(followings []dto.ClassicUserFollowingsDTO) []model.StoryAlbum {
 	var allStoryAlbums = repo.FindAllStoryAlbums()
 	var allFollowingStoryAlbums []model.StoryAlbum
 	var notExpiredStoryAlbums []model.StoryAlbum
@@ -81,7 +81,7 @@ func (repo *StoryAlbumRepository) FindAllFollowingStoryAlbums(followings []userM
 	}
 
 	for i:=0; i< len(allFollowingStoryAlbums); i++{
-		if time.Now().After(allFollowingStoryAlbums[i].CreationDate.Add(60 * time.Second)){
+		if time.Now().After(allFollowingStoryAlbums[i].CreationDate.Add(24 * time.Hour)){
 			// PASSED TIME SHOULD SET STORY ALBUM AS EXPIRED
 			//allFollowingStoryAlbums[i].IsExpired = true
 			repo.Database.Model(&model.StoryAlbum{}).Where("id = ?", allFollowingStoryAlbums[i].ID).Update("is_expired", true)

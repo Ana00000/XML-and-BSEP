@@ -65,7 +65,7 @@ func (service *LocationService) FindLocationIdByLocationString(locationString st
 	return service.Repo.FindLocationIdByLocationString(locationString)
 }
 
-func (service *LocationService) FindAllLocationsForPostAlbums(albums []postsModel.PostAlbum) []model.Location {
+func (service *LocationService) FindAllLocationsForPostAlbums(albums []dto.PostAlbumFullDTO) []model.Location {
 	locations := service.Repo.FindAllLocationsForPostAlbums(albums)
 	if locations != nil {
 		return locations
@@ -73,7 +73,7 @@ func (service *LocationService) FindAllLocationsForPostAlbums(albums []postsMode
 	return nil
 }
 
-func (service *LocationService) FindAllLocationsForPostAlbum(album *postsModel.PostAlbum) []model.Location {
+func (service *LocationService) FindAllLocationsForPostAlbum(album *dto.PostAlbumFullDTO) []model.Location {
 	locations := service.Repo.FindAllLocationsForPostAlbum(album)
 	if locations != nil {
 		return locations
@@ -81,7 +81,7 @@ func (service *LocationService) FindAllLocationsForPostAlbum(album *postsModel.P
 	return nil
 }
 
-func (service *LocationService) FindAllLocationsForStoryAlbums(albums []storyModel.StoryAlbum) []model.Location {
+func (service *LocationService) FindAllLocationsForStoryAlbums(albums []dto.StoryAlbumFullDTO) []model.Location {
 	locations := service.Repo.FindAllLocationsForStoryAlbums(albums)
 	if locations != nil {
 		return locations
@@ -89,7 +89,7 @@ func (service *LocationService) FindAllLocationsForStoryAlbums(albums []storyMod
 	return nil
 }
 
-func (service *LocationService) FindAllLocationsForStoryAlbum(album *storyModel.StoryAlbum) []model.Location {
+func (service *LocationService) FindAllLocationsForStoryAlbum(album *dto.StoryAlbumFullDTO) []model.Location {
 	locations := service.Repo.FindAllLocationsForStoryAlbum(album)
 	if locations != nil {
 		return locations

@@ -665,16 +665,16 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 		return
 	}
 
-	var allValidStories []model.SingleStory
-	var stories = handler.SingleStoryService.FindAllFollowingStories(followings)
+	var allValidStories []dto.SingleStoryFullDTO
+	var stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllFollowingStories(followings))
 
 
 	for i:=0; i<len(stories);i++{
-		if stories[i].Type == model.PUBLIC || stories[i].Type == model.ALL_FRIENDS{
+		if stories[i].Type == "PUBLIC" || stories[i].Type == "ALL_FRIENDS"{
 
 			allValidStories = append(allValidStories, stories[i])
 
-		}else if stories[i].Type == model.CLOSE_FRIENDS{
+		}else if stories[i].Type == "CLOSE_FRIENDS"{
 
 			//var checkIfCloseFriend = handler.ClassicUserCloseFriendsService.CheckIfCloseFriend(stories[i].UserId, uuid.MustParse(id))
 			var returnValueCloseFriend ReturnValueBool
@@ -695,7 +695,7 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 
 	//var contents = handler.StoryContentService.FindAllContentsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
-	jsonValidStoriesDTO, _ := json.Marshal(stories)
+	jsonValidStoriesDTO, _ := json.Marshal(allValidStories)
 	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	fmt.Println(string(jsonValidStoriesDTO))
 	resp,err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
@@ -714,7 +714,7 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 
 	//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
-	jsonLocationsDTO, _ := json.Marshal(stories)
+	jsonLocationsDTO, _ := json.Marshal(allValidStories)
 	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
@@ -733,7 +733,7 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
-	jsonTagsDTO, _ := json.Marshal(stories)
+	jsonTagsDTO, _ := json.Marshal(allValidStories)
 	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
@@ -748,7 +748,7 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-	var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
+	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories) ,contents,locations,tags)
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)
@@ -789,7 +789,7 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 	}
 
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_story/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
-	jsonValidStoriesDTO, _ := json.Marshal(story)
+	jsonValidStoriesDTO, _ := json.Marshal(convertSingleStoryToSingleStoryDTO(*story))
 	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	fmt.Println(string(jsonValidStoriesDTO))
 	resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
@@ -808,7 +808,7 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 
 	//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_story/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
-	jsonLocationsDTO, _ := json.Marshal(story)
+	jsonLocationsDTO, _ := json.Marshal(convertSingleStoryToSingleStoryDTO(*story))
 	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
@@ -827,7 +827,7 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_story/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
-	jsonTagsDTO, _ := json.Marshal(story)
+	jsonTagsDTO, _ := json.Marshal(convertSingleStoryToSingleStoryDTO(*story))
 	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
@@ -867,11 +867,60 @@ type ReturnValueString struct {
 func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
-	var stories = handler.SingleStoryService.FindAllStoriesForLoggedUser(uuid.MustParse(id))
-	var contents = handler.StoryContentService.FindAllContentsForStories(stories)
-	var locations = handler.LocationService.FindAllLocationsForStories(stories)
-	var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
-	var storiesDTOS = handler.CreateStoriesDTOList(stories,contents,locations,tags)
+	var stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllStoriesForLoggedUser(uuid.MustParse(id)))
+	//var contents = handler.StoryContentService.FindAllContentsForStories(stories)
+	reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
+	jsonValidStoriesDTO, _ := json.Marshal(stories)
+	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	fmt.Println(string(jsonValidStoriesDTO))
+	resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
+	if err != nil || resp.StatusCode == 400 {
+		print("Fail")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var contents []dto.SingleStoryContentDTO
+	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+	//var locations = handler.LocationService.FindAllLocationsForStories(stories)
+	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
+	jsonLocationsDTO, _ := json.Marshal(stories)
+	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	fmt.Println(string(jsonLocationsDTO))
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
+	if err != nil || resp.StatusCode == 400 {
+		print("Fail")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var locations []dto.LocationDTO
+	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
+	jsonTagsDTO, _ := json.Marshal(stories)
+	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	fmt.Println(string(jsonTagsDTO))
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
+	if err != nil || resp.StatusCode == 400 {
+		print("Fail")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var tags []dto.StoryTagStoriesDTO
+	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories),contents,locations,tags)
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)

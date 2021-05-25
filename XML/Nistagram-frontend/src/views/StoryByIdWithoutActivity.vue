@@ -22,7 +22,7 @@
               <v-list-item-content>
                 <video width="320" height="440" controls>
                   <source
-                    :src="require(`../../../Media/${story.path}`)"
+                    :src="require(`/app/public/uploads/${story.path}`)"
                     type="video/mp4"
                   />
                 </video>
@@ -32,7 +32,7 @@
             <v-list-item three-line v-if="story.type != 'VIDEO'">
               <v-list-item-content>
                 <img
-                  :src="require(`../../../Media/${story.path}`)"
+                  :src="require(`/app/public/uploads/${story.path}`)"
                   alt
                   class="icon"
                   width="320"
@@ -111,9 +111,11 @@ export default {
   },
   methods: {
     init() {
+      alert(localStorage.getItem("mySelectedStoryId"));
+      alert(localStorage.getItem("mySelectedUserId"));
       this.$http
         .get(
-          "http://localhost:8086/find_selected_story_reg?id=" +
+          "http://localhost:8080/api/story/find_selected_story_reg?id=" +
             localStorage.getItem("mySelectedStoryId") +
             "&logId=" +
             localStorage.getItem("mySelectedUserId")
@@ -125,7 +127,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8086/find_all_story_highlights_for_user?id=" +
+          "http://localhost:8080/api/story/find_all_story_highlights_for_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -144,7 +146,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8086/find_all_single_story_story_highlights_for_story?id=" +
+          "http://localhost:8080/api/story/find_all_single_story_story_highlights_for_story?id=" +
             localStorage.getItem("mySelectedStoryId")
         )
         .then((response) => {
@@ -159,7 +161,7 @@ export default {
             }
           }
           this.$http
-            .post("http://localhost:8086/single_story_story_highlights/", {
+            .post("http://localhost:8080/api/story/single_story_story_highlights/", {
               story_highlight_id: this.highlightedStoryId,
               single_story_id: localStorage.getItem("mySelectedStoryId"),
             })

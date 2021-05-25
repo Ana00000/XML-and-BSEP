@@ -273,6 +273,8 @@ services:
       SETTINGS_SERVICE_PORT: 8088
       REQUESTS_SERVICE_DOMAIN: requests-service
       REQUESTS_SERVICE_PORT: 8087
+      TAG_SERVICE_DOMAIN: tag-service
+      TAG_SERVICE_PORT: 8090
     depends_on:
       - db
 

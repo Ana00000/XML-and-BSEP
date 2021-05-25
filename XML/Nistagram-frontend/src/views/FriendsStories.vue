@@ -133,7 +133,7 @@ export default {
     getStoryAlbums() {
       this.$http
         .get(
-          "http://localhost:8086/find_all_following_story_albums?id=" +
+          "http://localhost:8080/api/story/find_all_following_story_albums?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {

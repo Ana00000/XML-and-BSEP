@@ -75,6 +75,30 @@ func (handler *ClassicUserFollowingsHandler) FindAllValidFollowingsForUser(w htt
 	}
 
 	var validFollowingsForUser = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id),convertListClassicUserDTOToListClassicUser(classicUserDTO))
+	for i := 0; i < len(validFollowingsForUser); i++ {
+		fmt.Println(validFollowingsForUser[i].FollowingUserId)
+	}
+
+
+	returnValueJson, _ := json.Marshal(convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(validFollowingsForUser))
+	w.Write(returnValueJson)
+
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *ClassicUserFollowingsHandler) FindAllUserWhoFollowUserId(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var classicUserDTO []dto.ClassicUserDTO
+	err := json.NewDecoder(r.Body).Decode(&classicUserDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var validFollowingsForUser = handler.ClassicUserFollowingsService.FindAllUserWhoFollowUserId(uuid.MustParse(id),convertListClassicUserDTOToListClassicUser(classicUserDTO))
 
 	returnValueJson, _ := json.Marshal(convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(validFollowingsForUser))
 	w.Write(returnValueJson)
@@ -87,8 +111,8 @@ func (handler *ClassicUserFollowingsHandler) CheckIfFollowingPostStory(w http.Re
 	vars := mux.Vars(r)
 	id := vars["id"]
 	logId :=vars["logId"]
-
-	var check = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), uuid.MustParse(id))
+	//izmjenio
+	var check = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(id), uuid.MustParse(logId))
 
 	var returnValue = ReturnValueBool{ReturnValue: check}
 

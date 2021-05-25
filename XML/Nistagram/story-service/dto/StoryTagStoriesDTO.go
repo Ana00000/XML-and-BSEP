@@ -6,6 +6,6 @@ import (
 
 type StoryTagStoriesDTO struct {
 	ID uuid.UUID `json:"id"`
-	StoryTagId uuid.UUID `json:"story_tag_id"`
+	TagId uuid.UUID `json:"tag_id"`
 	StoryId uuid.UUID `json:"story_id"`
 }

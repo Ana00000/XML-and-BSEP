@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
@@ -74,6 +75,27 @@ func (handler *LocationHandler) FindByID(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "application/json")
 }
 
+type ReturnValueId struct {
+	ID uuid.UUID `json:"id"`
+}
+
+func (handler *LocationHandler) FindLocationIdByLocationString(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	locationString := vars["locationString"]
+
+	var location = handler.Service.FindLocationIdByLocationString(locationString)
+
+	locationId := ReturnValueId{
+		ID: location.ID,
+	}
+	locationJson, _ := json.Marshal(locationId)
+	w.Write(locationJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
 func (handler *LocationHandler) FindAllLocationsForStories(w http.ResponseWriter, r *http.Request) {
 	var singleStoriesDTO []dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoriesDTO)
@@ -130,6 +152,70 @@ func (handler *LocationHandler) FindAllLocationsForPost(w http.ResponseWriter, r
 		return
 	}
 	var locations = handler.Service.FindAllLocationsForPost(&singlePostDTO)
+
+	locationJson, _ := json.Marshal(locations)
+	w.Write(locationJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *LocationHandler) FindAllLocationsForStoryAlbums(w http.ResponseWriter, r *http.Request) {
+	var storyAlbumsFullDTO []dto.StoryAlbumFullDTO
+	err := json.NewDecoder(r.Body).Decode(&storyAlbumsFullDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var locations = handler.Service.FindAllLocationsForStoryAlbums(storyAlbumsFullDTO)
+
+	locationJson, _ := json.Marshal(locations)
+	w.Write(locationJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *LocationHandler) FindAllLocationsForStoryAlbum(w http.ResponseWriter, r *http.Request) {
+	var storyAlbumFullDTO dto.StoryAlbumFullDTO
+	err := json.NewDecoder(r.Body).Decode(&storyAlbumFullDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var locations = handler.Service.FindAllLocationsForStoryAlbum(&storyAlbumFullDTO)
+
+	locationJson, _ := json.Marshal(locations)
+	w.Write(locationJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *LocationHandler) FindAllLocationsForPostAlbums(w http.ResponseWriter, r *http.Request) {
+	var postAlbumsFullDTO []dto.PostAlbumFullDTO
+	err := json.NewDecoder(r.Body).Decode(&postAlbumsFullDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var locations = handler.Service.FindAllLocationsForPostAlbums(postAlbumsFullDTO)
+
+	locationJson, _ := json.Marshal(locations)
+	w.Write(locationJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *LocationHandler) FindAllLocationsForPostAlbum(w http.ResponseWriter, r *http.Request) {
+	var postAlbumFullDTO dto.PostAlbumFullDTO
+	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var locations = handler.Service.FindAllLocationsForPostAlbum(&postAlbumFullDTO)
 
 	locationJson, _ := json.Marshal(locations)
 	w.Write(locationJson)

@@ -49,7 +49,7 @@
               <v-list-item-content>
                 <video width="320" height="240" controls>
                   <source
-                    :src="require(`../../../Media/${item.path}`)"
+                    :src="require(`/app/public/uploads/${item.path}`)"
                     type="video/mp4"
                   />
                 </video>
@@ -59,7 +59,7 @@
             <v-list-item three-line v-if="item.type != 'VIDEO'">
               <v-list-item-content>
                 <img
-                  :src="require(`../../../Media/${item.path}`)"
+                  :src="require(`/app/public/uploads/${item.path}`)"
                   alt
                   class="icon"
                   width="320"
@@ -88,7 +88,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8084/find_selected_post_album_for_logged_user?id=" +
+          "http://localhost:8080/api/post/find_selected_post_album_for_logged_user?id=" +
             localStorage.getItem("mySelectedPostAlbumId") +
             "&logId=" +
             localStorage.getItem("mySelectedUserId")

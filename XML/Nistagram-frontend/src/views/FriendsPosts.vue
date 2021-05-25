@@ -146,7 +146,7 @@ export default {
     getPostAlbums() {
       this.$http
         .get(
-          "http://localhost:8084/find_all_following_post_albums?id=" +
+          "http://localhost:8080/api/post/find_all_following_post_albums?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {

@@ -155,7 +155,7 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 	router.HandleFunc("/advertisement_content/", handlerAdvertisementContent.CreateAdvertisementContent).Methods("POST")
 	router.HandleFunc("/post_album_content/", handlerPostAlbumContent.CreatePostAlbumContent).Methods("POST")
 	router.HandleFunc("/story_album_content/", handlerStoryAlbumContent.CreateStoryAlbumContent).Methods("POST")
-	router.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent).Methods("POST")
+	//router.HandleFunc("/comment_content/", handlerCommentContent.CreateCommentContent).Methods("POST")
 	router.HandleFunc("/message_content/", handlerMessageContent.CreateMessageContent).Methods("POST")
 	router.HandleFunc("/uploadPostMedia/", handlerSinglePostContent.Upload).Methods("POST")
 	router.HandleFunc("/uploadPostAlbumMedia/", handlerPostAlbumContent.Upload).Methods("POST")
@@ -163,9 +163,12 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 	router.HandleFunc("/uploadStoryAlbumMedia/", handlerStoryAlbumContent.Upload).Methods("POST")
 	router.HandleFunc("/find_all_contents_for_stories/", handlerSingleStoryContent.FindAllContentsForStories).Methods("POST")
 	router.HandleFunc("/find_all_contents_for_story/", handlerSingleStoryContent.FindAllContentsForStory).Methods("POST")
-
+	router.HandleFunc("/find_all_contents_for_story_album/", handlerStoryAlbumContent.FindAllContentsForStoryAlbum).Methods("POST")
+	router.HandleFunc("/find_all_contents_for_story_albums/", handlerStoryAlbumContent.FindAllContentsForStoryAlbums).Methods("POST")
 	router.HandleFunc("/find_all_contents_for_posts/", handlerSinglePostContent.FindAllContentsForPosts).Methods("POST")
 	router.HandleFunc("/find_all_contents_for_post/", handlerSinglePostContent.FindAllContentsForPost).Methods("POST")
+	router.HandleFunc("/find_all_contents_for_post_album/", handlerPostAlbumContent.FindAllContentsForPostAlbum).Methods("POST")
+	router.HandleFunc("/find_all_contents_for_post_albums/", handlerPostAlbumContent.FindAllContentsForPostAlbums).Methods("POST")
 
 	router.HandleFunc("/find_single_story_content_for_story_id", handlerSingleStoryContent.FindSingleStoryContentForStoryId).Methods("GET")
 
@@ -203,5 +206,6 @@ func main() {
 	repoMessageContent := initMessageContentRepo(database)
 	serviceMessageContent := initMessageContentService(repoMessageContent)
 	handlerMessageContent := initMessageContentHandler(serviceMessageContent)
+
 	handleFunc(handlerContent, handlerAdvertisementContent,handlerPostAlbumContent,handlerSinglePostContent,handlerStoryAlbumContent,handlerSingleStoryContent,handlerMessageContent)
 }

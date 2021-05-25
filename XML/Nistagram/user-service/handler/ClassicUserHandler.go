@@ -126,6 +126,28 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedInDTOs(w http.ResponseWr
 	w.Header().Set("Content-Type", "application/json")
 }
 
+func (handler *ClassicUserHandler) FindAllUsersByFollowingIds(w http.ResponseWriter, r *http.Request) {
+
+	var classicUserFollowingsFullDTO []dto.ClassicUserFollowingsFullDTO
+	err := json.NewDecoder(r.Body).Decode(&classicUserFollowingsFullDTO)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var users = handler.ClassicUserService.FindAllUsersByFollowingIds(convertListClassicUserFollowingsDTOToListClassicUserFollowings(classicUserFollowingsFullDTO))
+	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
+	/*if  user == nil {
+		fmt.Println("No user found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}*/
+
+	userJson, _ := json.Marshal(convertListClassicUserToListClassicUserDTO(users))
+	w.Write(userJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
 func (handler *ClassicUserHandler) CheckIfUserValid(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userId := vars["userID"]
@@ -227,6 +249,17 @@ func convertClassicUserToClassicUserDTO(classicUser model.ClassicUser) dto.Class
 	return classicUserDTO
 }
 
+func (handler *ClassicUserHandler) FindClassicUserById(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userId := vars["userID"]
+	var classicUser = handler.ClassicUserService.FindById(uuid.MustParse(userId))
+	validJson, _ := json.Marshal(convertClassicUserToClassicUserDTO(*classicUser))
+	w.Write(validJson)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}
+
 func convertListClassicUserDTOToListClassicUser(classicUsersDTO []dto.ClassicUserDTO) []model.ClassicUser{
 	var classicUsers []model.ClassicUser
 	for i := 0; i < len(classicUsersDTO); i++ {
@@ -275,4 +308,20 @@ func convertClassicUserDTOToClassicUser(classicUserDTO dto.ClassicUserDTO) model
 		IsDeleted: false,
 	}
 	return classicUser
+}
+func convertClassicUserFollowingsDTOToClassicUserFollowings(classicUserFollowingsDTO dto.ClassicUserFollowingsFullDTO) model.ClassicUserFollowings{
+	var classicUserFollowings=model.ClassicUserFollowings{
+		ID:              classicUserFollowingsDTO.ID,
+		ClassicUserId:   classicUserFollowingsDTO.ClassicUserId,
+		FollowingUserId: classicUserFollowingsDTO.FollowingUserId,
+	}
+	return classicUserFollowings
+}
+
+func convertListClassicUserFollowingsDTOToListClassicUserFollowings(classicUserFollowingsDTOs []dto.ClassicUserFollowingsFullDTO) []model.ClassicUserFollowings{
+	var classicUserFollowings []model.ClassicUserFollowings
+	for i := 0; i < len(classicUserFollowingsDTOs); i++ {
+		classicUserFollowings = append(classicUserFollowings,convertClassicUserFollowingsDTOToClassicUserFollowings(classicUserFollowingsDTOs[i]))
+	}
+	return classicUserFollowings
 }
