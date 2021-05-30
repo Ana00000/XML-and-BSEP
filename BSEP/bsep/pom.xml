@@ -34,7 +34,7 @@
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>httpclient</artifactId>
-		    <version>4.3.6</version>
+		    <version>4.5.13</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.soulwing.ssl/ssl-context-tools -->
@@ -103,7 +103,7 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk16</artifactId>
-			<version>1.45</version>
+			<version>1.46</version>
 		</dependency>
 		<!-- ukljucena podrska za Spring Security -->
 		<dependency>
