@@ -68,7 +68,7 @@ export default {
       this.confirmationToken = hrefPaths[4];
       this.userId = hrefPaths[5];
       this.$http
-        .post("http://localhost:8080/api/user/verify_recovery_password_token/", {
+        .post("https://localhost:8080/api/user/verify_recovery_password_token/", {
             recovery_password_token: this.confirmationToken,
             user_id: this.userId
         })
@@ -90,7 +90,7 @@ export default {
             return;
         }
         this.$http
-        .post("http://localhost:8080/api/user/change_user_password/", {
+        .post("https://localhost:8080/api/user/change_user_password/", {
             email: this.userEmail,
             password: this.password,
             confirmed_password: this.confirmPassword
@@ -98,7 +98,7 @@ export default {
         .then((res) => {
           console.log(res);
           alert("You are successfully change password on your account! You can log in on system!");
-          window.location.href = "http://localhost:8081/logIn";
+          window.location.href = "https://localhost:8081/logIn";
         })
         .catch((err) => {
           console.log(err);
@@ -106,7 +106,7 @@ export default {
         });
     },
     redirectToLogIn() {
-      window.location.href = "http://localhost:8081/logIn";
+      window.location.href = "https://localhost:8081/logIn";
     },
     validPassword() {
       if (this.password.length < 10) {

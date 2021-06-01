@@ -65,7 +65,7 @@ export default {
       console.log(this.id)
       console.log(this.token)
       this.$http
-        .get("http://localhost:8080/api/requests/find_all_pending_requests_for_user?id=" + this.id)
+        .get("https://localhost:8080/api/requests/find_all_pending_requests_for_user?id=" + this.id)
         .then((resp) => {
           console.log("USAO")
           this.requests = resp.data
@@ -78,7 +78,7 @@ export default {
     console.log("OK");
      console.log("usao ovde i id je: "+ this.selectedRequest.id);
         localStorage.setItem("selectedRequestId",this.selectedRequest.id);
-        window.location.href = "http://localhost:8081/selectedFollowRequest";
+        window.location.href = "https://localhost:8081/selectedFollowRequest";
       
     }
     }

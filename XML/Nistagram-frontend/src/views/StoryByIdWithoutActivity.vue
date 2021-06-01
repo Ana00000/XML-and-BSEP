@@ -115,7 +115,7 @@ export default {
       alert(localStorage.getItem("mySelectedUserId"));
       this.$http
         .get(
-          "http://localhost:8080/api/story/find_selected_story_reg?id=" +
+          "https://localhost:8080/api/story/find_selected_story_reg?id=" +
             localStorage.getItem("mySelectedStoryId") +
             "&logId=" +
             localStorage.getItem("mySelectedUserId")
@@ -127,7 +127,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8080/api/story/find_all_story_highlights_for_user?id=" +
+          "https://localhost:8080/api/story/find_all_story_highlights_for_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -146,7 +146,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8080/api/story/find_all_single_story_story_highlights_for_story?id=" +
+          "https://localhost:8080/api/story/find_all_single_story_story_highlights_for_story?id=" +
             localStorage.getItem("mySelectedStoryId")
         )
         .then((response) => {
@@ -161,7 +161,7 @@ export default {
             }
           }
           this.$http
-            .post("http://localhost:8080/api/story/single_story_story_highlights/", {
+            .post("https://localhost:8080/api/story/single_story_story_highlights/", {
               story_highlight_id: this.highlightedStoryId,
               single_story_id: localStorage.getItem("mySelectedStoryId"),
             })

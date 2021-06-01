@@ -231,7 +231,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8080/api/story/find_all_story_highlights_for_user?id=" +
+          "https://localhost:8080/api/story/find_all_story_highlights_for_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -240,7 +240,7 @@ export default {
         .catch(console.log);
 
       this.$http
-        .get("http://localhost:8080/api/user/find_user_by_id?id=" + this.id)
+        .get("https://localhost:8080/api/user/find_user_by_id?id=" + this.id)
         .then((response) => {
           this.user = response.data;
           this.setUserInfo(this.user);
@@ -272,7 +272,7 @@ export default {
       }
     },
     cancelChanges() {
-      window.location.href = "http://localhost:8081/updateProfile";
+      window.location.href = "https://localhost:8081/updateProfile";
     },
     changeProfileInfo() {
       if (
@@ -289,7 +289,7 @@ export default {
 
       this.$http
         .post(
-          "http://localhost:8080/api/user/update_user_profile_info/",
+          "https://localhost:8080/api/user/update_user_profile_info/",
           {
             id: this.id,
             firstName: this.firstName,
@@ -312,7 +312,7 @@ export default {
         .then((response) => {
           console.log(response.data);
           alert("Successfully updated profile informations!");
-          window.location.href = "http://localhost:8081/updateProfile";
+          window.location.href = "https://localhost:8081/updateProfile";
         })
         .catch((err) => {
           console.log(err);
@@ -330,14 +330,14 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8080/api/story/story_highlight/", {
+        .post("https://localhost:8080/api/story/story_highlight/", {
           title: this.title,
           userID: localStorage.getItem("userId"),
         })
         .then((response) => {
           console.log(response);
           alert("Successful creation of story highlight.");
-          window.location.href = "http://localhost:8081/updateProfile";
+          window.location.href = "https://localhost:8081/updateProfile";
         })
         .catch((er) => {
           console.log(er.response.data);
@@ -346,7 +346,7 @@ export default {
     getStoryHighlight(item) {
       localStorage.setItem("selectedStoryHighlightId", item.id);
 
-      window.location.href = "http://localhost:8081/storiesOfStoryHighlight";
+      window.location.href = "https://localhost:8081/storiesOfStoryHighlight";
     },
     validFirstName() {
       if (this.firstName.length < 2) {

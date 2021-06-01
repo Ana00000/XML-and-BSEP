@@ -152,7 +152,7 @@ export default {
       logOff() {
         localStorage.setItem("token", "");
         localStorage.setItem("userType", null);
-        window.location.href = "http://localhost:8081/";
+        window.location.href = "https://localhost:8081/";
       }
     }
 }

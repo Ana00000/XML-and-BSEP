@@ -76,7 +76,7 @@ export default {
       console.log(this.id)
       console.log(this.token)
       this.$http
-        .get("http://localhost:8080/api/user/find_all_classic_users_but_logged_in?id=" + this.id)
+        .get("https://localhost:8080/api/user/find_all_classic_users_but_logged_in?id=" + this.id)
         .then((resp) => {
           console.log("USAO")
           this.users = resp.data
@@ -101,7 +101,7 @@ export default {
      console.log("usao ovde i id je: "+ this.selectedUser.id);
         localStorage.setItem("selectedUserUsername",this.selectedUser.username);
         localStorage.setItem("selectedUserId",this.selectedUser.id);
-        window.location.href = "http://localhost:8081/selectedUser";
+        window.location.href = "https://localhost:8081/selectedUser";
       
     }
     }

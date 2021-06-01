@@ -69,7 +69,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8080/api/post/find_all_posts_for_location?locationString=" + localStorage.getItem("selectedLocationString"))
+        .get("https://localhost:8080/api/post/find_all_posts_for_location?locationString=" + localStorage.getItem("selectedLocationString"))
         .then((response) => {
           this.posts = response.data;
         })

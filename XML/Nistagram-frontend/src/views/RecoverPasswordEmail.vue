@@ -37,7 +37,7 @@ export default {
       if (!this.validCertificate()) return;
       this.$http
         .post(
-          "http://localhost:8080/api/user/recovery_password/",
+          "https://localhost:8080/api/user/recovery_password/",
           {
               email: this.emailRecover
           }
@@ -46,7 +46,7 @@ export default {
         .then((resp) => {
           console.log(resp.data);
           alert("Send email on "+this.emailRecover+"!");
-          window.location.href = "http://localhost:8081/";
+          window.location.href = "https://localhost:8081/";
         })
         .catch((err) => {
           alert("Your email is incorect or don't exist account");
@@ -54,7 +54,7 @@ export default {
         });
     },
     redirectToLogIn() {
-      window.location.href = "http://localhost:8081/logIn";
+      window.location.href = "https://localhost:8081/logIn";
     },
     validCertificate() {
       if (this.validRecoverEmail()) return true;

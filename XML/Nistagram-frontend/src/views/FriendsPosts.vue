@@ -126,7 +126,7 @@ export default {
       alert(localStorage.getItem("userId"));
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_following_posts?id=" +
+          "https://localhost:8080/api/post/find_all_following_posts?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -141,12 +141,12 @@ export default {
       localStorage.setItem("selectedUserId", item.user_id);
       localStorage.setItem("selectedPostId", item.post_id);
 
-      window.location.href = "http://localhost:8081/postById";
+      window.location.href = "https://localhost:8081/postById";
     },
     getPostAlbums() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_following_post_albums?id=" +
+          "https://localhost:8080/api/post/find_all_following_post_albums?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -159,7 +159,7 @@ export default {
       localStorage.setItem("mySelectedPostAlbumId", item.post_album_id);
 
       window.location.href =
-        "http://localhost:8081/postAlbumByIdWithoutActivity";
+        "https://localhost:8081/postAlbumByIdWithoutActivity";
     },
   },
 };

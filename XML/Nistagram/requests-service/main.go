@@ -144,7 +144,7 @@ func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContent
 	cors := handlers.CORS(
 		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
-		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowedOrigins([]string{"https://localhost:8081"}),
 		handlers.AllowCredentials(),
 	)
 
@@ -162,7 +162,7 @@ func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContent
 	router.HandleFunc("/find_request_by_classic_user_and_follower_user_ids/{classicUserID}/{followerUserID}", followRequestHandler.FindFollowRequestByIDsClassicUserAndHisFollower).Methods("GET")
 	router.HandleFunc("/accept_follow_request/{requestID}", followRequestHandler.UpdateFollowRequestToAccepted).Methods("POST")
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")),cors(router)))
 }
 
 func main() {

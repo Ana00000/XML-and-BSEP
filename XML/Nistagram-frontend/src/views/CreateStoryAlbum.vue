@@ -77,7 +77,7 @@
             style="display: none"
           ></iframe>
           <form
-            action="http://localhost:8080/api/content/uploadStoryAlbumMedia/"
+            action="https://localhost:8080/api/content/uploadStoryAlbumMedia/"
             enctype="multipart/form-data"
             method="post"
             v-if="!isHiddenContent"
@@ -118,7 +118,7 @@
             single-line
           />
           <form
-            action="http://localhost:8080/api/content/uploadStoryAlbumMedia/"
+            action="https://localhost:8080/api/content/uploadStoryAlbumMedia/"
             enctype="multipart/form-data"
             method="post"
             v-if="!isHiddenAdditionalContent"
@@ -310,7 +310,7 @@ export default {
      init() {
       this.userId = localStorage.getItem("userId");
       this.$http
-        .get("http://localhost:8080/api/tag/find_all_taggable_users_story/")
+        .get("https://localhost:8080/api/tag/find_all_taggable_users_story/")
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
             if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
@@ -428,7 +428,7 @@ export default {
 
       if (this.isValidLocation) {
         this.$http
-          .post("http://localhost:8080/api/location/", {
+          .post("https://localhost:8080/api/location/", {
             longitude: this.longitude,
             latitude: this.latitude,
             country: this.country,
@@ -450,7 +450,7 @@ export default {
     createStoryAlbumDescription() {
       if (this.isValidStoryAlbumDescription) {
         this.$http
-          .post("http://localhost:8080/api/story/story_album/", {
+          .post("https://localhost:8080/api/story/story_album/", {
             description: this.storyAlbumDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -465,7 +465,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:8080/api/story/story_album/", {
+          .post("https://localhost:8080/api/story/story_album/", {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -482,7 +482,7 @@ export default {
     },
     createContent() {
       this.$http
-        .post("http://localhost:8080/api/content/story_album_content/", {
+        .post("https://localhost:8080/api/content/story_album_content/", {
           path: this.path,
           type: this.selectedType,
           story_album_id: this.storyAlbumId,
@@ -502,7 +502,7 @@ export default {
     },
     createAdditionalContent() {
       this.$http
-        .post("http://localhost:8080/api/content/story_album_content/", {
+        .post("https://localhost:8080/api/content/story_album_content/", {
           path: this.path,
           type: this.selectedType,
           story_album_id: this.storyAlbumId,
@@ -518,7 +518,7 @@ export default {
     },
     finish() {
       alert("Successful creation.");
-      window.location.href = "http://localhost:8081/";
+      window.location.href = "https://localhost:8081/";
     },
     addTag() {
        if (this.selectedTagType == "USER_TAG") {
@@ -530,7 +530,7 @@ export default {
       } else {
         if (!this.validTag()) return;
         this.$http
-          .post("http://localhost:8080/api/tag/tag/", {
+          .post("https://localhost:8080/api/tag/tag/", {
             name: this.tagName,
             tag_type: this.selectedTagType,
           })
@@ -553,7 +553,7 @@ export default {
     },
     CreateStoryAlbumTagStoryAlbums() {
       this.$http
-        .post("http://localhost:8080/api/tag/story_album_tag_story_albums/", {
+        .post("https://localhost:8080/api/tag/story_album_tag_story_albums/", {
           tag_id: this.storyAlbumTagId,
           story_album_id: this.storyAlbumId,
         })
@@ -568,7 +568,7 @@ export default {
     },
     createStoryAlbumUserTagStoryAlbums() {
       this.$http
-        .post("http://localhost:8080/api/tag/story_album_tag_story_albums/", {
+        .post("https://localhost:8080/api/tag/story_album_tag_story_albums/", {
           tag_id: this.userTag.id,
           story_album_id: this.storyAlbumId,
         })

@@ -66,7 +66,7 @@
             style="display: none"
           ></iframe>
           <form
-            action="http://localhost:8083/uploadPostMedia/"
+            action="https://localhost:8080/api/content/uploadPostMedia/"
             enctype="multipart/form-data"
             method="post"
             v-if="!isHiddenContent"
@@ -237,7 +237,7 @@ export default {
     init() {
       this.userId = localStorage.getItem("userId");
       this.$http
-        .get("http://localhost:8080/api/tag/find_all_taggable_users_post/")
+        .get("https://localhost:8080/api/tag/find_all_taggable_users_post/")
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
             if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
@@ -322,7 +322,7 @@ export default {
 
       if (this.isValidLocation) {
         this.$http
-          .post("http://localhost:8080/api/location/", {
+          .post("https://localhost:8080/api/location/", {
             longitude: this.longitude,
             latitude: this.latitude,
             country: this.country,
@@ -344,7 +344,7 @@ export default {
     createPostDescription() {
       if (this.isValidPostDescription) {
         this.$http
-          .post("http://localhost:8080/api/post/single_post/", {
+          .post("https://localhost:8080/api/post/single_post/", {
             description: this.postDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -358,7 +358,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:8080/api/post/single_post/", {
+          .post("https://localhost:8080/api/post/single_post/", {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -374,7 +374,7 @@ export default {
     },
     createContent() {
       this.$http
-        .post("http://localhost:8080/api/content/single_post_content/", {
+        .post("https://localhost:8080/api/content/single_post_content/", {
           path: this.path,
           type: this.selectedType,
           single_post_id: this.postId,
@@ -388,7 +388,7 @@ export default {
     },
     finish() {
       alert("Successful creation.");
-      window.location.href = "http://localhost:8081/";
+      window.location.href = "https://localhost:8081/";
     },
     addTag() {
       
@@ -401,7 +401,7 @@ export default {
       } else {
         if (!this.validTag()) return;
         this.$http
-          .post("http://localhost:8080/api/tag/tag/", {
+          .post("https://localhost:8080/api/tag/tag/", {
             name: this.tagName,
             tag_type: this.selectedTagType,
           })
@@ -417,7 +417,7 @@ export default {
     },
     createPostTagPosts() {
       this.$http
-        .post("http://localhost:8080/api/tag/post_tag_posts/", {
+        .post("https://localhost:8080/api/tag/post_tag_posts/", {
           tag_id: this.postTagId,
           post_id: this.postId,
         })
@@ -432,7 +432,7 @@ export default {
     },
     createPostUserTagPosts() {
       this.$http
-        .post("http://localhost:8080/api/tag/post_tag_posts/", {
+        .post("https://localhost:443s/api/tag/post_tag_posts/", {
           tag_id: this.userTag.id,
           post_id: this.postId,
         })

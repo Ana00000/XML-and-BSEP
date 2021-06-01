@@ -88,7 +88,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_selected_post_album_for_logged_user?id=" +
+          "https://localhost:8080/api/post/find_selected_post_album_for_logged_user?id=" +
             localStorage.getItem("mySelectedPostAlbumId") +
             "&logId=" +
             localStorage.getItem("mySelectedUserId")

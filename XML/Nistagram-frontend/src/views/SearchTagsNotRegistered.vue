@@ -76,7 +76,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8080/api/post/find_all_tags_for_public_posts/")
+        .get("https://localhost:8080/api/post/find_all_tags_for_public_posts/")
         .then((resp) => {
           this.tags = resp.data;
           this.tagsCopy = resp.data;
@@ -100,7 +100,7 @@ export default {
       localStorage.setItem("selectedTagName", this.selectedTag.name);
       localStorage.setItem("selectedTagId", this.selectedTag.id);
       window.location.href =
-        "http://localhost:8081/postsForSelectedTagNotRegistered";
+        "https://localhost:8081/postsForSelectedTagNotRegistered";
     },
   },
 };

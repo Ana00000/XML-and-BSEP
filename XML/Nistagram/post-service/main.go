@@ -146,7 +146,7 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	cors := handlers.CORS(
 		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
-		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowedOrigins([]string{"https://localhost:8081"}),
 		handlers.AllowCredentials(),
 	)
 

@@ -88,7 +88,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8080/api/story/find_selected_story_album_for_logged_user?id=" +
+          "https://localhost:8080/api/story/find_selected_story_album_for_logged_user?id=" +
             localStorage.getItem("mySelectedStoryAlbumId") +
             "&logId=" +
             localStorage.getItem("mySelectedUserId")

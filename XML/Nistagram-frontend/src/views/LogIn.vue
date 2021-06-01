@@ -50,7 +50,7 @@ export default {
   methods: {
     logIn() {
       this.$http
-        .post("http://localhost:8080/api/user/login/", {
+        .post("https://localhost:8080/api/user/login/", {
            username: this.username,
            password: this.password
         })
@@ -62,7 +62,7 @@ export default {
           localStorage.setItem("userType", resp.data.userType)
          
           this.$http
-          .get("http://localhost:8080/api/settings/find_profile_settings_by_user_id/"+resp.data.id)
+          .get("https://localhost:8080/api/settings/find_profile_settings_by_user_id/"+resp.data.id)
           .then((resp) => {
           console.log("FOUND PROFILE SETTINGS")
           console.log("USER PRIVACY")
@@ -76,7 +76,7 @@ export default {
              localStorage.setItem("userPrivacy", "PUBLIC")
           }
 
-          window.location.href = "http://localhost:8081/";
+          window.location.href = "https://localhost:8081/";
 
          }).catch(console.log);
          

@@ -77,7 +77,7 @@
             style="display: none"
           ></iframe>
           <form
-            action="http://localhost:8080/api/content/uploadStoryMedia/"
+            action="https://localhost:8080/api/content/uploadStoryMedia/"
             enctype="multipart/form-data"
             method="post"
             v-if="!isHiddenContent"
@@ -250,7 +250,7 @@ export default {
     init() {
         this.userId = localStorage.getItem("userId");
         this.$http
-        .get("http://localhost:8080/api/tag/find_all_taggable_users_story/")
+        .get("https://localhost:8080/api/tag/find_all_taggable_users_story/")
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
             if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
@@ -335,7 +335,7 @@ export default {
 
       if (this.isValidLocation) {
         this.$http
-          .post("http://localhost:8080/api/location/", {
+          .post("https://localhost:8080/api/location/", {
             longitude: this.longitude,
             latitude: this.latitude,
             country: this.country,
@@ -357,7 +357,7 @@ export default {
     createStoryDescription() {
       if (this.isValidStoryDescription) {
         this.$http
-          .post("http://localhost:8080/api/story/single_story/", {
+          .post("https://localhost:8080/api/story/single_story/", {
             description: this.storyDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -372,7 +372,7 @@ export default {
           });
       } else {
         this.$http
-          .post("http://localhost:8080/api/story/single_story/", {
+          .post("https://localhost:8080/api/story/single_story/", {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
@@ -389,7 +389,7 @@ export default {
     },
     createContent() {
       this.$http
-        .post("http://localhost:8080/api/content/single_story_content/", {
+        .post("https://localhost:8080/api/content/single_story_content/", {
           path: this.path,
           type: this.selectedType,
           single_story_id: this.storyId,
@@ -403,7 +403,7 @@ export default {
     },
     finish() {
       alert("Successful creation.");
-      window.location.href = "http://localhost:8081/";
+      window.location.href = "https://localhost:8081/";
     },
     addTag() {
       
@@ -416,7 +416,7 @@ export default {
       } else {
          if (!this.validTag()) return;
          this.$http
-          .post("http://localhost:8080/api/tag/tag/", {
+          .post("https://localhost:8080/api/tag/tag/", {
             name: this.tagName,
             tag_type: this.selectedTagType,
           })
@@ -431,7 +431,7 @@ export default {
     },
     createStoryTagStories() {
       this.$http
-        .post("http://localhost:8080/api/tag/story_tag_stories/", {
+        .post("https://localhost:8080/api/tag/story_tag_stories/", {
           tag_id: this.storyTagId,
           story_id: this.storyId,
         })
@@ -446,7 +446,7 @@ export default {
     },
     createStoryUserTagStories() {
       this.$http
-        .post("http://localhost:8080/api/tag/story_tag_stories/", {
+        .post("https://localhost:8080/api/tag/story_tag_stories/", {
           tag_id: this.userTag.id,
           story_id: this.storyId,
         })

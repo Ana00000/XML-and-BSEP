@@ -90,7 +90,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8080/api/post/find_all_locations_for_public_posts/")
+        .get("https://localhost:8080/api/post/find_all_locations_for_public_posts/")
         .then((resp) => {
           //this.locations = resp.data;
           this.locations = resp.data;
@@ -115,7 +115,7 @@ export default {
       localStorage.setItem("selectedLocationString", this.locationString);
       localStorage.setItem("selectedLocationId", this.selectedLocation.id);
       window.location.href =
-        "http://localhost:8081/postsForSelectedLocationNotRegistered";
+        "https://localhost:8081/postsForSelectedLocationNotRegistered";
     },
   },
 };

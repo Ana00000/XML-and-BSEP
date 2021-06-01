@@ -240,7 +240,7 @@ export default {
     getPosts() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_posts_for_logged_user?id=" +
+          "https://localhost:8080/api/post/find_all_posts_for_logged_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -251,7 +251,7 @@ export default {
     getStories() {
       this.$http
         .get(
-          "http://localhost:8080/api/story/find_all_stories_for_logged_user?id=" +
+          "https://localhost:8080/api/story/find_all_stories_for_logged_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -262,7 +262,7 @@ export default {
     getPostAlbums() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_album_posts_for_logged_user?id=" +
+          "https://localhost:8080/api/post/find_all_album_posts_for_logged_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -273,7 +273,7 @@ export default {
     getStoryAlbums() {
       this.$http
         .get(
-          "http://localhost:8080/api/story/find_all_album_stories_for_logged_user?id=" +
+          "https://localhost:8080/api/story/find_all_album_stories_for_logged_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -285,27 +285,27 @@ export default {
       localStorage.setItem("mySelectedUserId", item.user_id);
       localStorage.setItem("mySelectedPostId", item.post_id);
 
-      window.location.href = "http://localhost:8081/postByIdWithoutActivity";
+      window.location.href = "https://localhost:8081/postByIdWithoutActivity";
     },
     getMyStory(item) {
       localStorage.setItem("mySelectedUserId", item.user_id);
       localStorage.setItem("mySelectedStoryId", item.story_id);
 
-      window.location.href = "http://localhost:8081/storyByIdWithoutActivity";
+      window.location.href = "https://localhost:8081/storyByIdWithoutActivity";
     },
     getMyAlbumPosts(item) {
       localStorage.setItem("mySelectedUserId", item.user_id);
       localStorage.setItem("mySelectedPostAlbumId", item.post_album_id);
 
       window.location.href =
-        "http://localhost:8081/postAlbumByIdWithoutActivity";
+        "https://localhost:8081/postAlbumByIdWithoutActivity";
     },
     getMyAlbumStories(item) {
       localStorage.setItem("mySelectedUserId", item.user_id);
       localStorage.setItem("mySelectedStoryAlbumId", item.story_album_id);
 
       window.location.href =
-        "http://localhost:8081/storyAlbumByIdWithoutActivity";
+        "https://localhost:8081/storyAlbumByIdWithoutActivity";
     },
   },
 };

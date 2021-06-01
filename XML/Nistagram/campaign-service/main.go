@@ -120,7 +120,7 @@ func handleFunc(handlerMultiUseCampaign *handler.MultiUseCampaignHandler,handler
 	cors := handlers.CORS(
 		handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "Authorization", "Access-Control-Allow-Headers"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
-		handlers.AllowedOrigins([]string{"http://localhost:8081"}),
+		handlers.AllowedOrigins([]string{"https://localhost:8081"}),
 		handlers.AllowCredentials(),
 	)
 
@@ -130,7 +130,7 @@ func handleFunc(handlerMultiUseCampaign *handler.MultiUseCampaignHandler,handler
 	router.HandleFunc("/advertisement/", handlerAdvertisement.CreateAdvertisement).Methods("POST")
 	router.HandleFunc("/campaign_chosen_group/", handlerCampaignChosenGroup.CreateCampaignChosenGroup).Methods("POST")
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")),cors(router)))
 }
 
 func main() {
