@@ -7,6 +7,8 @@ import org.bouncycastle.asn1.x500.X500Name;
 
 public class Subject extends Users {
 
+	private static final long serialVersionUID = 1L;
+
 	private PublicKey publicKey;
 
 	private X500Name x500name;

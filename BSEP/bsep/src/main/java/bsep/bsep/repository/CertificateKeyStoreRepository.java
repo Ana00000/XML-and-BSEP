@@ -24,7 +24,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import bsep.bsep.model.CertificateType;
 import bsep.bsep.model.Issuer;
 
 @Repository
