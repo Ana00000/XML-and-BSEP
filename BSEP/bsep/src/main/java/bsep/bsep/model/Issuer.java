@@ -6,6 +6,8 @@ import org.bouncycastle.asn1.x500.X500Name;
 
 public class Issuer extends Users {
 
+	private static final long serialVersionUID = 1L;
+
 	private PrivateKey privateKey;
 
 	private X500Name x500name;
