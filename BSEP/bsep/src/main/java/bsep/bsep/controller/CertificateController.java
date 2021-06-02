@@ -2,6 +2,7 @@ package bsep.bsep.controller;
 
 import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -35,7 +36,10 @@ public class CertificateController {
 	private CertificateService certificateService;
 	private UserService userService;
 	private CertificateValidation certificateValidation;
-	private Logger logger = LoggerFactory.getLogger(UserService.class);
+	private Logger loggerInfo = LoggerFactory.getLogger(CertificateController.class);
+	
+	private Logger loggerError = LoggerFactory.getLogger("logerror");
+
 
 	@Autowired
 	public CertificateController(CertificateService certificateService, UserService userService) {
@@ -49,11 +53,10 @@ public class CertificateController {
 	public ResponseEntity<Boolean> revokeCertificate(@PathVariable String serialNumber) {
 		try {
 			certificateService.revokeCertificate(serialNumber);
-			logger.info("action=revokeCertificate status=success certificateSerialNumber={}", serialNumber);
+			loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=REVCERT674 status=success serialNumber="+serialNumber);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
-			logger.error("action=revokeCertificate status=failure message={} certificateSerialNumber={}",
-					e.getMessage(), serialNumber);
+			loggerError.error("location=CertificateController timestamp="+LocalDateTime.now().toString()+" action=REVCERT674 status=failure message="+e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -61,28 +64,28 @@ public class CertificateController {
 	@PostAuthorize("hasAuthority('USER_GET_CERTIFICATE_DTO_BY_SERIAL_NUMBER_PRIVILEGE')")
 	@GetMapping(value = "/{serialNumber}")
 	public ResponseEntity<CertificateData> checkCertificateValidity(@PathVariable String serialNumber) {
-		logger.info("action=checkCertificateValidity status=success certificateSerialNumber={}", serialNumber);
+		loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=CHCERTVAL482 status=success serialNumber="+serialNumber);
 		return new ResponseEntity<>(certificateService.findCertificateDataBySerialNumber(serialNumber), HttpStatus.OK);
 	}
 
 	@PostAuthorize("hasAuthority('USER_GET_CERTIFICATE_DTO_BY_SERIAL_NUMBER_PRIVILEGE')")
 	@GetMapping(value = "/getCertificate/{serialNumber}")
 	public ResponseEntity<CertificateDTO> getCertificateDTOBySerialNumber(@PathVariable String serialNumber) {
-		logger.info("action=getCertificate status=success certificateSerialNumber={}", serialNumber);
+		loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=GETCER821 status=success serialNumber="+ serialNumber);
 		return new ResponseEntity<>(certificateService.findCertificateDTOBySerialNumber(serialNumber), HttpStatus.OK);
 	}
 
 	@PostAuthorize("hasAuthority('USER_ALL_VALID_CERTIFICATES_PRIVILEGE')")
 	@GetMapping(value = "/allValid/{userEmail}")
 	public ResponseEntity<List<CertificateDTO>> allValidCertificates(@PathVariable String userEmail) {
-		logger.info("action=allValidCertificates status=success");
+		loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=ALVALCERT3281 status=success");
 		return new ResponseEntity<>(getListOfCertificate(userEmail), HttpStatus.OK);
 	}
 
 	@PostAuthorize("hasAuthority('USER_ALL_REVOKED_OR_EXPIRED_CERTIFICATES_PRIVILEGE')")
 	@GetMapping(value = "/allRevokedOrExpired")
 	public ResponseEntity<List<CertificateDTO>> allRevokedOrExpiredCertificates() {
-		logger.info("action=allRevokedOrExpired status=success");
+		loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=ALINVALCERT429 status=success");
 		return new ResponseEntity<>(certificateService.findAllRevokedOrExpired(), HttpStatus.OK);
 	}
 
@@ -91,17 +94,15 @@ public class CertificateController {
 	public ResponseEntity<Boolean> loadToFile(@PathVariable String serialNumber) {
 		try {
 			certificateService.loadCertificateToFile(serialNumber);
-			logger.info("action=loadToFile status=success certificateSerialNumber={}", serialNumber);
+			loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=LODTFIL4125 status=success serialNumber="+serialNumber);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (CertificateEncodingException | IOException e) {
-			e.printStackTrace();
-			logger.error("action=loadToFile status=failure message={} certificateSerialNumber={}", e.getMessage(),
-					serialNumber);
+			//e.printStackTrace();
+			loggerError.error("location=CertificateController timestamp="+LocalDateTime.now().toString()+" action=LODTFIL4125 status=failure message="+e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("action=loadToFile status=failure message={} certificateSerialNumber={}", e.getMessage(),
-					serialNumber);
+			//e.printStackTrace();
+			loggerError.error("location=CertificateController timestamp="+LocalDateTime.now().toString()+" action=LODTFIL4125 status=failure message="+e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -109,21 +110,17 @@ public class CertificateController {
 	@PostAuthorize("hasAuthority('USER_CREATE_CERTIFICATE_PRIVILEGE')")
 	@PostMapping(value = "/createCertificate", consumes = "application/json")
 	public ResponseEntity<CertificateData> createCertificate(@RequestBody CertificateInfoDTO certificateInfoDTO) {
-		String certificateAlias = certificateInfoDTO.getAlias();
 		if (!certificateValidation.validCertificate(certificateInfoDTO)) {
-			String message = "Certificate is not valid";
-			logger.error("action=createCertificate status=failure message={} certificateAlias={}", message,
-					certificateAlias);
+			loggerError.error("location=CertificateController timestamp="+LocalDateTime.now().toString()+" action=CRTCERT611 status=failure message=Certificate is not valid");
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		try {
 			CertificateData certificateData = certificateService.createCertificate(certificateInfoDTO);
-			logger.info("action=createCertificate status=success certificateAlias={}", certificateAlias);
+			loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=CRTCERT611 status=success serialNumber="+certificateData.getSerialNumber());
 			return new ResponseEntity<>(certificateData, checkStatusForCreatingCertificate(certificateData));
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("action=createCertificate status=failure message={} certificateAlias={}", e.getMessage(),
-					certificateAlias);
+			//e.printStackTrace();
+			loggerError.error("location=CertificateController timestamp="+LocalDateTime.now().toString()+" action=CRTCERT611 status=failure message="+e.getMessage());
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 	}

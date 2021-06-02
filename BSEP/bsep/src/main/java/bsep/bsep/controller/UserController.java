@@ -1,8 +1,10 @@
 package bsep.bsep.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -61,8 +63,11 @@ public class UserController {
 
 	private final ConfirmationTokenService confirmationTokenService;
 
-	private Logger logger = LoggerFactory.getLogger(UserService.class);
+	private Logger loggerInfo = LoggerFactory.getLogger(UserController.class);
+	
+	private Logger loggerError = LoggerFactory.getLogger("logerror");
 
+	
 	@Autowired
 	public UserController(UserService userService, AuthorityService authorityService,
 			ConfirmationTokenService confirmationTokenService,
@@ -77,19 +82,19 @@ public class UserController {
 
 	@GetMapping("/findAllUsers")
 	public ResponseEntity<List<Users>> findAllUsers() {
-		logger.info("action=findAllUsers status=success");
+		loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=FAU562 status=success");
 		return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
 	}
 
 	@GetMapping("/getUsersEmails")
 	public ResponseEntity<List<String>> findAllUsersEmails() {
-		logger.info("action=getUsersEmails status=success");
+		loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=GUE457 status=success");
 		return new ResponseEntity<>(userService.findAllUsersEmails(), HttpStatus.OK);
 	}
 
 	@GetMapping("/redirectMeToMyHomePage")
 	public String RedirectionToHome() {
-		logger.info("action=redirectMeToMyHomePage status=success");
+		loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=RMTMHP549 status=success");
 		return "https://localhost:8081/";
 	}
 
@@ -97,19 +102,17 @@ public class UserController {
 	public ResponseEntity<Boolean> recoveringPassword(@RequestBody EmailDTO recoveryPasswordRequestEmail) {
 		String userEmail = recoveryPasswordRequestEmail.getEmailOfUser();
 		if (!userValidation.validUserEmail(userEmail)) {
-			String message = "User email is not valid";
-			logger.error("action=recoverPasswordWithToken status=faliure message={} userEmail={}", message, userEmail);
+			loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=RPWT864 status=failure message=User email is not valid");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		Users user = userService.findByUserEmail(userEmail);
 		if (user == null || !user.isConfirmed()) {
-			String message = "User not found or not confirmed";
-			logger.error("action=recoverPasswordWithToken status=faliure message={} userEmail={}", message, userEmail);
+			loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=RPWT864 status=failure message=User not found or not confirmed");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
 		recoverPasswordTokenService.saveTokenAndSendEmailToUser(new RecoverPasswordToken(user));
-		logger.info("action=recoverPasswordWithToken status=success userEmail={}", userEmail);
+		loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=RPWT864 status=success ID="+ user.getId());
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -118,13 +121,10 @@ public class UserController {
 		RecoverPasswordToken recoverPasswordToken = recoverPasswordTokenService
 				.findRecoverPasswordTokenByToken(token.getToken());
 		if (recoverPasswordToken != null && recoverPasswordToken.getUsers() != null) {
-			logger.info("action=findUserByToken status=success userEmail={}",
-					recoverPasswordToken.getUsers().getUserEmail());
+			loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=FUBT953 status=success ID="+recoverPasswordToken.getUsers().getId());
 			return new ResponseEntity<>(recoverPasswordToken.getUsers(), HttpStatus.OK);
 		}
-
-		String message = "Token not found";
-		logger.error("action=findUserByToken status=failure message={}", message);
+		loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=FUBT953 status=failure message=Token not found");
 		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 	}
 
@@ -135,24 +135,21 @@ public class UserController {
 				|| !userValidation.validPassword(userChangePasswordDTO.getPassword())
 				|| !userValidation.validPassword(userChangePasswordDTO.getConfirmedPassword())
 				|| !userValidation.validPasswordAndConfirmPassword(userChangePasswordDTO)) {
-			String message = "Bad credentials";
-			logger.error("action=changePassword status=failure message={} userEmail={}", message, userEmail);
+			loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=CH9882 status=failure message=Bad credentials");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		try {
 			Users users = userService.findByUserEmail(userChangePasswordDTO.getEmailOfUser());
 			if (users == null) {
-				String message = "User not found";
-				logger.error("action=changePassword status=failure message={} userEmail={}", message, userEmail);
+				loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=CH9882 status=failure message=User not found");
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 			users.setPassword(userChangePasswordDTO.getPassword());
 			userService.updatePassword(users);
-			logger.info("action=changePassword status=success userEmail={}", userEmail);
+			loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=CH9882 status=success ID="+ users.getId());
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
-
-			logger.error("action=changePassword status=failure message={} userEmail={}", e.getMessage(), userEmail);
+			loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=CH9882 status=failure message="+ e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
@@ -176,17 +173,15 @@ public class UserController {
 
 			if (user.isConfirmed()) {
 				String jwt = tokenUtils.generateToken(userEmail);
-				logger.info("action=login status=success userEmail={}", userEmail);
+				loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=LI3431 status=success ID="+ user.getId());
 				return ResponseEntity
 						.ok(new UserTokenState(jwt, tokenUtils.getExpiredIn(), user.getTypeOfUser().name()));
 			}
 		} catch (Exception e) {
-			logger.error("action=login status=failure message={} userEmail={}", e.getMessage(), userEmail);
+			loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=LI3431 status=failure message="+ e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-
-		String message = "Bad request";
-		logger.error("action=login status=failure message={} userEmail={}", message, userEmail);
+		loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=LI3431 status=failure message=Bad request");
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
 	}
@@ -195,27 +190,22 @@ public class UserController {
 	public ResponseEntity<Users> addUser(@RequestBody UserDTO userRequest) {
 		String userEmail = userRequest.getUserEmail();
 		if (userRequest.getTypeOfUser().toUpperCase().equals("ADMIN") || !userValidation.validUser(userRequest)) {
-			String message = "User info is not valid";
-			logger.error("action=register status=failure message={}", message);
+			loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=REG430 status=failure message=User info is not valid");
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		} else if (userService.findByUserEmail(userEmail) != null) {
-			System.out.println("Username already exists.");
-			String message = "User email already exists";
-			logger.error("action=register status=failure message={} userEmail={}", message, userEmail);
+			loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=REG430 status=failure message=User email already exists");
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 
 		try {
 			Users userWithPermissions = addPermissionsForUser(userRequest);
 			Users userRegistered = userService.save(userWithPermissions);
-			logger.info("action=register status=success userEmail={}", userEmail);
+			loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=REG430 status=success ID="+ userRegistered.getId());
 			return new ResponseEntity<>(userRegistered, HttpStatus.CREATED);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("action=register status=failure message={} userEmail={}", e.getMessage(), userEmail);
+			loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=REG430 status=failure message="+ e.getMessage());
 		}
-		String message = "Bad request";
-		logger.error("action=register status=failure message={} userEmail={}", message, userEmail);
+		loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=REG430 status=failure message=Bad request");
 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 	}
 
@@ -226,19 +216,17 @@ public class UserController {
 			ConfirmationToken confirmationToken = confirmationTokenService.findByConfirmationToken(token);
 			if (confirmationToken != null) {
 				setConfirmedAccount(confirmationToken);
-				logger.info("action=confirmAccount status=success userEmail={}",
-						confirmationToken.getUsers().getUserEmail());
+				loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=CONFACC43 status=success ID="+confirmationToken.getUsers().getId());
 				return new ResponseEntity<>(HttpStatus.OK);
 
 			} else {
-				String message = "Confirmation token is not valid";
-				logger.error("action=confirmAccount status=failure message={} token={}", message, token);
+				loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=CONFACC43 status=failure message=Confirmation token is not valid");
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 
 		} catch (Exception e) {
 
-			logger.error("action=confirmAccount status=failure message={} token={}", e.getMessage(), token);
+			loggerError.error("location=UserController timestamp="+LocalDateTime.now().toString()+" action=CONFACC43 status=failure message="+ e.getMessage());
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
