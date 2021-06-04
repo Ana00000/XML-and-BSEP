@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/form3tech-oss/jwt-go"
 	"github.com/google/uuid"
 	"github.com/mikespook/gorbac"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
