@@ -1,18 +1,18 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
 	"net/http"
 	_ "strconv"
 )
 
 type VerificationRequestHandler struct {
-	Service * service.VerificationRequestService
+	Service *service.VerificationRequestService
 }
 
 func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.ResponseWriter, r *http.Request) {
@@ -24,11 +24,11 @@ func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.Resp
 	}
 
 	verificationRequest := model.VerificationRequest{
-		ID:          			   uuid.UUID{},
-		FirstName:   			   verificationRequestDTO.FirstName,
-		LastName:     			   verificationRequestDTO.LastName,
-		OfficialDocumentPath:      verificationRequestDTO.OfficialDocumentPath,
-		RegisteredUserCategory:         verificationRequestDTO.RegisteredUserCategory,
+		ID:                     uuid.UUID{},
+		FirstName:              verificationRequestDTO.FirstName,
+		LastName:               verificationRequestDTO.LastName,
+		OfficialDocumentPath:   verificationRequestDTO.OfficialDocumentPath,
+		RegisteredUserCategory: verificationRequestDTO.RegisteredUserCategory,
 	}
 
 	err = handler.Service.CreateVerificationRequest(&verificationRequest)
@@ -39,4 +39,3 @@ func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.Resp
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-

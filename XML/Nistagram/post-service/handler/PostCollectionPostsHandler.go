@@ -1,17 +1,17 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
 	"net/http"
 )
 
 type PostCollectionPostsHandler struct {
-	Service * service.PostCollectionPostsService
+	Service *service.PostCollectionPostsService
 }
 
 func (handler *PostCollectionPostsHandler) CreatePostCollectionPosts(w http.ResponseWriter, r *http.Request) {

@@ -12,7 +12,7 @@ import (
 )
 
 type StoryTagStoriesHandler struct {
-	Service * service.StoryTagStoriesService
+	Service *service.StoryTagStoriesService
 }
 
 func (handler *StoryTagStoriesHandler) CreateStoryTagStories(w http.ResponseWriter, r *http.Request) {
@@ -24,9 +24,9 @@ func (handler *StoryTagStoriesHandler) CreateStoryTagStories(w http.ResponseWrit
 	}
 
 	storyTagStories := model.StoryTagStories{
-		ID:         uuid.UUID{},
-		TagId: storyTagStoriesDTO.TagId,
-		StoryId:    storyTagStoriesDTO.StoryId,
+		ID:      uuid.UUID{},
+		TagId:   storyTagStoriesDTO.TagId,
+		StoryId: storyTagStoriesDTO.StoryId,
 	}
 
 	err = handler.Service.CreateStoryTagStories(&storyTagStories)

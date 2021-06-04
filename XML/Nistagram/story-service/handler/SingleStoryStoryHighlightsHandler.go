@@ -1,18 +1,18 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
 	"net/http"
 	_ "strconv"
 )
 
 type SingleStoryStoryHighlightsHandler struct {
-	Service * service.SingleStoryStoryHighlightsService
+	Service *service.SingleStoryStoryHighlightsService
 }
 
 func (handler *SingleStoryStoryHighlightsHandler) CreateSingleStoryStoryHighlights(w http.ResponseWriter, r *http.Request) {

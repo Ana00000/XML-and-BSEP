@@ -12,7 +12,7 @@ import (
 )
 
 type MessageHandler struct {
-	Service * service.MessageService
+	Service *service.MessageService
 }
 
 func (handler *MessageHandler) CreateMessage(w http.ResponseWriter, r *http.Request) {
@@ -28,13 +28,13 @@ func (handler *MessageHandler) CreateMessage(w http.ResponseWriter, r *http.Requ
 	creationDate, _ := time.Parse(layout, messageDTO.CreationDate)
 
 	message := model.Message{
-		ID: uuid.UUID{},
+		ID:                 uuid.UUID{},
 		MessageSubstanceId: messageDTO.MessageContentID,
-		IsDisposable: messageDTO.IsDisposable,
-		CreationDate: creationDate,
-		SenderUserID: messageDTO.SenderUserID,
-        ReceiverUserID: messageDTO.ReceiverUserID,
-        IsDeleted: messageDTO.IsDeleted,
+		IsDisposable:       messageDTO.IsDisposable,
+		CreationDate:       creationDate,
+		SenderUserID:       messageDTO.SenderUserID,
+		ReceiverUserID:     messageDTO.ReceiverUserID,
+		IsDeleted:          messageDTO.IsDeleted,
 	}
 
 	err = handler.Service.CreateMessage(&message)

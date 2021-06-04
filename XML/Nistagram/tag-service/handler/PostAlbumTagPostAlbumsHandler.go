@@ -12,7 +12,7 @@ import (
 )
 
 type PostAlbumTagPostAlbumsHandler struct {
-	Service * service.PostAlbumTagPostAlbumsService
+	Service *service.PostAlbumTagPostAlbumsService
 }
 
 func (handler *PostAlbumTagPostAlbumsHandler) CreatePostAlbumTagPostAlbums(w http.ResponseWriter, r *http.Request) {
@@ -25,9 +25,9 @@ func (handler *PostAlbumTagPostAlbumsHandler) CreatePostAlbumTagPostAlbums(w htt
 
 	id := uuid.New()
 	postAlbumTagPostAlbums := model.PostAlbumTagPostAlbums{
-		ID:        			id,
-		TagId: 				postAlbumTagPostAlbumsDTO.TagId,
-		PostAlbumId:    	postAlbumTagPostAlbumsDTO.PostAlbumId,
+		ID:          id,
+		TagId:       postAlbumTagPostAlbumsDTO.TagId,
+		PostAlbumId: postAlbumTagPostAlbumsDTO.PostAlbumId,
 	}
 
 	err = handler.Service.CreatePostAlbumTagPostAlbums(&postAlbumTagPostAlbums)

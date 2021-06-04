@@ -13,7 +13,7 @@ import (
 )
 
 type LocationHandler struct {
-	Service * service.LocationService
+	Service *service.LocationService
 }
 
 func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +24,7 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 		return
 	}
 	var foundLocation = handler.Service.FindByLocationDTO(locationDTO)
-	if foundLocation!=nil{
+	if foundLocation != nil {
 		fmt.Println(foundLocation.StreetName)
 		locationIDJson, _ := json.Marshal(foundLocation.ID)
 		w.Write(locationIDJson)
@@ -34,16 +34,14 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 	}
 	fmt.Println("Nije pronasao lokaciju")
 	location := model.Location{
-		ID:          uuid.UUID{},
-		Longitude: locationDTO.Longitude,
-		Latitude:      locationDTO.Latitude,
-		Country:       locationDTO.Country,
-		City:      locationDTO.City,
-		StreetName:       locationDTO.StreetName,
-		StreetNumber:       locationDTO.StreetNumber,
+		ID:           uuid.UUID{},
+		Longitude:    locationDTO.Longitude,
+		Latitude:     locationDTO.Latitude,
+		Country:      locationDTO.Country,
+		City:         locationDTO.City,
+		StreetName:   locationDTO.StreetName,
+		StreetNumber: locationDTO.StreetNumber,
 	}
-
-
 
 	err = handler.Service.CreateLocation(&location)
 	if err != nil {
@@ -63,7 +61,7 @@ func (handler *LocationHandler) FindByID(w http.ResponseWriter, r *http.Request)
 	id := r.URL.Query().Get("id")
 
 	var location = handler.Service.FindByID(uuid.MustParse(id))
-	if  location == nil {
+	if location == nil {
 		fmt.Println("Location not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}

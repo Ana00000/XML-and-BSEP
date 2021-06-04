@@ -12,7 +12,7 @@ import (
 )
 
 type AdvertisementHandler struct {
-	Service * service.AdvertisementService
+	Service *service.AdvertisementService
 }
 
 func (handler *AdvertisementHandler) CreateAdvertisement(w http.ResponseWriter, r *http.Request) {
@@ -24,8 +24,8 @@ func (handler *AdvertisementHandler) CreateAdvertisement(w http.ResponseWriter, 
 	}
 
 	advertisement := model.Advertisement{
-		ID:                     uuid.UUID{},
-		CampaignId:          advertisementDTO.CampaignId,
+		ID:         uuid.UUID{},
+		CampaignId: advertisementDTO.CampaignId,
 	}
 
 	err = handler.Service.CreateAdvertisement(&advertisement)

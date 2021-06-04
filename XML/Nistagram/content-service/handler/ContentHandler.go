@@ -1,18 +1,18 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
 	"net/http"
 	_ "strconv"
 )
 
 type ContentHandler struct {
-	Service * service.ContentService
+	Service *service.ContentService
 }
 
 func (handler *ContentHandler) CreateContent(w http.ResponseWriter, r *http.Request) {

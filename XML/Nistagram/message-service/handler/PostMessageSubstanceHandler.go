@@ -11,7 +11,7 @@ import (
 )
 
 type PostMessageSubstanceHandler struct {
-	Service * service.PostMessageSubstanceService
+	Service *service.PostMessageSubstanceService
 }
 
 func (handler *PostMessageSubstanceHandler) CreatePostMessageSubstance(w http.ResponseWriter, r *http.Request) {

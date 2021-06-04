@@ -12,7 +12,7 @@ import (
 )
 
 type ClassicUserCampaignsHandler struct {
-	Service * service.ClassicUserCampaignsService
+	Service *service.ClassicUserCampaignsService
 }
 
 func (handler *ClassicUserCampaignsHandler) CreateClassicUserCampaigns(w http.ResponseWriter, r *http.Request) {
@@ -23,9 +23,9 @@ func (handler *ClassicUserCampaignsHandler) CreateClassicUserCampaigns(w http.Re
 		return
 	}
 	classicUserCampaigns := model.ClassicUserCampaigns{
-		ID:               uuid.UUID{},
+		ID:            uuid.UUID{},
 		ClassicUserId: classicUserCampaignsDTO.ClassicUserId,
-		CampaignId:       classicUserCampaignsDTO.CampaignId,
+		CampaignId:    classicUserCampaignsDTO.CampaignId,
 	}
 
 	err = handler.Service.CreateClassicUserCampaigns(&classicUserCampaigns)

@@ -12,7 +12,7 @@ import (
 )
 
 type CommentTagCommentsHandler struct {
-	Service * service.CommentTagCommentsService
+	Service *service.CommentTagCommentsService
 }
 
 func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.ResponseWriter, r *http.Request) {
@@ -24,8 +24,8 @@ func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.Respon
 	}
 
 	commentTagComments := model.CommentTagComments{
-		ID:          uuid.UUID{},
-		TagId: 		commentTagCommentsDTO.TagId,
+		ID:        uuid.UUID{},
+		TagId:     commentTagCommentsDTO.TagId,
 		CommentId: commentTagCommentsDTO.CommentId,
 	}
 
@@ -34,7 +34,6 @@ func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.Respon
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
-
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")

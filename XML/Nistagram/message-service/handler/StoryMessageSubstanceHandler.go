@@ -11,7 +11,7 @@ import (
 )
 
 type StoryMessageSubstanceHandler struct {
-	Service * service.StoryMessageSubstanceService
+	Service *service.StoryMessageSubstanceService
 }
 
 func (handler *StoryMessageSubstanceHandler) CreateStoryMessageSubstance(w http.ResponseWriter, r *http.Request) {

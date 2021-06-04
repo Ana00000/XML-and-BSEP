@@ -11,7 +11,7 @@ import (
 )
 
 type ActivityHandler struct {
-	Service * service.ActivityService
+	Service *service.ActivityService
 }
 
 func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Request) {
@@ -24,11 +24,11 @@ func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Re
 	}
 
 	activity := model.Activity{
-		ID: uuid.UUID{},
-		PostID: activityDTO.PostID,
-		UserID: activityDTO.UserID,
+		ID:          uuid.UUID{},
+		PostID:      activityDTO.PostID,
+		UserID:      activityDTO.UserID,
 		LikedStatus: activityDTO.LikedStatus,
-		IsFavorite: activityDTO.IsFavorite,
+		IsFavorite:  activityDTO.IsFavorite,
 	}
 
 	err = handler.Service.CreateActivity(&activity)
@@ -45,7 +45,6 @@ func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Re
 }
 
 func (handler *ActivityHandler) FindAllLikesForPost(w http.ResponseWriter, r *http.Request) {
-
 
 	id := r.URL.Query().Get("id")
 

@@ -9,9 +9,8 @@ import (
 )
 
 type ClassicUserFollowersHandler struct {
-	ClassicUserFollowersService * service.ClassicUserFollowersService
+	ClassicUserFollowersService *service.ClassicUserFollowersService
 }
-
 
 func (handler *ClassicUserFollowersHandler) FindAllMutualFollowerForUser(w http.ResponseWriter, r *http.Request) {
 

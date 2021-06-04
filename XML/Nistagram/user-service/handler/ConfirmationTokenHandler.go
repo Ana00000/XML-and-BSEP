@@ -10,31 +10,31 @@ import (
 )
 
 type ConfirmationTokenHandler struct {
-	ConfirmationTokenService * service.ConfirmationTokenService
-	ClassicUserService * service.ClassicUserService
-	RegisteredUserService * service.RegisteredUserService
-	UserService * service.UserService
+	ConfirmationTokenService *service.ConfirmationTokenService
+	ClassicUserService       *service.ClassicUserService
+	RegisteredUserService    *service.RegisteredUserService
+	UserService              *service.UserService
 }
 
 func (handler *ConfirmationTokenHandler) VerifyConfirmationToken(w http.ResponseWriter, r *http.Request) {
 	var confirmationAccountDTO dto.ConfirmationAccountDTO
 	err := json.NewDecoder(r.Body).Decode(&confirmationAccountDTO)
-	if err!=nil{
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	userIdUUID := confirmationAccountDTO.UserId
-	tokenUUID:= confirmationAccountDTO.ConfirmationToken
+	tokenUUID := confirmationAccountDTO.ConfirmationToken
 
-	var confirmationToken= handler.ConfirmationTokenService.FindByToken(tokenUUID)
-	if !confirmationToken.IsValid{
+	var confirmationToken = handler.ConfirmationTokenService.FindByToken(tokenUUID)
+	if !confirmationToken.IsValid {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if confirmationToken.UserId!=userIdUUID || confirmationToken.ExpiredTime.Before(time.Now()){
+	if confirmationToken.UserId != userIdUUID || confirmationToken.ExpiredTime.Before(time.Now()) {
 		err := handler.ConfirmationTokenService.UpdateConfirmationTokenValidity(confirmationToken.ConfirmationToken, false)
 		if err != nil {
-			return 
+			return
 		}
 		w.WriteHeader(http.StatusBadRequest)
 		return

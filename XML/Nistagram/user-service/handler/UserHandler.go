@@ -19,17 +19,16 @@ import (
 )
 
 type UserHandler struct {
-
-	UserService * service.UserService
-	AdminService * service.AdminService
-	ClassicUserService * service.ClassicUserService
-	AgentService * service.AgentService
-	Rbac * gorbac.RBAC
-	PermissionFindAllUsers *gorbac.Permission
-	RegisteredUserService * service.RegisteredUserService
-	PermissionUpdateUserInfo * gorbac.Permission
+	UserService              *service.UserService
+	AdminService             *service.AdminService
+	ClassicUserService       *service.ClassicUserService
+	AgentService             *service.AgentService
+	Rbac                     *gorbac.RBAC
+	PermissionFindAllUsers   *gorbac.Permission
+	RegisteredUserService    *service.RegisteredUserService
+	PermissionUpdateUserInfo *gorbac.Permission
 	Validator                *validator.Validate
-	PasswordUtil			 *util.PasswordUtil
+	PasswordUtil             *util.PasswordUtil
 }
 
 func ExtractToken(r *http.Request) string {
@@ -143,7 +142,7 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 
 	if validPassword {
 		salt, password = handler.PasswordUtil.GeneratePasswordWithSalt(userChangePasswordDTO.Password)
-	}else {
+	} else {
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
@@ -230,7 +229,7 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString(logInUserDTO.Password)
 		sb.WriteString(salt)
 		plainPassword = sb.String()
-	}else {
+	} else {
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
@@ -295,7 +294,6 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 		return
 	}
 
-
 	err := handler.UserService.UpdateUserProfileInfo(&userDTO)
 	if err != nil {
 		fmt.Println(err)
@@ -357,7 +355,7 @@ func (handler *UserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *ht
 	id := r.URL.Query().Get("id")
 
 	var user = handler.UserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
-	if  user == nil {
+	if user == nil {
 		fmt.Println("No user found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
@@ -372,16 +370,15 @@ func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Re
 	var profileSettings []Data
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_for_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
 	err := getJson(reqUrl, &profileSettings)
-	if err!=nil{
+	if err != nil {
 		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
-/*
-	var profileSettings = handler.ProfileSettingsService.FindAllProfileSettingsForPublicUsers()
-*/
+	/*
+		var profileSettings = handler.ProfileSettingsService.FindAllProfileSettingsForPublicUsers()
+	*/
 	var users []model.User
 	users = handler.UserService.FindAllPublicUsers(convertListDataToListUUID(profileSettings))
-
 
 	usersJson, _ := json.Marshal(users)
 	if usersJson != nil {
@@ -398,7 +395,7 @@ func (handler *UserHandler) FindByUserName(w http.ResponseWriter, r *http.Reques
 	username := r.URL.Query().Get("username")
 
 	var user = handler.UserService.FindByUserName(username)
-	if  user == nil {
+	if user == nil {
 		fmt.Println("User not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
@@ -417,7 +414,7 @@ type Data struct {
 func convertListDataToListUUID(datas []Data) []uuid.UUID {
 	var uuids []uuid.UUID
 	for i := 0; i < len(datas); i++ {
-		uuids=append(uuids, datas[i].Uuid)
+		uuids = append(uuids, datas[i].Uuid)
 	}
 	return uuids
 }

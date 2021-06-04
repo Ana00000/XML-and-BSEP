@@ -1,18 +1,18 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/service"
 	"net/http"
 	_ "strconv"
 )
 
 type CampaignChosenGroupHandler struct {
-	Service * service.CampaignChosenGroupService
+	Service *service.CampaignChosenGroupService
 }
 
 func (handler *CampaignChosenGroupHandler) CreateCampaignChosenGroup(w http.ResponseWriter, r *http.Request) {
@@ -24,8 +24,8 @@ func (handler *CampaignChosenGroupHandler) CreateCampaignChosenGroup(w http.Resp
 	}
 
 	campaignChosenGroup := model.CampaignChosenGroup{
-		ID:                uuid.UUID{},
-		CampaignId:        campaignChosenGroupDTO.CampaignId,
+		ID:                     uuid.UUID{},
+		CampaignId:             campaignChosenGroupDTO.CampaignId,
 		RegisteredUserCategory: campaignChosenGroupDTO.RegisteredUserCategory,
 	}
 
@@ -37,4 +37,3 @@ func (handler *CampaignChosenGroupHandler) CreateCampaignChosenGroup(w http.Resp
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-

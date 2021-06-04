@@ -48,7 +48,7 @@ func (handler *AgentUserHandler) CreateAgentUser(w http.ResponseWriter, r *http.
 
 	if validPassword {
 		salt, password = handler.AgentPasswordUtil.GeneratePasswordWithSalt(agentUserDTO.Password)
-	}else {
+	} else {
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
@@ -77,7 +77,7 @@ func (handler *AgentUserHandler) CreateAgentUser(w http.ResponseWriter, r *http.
 		DateOfBirth: dateOfBirth,
 		Website:     agentUserDTO.Website,
 		Biography:   agentUserDTO.Biography,
-		Salt: salt,
+		Salt:        salt,
 	}
 
 	if err := handler.AgentUserService.CreateAgentUser(&agentUser); err != nil {

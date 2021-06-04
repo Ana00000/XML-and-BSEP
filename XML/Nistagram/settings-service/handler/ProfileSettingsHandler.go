@@ -13,7 +13,7 @@ import (
 )
 
 type ProfileSettingsHandler struct {
-	Service * service.ProfileSettingsService
+	Service *service.ProfileSettingsService
 }
 
 func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWriter, r *http.Request) {
@@ -21,13 +21,13 @@ func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWrit
 	userId := vars["userID"]
 
 	profileSettings := model.ProfileSettings{
-		ID:          uuid.UUID{},
-		UserId: uuid.MustParse(userId),
+		ID:                  uuid.UUID{},
+		UserId:              uuid.MustParse(userId),
 		UserVisibility:      model.PUBLIC_VISIBILITY,
-		MessageApprovalType:       model.PUBLIC,
-		IsPostTaggable: true,
-		IsStoryTaggable: true,
-		IsCommentTaggable: true,
+		MessageApprovalType: model.PUBLIC,
+		IsPostTaggable:      true,
+		IsStoryTaggable:     true,
+		IsCommentTaggable:   true,
 	}
 
 	err := handler.Service.CreateProfileSettings(&profileSettings)
@@ -49,17 +49,17 @@ func (handler *ProfileSettingsHandler) FindProfileSettingByUserId(w http.Respons
 		w.WriteHeader(http.StatusNotFound)
 	}
 
-	userVisibility :=""
-	if profileSettings.UserVisibility == model.PRIVATE_VISIBILITY{
+	userVisibility := ""
+	if profileSettings.UserVisibility == model.PRIVATE_VISIBILITY {
 		userVisibility = "PRIVATE_VISIBILITY"
-	} else if profileSettings.UserVisibility == model.PUBLIC_VISIBILITY{
+	} else if profileSettings.UserVisibility == model.PUBLIC_VISIBILITY {
 		userVisibility = "PUBLIC_VISIBILITY"
 	}
 
-	messageApprovalType:=""
-	if profileSettings.MessageApprovalType == model.PUBLIC{
+	messageApprovalType := ""
+	if profileSettings.MessageApprovalType == model.PUBLIC {
 		messageApprovalType = "PUBLIC"
-	} else if profileSettings.MessageApprovalType == model.FRIENDS_ONLY{
+	} else if profileSettings.MessageApprovalType == model.FRIENDS_ONLY {
 		messageApprovalType = "FRIENDS_ONLY"
 	}
 
@@ -129,7 +129,7 @@ type Data struct {
 func convertListUUIDToListData(uuids []uuid.UUID) []Data {
 	var datas []Data
 	for i := 0; i < len(uuids); i++ {
-		datas=append(datas, Data{Uuid: uuids[i]})
+		datas = append(datas, Data{Uuid: uuids[i]})
 	}
 	return datas
 }

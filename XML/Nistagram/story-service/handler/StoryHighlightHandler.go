@@ -12,7 +12,7 @@ import (
 )
 
 type StoryHighlightHandler struct {
-	Service * service.StoryHighlightService
+	Service *service.StoryHighlightService
 }
 
 func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter, r *http.Request) {
@@ -24,9 +24,9 @@ func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter
 	}
 
 	storyHighlight := model.StoryHighlight{
-		ID:          uuid.UUID{},
-		Title: storyHighlightDTO.Title,
-		UserId:      storyHighlightDTO.UserId,
+		ID:     uuid.UUID{},
+		Title:  storyHighlightDTO.Title,
+		UserId: storyHighlightDTO.UserId,
 	}
 
 	err = handler.Service.CreateStoryHighlight(&storyHighlight)

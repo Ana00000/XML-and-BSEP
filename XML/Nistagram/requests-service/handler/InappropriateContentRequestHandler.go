@@ -1,18 +1,18 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
 	"net/http"
 	_ "strconv"
 )
 
 type InappropriateContentRequestHandler struct {
-	Service * service.InappropriateContentRequestService
+	Service *service.InappropriateContentRequestService
 }
 
 func (handler *InappropriateContentRequestHandler) CreateInappropriateContentRequest(w http.ResponseWriter, r *http.Request) {
@@ -24,9 +24,9 @@ func (handler *InappropriateContentRequestHandler) CreateInappropriateContentReq
 	}
 
 	inappropriateContentRequest := model.InappropriateContentRequest{
-		ID:          uuid.UUID{},
-		Note: 		 inappropriateContentRequestDTO.Note,
-		UserId:      inappropriateContentRequestDTO.UserId,
+		ID:     uuid.UUID{},
+		Note:   inappropriateContentRequestDTO.Note,
+		UserId: inappropriateContentRequestDTO.UserId,
 	}
 
 	err = handler.Service.CreateInappropriateContentRequest(&inappropriateContentRequest)
@@ -37,4 +37,3 @@ func (handler *InappropriateContentRequestHandler) CreateInappropriateContentReq
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-

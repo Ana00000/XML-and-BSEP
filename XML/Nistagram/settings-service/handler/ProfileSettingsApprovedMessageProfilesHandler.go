@@ -1,18 +1,18 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"net/http"
 	_ "strconv"
 )
 
 type ProfileSettingsApprovedMessageProfilesHandler struct {
-	Service * service.ProfileSettingsApprovedMessageProfilesService
+	Service *service.ProfileSettingsApprovedMessageProfilesService
 }
 
 func (handler *ProfileSettingsApprovedMessageProfilesHandler) CreateProfileSettingsApprovedMessageProfiles(w http.ResponseWriter, r *http.Request) {

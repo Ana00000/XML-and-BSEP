@@ -11,7 +11,7 @@ import (
 )
 
 type MessageSubstanceHandler struct {
-	Service * service.MessageSubstanceService
+	Service *service.MessageSubstanceService
 }
 
 func (handler *MessageSubstanceHandler) CreateMessageSubstance(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +24,7 @@ func (handler *MessageSubstanceHandler) CreateMessageSubstance(w http.ResponseWr
 	}
 
 	messageSubstance := model.MessageSubstance{
-		ID: uuid.UUID{},
+		ID:   uuid.UUID{},
 		Text: messageSubstanceDTO.Text,
 	}
 

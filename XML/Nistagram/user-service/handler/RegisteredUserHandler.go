@@ -18,10 +18,10 @@ import (
 )
 
 type RegisteredUserHandler struct {
-	RegisteredUserService * service. RegisteredUserService
-	UserService * service.UserService
-	ClassicUserService * service.ClassicUserService
-	ConfirmationTokenService * service.ConfirmationTokenService
+	RegisteredUserService    *service.RegisteredUserService
+	UserService              *service.UserService
+	ClassicUserService       *service.ClassicUserService
+	ConfirmationTokenService *service.ConfirmationTokenService
 	Validator                *validator.Validate
 	PasswordUtil             *util.PasswordUtil
 }
@@ -141,7 +141,7 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	tagId:=uuid.New()
+	tagId := uuid.New()
 	var userTag = dto.UserTagFullDTO{
 		ID:     tagId,
 		Name:   registeredUser.Username,
@@ -159,7 +159,6 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 		return
 	}
 
-	
 	fmt.Println(registeredUser.ClassicUser.User.ID)
 	confirmationToken := model.ConfirmationToken{
 		ID:                uuid.New(),
@@ -177,7 +176,6 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	}
 
 	SendConfirmationMail(registeredUser.ClassicUser.User, confirmationToken.ConfirmationToken)
-
 
 	reqUrl = fmt.Sprintf("http://%s:%s/profile_settings/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), userId)
 	jsonOrders, _ = json.Marshal(nil)

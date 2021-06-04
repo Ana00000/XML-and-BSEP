@@ -14,8 +14,8 @@ import (
 )
 
 type SinglePostContentHandler struct {
-	Service * service.SinglePostContentService
-	ContentService * service.ContentService
+	Service        *service.SinglePostContentService
+	ContentService *service.ContentService
 }
 
 var pathPostGlobal = ""
@@ -76,7 +76,6 @@ func (handler *SinglePostContentHandler) FindAllContentsForPosts(w http.Response
 	pathJson, _ := json.Marshal(contents)
 	w.Write(pathJson)
 
-
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -95,7 +94,6 @@ func (handler *SinglePostContentHandler) FindAllContentsForPost(w http.ResponseW
 	pathJson, _ := json.Marshal(contents)
 	w.Write(pathJson)
 
-
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -111,7 +109,7 @@ func (handler *SinglePostContentHandler) Upload(writer http.ResponseWriter, requ
 	}
 	defer file.Close()
 
-	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"),  "*" + hand.Filename)
+	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"), "*"+hand.Filename)
 	if err != nil {
 		fmt.Println("Greska drugi if")
 		fmt.Println(err)
@@ -127,26 +125,25 @@ func (handler *SinglePostContentHandler) Upload(writer http.ResponseWriter, requ
 	}
 	tempFile.Write(fileBytes)
 
-
 	pathPostGlobal = tempFile.Name()[20:len(tempFile.Name())]
 
 	pathJson, _ := json.Marshal(tempFile.Name())
 	writer.Write(pathJson)
 }
 
-func convertListSinglePostContentsToListSinglePostContentsForSinglePostDTO(singlePostContents []model.SinglePostContent) []dto.SinglePostContentForSinglePostDTO{
+func convertListSinglePostContentsToListSinglePostContentsForSinglePostDTO(singlePostContents []model.SinglePostContent) []dto.SinglePostContentForSinglePostDTO {
 	var listSinglePostContentsDTO []dto.SinglePostContentForSinglePostDTO
 	for i := 0; i < len(singlePostContents); i++ {
-		listSinglePostContentsDTO = append(listSinglePostContentsDTO,convertSinglePostContentToSinglePostContentForSinglePostDTO(singlePostContents[i]))
+		listSinglePostContentsDTO = append(listSinglePostContentsDTO, convertSinglePostContentToSinglePostContentForSinglePostDTO(singlePostContents[i]))
 	}
 	return listSinglePostContentsDTO
 }
 
-func convertSinglePostContentToSinglePostContentForSinglePostDTO(singlePostContent model.SinglePostContent) dto.SinglePostContentForSinglePostDTO{
+func convertSinglePostContentToSinglePostContentForSinglePostDTO(singlePostContent model.SinglePostContent) dto.SinglePostContentForSinglePostDTO {
 	contentType := ""
-	if singlePostContent.Type == model.VIDEO{
+	if singlePostContent.Type == model.VIDEO {
 		contentType = "VIDEO"
-	} else if singlePostContent.Type == model.PICTURE{
+	} else if singlePostContent.Type == model.PICTURE {
 		contentType = "PICTURE"
 	}
 

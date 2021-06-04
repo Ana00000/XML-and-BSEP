@@ -11,7 +11,7 @@ import (
 )
 
 type PostCollectionHandler struct {
-	Service * service.PostCollectionService
+	Service *service.PostCollectionService
 }
 
 func (handler *PostCollectionHandler) CreatePostCollection(w http.ResponseWriter, r *http.Request) {
@@ -25,8 +25,8 @@ func (handler *PostCollectionHandler) CreatePostCollection(w http.ResponseWriter
 
 	id := uuid.New()
 	postCollection := model.PostCollection{
-		ID: id,
-		Title: postCollectionDTO.Title,
+		ID:     id,
+		Title:  postCollectionDTO.Title,
 		UserID: postCollectionDTO.UserID,
 	}
 

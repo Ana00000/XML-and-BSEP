@@ -1,18 +1,18 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"net/http"
 	_ "strconv"
 )
 
 type ProfileSettingsBlockedProfilesHandler struct {
-	Service * service.ProfileSettingsBlockedProfilesService
+	Service *service.ProfileSettingsBlockedProfilesService
 }
 
 func (handler *ProfileSettingsBlockedProfilesHandler) CreateProfileSettingsBlockedProfiles(w http.ResponseWriter, r *http.Request) {

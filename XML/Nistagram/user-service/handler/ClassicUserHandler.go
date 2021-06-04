@@ -16,8 +16,8 @@ import (
 )
 
 type ClassicUserHandler struct {
-	ClassicUserService * service.ClassicUserService
-	ClassicUserFollowingsService * service.ClassicUserFollowingsService
+	ClassicUserService           *service.ClassicUserService
+	ClassicUserFollowingsService *service.ClassicUserFollowingsService
 }
 
 func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r *http.Request) {
@@ -34,17 +34,17 @@ func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r
 	var profileSettings dto.ProfileSettingsDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &profileSettings)
-	if err!=nil{
+	if err != nil {
 		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 	/*
-	var profileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(uuid.MustParse(id))
-	if profileSettings == nil {
-		fmt.Println("Profile settings not found")
-		w.WriteHeader(http.StatusExpectationFailed)
-	}
+		var profileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(uuid.MustParse(id))
+		if profileSettings == nil {
+			fmt.Println("Profile settings not found")
+			w.WriteHeader(http.StatusExpectationFailed)
+		}
 	*/
 	if profileSettings.UserVisibility == "PRIVATE_VISIBILITY" {
 		user.ProfileVisibility = "PRIVATE"
@@ -54,26 +54,25 @@ func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r
 		fmt.Println("PUBLIC")
 	}
 	//izmjenjeno da dobija requestove iz request microservica listu FollowerRequestForUserDTO i radi posle sa njom
-	var  allFollowRequestsForUser []dto.FollowRequestForUserDTO
+	var allFollowRequestsForUser []dto.FollowRequestForUserDTO
 	reqUrlFollowRequests := fmt.Sprintf("http://%s:%s/find_all_requests_by_user_id/%s", os.Getenv("REQUESTS_SERVICE_DOMAIN"), os.Getenv("REQUESTS_SERVICE_PORT"), logId)
 	err = getJson(reqUrlFollowRequests, &allFollowRequestsForUser)
-	if err!=nil{
+	if err != nil {
 		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 	//var allFollowRequestsForUser = handler.FollowRequestService.FindAllFollowerRequestsForUser(uuid.MustParse(logId))
 	fmt.Println("USPEO1")
-	var checkFollowingStatus = handler.ClassicUserFollowingsService.CheckFollowingStatus(uuid.MustParse(logId),uuid.MustParse(id),allFollowRequestsForUser)
-	if (checkFollowingStatus == "FOLLOWING") || (checkFollowingStatus == "NOT FOLLOWING") || (checkFollowingStatus == "PENDING"){
+	var checkFollowingStatus = handler.ClassicUserFollowingsService.CheckFollowingStatus(uuid.MustParse(logId), uuid.MustParse(id), allFollowRequestsForUser)
+	if (checkFollowingStatus == "FOLLOWING") || (checkFollowingStatus == "NOT FOLLOWING") || (checkFollowingStatus == "PENDING") {
 		user.FollowingStatus = checkFollowingStatus
 		fmt.Println("USPEO2")
-	}else{
+	} else {
 		fmt.Println("Check if following failed")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-
 
 	userJson, _ := json.Marshal(user)
 	w.Write(userJson)
@@ -203,7 +202,7 @@ func (handler *ClassicUserHandler) FindAllValidUsers(w http.ResponseWriter, r *h
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func convertListClassicUserToListClassicUserDTO(classicUsers []model.ClassicUser) []dto.ClassicUserDTO{
+func convertListClassicUserToListClassicUserDTO(classicUsers []model.ClassicUser) []dto.ClassicUserDTO {
 	var classicUsersDTO []dto.ClassicUserDTO
 	for i := 0; i < len(classicUsers); i++ {
 		classicUsersDTO = append(classicUsersDTO, convertClassicUserToClassicUserDTO(classicUsers[i]))
@@ -211,23 +210,23 @@ func convertListClassicUserToListClassicUserDTO(classicUsers []model.ClassicUser
 	return classicUsersDTO
 }
 
-func convertClassicUserToClassicUserDTO(classicUser model.ClassicUser) dto.ClassicUserDTO{
+func convertClassicUserToClassicUserDTO(classicUser model.ClassicUser) dto.ClassicUserDTO {
 	layout := "2006-01-02T15:04:05.000Z"
-	gender :=""
+	gender := ""
 	userType := ""
-	if classicUser.Gender==model.MALE{
-		gender="MALE"
-	} else if classicUser.Gender==model.FEMALE{
-		gender="FEMALE"
+	if classicUser.Gender == model.MALE {
+		gender = "MALE"
+	} else if classicUser.Gender == model.FEMALE {
+		gender = "FEMALE"
 	} else {
-		gender="OTHER"
+		gender = "OTHER"
 	}
-	if classicUser.UserType==model.REGISTERED_USER{
-		userType="REGISTERED_USER"
-	} else if classicUser.UserType==model.AGENT{
-		userType="AGENT"
-	} else if classicUser.UserType==model.ADMIN {
-		userType="ADMIN"
+	if classicUser.UserType == model.REGISTERED_USER {
+		userType = "REGISTERED_USER"
+	} else if classicUser.UserType == model.AGENT {
+		userType = "AGENT"
+	} else if classicUser.UserType == model.ADMIN {
+		userType = "ADMIN"
 	}
 	var classicUserDTO = dto.ClassicUserDTO{
 		ID:          classicUser.ID,
@@ -260,7 +259,7 @@ func (handler *ClassicUserHandler) FindClassicUserById(w http.ResponseWriter, r 
 
 }
 
-func convertListClassicUserDTOToListClassicUser(classicUsersDTO []dto.ClassicUserDTO) []model.ClassicUser{
+func convertListClassicUserDTOToListClassicUser(classicUsersDTO []dto.ClassicUserDTO) []model.ClassicUser {
 	var classicUsers []model.ClassicUser
 	for i := 0; i < len(classicUsersDTO); i++ {
 		classicUsers = append(classicUsers, convertClassicUserDTOToClassicUser(classicUsersDTO[i]))
@@ -268,28 +267,28 @@ func convertListClassicUserDTOToListClassicUser(classicUsersDTO []dto.ClassicUse
 	return classicUsers
 }
 
-func convertClassicUserDTOToClassicUser(classicUserDTO dto.ClassicUserDTO) model.ClassicUser{
+func convertClassicUserDTOToClassicUser(classicUserDTO dto.ClassicUserDTO) model.ClassicUser {
 	layout := "2006-01-02T15:04:05.000Z"
 	dateOfBirth, _ := time.Parse(layout, classicUserDTO.DateOfBirth)
 	var gender model.Gender
 	var userType model.UserType
-	if classicUserDTO.Gender=="MALE"{
-		gender=model.MALE
-	} else if classicUserDTO.Gender=="FEMALE"{
-		gender=model.FEMALE
+	if classicUserDTO.Gender == "MALE" {
+		gender = model.MALE
+	} else if classicUserDTO.Gender == "FEMALE" {
+		gender = model.FEMALE
 	} else {
-		gender=model.OTHER
+		gender = model.OTHER
 	}
 
-	if classicUserDTO.UserType=="REGISTERED_USER"{
-		userType=model.REGISTERED_USER
-	} else if classicUserDTO.UserType=="AGENT"{
-		userType=model.AGENT
-	} else if classicUserDTO.UserType=="ADMIN"{
-		userType=model.ADMIN
+	if classicUserDTO.UserType == "REGISTERED_USER" {
+		userType = model.REGISTERED_USER
+	} else if classicUserDTO.UserType == "AGENT" {
+		userType = model.AGENT
+	} else if classicUserDTO.UserType == "ADMIN" {
+		userType = model.ADMIN
 	}
 	var classicUser = model.ClassicUser{
-		User:      model.User{
+		User: model.User{
 			ID:          classicUserDTO.ID,
 			Username:    classicUserDTO.Username,
 			Password:    classicUserDTO.Password,
@@ -309,8 +308,8 @@ func convertClassicUserDTOToClassicUser(classicUserDTO dto.ClassicUserDTO) model
 	}
 	return classicUser
 }
-func convertClassicUserFollowingsDTOToClassicUserFollowings(classicUserFollowingsDTO dto.ClassicUserFollowingsFullDTO) model.ClassicUserFollowings{
-	var classicUserFollowings=model.ClassicUserFollowings{
+func convertClassicUserFollowingsDTOToClassicUserFollowings(classicUserFollowingsDTO dto.ClassicUserFollowingsFullDTO) model.ClassicUserFollowings {
+	var classicUserFollowings = model.ClassicUserFollowings{
 		ID:              classicUserFollowingsDTO.ID,
 		ClassicUserId:   classicUserFollowingsDTO.ClassicUserId,
 		FollowingUserId: classicUserFollowingsDTO.FollowingUserId,
@@ -318,10 +317,10 @@ func convertClassicUserFollowingsDTOToClassicUserFollowings(classicUserFollowing
 	return classicUserFollowings
 }
 
-func convertListClassicUserFollowingsDTOToListClassicUserFollowings(classicUserFollowingsDTOs []dto.ClassicUserFollowingsFullDTO) []model.ClassicUserFollowings{
+func convertListClassicUserFollowingsDTOToListClassicUserFollowings(classicUserFollowingsDTOs []dto.ClassicUserFollowingsFullDTO) []model.ClassicUserFollowings {
 	var classicUserFollowings []model.ClassicUserFollowings
 	for i := 0; i < len(classicUserFollowingsDTOs); i++ {
-		classicUserFollowings = append(classicUserFollowings,convertClassicUserFollowingsDTOToClassicUserFollowings(classicUserFollowingsDTOs[i]))
+		classicUserFollowings = append(classicUserFollowings, convertClassicUserFollowingsDTOToClassicUserFollowings(classicUserFollowingsDTOs[i]))
 	}
 	return classicUserFollowings
 }

@@ -14,8 +14,8 @@ import (
 )
 
 type PostAlbumHandler struct {
-	Service * service.PostAlbumService
-	PostService * service.PostService
+	Service     *service.PostAlbumService
+	PostService *service.PostService
 }
 
 func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.Request) {
@@ -29,13 +29,13 @@ func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.
 
 	id := uuid.New()
 	postAlbum := model.PostAlbum{
-		Post : model.Post{
-			ID: id,
-			Description: postAlbumDTO.Description,
+		Post: model.Post{
+			ID:           id,
+			Description:  postAlbumDTO.Description,
 			CreationDate: time.Now(),
-			UserID: postAlbumDTO.UserID,
-			LocationId: postAlbumDTO.LocationID,
-			IsDeleted: false,
+			UserID:       postAlbumDTO.UserID,
+			LocationId:   postAlbumDTO.LocationID,
+			IsDeleted:    false,
 		},
 	}
 
@@ -117,7 +117,7 @@ func (handler *PostAlbumHandler) FindAllAlbumPostsForLoggedUser(w http.ResponseW
 		return
 	}
 
-	var albumPostsDTOS = handler.CreatePostAlbumsDTOList(convertListPostAlbumDTOToListPostAlbum(albumPosts),contents,locations,tags)
+	var albumPostsDTOS = handler.CreatePostAlbumsDTOList(convertListPostAlbumDTOToListPostAlbum(albumPosts), contents, locations, tags)
 
 	albumPostsJson, _ := json.Marshal(albumPostsDTOS)
 	w.Write(albumPostsJson)
@@ -156,10 +156,10 @@ func (handler *PostAlbumHandler) CreatePostAlbumsDTOList(albums []model.PostAlbu
 		for p := 0; p < len(tags); p++ {
 			if tags[p].PostAlbumId == albums[i].ID {
 				//listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
-				var returnValueTagName  ReturnValueString
-				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].TagId.String())
+				var returnValueTagName ReturnValueString
+				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tags[p].TagId.String())
 				err := getJson(reqUrl, &returnValueTagName)
-				if err!=nil{
+				if err != nil {
 					fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
 					panic(err)
 				}
@@ -180,7 +180,7 @@ func (handler *PostAlbumHandler) CreatePostAlbumsDTOList(albums []model.PostAlbu
 
 func (handler *PostAlbumHandler) FindSelectedPostAlbumByIdForLoggedUser(w http.ResponseWriter, r *http.Request) {
 
-	id := r.URL.Query().Get("id") //post album id
+	id := r.URL.Query().Get("id")       //post album id
 	logId := r.URL.Query().Get("logId") //loged user id
 
 	var postAlbum = handler.Service.FindByID(uuid.MustParse(id))
@@ -192,13 +192,13 @@ func (handler *PostAlbumHandler) FindSelectedPostAlbumByIdForLoggedUser(w http.R
 		return
 	}
 
-	if postAlbum.IsDeleted == true{
+	if postAlbum.IsDeleted == true {
 		fmt.Println("Deleted post album")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
-	if postAlbum.UserID != uuid.MustParse(logId){
+	if postAlbum.UserID != uuid.MustParse(logId) {
 		fmt.Println("Post album doesnt belong to user")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
@@ -258,7 +258,7 @@ func (handler *PostAlbumHandler) FindSelectedPostAlbumByIdForLoggedUser(w http.R
 		return
 	}
 
-	var postAlbumDTO = handler.CreatePostAlbumDTO(postAlbum,contents,locations,tags)
+	var postAlbumDTO = handler.CreatePostAlbumDTO(postAlbum, contents, locations, tags)
 
 	postAlbumJson, _ := json.Marshal(postAlbumDTO)
 	w.Write(postAlbumJson)
@@ -274,7 +274,6 @@ func (handler *PostAlbumHandler) CreatePostAlbumDTO(album *model.PostAlbum, cont
 	postAlbumDTO.PostAlbumId = album.ID
 	postAlbumDTO.Description = album.Description
 	postAlbumDTO.CreationDate = album.CreationDate
-
 
 	for j := 0; j < len(contents); j++ {
 		if contents[j].PostAlbumId == album.ID {
@@ -296,10 +295,10 @@ func (handler *PostAlbumHandler) CreatePostAlbumDTO(album *model.PostAlbum, cont
 	var listOfTags []string
 	for p := 0; p < len(tags); p++ {
 		if tags[p].PostAlbumId == album.ID {
-			var returnValueTagName  ReturnValueString
-			reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].TagId.String())
+			var returnValueTagName ReturnValueString
+			reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tags[p].TagId.String())
 			err := getJson(reqUrl, &returnValueTagName)
-			if err!=nil{
+			if err != nil {
 				fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
 				panic(err)
 			}
@@ -320,10 +319,10 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 
 	// returns only VALID users but loggedIn user
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
-	var  allValidUsers []dto.ClassicUserDTO
-	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
+	var allValidUsers []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &allValidUsers)
-	if err!=nil{
+	if err != nil {
 		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
@@ -402,7 +401,7 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 		return
 	}
 
-	var postAlbumsDTOS = handler.CreatePostAlbumsDTOList(convertListPostAlbumDTOToListPostAlbum(publicValidAlbumPosts),contents,locations,tags)
+	var postAlbumsDTOS = handler.CreatePostAlbumsDTOList(convertListPostAlbumDTOToListPostAlbum(publicValidAlbumPosts), contents, locations, tags)
 
 	postAlbumsJson, _ := json.Marshal(postAlbumsDTOS)
 	w.Write(postAlbumsJson)
@@ -414,10 +413,10 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var  allValidUsers []dto.ClassicUserDTO
+	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
-	if err!=nil{
+	if err != nil {
 		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
@@ -494,7 +493,7 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http
 		return
 	}
 
-	var postAlbumsDTOS = handler.CreatePostAlbumsDTOList(convertListPostAlbumDTOToListPostAlbum(publicValidAlbumPosts),contents,locations,tags)
+	var postAlbumsDTOS = handler.CreatePostAlbumsDTOList(convertListPostAlbumDTOToListPostAlbum(publicValidAlbumPosts), contents, locations, tags)
 
 	postAlbumsJson, _ := json.Marshal(postAlbumsDTOS)
 	w.Write(postAlbumsJson)
@@ -508,10 +507,10 @@ func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWrite
 
 	// returns only valid users
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
-	var  allValidUsers []dto.ClassicUserDTO
-	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
+	var allValidUsers []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &allValidUsers)
-	if err!=nil{
+	if err != nil {
 		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
@@ -591,7 +590,7 @@ func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWrite
 		return
 	}
 
-	var postAlbumsDTOS = handler.CreatePostAlbumsDTOList(convertListPostAlbumDTOToListPostAlbum(postAlbums),contents,locations,tags)
+	var postAlbumsDTOS = handler.CreatePostAlbumsDTOList(convertListPostAlbumDTOToListPostAlbum(postAlbums), contents, locations, tags)
 
 	postAlbumsJson, _ := json.Marshal(postAlbumsDTOS)
 	w.Write(postAlbumsJson)
@@ -600,7 +599,7 @@ func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWrite
 
 }
 
-func convertPostAlbumToPostAlbumDTO(postAlbum model.PostAlbum) dto.PostAlbumFullDTO{
+func convertPostAlbumToPostAlbumDTO(postAlbum model.PostAlbum) dto.PostAlbumFullDTO {
 	layout := "2006-01-02T15:04:05.000Z"
 	var postAlbumDTO = dto.PostAlbumFullDTO{
 		ID:           postAlbum.ID,
@@ -613,17 +612,17 @@ func convertPostAlbumToPostAlbumDTO(postAlbum model.PostAlbum) dto.PostAlbumFull
 	return postAlbumDTO
 }
 
-func convertListPostAlbumToListPostAlbumDTO(postAlbums []model.PostAlbum) []dto.PostAlbumFullDTO{
+func convertListPostAlbumToListPostAlbumDTO(postAlbums []model.PostAlbum) []dto.PostAlbumFullDTO {
 	var postAlbumsDTO []dto.PostAlbumFullDTO
 	for i := 0; i < len(postAlbums); i++ {
-		postAlbumsDTO=append(postAlbumsDTO,convertPostAlbumToPostAlbumDTO(postAlbums[i]))
+		postAlbumsDTO = append(postAlbumsDTO, convertPostAlbumToPostAlbumDTO(postAlbums[i]))
 	}
 	return postAlbumsDTO
 }
 
-func convertPostAlbumDTOToPostAlbum(postAlbumDTO dto.PostAlbumFullDTO) model.PostAlbum{
+func convertPostAlbumDTOToPostAlbum(postAlbumDTO dto.PostAlbumFullDTO) model.PostAlbum {
 	layout := "2006-01-02T15:04:05.000Z"
-	date, _ :=time.Parse(layout, postAlbumDTO.CreationDate)
+	date, _ := time.Parse(layout, postAlbumDTO.CreationDate)
 	var postAlbum = model.PostAlbum{
 		Post: model.Post{
 			ID:           postAlbumDTO.ID,
@@ -633,15 +632,14 @@ func convertPostAlbumDTOToPostAlbum(postAlbumDTO dto.PostAlbumFullDTO) model.Pos
 			LocationId:   postAlbumDTO.LocationId,
 			IsDeleted:    postAlbumDTO.IsDeleted,
 		},
-
 	}
 	return postAlbum
 }
 
-func convertListPostAlbumDTOToListPostAlbum(postAlbumsDTO []dto.PostAlbumFullDTO) []model.PostAlbum{
+func convertListPostAlbumDTOToListPostAlbum(postAlbumsDTO []dto.PostAlbumFullDTO) []model.PostAlbum {
 	var postAlbums []model.PostAlbum
 	for i := 0; i < len(postAlbumsDTO); i++ {
-		postAlbums=append(postAlbums,convertPostAlbumDTOToPostAlbum(postAlbumsDTO[i]))
+		postAlbums = append(postAlbums, convertPostAlbumDTOToPostAlbum(postAlbumsDTO[i]))
 	}
 	return postAlbums
 }

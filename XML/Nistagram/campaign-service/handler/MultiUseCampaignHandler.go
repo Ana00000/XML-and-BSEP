@@ -1,19 +1,19 @@
 package handler
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/service"
 	"net/http"
 	_ "strconv"
 	"time"
 )
 
 type MultiUseCampaignHandler struct {
-	Service * service.MultiUseCampaignService
+	Service *service.MultiUseCampaignService
 }
 
 func (handler *MultiUseCampaignHandler) CreateMultiUseCampaign(w http.ResponseWriter, r *http.Request) {
@@ -24,13 +24,12 @@ func (handler *MultiUseCampaignHandler) CreateMultiUseCampaign(w http.ResponseWr
 		return
 	}
 	layout := "2006-01-02T15:04:05.000Z"
-	exposureTime,_ :=time.Parse(layout,multiUseCampaignDTO.ExposureTime)
-	expiryTime,_ :=time.Parse(layout,multiUseCampaignDTO.ExpiryTime)
+	exposureTime, _ := time.Parse(layout, multiUseCampaignDTO.ExposureTime)
+	expiryTime, _ := time.Parse(layout, multiUseCampaignDTO.ExpiryTime)
 	multiUseCampaign := model.MultiUseCampaign{
-		Campaign:   model.Campaign{
-			ID:                     uuid.UUID{},
-			//Advertisements:         nil,
-			ExposureTime:           exposureTime,
+		Campaign: model.Campaign{
+			ID: uuid.UUID{},
+			ExposureTime: exposureTime,
 		},
 		ExpiryTime: expiryTime,
 		Frequency:  multiUseCampaignDTO.Frequency,

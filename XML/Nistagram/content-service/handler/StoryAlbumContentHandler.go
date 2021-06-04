@@ -14,8 +14,8 @@ import (
 )
 
 type StoryAlbumContentHandler struct {
-	Service * service.StoryAlbumContentService
-	ContentService * service.ContentService
+	Service        *service.StoryAlbumContentService
+	ContentService *service.ContentService
 }
 
 var pathStoryAlbumGlobal = ""
@@ -69,7 +69,7 @@ func (handler *StoryAlbumContentHandler) Upload(writer http.ResponseWriter, requ
 	}
 	defer file.Close()
 
-	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"),  "*" + hand.Filename)
+	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"), "*"+hand.Filename)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -119,12 +119,12 @@ func (handler *StoryAlbumContentHandler) FindAllContentsForStoryAlbum(w http.Res
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func convertStoryAlbumContentToStoryAlbumContentDTO(storyAlbumContent model.StoryAlbumContent) dto.StoryAlbumContentFullDTO{
-	storyAlbumContentType :=""
-	if storyAlbumContent.Type==model.PICTURE{
-		storyAlbumContentType="PICTURE"
-	}else if storyAlbumContent.Type==model.VIDEO{
-		storyAlbumContentType="VIDEO"
+func convertStoryAlbumContentToStoryAlbumContentDTO(storyAlbumContent model.StoryAlbumContent) dto.StoryAlbumContentFullDTO {
+	storyAlbumContentType := ""
+	if storyAlbumContent.Type == model.PICTURE {
+		storyAlbumContentType = "PICTURE"
+	} else if storyAlbumContent.Type == model.VIDEO {
+		storyAlbumContentType = "VIDEO"
 	}
 	var storyAlbumContentDTO = dto.StoryAlbumContentFullDTO{
 		ID:           storyAlbumContent.ID,
@@ -135,10 +135,10 @@ func convertStoryAlbumContentToStoryAlbumContentDTO(storyAlbumContent model.Stor
 	return storyAlbumContentDTO
 }
 
-func convertListStoryAlbumContentToListStoryAlbumContentDTO(storyAlbumContents []model.StoryAlbumContent) []dto.StoryAlbumContentFullDTO{
+func convertListStoryAlbumContentToListStoryAlbumContentDTO(storyAlbumContents []model.StoryAlbumContent) []dto.StoryAlbumContentFullDTO {
 	var storyAlbumContentsDTO []dto.StoryAlbumContentFullDTO
 	for i := 0; i < len(storyAlbumContents); i++ {
-		storyAlbumContentsDTO=append(storyAlbumContentsDTO, convertStoryAlbumContentToStoryAlbumContentDTO(storyAlbumContents[i]))
+		storyAlbumContentsDTO = append(storyAlbumContentsDTO, convertStoryAlbumContentToStoryAlbumContentDTO(storyAlbumContents[i]))
 	}
 	return storyAlbumContentsDTO
 }

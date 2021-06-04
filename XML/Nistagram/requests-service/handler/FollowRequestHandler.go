@@ -13,7 +13,7 @@ import (
 )
 
 type FollowRequestHandler struct {
-	Service * service.FollowRequestService
+	Service *service.FollowRequestService
 }
 
 func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, r *http.Request) {
@@ -26,12 +26,12 @@ func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, 
 
 	// CHECK IF ALREADY EXISTS - IF YES THEN UPDATE TO PENDING IF NOT CREATE NEW PENDING
 	var checkIfExists = handler.Service.FindFollowRequest(followRequestDTO.ClassicUserId, followRequestDTO.FollowerUserId)
-	if checkIfExists == nil{
+	if checkIfExists == nil {
 		followRequest := model.FollowRequest{
-			ID:          			   uuid.UUID{},
-			ClassicUserId:   		   followRequestDTO.ClassicUserId,
-			FollowerUserId:     	   followRequestDTO.FollowerUserId,
-			FollowRequestStatus:       model.PENDING,
+			ID:                  uuid.UUID{},
+			ClassicUserId:       followRequestDTO.ClassicUserId,
+			FollowerUserId:      followRequestDTO.FollowerUserId,
+			FollowRequestStatus: model.PENDING,
 		}
 
 		err = handler.Service.CreateFollowRequest(&followRequest)
@@ -40,7 +40,7 @@ func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, 
 			w.WriteHeader(http.StatusExpectationFailed)
 		}
 
-	}else{
+	} else {
 
 		err = handler.Service.UpdateFollowRequestPending(checkIfExists.ID)
 		if err != nil {
@@ -59,7 +59,7 @@ func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, 
 	id := r.URL.Query().Get("id")
 
 	var request = handler.Service.FindById(uuid.MustParse(id))
-	if request == nil{
+	if request == nil {
 		fmt.Println("Request not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
@@ -73,13 +73,13 @@ func (handler *FollowRequestHandler) FindFollowRequestByIDsClassicUserAndHisFoll
 	vars := mux.Vars(r)
 	classicUserId := vars["classicUserID"]
 	followerUserId := vars["followerUserID"]
-	var request = handler.Service.FindFollowRequest(uuid.MustParse(classicUserId),uuid.MustParse(followerUserId))
-	if request == nil{
+	var request = handler.Service.FindFollowRequest(uuid.MustParse(classicUserId), uuid.MustParse(followerUserId))
+	if request == nil {
 		fmt.Println("Request not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 	var requestForJson = *request
-	fmt.Println(requestForJson.ClassicUserId.String()+" "+requestForJson.FollowerUserId.String())
+	fmt.Println(requestForJson.ClassicUserId.String() + " " + requestForJson.FollowerUserId.String())
 	requestsJson, _ := json.Marshal(convertFollowRequestToFollowRequestForUserDTOs(requestForJson))
 	w.Write(requestsJson)
 	w.WriteHeader(http.StatusOK)
@@ -90,7 +90,7 @@ func (handler *FollowRequestHandler) UpdateFollowRequestToAccepted(w http.Respon
 	vars := mux.Vars(r)
 	requestId := vars["requestID"]
 	err := handler.Service.UpdateFollowRequestAccepted(uuid.MustParse(requestId))
-	if err != nil{
+	if err != nil {
 		fmt.Println("Fail to update")
 		w.WriteHeader(http.StatusBadRequest)
 	}
@@ -103,7 +103,6 @@ func (handler *FollowRequestHandler) FindAllPendingFollowerRequestsForUser(w htt
 
 	var requests = handler.Service.FindAllPendingFollowerRequestsForUser(uuid.MustParse(id))
 
-
 	requestsJson, _ := json.Marshal(requests)
 	w.Write(requestsJson)
 	w.WriteHeader(http.StatusOK)
@@ -115,7 +114,7 @@ func (handler *FollowRequestHandler) FindRequestById(w http.ResponseWriter, r *h
 	id := r.URL.Query().Get("id")
 
 	var request = handler.Service.FindById(uuid.MustParse(id))
-	if  request == nil {
+	if request == nil {
 		fmt.Println("No user found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
@@ -132,7 +131,7 @@ func (handler *FollowRequestHandler) FindAllFollowerRequestsForUser(w http.Respo
 	userId := vars["userID"]
 
 	var requests = handler.Service.FindAllFollowerRequestsForUser(uuid.MustParse(userId))
-	if  requests == nil {
+	if requests == nil {
 		fmt.Println("No user found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
@@ -144,22 +143,22 @@ func (handler *FollowRequestHandler) FindAllFollowerRequestsForUser(w http.Respo
 
 }
 
-func convertListFollowRequestsToListFollowRequestForUserDTOs(followerRequests []model.FollowRequest) []dto.FollowRequestForUserDTO{
+func convertListFollowRequestsToListFollowRequestForUserDTOs(followerRequests []model.FollowRequest) []dto.FollowRequestForUserDTO {
 	var followerRequestForUserDTOs []dto.FollowRequestForUserDTO
 	for i := 0; i < len(followerRequests); i++ {
 		var followRequestForUserDTO = convertFollowRequestToFollowRequestForUserDTOs(followerRequests[i])
-		followerRequestForUserDTOs = append(followerRequestForUserDTOs,followRequestForUserDTO)
+		followerRequestForUserDTOs = append(followerRequestForUserDTOs, followRequestForUserDTO)
 	}
 	return followerRequestForUserDTOs
 }
 
-func convertFollowRequestToFollowRequestForUserDTOs(followerRequest model.FollowRequest) dto.FollowRequestForUserDTO{
-	followRequestStatus:=""
-	if followerRequest.FollowRequestStatus==model.PENDING{
+func convertFollowRequestToFollowRequestForUserDTOs(followerRequest model.FollowRequest) dto.FollowRequestForUserDTO {
+	followRequestStatus := ""
+	if followerRequest.FollowRequestStatus == model.PENDING {
 		followRequestStatus = "PENDING"
-	} else if followerRequest.FollowRequestStatus==model.ACCEPTED{
+	} else if followerRequest.FollowRequestStatus == model.ACCEPTED {
 		followRequestStatus = "ACCEPTED"
-	} else if followerRequest.FollowRequestStatus==model.REJECT{
+	} else if followerRequest.FollowRequestStatus == model.REJECT {
 		followRequestStatus = "REJECT"
 	}
 	var followRequestForUserDTO = dto.FollowRequestForUserDTO{
