@@ -113,7 +113,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8080/api/post/find_all_public_posts_not_reg/")
+        .get("https://localhost:8080/api/post/find_all_public_posts_not_reg/")
         .then((response) => {
           this.posts = response.data;
         })
@@ -124,7 +124,7 @@ export default {
     getPostAlbums() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_public_album_posts_not_reg?id=" +
+          "https://localhost:8080/api/post/find_all_public_album_posts_not_reg?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -137,7 +137,7 @@ export default {
       localStorage.setItem("mySelectedPostAlbumId", item.post_album_id);
 
       window.location.href =
-        "http://localhost:8081/postAlbumByIdWithoutActivity";
+        "https://localhost:8081/postAlbumByIdWithoutActivity";
     },
   },
 };

@@ -78,7 +78,7 @@ export default {
     getRequest() {
       console.log(this.selectedRequestId);
       this.$http
-        .get("http://localhost:8080/api/requests/find_request_by_id?id=" + this.selectedRequestId)
+        .get("https://localhost:8080/api/requests/find_request_by_id?id=" + this.selectedRequestId)
         .then((resp) => {
           this.setRequestInfo(resp.data);
           this.requestFollower = resp.data.classic_user_id
@@ -98,7 +98,7 @@ export default {
       console.log(this.requestFollower)
       
      this.$http
-        .post("http://localhost:8080/api/user/accept_follow_request/", {
+        .post("https://localhost:8080/api/user/accept_follow_request/", {
           classic_user_id: this.requestFollower,
           follower_user_id: this.logId,
       
@@ -106,18 +106,18 @@ export default {
         .then((resp) => {
           console.log(resp.data);
           alert("Accepted follow!");
-           window.location.href = "http://localhost:8081/followRequests";
+           window.location.href = "https://localhost:8081/followRequests";
         })
         .catch((err) => console.log(err));
       
     },
     rejectRequest(){
        this.$http
-        .post("http://localhost:8080/api/requests/reject_follow_request?id="+this.selectedRequestId, {})
+        .post("https://localhost:8080/api/requests/reject_follow_request?id="+this.selectedRequestId, {})
         .then((resp) => {
           console.log(resp.data);
           alert("Rejected  follow!");
-           window.location.href = "http://localhost:8081/followRequests";
+           window.location.href = "https://localhost:8081/followRequests";
         })
         .catch((err) => console.log(err));
     }

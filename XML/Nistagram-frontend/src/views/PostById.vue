@@ -110,27 +110,74 @@
     >
       Remove Favorite
     </v-btn>
+    
+  <v-container grid-list-lg v-if="!isHiddenTagComment">
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in allUserTags"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card class="mx-auto" v-on:click="getUserTag(item)">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{
+                  item.name
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
 
-    <template>
-      <v-container>
-        <v-textarea
-          class="textArea"
-          v-if="!isHiddenComment"
-          v-model="text"
-          solo
-          name="input-5-4"
-          label="Add Comment"
-        ></v-textarea>
-      </v-container>
-    </template>
+    <v-container grid-list-lg v-if="!isHiddenTagComment">
+      <v-layout row>
+        <v-flex
+          lg4
+          v-for="item in allHashTags"
+          :key="item.id"
+          class="space-bottom"
+        >
+          <v-card class="mx-auto" v-on:click="getHashTag(item)">
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-subtitle>{{
+                  item.name
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+
+    <v-textarea
+      class="textArea"
+      v-if="!isHiddenComment"
+      v-model="text"
+      solo
+      name="input-5-4"
+      label="Add description"
+    ></v-textarea>
+
 
     <v-btn
       color="info mb-10"
-      v-if="!isHiddenComment"
-      v-on:click="createComment"
-      class="addCommentButton"
+      v-if="!isHiddenTagComment"
+      v-on:click="isHiddenTagComment = true, isHiddenComment = false"
+      class="cancelCommentButton"
     >
-      Add
+      Skip
+    </v-btn>
+
+    <v-btn
+      color="info mb-10"
+      v-if="!isHiddenTagComment"
+      v-on:click="isHiddenTagComment = true, isHiddenComment = false"
+    >
+      Add tag
     </v-btn>
 
     <v-btn
@@ -140,6 +187,14 @@
       class="cancelCommentButton"
     >
       Cancel
+    </v-btn>
+
+     <v-btn
+      color="info mb-10"
+      v-if="!isHiddenComment"
+      v-on:click="createComment"
+    >
+      Finish
     </v-btn>
 
     <v-container grid-list-lg>
@@ -155,6 +210,10 @@
 
             <v-card-text class="headline font-weight-bold">
               {{ item.text }}
+            </v-card-text>
+
+            <v-card-text class="headline font-weight-bold">
+              {{ item.tags }}
             </v-card-text>
 
             <v-card-actions>
@@ -239,6 +298,16 @@ export default {
     userName: "",
     gender: "",
     allData: [],
+    itemsHashtag: [],
+    items: [],
+    itemsUsertag:[],
+    allTags: [],
+    allUserTags: [],
+    allHashTags: [],
+    selectedTags: [],
+    selectedUserTags: [],
+    selectedHashTags: [],
+    isHiddenTagComment: true,
   }),
   mounted() {
     this.init();
@@ -247,7 +316,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_post_collections_for_reg?id=" +
+          "https://localhost:8080/api/post/find_all_post_collections_for_reg?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -257,7 +326,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_selected_post_for_logged_user?id=" +
+          "https://localhost:8080/api/post/find_selected_post_for_logged_user?id=" +
             localStorage.getItem("selectedPostId") +
             "&logId=" +
             localStorage.getItem("selectedUserId")
@@ -269,7 +338,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_comments_for_post?id=" +
+          "https://localhost:8080/api/post/find_all_comments_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -278,16 +347,51 @@ export default {
           this.getData(response.data);
         })
         .catch(console.log);
+      
+      this.$http
+        .get("https://localhost:8080/api/tag/find_all_taggable_users_comment/")
+        .then((response) => {
+          console.log(response.data);
+          for (var i = 0; i < response.data.length; i++) {
+            if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
+              this.itemsUsertag.push(response.data[i].name);
+              this.allUserTags.push(response.data[i]);
+            }
+          }
+        })
+        .catch(console.log);
+        ///find_all_hashtags/
+      this.$http
+        .get("https://localhost:8080/api/tag/find_all_hashtags/")
+        .then((response) => {
+          console.log(response.data);
+          for (var i = 0; i < response.data.length; i++) {
+            if (response.data[i].tag_type == 1) {
+              this.allHashTags.push(response.data[i]);
+              this.itemsHashtag.push(response.data[i].name);
+            }
+          }
+        })
+        .catch(console.log);
+    },
+    onOpen (key) {
+      this.items = key === '@' ? this.itemsUsertag : this.itemsHashtag
     },
     getData(items) {
       for (var i = 0; i < items.length; i++) {
         this.getItem(items[i]);
       }
     },
+    getUserTag(item) {
+        this.selectedUserTags.push(item);
+    },
+    getHashTag(item) {
+        this.selectedHashTags.push(item);
+    },
     getItem(item){
       console.log(item);
        this.$http
-          .get("http://localhost:8080/api/user/find_user_by_id?id=" + item.user_id)
+          .get("https://localhost:8080/api/user/find_user_by_id?id=" + item.user_id)
           .then((r) => {
             this.userName = r.data.username;
             if (r.data.gender == 0) {
@@ -297,13 +401,19 @@ export default {
             } else {
               this.gender = "OTHER";
             }
-            this.allData.push({
-              id: r.data.id,
-              text: item.text,
-              gender: this.gender,
-              userName: this.userName,
-            });
-          })
+            this.$http
+              .get("https://localhost:8080/api/tag/find_comment_tag_comments_for_comment/"+item.id )
+              .then((resp) => {
+                console.log(resp.data)
+                this.allData.push({
+                  id: r.data.id,
+                  text: item.text,
+                  gender: this.gender,
+                  userName: this.userName,
+                  tags: resp.data,
+                });
+                }).catch(console.log);
+            })
           .catch(console.log);
 
         this.isHiddenUserName = false;
@@ -311,7 +421,7 @@ export default {
     likePost() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
+          "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -334,7 +444,7 @@ export default {
             ) {
               this.likeActivityId = this.activities[i].id;
               this.$http
-                .post("http://localhost:8080/api/post/update_activity/", {
+                .post("https://localhost:8080/api/post/update_activity/", {
                   id: this.likeActivityId,
                   likedStatus: 0,
                   IsFavorite: false,
@@ -353,7 +463,7 @@ export default {
           }
 
           this.$http
-            .post("http://localhost:8080/api/post/activity/", {
+            .post("https://localhost:8080/api/post/activity/", {
               postID: localStorage.getItem("selectedPostId"),
               userID: localStorage.getItem("selectedUserId"),
               likedStatus: 0,
@@ -374,7 +484,7 @@ export default {
     dislikePost() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
+          "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -397,7 +507,7 @@ export default {
             ) {
               this.dislikeActivityId = this.activities[i].id;
               this.$http
-                .post("http://localhost:8080/api/post/update_activity/", {
+                .post("https://localhost:8080/api/post/update_activity/", {
                   id: this.dislikeActivityId,
                   likedStatus: 1,
                   IsFavorite: false,
@@ -416,7 +526,7 @@ export default {
           }
 
           this.$http
-            .post("http://localhost:8080/api/post/activity/", {
+            .post("https://localhost:8080/api/post/activity/", {
               postID: localStorage.getItem("selectedPostId"),
               userID: localStorage.getItem("selectedUserId"),
               likedStatus: 1,
@@ -437,7 +547,7 @@ export default {
     favoritePost() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
+          "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -464,7 +574,7 @@ export default {
               this.favoriteActivityId = this.activities[i].id;
               this.likeabilityStatus = this.activities[i].liked_status;
               this.$http
-                .post("http://localhost:8080/api/post/update_activity/", {
+                .post("https://localhost:8080/api/post/update_activity/", {
                   id: this.favoriteActivityId,
                   likedStatus: this.likeabilityStatus,
                   IsFavorite: true,
@@ -486,7 +596,7 @@ export default {
           }
 
           this.$http
-            .post("http://localhost:8080/api/post/activity/", {
+            .post("https://localhost:8080/api/post/activity/", {
               postID: localStorage.getItem("selectedPostId"),
               userID: localStorage.getItem("selectedUserId"),
               likedStatus: this.likeabilityStatus,
@@ -509,7 +619,7 @@ export default {
     removeFavorite() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
+          "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -536,7 +646,7 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8080/api/post/update_activity/", {
+        .post("https://localhost:8080/api/post/update_activity/", {
           id: this.favoriteActivityId,
           likedStatus: this.likeabilityStatus,
           IsFavorite: false,
@@ -554,7 +664,7 @@ export default {
     removeLike() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
+          "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -586,7 +696,7 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8080/api/post/update_activity/", {
+        .post("https://localhost:8080/api/post/update_activity/", {
           id: this.likeActivityId,
           likedStatus: 2,
           IsFavorite: false,
@@ -603,7 +713,7 @@ export default {
     removeDislike() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_activities_for_post?id=" +
+          "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -635,7 +745,7 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8080/api/post/update_activity/", {
+        .post("https://localhost:8080/api/post/update_activity/", {
           id: this.dislikeActivityId,
           likedStatus: 2,
           IsFavorite: false,
@@ -660,7 +770,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_post_collection_posts_for_post?id=" +
+          "https://localhost:8080/api/post/find_all_post_collection_posts_for_post?id=" +
             localStorage.getItem("selectedPostId")
         )
         .then((response) => {
@@ -671,7 +781,7 @@ export default {
             }
           }
           this.$http
-            .post("http://localhost:8080/api/post/post_collection_posts/", {
+            .post("https://localhost:8080/api/post/post_collection_posts/", {
               post_collection_id: this.postCollectionId,
               single_post_id: localStorage.getItem("selectedPostId"),
             })
@@ -686,7 +796,7 @@ export default {
         .catch(console.log);
     },
     setVisibleCommentTextArea() {
-      this.isHiddenComment = false;
+      this.isHiddenTagComment = false;
     },
     createComment() {
       if (!this.validComment()) return;
@@ -695,15 +805,46 @@ export default {
       var date = currentDate.toISOString();
       console.log(date);
 
-      this.$http.post("http://localhost:8080/api/post/comment/", {
+      this.$http.post("https://localhost:8080/api/post/comment/", {
         creation_date: date,
         user_id: localStorage.getItem("userId"),
-        post_id: this.post.post_id,
+        post_id: localStorage.getItem("selectedPostId"),
         text: this.text,
       }).then((response) => {
+        if(this.selectedUserTags.length != 0) {
+          for(var i = 0; i < this.selectedUserTags.length; i++) {
+            this.$http
+              .post("https://localhost:8080/api/tag/comment_tag_comments/", {
+                tag_id: this.selectedUserTags[i].id,
+                comment_id: response.data,
+              })
+              .then((r) => {
+                console.log(r.data);
+              })
+              .catch((er) => {
+                console.log(er.response.data);
+              });
+          }
+        }
+
+        if(this.selectedHashTags.length != 0) {
+          for(var j = 0; j < this.selectedHashTags.length; j++) {
+            this.$http
+              .post("https://localhost:8080/api/tag/comment_tag_comments/", {
+                tag_id: this.selectedHashTags[j].id,
+                comment_id: response.data,
+              })
+              .then((response) => {
+                console.log(response.data);
+              })
+              .catch((er) => {
+                console.log(er.response.data);
+              });
+          }
+        }
         console.log(response.data);
         alert("Successfully created comment.");
-        window.location.href = "http://localhost:8081/postById"
+        window.location.href = "https://localhost:8081/postById"
       })
       .catch((er) => {
         console.log(er.response.data);
@@ -731,6 +872,16 @@ export default {
 </script>
 
 <style scoped>
+
+.mention-item {
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.mention-selected {
+  background: rgb(192, 250, 153);
+}
+
 .spacingOne {
   height: 50px;
 }
@@ -785,6 +936,10 @@ export default {
 .textArea {
   margin-left: 20%;
   width: 60%;
+}
+
+.tags {
+  margin-left: 20%;
 }
 
 .addCommentButton {

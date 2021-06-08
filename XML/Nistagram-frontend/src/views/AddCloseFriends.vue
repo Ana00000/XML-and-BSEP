@@ -92,7 +92,7 @@ export default {
       this.id = localStorage.getItem("userId");
       this.$http
         .get(
-          "http://localhost:8080/api/user/find_all_mutual_followers_for_user?id=" +
+          "https://localhost:8080/api/user/find_all_mutual_followers_for_user?id=" +
             this.id
         )
         .then((resp) => {
@@ -121,7 +121,7 @@ export default {
     },
     addCloseFriend() {
       this.$http
-        .post("http://localhost:8080/api/user/create_close_friend/", {
+        .post("https://localhost:8080/api/user/create_close_friend/", {
           classic_user_id: this.classicUserId,
           close_friend_user_id: this.followerUserId,
         })

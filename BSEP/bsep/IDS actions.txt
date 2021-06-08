@@ -1,0 +1,24 @@
+******USER CONTROLLER******
+
+getUsersEmails - GUE457 
+findAllUsers - FAU562
+redirectMeToMyHomePage - RMTMHP549
+recoverPasswordWithToken - RPWT864
+findUserByToken - FUBT953
+changePassword - CH9882
+login - LI3431
+register - REG430
+confirmAccount - CONFACC43
+
+****************************
+******CERTIFICATE CONTROLLER******
+
+revokeCertificate - REVCERT674
+checkCertificateValidity - CHCERTVAL482
+getCertificate - GETCER821
+allValidCertificates - ALVALCERT3281
+allRevokedOrExpired - ALINVALCERT429
+loadToFile - LODTFIL4125
+createCertificate - CRTCERT611
+
+****************************

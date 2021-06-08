@@ -57,10 +57,15 @@ func (repo *SinglePostRepository) FindAllFollowingPosts(followings []dto.Classic
 func (repo *SinglePostRepository) FindAllPublicAndFriendsPostsValid(allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
 	var allPosts = repo.FindAllPosts()
 	var allPublicPosts []model.SinglePost
-
+	fmt.Println("Size all post ---->")
+	fmt.Println(len(allPosts))
+	fmt.Println("Size all allValidUsers ---->")
+	fmt.Println(len(allValidUsers))
 	for i:=0;i<len(allPosts);i++{
 		for j:=0; j<len(allValidUsers);j++{
+			fmt.Println(allPosts[i].UserID.String() + "  -  " + allValidUsers[j].ID.String())
 			if allPosts[i].UserID == allValidUsers[j].ID {
+				fmt.Println("Adding to list allPublicPosts post with ID ---->"+allPosts[i].ID.String())
 				allPublicPosts = append(allPublicPosts, allPosts[i])
 			}
 		}
@@ -73,7 +78,6 @@ func (repo *SinglePostRepository) FindAllPublicAndFriendsPostsValid(allValidUser
 func (repo *SinglePostRepository) FindAllPostsByIds(postsIds []uuid.UUID) []model.SinglePost {
 	var allPosts = repo.FindAllPosts()
 	var allTagPosts []model.SinglePost
-
 	for i:=0; i<len(allPosts);i++{
 		for j:=0;j<len(postsIds);j++{
 			if allPosts[i].ID == postsIds[j] && allPosts[i].IsDeleted == false{
@@ -89,7 +93,10 @@ func (repo *SinglePostRepository) FindAllPostsByIds(postsIds []uuid.UUID) []mode
 func (repo *SinglePostRepository) FindAllPublicPostsByIds(postsIds []uuid.UUID, allValidUsers []dto.ClassicUserDTO) []model.SinglePost {
 	var allPosts = repo.FindAllPublicAndFriendsPostsValid(allValidUsers)
 	var allTagPosts []model.SinglePost
-
+	fmt.Println("Size all post ---->")
+	fmt.Println(len(allPosts))
+	fmt.Println("Size all postsIds ---->")
+	fmt.Println(len(postsIds))
 	for i:=0; i<len(allPosts);i++{
 		for j:=0;j<len(postsIds);j++{
 			fmt.Println("REPO REPO REPO REPO REPO")

@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"fmt"
+	"github.com/google/uuid"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"gorm.io/gorm"
 )
 
@@ -14,4 +15,10 @@ func (repo * CommentTagCommentsRepository) CreateCommentTagComments(commentTagCo
 	result := repo.Database.Create(commentTagComments)
 	fmt.Print(result)
 	return nil
+}
+
+func (repo CommentTagCommentsRepository) FindAllCommentTagCommentsByCommentId(id uuid.UUID) []model.CommentTagComments {
+	var tags []model.CommentTagComments
+	repo.Database.Select("*").Where("comment_id = ?", id).Find(&tags)
+	return tags
 }

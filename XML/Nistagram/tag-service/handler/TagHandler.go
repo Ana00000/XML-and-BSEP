@@ -108,11 +108,28 @@ func (handler *TagHandler) FindTagForId(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusBadRequest)
 }
 
+func (handler *TagHandler) FindAllHashTags(w http.ResponseWriter, r *http.Request) {
+	tag := handler.Service.FindAllHashTags()
+	tagJson, _ := json.Marshal(tag)
+	if tagJson != nil {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(tagJson)
+	}
+	w.WriteHeader(http.StatusBadRequest)
+}
+
 func (handler *TagHandler) FindTagByName(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name := vars["name"]
-
+	fmt.Println("Finding tag with name "+name)
 	tag := handler.Service.FindTagByName(name)
+
+	if tag==nil{
+		fmt.Println("Not found tag with name "+name)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	tagType :=""
 	if tag.TagType==model.USER_TAG{
 		tagType="USER_TAG"
@@ -126,9 +143,10 @@ func (handler *TagHandler) FindTagByName(w http.ResponseWriter, r *http.Request)
 	}
 	tagJson, _ := json.Marshal(tagDTO)
 	if tagJson != nil {
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(tagJson)
 	}
 	w.WriteHeader(http.StatusBadRequest)
 }
+

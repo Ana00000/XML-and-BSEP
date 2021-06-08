@@ -121,7 +121,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8080/api/story/find_all_public_stories_reg?id=" + localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/story/find_all_public_stories_reg?id=" + localStorage.getItem("userId"))
         .then((response) => {
           this.stories = response.data;
         })
@@ -132,7 +132,7 @@ export default {
     getStoryAlbums() {
       this.$http
         .get(
-          "http://localhost:8080/api/story/find_all_public_album_stories_reg?id=" +
+          "https://localhost:8080/api/story/find_all_public_album_stories_reg?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -146,7 +146,7 @@ export default {
       localStorage.setItem("mySelectedStoryAlbumId", item.story_album_id);
 
       window.location.href =
-        "http://localhost:8081/storyAlbumByIdWithoutActivity";
+        "https://localhost:8081/storyAlbumByIdWithoutActivity";
     },
   },
 };

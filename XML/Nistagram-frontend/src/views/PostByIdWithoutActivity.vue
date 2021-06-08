@@ -169,7 +169,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_selected_post_for_logged_user?id=" +
+          "https://localhost:8080/api/post/find_selected_post_for_logged_user?id=" +
             localStorage.getItem("mySelectedPostId") +
             "&logId=" +
             localStorage.getItem("mySelectedUserId")
@@ -181,7 +181,7 @@ export default {
 
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_comments_for_post?id=" +
+          "https://localhost:8080/api/post/find_all_comments_for_post?id=" +
             localStorage.getItem("mySelectedPostId")
         )
         .then((response) => {
@@ -202,7 +202,7 @@ export default {
     getItem(item) {
       console.log(item);
       this.$http
-        .get("http://localhost:8080/api/user/find_user_by_id?id=" + item.user_id)
+        .get("https://localhost:8080/api/user/find_user_by_id?id=" + item.user_id)
         .then((r) => {
           this.userName = r.data.username;
           if (r.data.gender == 0) {
@@ -230,7 +230,7 @@ export default {
       var date = currentDate.toISOString();
       console.log(date);
 
-      this.$http.post("http://localhost:8080/api/post/comment/", {
+      this.$http.post("https://localhost:8080/api/post/comment/", {
         creation_date: date,
         user_id: localStorage.getItem("userId"),
         post_id: this.post.post_id,
@@ -238,7 +238,7 @@ export default {
       }).then((r) => {
           console.log(r);
           alert("Successfully created comment");
-          window.location.href = "http://localhost:8081/postByIdWithoutActivity"
+          window.location.href = "https://localhost:8081/postByIdWithoutActivity"
         })
         .catch(console.log);
       this.text = "";

@@ -61,7 +61,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8080/api/post/find_all_post_collections_for_reg?id=" +
+          "https://localhost:8080/api/post/find_all_post_collections_for_reg?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -80,14 +80,14 @@ export default {
       }
 
       this.$http
-        .post("http://localhost:8080/api/post/post_collection/", {
+        .post("https://localhost:8080/api/post/post_collection/", {
           title: this.title,
           userID: localStorage.getItem("userId"),
         })
         .then((response) => {
           this.postCollectionId = response.data;
           alert("Successful creation of collection.");
-          window.location.href = "http://localhost:8081/myCollections";
+          window.location.href = "https://localhost:8081/myCollections";
         })
         .catch((er) => {
           console.log(er.response.data);

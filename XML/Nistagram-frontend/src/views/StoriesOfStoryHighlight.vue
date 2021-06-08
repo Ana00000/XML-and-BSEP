@@ -81,7 +81,7 @@ export default {
     init() {
       this.$http
         .get(
-          "http://localhost:8080/api/story/find_all_single_story_story_highlights_for_story_highlight?id=" +
+          "https://localhost:8080/api/story/find_all_single_story_story_highlights_for_story_highlight?id=" +
             localStorage.getItem("selectedStoryHighlightId")
         )
         .then((response) => {
@@ -95,7 +95,7 @@ export default {
     getStories() {
       this.$http
         .get(
-          "http://localhost:8080/api/story/find_all_stories_for_logged_user?id=" +
+          "https://localhost:8080/api/story/find_all_stories_for_logged_user?id=" +
             localStorage.getItem("userId")
         )
         .then((response) => {
@@ -111,7 +111,7 @@ export default {
       localStorage.setItem("mySelectedUserId", item.user_id);
       localStorage.setItem("mySelectedStoryId", item.story_id);
 
-      window.location.href = "http://localhost:8081/storyByIdWithoutActivity";
+      window.location.href = "https://localhost:8081/storyByIdWithoutActivity";
     }
   },
 };

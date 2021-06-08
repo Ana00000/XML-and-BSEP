@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
 )
@@ -15,4 +16,9 @@ func (service * CommentTagCommentsService) CreateCommentTagComments(commentTagCo
 		return err
 	}
 	return nil
+}
+
+func (service CommentTagCommentsService) FindAllCommentTagCommentsByCommentId(id uuid.UUID) []model.CommentTagComments {
+	return service.Repo.FindAllCommentTagCommentsByCommentId(id)
+
 }

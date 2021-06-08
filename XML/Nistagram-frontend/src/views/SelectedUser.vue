@@ -225,7 +225,7 @@ export default {
     getUser() {
       console.log(this.selectedUser);
       this.$http
-        .get("http://localhost:8080/api/user/find_selected_user_by_id?id=" + this.selectedUser+"&logId=" + this.logId)
+        .get("https://localhost:8080/api/user/find_selected_user_by_id?id=" + this.selectedUser+"&logId=" + this.logId)
         .then((resp) => {
           this.setUserInfo(resp.data);
           console.log(resp.data);
@@ -273,14 +273,14 @@ export default {
         .catch(console.log("Didn't set user info!"));
 
         this.$http
-        .get("http://localhost:8080/api/post/find_all_posts_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/post/find_all_posts_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"))
         .then((response) => {
           this.posts = response.data;
         })
         .catch(console.log);
 
         this.$http
-        .get("http://localhost:8080/api/story/find_all_stories_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/story/find_all_stories_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"))
         .then((response) => {
           this.stories = response.data;
         })
@@ -298,7 +298,7 @@ export default {
       this.isHiddenFollowRequestSent = true;
       
      this.$http
-        .post("http://localhost:8080/api/user/create_following/", {
+        .post("https://localhost:8080/api/user/create_following/", {
           classic_user_id: this.logId,
           following_user_id: this.selectedUser,
         })
@@ -316,7 +316,7 @@ export default {
       this.isHiddenFollowRequestSent = false;
 
        this.$http
-        .post("http://localhost:8080/api/requests/create_follow_request/", {
+        .post("https://localhost:8080/api/requests/create_follow_request/", {
           classic_user_id: this.logId,
           follower_user_id: this.selectedUser,
         })
@@ -331,7 +331,7 @@ export default {
       localStorage.setItem("selectedUserId", item.user_id);
       localStorage.setItem("selectedPostId", item.post_id);
 
-      window.location.href = "http://localhost:8081/postById";
+      window.location.href = "https://localhost:8081/postById";
     }
   },
 };

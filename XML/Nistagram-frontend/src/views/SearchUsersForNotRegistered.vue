@@ -85,7 +85,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8080/api/user/find_all_public_users/")
+        .get("https://localhost:8080/api/user/find_all_public_users/")
         .then((resp) => {
           this.users = resp.data;
           this.usersCopy = resp.data;
@@ -109,7 +109,7 @@ export default {
       localStorage.setItem("selectedUserUsername", this.selectedUser.username);
       localStorage.setItem("selectedUserId", this.selectedUser.id);
       window.location.href =
-        "http://localhost:8081/selectedUserForNotRegistered";
+        "https://localhost:8081/selectedUserForNotRegistered";
     },
   },
 };

@@ -110,7 +110,7 @@ export default {
           return;
       
       this.$http
-        .post("http://localhost:8080/api/user/registered_user/", {
+        .post("https://localhost:8080/api/user/registered_user/", {
           username: this.username,
           password: this.password,
           email : this.userEmail,
@@ -126,7 +126,7 @@ export default {
         .then((response) => {
           console.log(response.data.firstName);
           alert("Successfully registered.");
-          window.location.href = "http://localhost:8081/logIn";
+          window.location.href = "https://localhost:8081/logIn";
         })
         .catch((er) => {
           if(er.response.status == 409)

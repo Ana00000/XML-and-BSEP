@@ -69,7 +69,7 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("http://localhost:8080/api/post/find_all_posts_for_location_reg_user?locationString="+localStorage.getItem("selectedLocationString")+"&id=" + localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/post/find_all_posts_for_location_reg_user?locationString="+localStorage.getItem("selectedLocationString")+"&id=" + localStorage.getItem("userId"))
         .then((response) => {
           this.posts = response.data;
         })
@@ -79,7 +79,7 @@ export default {
       localStorage.setItem("selectedUserId", item.user_id);
       localStorage.setItem("selectedPostId", item.post_id);
 
-      window.location.href = "http://localhost:8081/postById";
+      window.location.href = "https://localhost:8081/postById";
     }
   },
 };
