@@ -215,7 +215,7 @@ export default {
     tagName: null,
     storyDescription: "",
     locationId: null,
-    storyTypes: ["CLOSE_FRIENDS", "ALL_FRIENDS", "PUBLIC"],
+    storyTypes: ["CLOSE_FRIENDS", "ALL_FRIENDS"],
     selectedStoryType: "CLOSE_FRIENDS",
     label2: "Story publicity type",
     path: "",
@@ -249,6 +249,9 @@ export default {
   methods: {
     init() {
         this.userId = localStorage.getItem("userId");
+        if (localStorage.getItem("userPrivacy")=="PUBLIC") {
+          this.storyTypes = ["CLOSE_FRIENDS", "PUBLIC"]
+        }
         this.$http
         .get("https://localhost:8080/api/tag/find_all_taggable_users_story/")
         .then((response) => {
