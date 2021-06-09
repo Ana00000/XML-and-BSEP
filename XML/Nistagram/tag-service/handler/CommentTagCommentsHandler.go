@@ -2,23 +2,33 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"net/http"
 	_ "strconv"
+	"time"
 )
 
 type CommentTagCommentsHandler struct {
 	Service * service.CommentTagCommentsService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
+//CRCOMMTAGCOMMTS9327
 func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.ResponseWriter, r *http.Request) {
 	var commentTagCommentsDTO dto.CommentTagCommentsDTO
 	err := json.NewDecoder(r.Body).Decode(&commentTagCommentsDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "CommentTagCommentsHandler",
+			"action":   "CRCOMMTAGCOMMTS9327",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to CommentTagCommentsDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -31,10 +41,21 @@ func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.Respon
 
 	err = handler.Service.CreateCommentTagComments(&commentTagComments)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "CommentTagCommentsHandler",
+			"action":   "CRCOMMTAGCOMMTS9327",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed adding comment tag for comment!")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "CommentTagCommentsHandler",
+		"action":   "CRCOMMTAGCOMMTS9327",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully added comment tag for comment!")
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
