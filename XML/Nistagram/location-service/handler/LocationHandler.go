@@ -5,21 +5,31 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/service"
 	"net/http"
 	_ "strconv"
+	"time"
 )
 
 type LocationHandler struct {
 	Service * service.LocationService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Request) {
 	var locationDTO dto.LocationDTO
 	err := json.NewDecoder(r.Body).Decode(&locationDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "CRLON001",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -28,6 +38,12 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 		fmt.Println(foundLocation.StreetName)
 		locationIDJson, _ := json.Marshal(foundLocation.ID)
 		w.Write(locationIDJson)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "CRLON001",
+			"timestamp":   time.Now().String(),
+		}).Error("Location already exists!")
 		w.WriteHeader(http.StatusAccepted)
 		w.Header().Set("Content-Type", "application/json")
 		return
@@ -43,10 +59,14 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 		StreetNumber:       locationDTO.StreetNumber,
 	}
 
-
-
 	err = handler.Service.CreateLocation(&location)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "CRLON001",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating location!")
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
@@ -54,6 +74,12 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 	locationIDJson, _ := json.Marshal(location.ID)
 	w.Write(locationIDJson)
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "CRLON001",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created location!")
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -64,13 +90,24 @@ func (handler *LocationHandler) FindByID(w http.ResponseWriter, r *http.Request)
 
 	var location = handler.Service.FindByID(uuid.MustParse(id))
 	if  location == nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "FIBYIDI111",
+			"timestamp":   time.Now().String(),
+		}).Error("Location not found!")
 		fmt.Println("Location not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 	locationJson, _ := json.Marshal(location)
 	w.Write(locationJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "FIBYIDI111",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found location!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -92,6 +129,13 @@ func (handler *LocationHandler) FindLocationIdByLocationString(w http.ResponseWr
 	locationJson, _ := json.Marshal(locationId)
 	w.Write(locationJson)
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "FILOIDBYLOSTR670",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found location!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -100,6 +144,12 @@ func (handler *LocationHandler) FindAllLocationsForStories(w http.ResponseWriter
 	var singleStoriesDTO []dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoriesDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "FIALLOFOSTH070",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SingleStoriesDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -107,7 +157,12 @@ func (handler *LocationHandler) FindAllLocationsForStories(w http.ResponseWriter
 
 	locationJson, _ := json.Marshal(locations)
 	w.Write(locationJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "FIALLOFOSTH070",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found locations!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -116,6 +171,12 @@ func (handler *LocationHandler) FindAllLocationsForStory(w http.ResponseWriter, 
 	var singleStoryDTO dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "FIALLOFOSTD780",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SingleStoryDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -123,7 +184,12 @@ func (handler *LocationHandler) FindAllLocationsForStory(w http.ResponseWriter, 
 
 	locationJson, _ := json.Marshal(locations)
 	w.Write(locationJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "FIALLOFOSTD780",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found locations!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -132,6 +198,12 @@ func (handler *LocationHandler) FindAllLocationsForPosts(w http.ResponseWriter, 
 	var singlePostsDTO []dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostsDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+		"status": "failure",
+		"location":   "LocationHandler",
+		"action":   "FIALLOFOPOP066",
+		"timestamp":   time.Now().String(),
+	}).Error("Wrong cast json to SinglePostsDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -139,7 +211,12 @@ func (handler *LocationHandler) FindAllLocationsForPosts(w http.ResponseWriter, 
 
 	locationJson, _ := json.Marshal(locations)
 	w.Write(locationJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "FIALLOFOPOP066",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found locations!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -148,6 +225,12 @@ func (handler *LocationHandler) FindAllLocationsForPost(w http.ResponseWriter, r
 	var singlePostDTO dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "FIALLOFOPOG429",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -155,7 +238,12 @@ func (handler *LocationHandler) FindAllLocationsForPost(w http.ResponseWriter, r
 
 	locationJson, _ := json.Marshal(locations)
 	w.Write(locationJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "FIALLOFOPOG429",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found locations!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -164,6 +252,12 @@ func (handler *LocationHandler) FindAllLocationsForStoryAlbums(w http.ResponseWr
 	var storyAlbumsFullDTO []dto.StoryAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumsFullDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "FIALLOFOSTALK777",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to StoryAlbumsFullDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -171,7 +265,12 @@ func (handler *LocationHandler) FindAllLocationsForStoryAlbums(w http.ResponseWr
 
 	locationJson, _ := json.Marshal(locations)
 	w.Write(locationJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "FIALLOFOSTALK777",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found locations!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -180,6 +279,12 @@ func (handler *LocationHandler) FindAllLocationsForStoryAlbum(w http.ResponseWri
 	var storyAlbumFullDTO dto.StoryAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumFullDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "FIALLOFOSTALJ927",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to StoryAlbumFullDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -187,7 +292,12 @@ func (handler *LocationHandler) FindAllLocationsForStoryAlbum(w http.ResponseWri
 
 	locationJson, _ := json.Marshal(locations)
 	w.Write(locationJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "FIALLOFOSTALJ927",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found locations!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -196,6 +306,12 @@ func (handler *LocationHandler) FindAllLocationsForPostAlbums(w http.ResponseWri
 	var postAlbumsFullDTO []dto.PostAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumsFullDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "FIALLOFOPOALP969",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumsFullDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -203,7 +319,12 @@ func (handler *LocationHandler) FindAllLocationsForPostAlbums(w http.ResponseWri
 
 	locationJson, _ := json.Marshal(locations)
 	w.Write(locationJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "FIALLOFOPOALP969",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found locations!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -212,6 +333,12 @@ func (handler *LocationHandler) FindAllLocationsForPostAlbum(w http.ResponseWrit
 	var postAlbumFullDTO dto.PostAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "LocationHandler",
+			"action":   "FIALLOFOPOALA073",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumFullDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -219,7 +346,12 @@ func (handler *LocationHandler) FindAllLocationsForPostAlbum(w http.ResponseWrit
 
 	locationJson, _ := json.Marshal(locations)
 	w.Write(locationJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "LocationHandler",
+		"action":   "FIALLOFOPOALA073",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found locations!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }

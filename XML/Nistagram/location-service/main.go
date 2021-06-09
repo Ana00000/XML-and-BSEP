@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/location-service/repository"
@@ -59,8 +60,8 @@ func initServices(repo *repository.LocationRepository) *service.LocationService{
 	return &service.LocationService { Repo: repo }
 }
 
-func initHandler(service *service.LocationService) *handler.LocationHandler{
-	return &handler.LocationHandler { Service: service }
+func initHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.LocationService) *handler.LocationHandler{
+	return &handler.LocationHandler { LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
 func handleFunc(handler *handler.LocationHandler){
@@ -93,9 +94,26 @@ func handleFunc(handler *handler.LocationHandler){
 }
 
 func main() {
+	logInfo := logrus.New()
+	logError := logrus.New()
+
+	LogInfoFile, err := os.OpenFile("logInfo.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+
+	LogErrorFile, err := os.OpenFile("logError.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+	logInfo.Out = LogInfoFile
+	logInfo.Formatter = &logrus.JSONFormatter{}
+	logError.Out = LogErrorFile
+	logError.Formatter = &logrus.JSONFormatter{}
+
 	database := initDB()
 	repo := initRepo(database)
 	service := initServices(repo)
-	handler := initHandler(service)
+	handler := initHandler(logInfo,logError,service)
 	handleFunc(handler)
 }
