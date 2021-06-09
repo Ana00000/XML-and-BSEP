@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -24,6 +25,8 @@ type RegisteredUserHandler struct {
 	ConfirmationTokenService * service.ConfirmationTokenService
 	Validator                *validator.Validate
 	PasswordUtil             *util.PasswordUtil
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 func SendConfirmationMail(user model.User, token uuid.UUID) {

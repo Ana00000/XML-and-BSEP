@@ -6,6 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/mikespook/gorbac"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -30,6 +31,8 @@ type UserHandler struct {
 	PermissionUpdateUserInfo * gorbac.Permission
 	Validator                *validator.Validate
 	PasswordUtil			 *util.PasswordUtil
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 func ExtractToken(r *http.Request) string {

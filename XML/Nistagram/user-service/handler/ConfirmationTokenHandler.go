@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
@@ -14,6 +15,8 @@ type ConfirmationTokenHandler struct {
 	ClassicUserService * service.ClassicUserService
 	RegisteredUserService * service.RegisteredUserService
 	UserService * service.UserService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 func (handler *ConfirmationTokenHandler) VerifyConfirmationToken(w http.ResponseWriter, r *http.Request) {

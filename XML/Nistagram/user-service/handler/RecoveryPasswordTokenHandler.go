@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -18,6 +19,8 @@ type RecoveryPasswordTokenHandler struct {
 	RecoveryPasswordTokenService * service.RecoveryPasswordTokenService
 	UserService * service.UserService
 	Validator   *validator.Validate
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 func SendRecoveryPasswordMail(user *model.User, token uuid.UUID) {
