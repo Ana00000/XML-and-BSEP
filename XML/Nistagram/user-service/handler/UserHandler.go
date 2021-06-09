@@ -70,11 +70,17 @@ func TokenValid(r *http.Request) error {
 	}
 	return nil
 }
-
+//FIDALUSRS2330
 func (handler *UserHandler) FindAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	err := TokenValid(r)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "FIDALUSRS2330",
+			"timestamp":   time.Now().String(),
+		}).Error("User need to be logged in!")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -90,6 +96,12 @@ func (handler *UserHandler) FindAllUsers(w http.ResponseWriter, r *http.Request)
 		userRole = "role-registered-user"
 	}
 	if !handler.Rbac.IsGranted(userRole, *handler.PermissionFindAllUsers, nil) {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "FIDALUSRS2330",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
@@ -97,10 +109,22 @@ func (handler *UserHandler) FindAllUsers(w http.ResponseWriter, r *http.Request)
 	users = handler.UserService.FindAllUsers()
 	usersJson, _ := json.Marshal(users)
 	if usersJson != nil {
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully founded all users!")
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(usersJson)
 	}
+	handler.LogError.WithFields(logrus.Fields{
+		"status": "failure",
+		"location":   "UserHandler",
+		"action":   "FIDALUSRS2330",
+		"timestamp":   time.Now().String(),
+	}).Error("Failed founding all users!")
 	w.WriteHeader(http.StatusBadRequest)
 }
 
@@ -119,23 +143,41 @@ func CreateToken(userName string) (string, error) {
 	}
 	return token, nil
 }
-
+//CHUSPASS9112
 func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
 	var userChangePasswordDTO dto.UserChangePasswordDTO
 
 	err := json.NewDecoder(r.Body).Decode(&userChangePasswordDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "CHUSPASS9112",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to UserChangePasswordDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	if userChangePasswordDTO.Password != userChangePasswordDTO.ConfirmedPassword {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "CHUSPASS9112",
+			"timestamp":   time.Now().String(),
+		}).Error("Password and his confirmation doesn't match!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	var user = handler.UserService.FindByEmail(userChangePasswordDTO.Email)
 	if user == nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "CHUSPASS9112",
+			"timestamp":   time.Now().String(),
+		}).Error("Not founded user with entered email!")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -147,13 +189,24 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 	if validPassword {
 		salt, password = handler.PasswordUtil.GeneratePasswordWithSalt(userChangePasswordDTO.Password)
 	}else {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "CHUSPASS9112",
+			"timestamp":   time.Now().String(),
+		}).Error("Password format is invalid!")
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 
 	err = handler.UserService.UpdateUserPassword(user.ID, salt, password)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "CHUSPASS9112",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed updating user info!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -161,50 +214,93 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 	if user.UserType == model.ADMIN {
 		err = handler.AdminService.UpdateAdminPassword(user.ID, salt, password)
 		if err != nil {
-			fmt.Println(err)
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "CHUSPASS9112",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed updating admin info!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
 	} else if user.UserType == model.AGENT {
 		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID, salt, password)
 		if err != nil {
-			fmt.Println(err)
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "CHUSPASS9112",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed updating classic user info!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
 		err = handler.AgentService.UpdateAgentPassword(user.ID, salt, password)
 		if err != nil {
-			fmt.Println(err)
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "CHUSPASS9112",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed updating agent info!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
 	} else {
 		err = handler.ClassicUserService.UpdateClassicUserPassword(user.ID, salt, password)
 		if err != nil {
-			fmt.Println(err)
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "CHUSPASS9112",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed updating classic user info!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
 		err = handler.RegisteredUserService.UpdateRegisteredUserPassword(user.ID, salt, password)
 		if err != nil {
-			fmt.Println(err)
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "CHUSPASS9112",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed updating registered user info!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
 	}
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "RegisteredUserHandler",
+		"action":   "CHUSPASS9112",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully changed user info!")
 	w.WriteHeader(http.StatusAccepted)
 	w.Header().Set("Content-Type", "application/json")
 }
 
+//LOG85310
 func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 	var logInUserDTO dto.LogInUserDTO
 	if err := json.NewDecoder(r.Body).Decode(&logInUserDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "LOG85310",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LogInUserDTO!")
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 
 	if err := handler.Validator.Struct(&logInUserDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "LOG85310",
+			"timestamp":   time.Now().String(),
+		}).Error("LogInUserDTO fields doesn't entered in valid format!")
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
@@ -213,12 +309,24 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 
 	if user.UserType == model.ADMIN {
 		if user == nil || !user.IsConfirmed {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "LOG85310",
+				"timestamp":   time.Now().String(),
+			}).Error("Admin doesn't confirmed!")
 			w.WriteHeader(http.StatusBadRequest) //400
 			return
 		}
 	} else {
 		var classicUser = handler.ClassicUserService.FindClassicUserByUserName(logInUserDTO.Username)
 		if user == nil || !classicUser.IsConfirmed || classicUser.IsDeleted {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "LOG85310",
+				"timestamp":   time.Now().String(),
+			}).Error("Classic user doesn't valid!")
 			w.WriteHeader(http.StatusBadRequest) //400
 			return
 		}
@@ -234,17 +342,35 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString(salt)
 		plainPassword = sb.String()
 	}else {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "LOG85310",
+			"timestamp":   time.Now().String(),
+		}).Error("Password doesn't entered in valid format!")
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 
 	if !handler.PasswordUtil.CheckPasswordHash(plainPassword, user.Password) {
-		w.WriteHeader(http.StatusUnauthorized)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "LOG85310",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed sign up!")
+		w.WriteHeader(http.StatusConflict)
 		return
 	}
 
 	token, err := CreateToken(user.Username)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "LOG85310",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating AWT token!")
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
@@ -257,15 +383,27 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 
 	logInResponseJson, _ := json.Marshal(logInResponse)
 	w.Write(logInResponseJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "RegisteredUserHandler",
+		"action":   "LOG85310",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully sign up user! User: "+user.Username)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
 }
 
+//UPDUSPROFINF393
 func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http.Request) {
 
 	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "UPDUSPROFINF393",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
@@ -273,11 +411,23 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 	var userDTO dto.UserUpdateProfileInfoDTO
 
 	if err := json.NewDecoder(r.Body).Decode(&userDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "UPDUSPROFINF393",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to UserUpdateProfileInfoDTO!")
 		w.WriteHeader(http.StatusBadRequest) // 400
 		return
 	}
 
 	if err := handler.Validator.Struct(&userDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "UPDUSPROFINF393",
+			"timestamp":   time.Now().String(),
+		}).Error("UserUpdateProfileInfoDTO fields aren't entered in valid format!")
 		w.WriteHeader(http.StatusBadRequest) // 400
 		return
 	}
@@ -291,9 +441,13 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 	} else {
 		userRole = "role-registered-user"
 	}
-	if !handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo, nil) &&
-		!handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo, nil) &&
-		!handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo, nil) {
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserInfo, nil) {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "UPDUSPROFINF393",
+			"timestamp":   time.Now().String(),
+		}).Error("User aren't authorized to update user information!")
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
@@ -301,82 +455,155 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 
 	err := handler.UserService.UpdateUserProfileInfo(&userDTO)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "UPDUSPROFINF393",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed updating basic user profile information!")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 	if userDTO.UserType == "ADMIN" {
 		err = handler.AdminService.UpdateAdminProfileInfo(&userDTO)
 		if err != nil {
-			fmt.Println(err)
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "UPDUSPROFINF393",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed updating admin profile information!")
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 	} else if userDTO.UserType == "AGENT" {
 		err = handler.AgentService.UpdateAgentProfileInfo(&userDTO)
 		if err != nil {
-			fmt.Println(err)
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "UPDUSPROFINF393",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed updating agent profile information!")
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 		err = handler.ClassicUserService.UpdateClassicUserProfileInfo(&userDTO)
 		if err != nil {
-			fmt.Println(err)
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "UPDUSPROFINF393",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed updating classic user profile information!")
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 	} else {
 		err = handler.RegisteredUserService.UpdateRegisteredUserProfileInfo(&userDTO)
 		if err != nil {
-			fmt.Println(err)
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "UPDUSPROFINF393",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed updating registered user profile information!")
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 		err = handler.ClassicUserService.UpdateClassicUserProfileInfo(&userDTO)
 		if err != nil {
-			fmt.Println(err)
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "UserHandler",
+				"action":   "UPDUSPROFINF393",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed updating classic user profile information!")
 			w.WriteHeader(http.StatusExpectationFailed)
+			return
 		}
 	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "RegisteredUserHandler",
+		"action":   "UPDUSPROFINF393",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully updated user profile info!")
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
 
+//FIDBYID0329
 func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	var user = handler.UserService.FindByID(uuid.MustParse(id))
 	if user == nil {
-		fmt.Println("User not found")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "FIDBYID0329",
+			"timestamp":   time.Now().String(),
+		}).Error("User not found!")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 	userJson, _ := json.Marshal(user)
 	w.Write(userJson)
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "RegisteredUserHandler",
+		"action":   "FIDBYID0329",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded user by id!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
 
+//FIDALUSRSBUTLOGGIN212
 func (handler *UserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
 
 	var user = handler.UserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
 	if  user == nil {
-		fmt.Println("No user found")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "FIDALUSRSBUTLOGGIN212",
+			"timestamp":   time.Now().String(),
+		}).Error("No user found!")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 	userJson, _ := json.Marshal(user)
 	w.Write(userJson)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "RegisteredUserHandler",
+		"action":   "FIDALUSRSBUTLOGGIN212",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded all users without logged in!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
 
+//FIDALPUBUSRS0291
 func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Request) {
 	var profileSettings []Data
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_for_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
 	err := getJson(reqUrl, &profileSettings)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "FIDALPUBUSRS0291",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list ids!")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 /*
@@ -388,27 +615,50 @@ func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Re
 
 	usersJson, _ := json.Marshal(users)
 	if usersJson != nil {
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location":   "RegisteredUserHandler",
+			"action":   "FIDALPUBUSRS0291",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully founded all public users!")
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(usersJson)
+		return
 	}
-
+	handler.LogError.WithFields(logrus.Fields{
+		"status": "failure",
+		"location":   "UserHandler",
+		"action":   "FIDALPUBUSRS0291",
+		"timestamp":   time.Now().String(),
+	}).Error("Failed finding all public users!")
 	w.WriteHeader(http.StatusBadRequest)
 }
 
+//FIDBYUSNAM9482
 func (handler *UserHandler) FindByUserName(w http.ResponseWriter, r *http.Request) {
 
 	username := r.URL.Query().Get("username")
 
 	var user = handler.UserService.FindByUserName(username)
 	if  user == nil {
-		fmt.Println("User not found")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "FIDBYUSNAM9482",
+			"timestamp":   time.Now().String(),
+		}).Error("User not found!")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 	userJson, _ := json.Marshal(user)
 	w.Write(userJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "RegisteredUserHandler",
+		"action":   "FIDBYUSNAM9482",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded user by username!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
