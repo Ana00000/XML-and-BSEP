@@ -6,10 +6,10 @@ import (
 )
 
 type StoryICRService struct {
-	Repo * repository.StoryICRRepository
+	Repo *repository.StoryICRRepository
 }
 
-func (service * StoryICRService) CreateStoryICR(storyICR *model.StoryICR) error {
+func (service *StoryICRService) CreateStoryICR(storyICR *model.StoryICR) error {
 	err := service.Repo.CreateStoryICR(storyICR)
 	if err != nil {
 		return err

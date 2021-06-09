@@ -6,10 +6,10 @@ import (
 )
 
 type AgentRegistrationRequestService struct {
-	Repo * repository.AgentRegistrationRequestRepository
+	Repo *repository.AgentRegistrationRequestRepository
 }
 
-func (service * AgentRegistrationRequestService) CreateAgentRegistrationRequest(agentRegistrationRequest *model.AgentRegistrationRequest) error {
+func (service *AgentRegistrationRequestService) CreateAgentRegistrationRequest(agentRegistrationRequest *model.AgentRegistrationRequest) error {
 	err := service.Repo.CreateAgentRegistrationRequest(agentRegistrationRequest)
 	if err != nil {
 		return err
