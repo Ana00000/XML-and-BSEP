@@ -6,10 +6,10 @@ import (
 )
 
 type ProfileSettingsMutedProfilesService struct {
-	Repo * repository.ProfileSettingsMutedProfilesRepository
+	Repo *repository.ProfileSettingsMutedProfilesRepository
 }
 
-func (service * ProfileSettingsMutedProfilesService) CreateProfileSettingsMutedProfiles(profileSettingsMutedProfiles *model.ProfileSettingsMutedProfiles) error {
+func (service *ProfileSettingsMutedProfilesService) CreateProfileSettingsMutedProfiles(profileSettingsMutedProfiles *model.ProfileSettingsMutedProfiles) error {
 	err := service.Repo.CreateProfileSettingsMutedProfiles(profileSettingsMutedProfiles)
 	if err != nil {
 		return err

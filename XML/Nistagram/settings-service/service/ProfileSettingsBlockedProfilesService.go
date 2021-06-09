@@ -6,10 +6,10 @@ import (
 )
 
 type ProfileSettingsBlockedProfilesService struct {
-	Repo * repository.ProfileSettingsBlockedProfilesRepository
+	Repo *repository.ProfileSettingsBlockedProfilesRepository
 }
 
-func (service * ProfileSettingsBlockedProfilesService) CreateProfileSettingsBlockedProfiles(profileSettingsBlockedProfiles *model.ProfileSettingsBlockedProfiles) error {
+func (service *ProfileSettingsBlockedProfilesService) CreateProfileSettingsBlockedProfiles(profileSettingsBlockedProfiles *model.ProfileSettingsBlockedProfiles) error {
 	err := service.Repo.CreateProfileSettingsBlockedProfiles(profileSettingsBlockedProfiles)
 	if err != nil {
 		return err
