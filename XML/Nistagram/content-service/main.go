@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/repository"
@@ -59,8 +60,8 @@ func initAdvertisementContentService(repo *repository.AdvertisementContentReposi
 	return &service.AdvertisementContentService { Repo: repo }
 }
 
-func initAdvertisementContentHandler(service *service.AdvertisementContentService) *handler.AdvertisementContentHandler{
-	return &handler.AdvertisementContentHandler { Service: service }
+func initAdvertisementContentHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.AdvertisementContentService) *handler.AdvertisementContentHandler{
+	return &handler.AdvertisementContentHandler { LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
 func initContentRepo(database *gorm.DB) *repository.ContentRepository{
@@ -71,8 +72,8 @@ func initContentService(repo *repository.ContentRepository) *service.ContentServ
 	return &service.ContentService { Repo: repo }
 }
 
-func initContentHandler(service *service.ContentService) *handler.ContentHandler{
-	return &handler.ContentHandler { Service: service }
+func initContentHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.ContentService) *handler.ContentHandler{
+	return &handler.ContentHandler { LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
 func initPostAlbumContentRepo(database *gorm.DB) *repository.PostAlbumContentRepository{
@@ -83,8 +84,8 @@ func initPostAlbumContentService(repo *repository.PostAlbumContentRepository) *s
 	return &service.PostAlbumContentService { Repo: repo }
 }
 
-func initPostAlbumContentHandler(service *service.PostAlbumContentService, contentService *service.ContentService) *handler.PostAlbumContentHandler{
-	return &handler.PostAlbumContentHandler { Service: service, ContentService: contentService  }
+func initPostAlbumContentHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.PostAlbumContentService, contentService *service.ContentService) *handler.PostAlbumContentHandler{
+	return &handler.PostAlbumContentHandler { LogInfo: LogInfo, LogError: LogError, Service: service, ContentService: contentService  }
 }
 
 func initStoryAlbumContentRepo(database *gorm.DB) *repository.StoryAlbumContentRepository{
@@ -95,8 +96,8 @@ func initStoryAlbumContentService(repo *repository.StoryAlbumContentRepository) 
 	return &service.StoryAlbumContentService { Repo: repo }
 }
 
-func initStoryAlbumContentHandler(service *service.StoryAlbumContentService, contentService * service.ContentService) *handler.StoryAlbumContentHandler{
-	return &handler.StoryAlbumContentHandler { Service: service, ContentService: contentService}
+func initStoryAlbumContentHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.StoryAlbumContentService, contentService * service.ContentService) *handler.StoryAlbumContentHandler{
+	return &handler.StoryAlbumContentHandler { LogInfo: LogInfo, LogError: LogError, Service: service, ContentService: contentService}
 }
 
 func initSingleStoryContentRepo(database *gorm.DB) *repository.SingleStoryContentRepository{
@@ -107,8 +108,8 @@ func initSingleStoryContentService(repo *repository.SingleStoryContentRepository
 	return &service.SingleStoryContentService { Repo: repo }
 }
 
-func initSingleStoryContentHandler(service *service.SingleStoryContentService, contentService *service.ContentService) *handler.SingleStoryContentHandler{
-	return &handler.SingleStoryContentHandler { Service: service, ContentService: contentService }
+func initSingleStoryContentHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.SingleStoryContentService, contentService *service.ContentService) *handler.SingleStoryContentHandler{
+	return &handler.SingleStoryContentHandler { LogInfo: LogInfo, LogError: LogError, Service: service, ContentService: contentService }
 }
 
 func initSinglePostContentRepo(database *gorm.DB) *repository.SinglePostContentRepository{
@@ -119,8 +120,8 @@ func initSinglePostContentService(repo *repository.SinglePostContentRepository) 
 	return &service.SinglePostContentService { Repo: repo }
 }
 
-func initSinglePostContentHandler(service *service.SinglePostContentService, contentService *service.ContentService) *handler.SinglePostContentHandler{
-	return &handler.SinglePostContentHandler { Service: service, ContentService: contentService }
+func initSinglePostContentHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.SinglePostContentService, contentService *service.ContentService) *handler.SinglePostContentHandler{
+	return &handler.SinglePostContentHandler { LogInfo: LogInfo, LogError: LogError, Service: service, ContentService: contentService }
 }
 
 func initMessageContentRepo(database *gorm.DB) *repository.MessageContentRepository{
@@ -131,8 +132,8 @@ func initMessageContentService(repo *repository.MessageContentRepository) *servi
 	return &service.MessageContentService { Repo: repo }
 }
 
-func initMessageContentHandler(service *service.MessageContentService) *handler.MessageContentHandler{
-	return &handler.MessageContentHandler { Service: service }
+func initMessageContentHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.MessageContentService) *handler.MessageContentHandler{
+	return &handler.MessageContentHandler { LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
 func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementContent *handler.AdvertisementContentHandler,
@@ -177,35 +178,51 @@ func handleFunc(handlerContent *handler.ContentHandler, handlerAdvertisementCont
 }
 
 func main() {
+	logInfo := logrus.New()
+	logError := logrus.New()
+
+	LogInfoFile, err := os.OpenFile("logInfo.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+
+	LogErrorFile, err := os.OpenFile("logError.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+	logInfo.Out = LogInfoFile
+	logInfo.Formatter = &logrus.JSONFormatter{}
+	logError.Out = LogErrorFile
+	logError.Formatter = &logrus.JSONFormatter{}
 
 	database := initDB()
 	repoContent := initContentRepo(database)
 	serviceContent := initContentService(repoContent)
-	handlerContent := initContentHandler(serviceContent)
+	handlerContent := initContentHandler(logInfo,logError,serviceContent)
 
 	repoAdvertisementContent := initAdvertisementContentRepo(database)
 	serviceAdvertisementContent := initAdvertisementContentService(repoAdvertisementContent)
-	handlerAdvertisementContent := initAdvertisementContentHandler(serviceAdvertisementContent)
+	handlerAdvertisementContent := initAdvertisementContentHandler(logInfo,logError,serviceAdvertisementContent)
 
 	repoPostAlbumContent := initPostAlbumContentRepo(database)
 	servicePostAlbumContent := initPostAlbumContentService(repoPostAlbumContent)
-	handlerPostAlbumContent := initPostAlbumContentHandler(servicePostAlbumContent, serviceContent)
+	handlerPostAlbumContent := initPostAlbumContentHandler(logInfo,logError,servicePostAlbumContent, serviceContent)
 
 	repoSinglePostContent := initSinglePostContentRepo(database)
 	serviceSinglePostContent := initSinglePostContentService(repoSinglePostContent)
-	handlerSinglePostContent := initSinglePostContentHandler(serviceSinglePostContent, serviceContent)
+	handlerSinglePostContent := initSinglePostContentHandler(logInfo,logError,serviceSinglePostContent, serviceContent)
 
 	repoStoryAlbumContent := initStoryAlbumContentRepo(database)
 	serviceStoryAlbumContent := initStoryAlbumContentService(repoStoryAlbumContent)
-	handlerStoryAlbumContent := initStoryAlbumContentHandler(serviceStoryAlbumContent, serviceContent)
+	handlerStoryAlbumContent := initStoryAlbumContentHandler(logInfo,logError,serviceStoryAlbumContent, serviceContent)
 
 	repoSingleStoryContent := initSingleStoryContentRepo(database)
 	serviceSingleStoryContent := initSingleStoryContentService(repoSingleStoryContent)
-	handlerSingleStoryContent := initSingleStoryContentHandler(serviceSingleStoryContent, serviceContent)
+	handlerSingleStoryContent := initSingleStoryContentHandler(logInfo,logError,serviceSingleStoryContent, serviceContent)
 
 	repoMessageContent := initMessageContentRepo(database)
 	serviceMessageContent := initMessageContentService(repoMessageContent)
-	handlerMessageContent := initMessageContentHandler(serviceMessageContent)
+	handlerMessageContent := initMessageContentHandler(logInfo,logError,serviceMessageContent)
 
 	handleFunc(handlerContent, handlerAdvertisementContent,handlerPostAlbumContent,handlerSinglePostContent,handlerStoryAlbumContent,handlerSingleStoryContent,handlerMessageContent)
 }

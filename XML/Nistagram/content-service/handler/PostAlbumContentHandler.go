@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
@@ -11,11 +12,14 @@ import (
 	"net/http"
 	"os"
 	_ "strconv"
+	"time"
 )
 
 type PostAlbumContentHandler struct {
 	Service * service.PostAlbumContentService
 	ContentService * service.ContentService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 var pathPostAlbumGlobal = ""
@@ -24,6 +28,12 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 	var postAlbumContentDTO dto.PostAlbumContentDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumContentDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumContentHandler",
+			"action":   "CRPOALCOL998",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumContentDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -46,16 +56,34 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 
 	err = handler.Service.CreatePostAlbumContent(&postAlbumContent)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumContentHandler",
+			"action":   "CRPOALCOL998",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating post album content!")
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 	err = handler.ContentService.CreateContent(&postAlbumContent.Content)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumContentHandler",
+			"action":   "CRPOALCOL998",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating content!")
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumContentHandler",
+		"action":   "CRPOALCOL998",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created content!")
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -65,24 +93,48 @@ func (handler *PostAlbumContentHandler) Upload(writer http.ResponseWriter, reque
 
 	file, hand, err := request.FormFile("myPostAlbumFile")
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumContentHandler",
+			"action":   "UPL887",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find the file!")
 		fmt.Println(err)
 	}
 	defer file.Close()
 
 	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"),  "*" + hand.Filename)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumContentHandler",
+			"action":   "UPL887",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to create temporary file!")
 		fmt.Println(err)
 	}
 	defer tempFile.Close()
 
 	fileBytes, err := ioutil.ReadAll(file)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumContentHandler",
+			"action":   "UPL887",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to read from file!")
 		fmt.Println(err)
 	}
 	tempFile.Write(fileBytes)
 
 	pathPostAlbumGlobal = tempFile.Name()[20:len(tempFile.Name())]
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumContentHandler",
+		"action":   "UPL887",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully uploaded the media!")
 	pathJson, _ := json.Marshal(tempFile.Name())
 	writer.Write(pathJson)
 }
@@ -91,6 +143,12 @@ func (handler *PostAlbumContentHandler) FindAllContentsForPostAlbums(w http.Resp
 	var postAlbumFullDTO []dto.PostAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumContentHandler",
+			"action":   "FIALCOFOPOALO555",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumFullDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -99,6 +157,13 @@ func (handler *PostAlbumContentHandler) FindAllContentsForPostAlbums(w http.Resp
 
 	contentsForPostAlbumsJson, _ := json.Marshal(contentsForPostAlbums)
 	w.Write(contentsForPostAlbumsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumContentHandler",
+		"action":   "FIALCOFOPOALO555",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found contents for post albums!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -107,6 +172,12 @@ func (handler *PostAlbumContentHandler) FindAllContentsForPostAlbum(w http.Respo
 	var postAlbumFullDTO dto.PostAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumContentHandler",
+			"action":   "FIALCOFOPOALO673",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumFullDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -115,6 +186,13 @@ func (handler *PostAlbumContentHandler) FindAllContentsForPostAlbum(w http.Respo
 
 	contentsForPostAlbumsJson, _ := json.Marshal(contentsForPostAlbums)
 	w.Write(contentsForPostAlbumsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumContentHandler",
+		"action":   "FIALCOFOPOALO673",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found contents for post album!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }

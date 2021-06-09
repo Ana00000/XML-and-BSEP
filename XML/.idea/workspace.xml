@@ -3,14 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/AdvertisementHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/AdvertisementHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignChosenGroupHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignChosenGroupHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/DisposableCampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/DisposableCampaignHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/MultiUseCampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/MultiUseCampaignHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/AdvertisementContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/AdvertisementContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/ContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/ContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/MessageContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/MessageContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/PostAlbumContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/PostAlbumContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/SinglePostContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/SinglePostContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/SingleStoryContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/SingleStoryContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/StoryAlbumContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/StoryAlbumContentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

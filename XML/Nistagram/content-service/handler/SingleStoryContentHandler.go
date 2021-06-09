@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
@@ -11,11 +12,14 @@ import (
 	"net/http"
 	"os"
 	_ "strconv"
+	"time"
 )
 
 type SingleStoryContentHandler struct {
 	Service * service.SingleStoryContentService
 	ContentService * service.ContentService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 var pathStoryGlobal = ""
@@ -24,6 +28,12 @@ func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.Respon
 	var singleStoryContentDTO dto.SingleStoryContentDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryContentDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryContentHandler",
+			"action":   "CRSISTCOA197",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SingleStoryContentDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -46,18 +56,35 @@ func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.Respon
 
 	err = handler.Service.CreateSingleStoryContent(&singleStoryContent)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryContentHandler",
+			"action":   "CRSISTCOA197",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating single story content!")
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 	err = handler.ContentService.CreateContent(&singleStoryContent.Content)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryContentHandler",
+			"action":   "CRSISTCOA197",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating content!")
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
 	pathStoryGlobal = ""
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryContentHandler",
+		"action":   "CRSISTCOA197",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created single story content!")
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -66,6 +93,12 @@ func (handler *SingleStoryContentHandler) FindAllContentsForStories(w http.Respo
 	var singleStoriesDTO []dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoriesDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryContentHandler",
+			"action":   "FIALCOFOSTF439",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SingleStoriesDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -74,6 +107,12 @@ func (handler *SingleStoryContentHandler) FindAllContentsForStories(w http.Respo
 
 	contentsForStoriesJson, _ := json.Marshal(contentsForStories)
 	w.Write(contentsForStoriesJson)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryContentHandler",
+		"action":   "FIALCOFOSTF439",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found contents for stories!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -82,6 +121,12 @@ func (handler *SingleStoryContentHandler) FindAllContentsForStory(w http.Respons
 	var singleStoryDTO dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryContentHandler",
+			"action":   "FIALCOFOSTV496",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SingleStoryDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -90,6 +135,12 @@ func (handler *SingleStoryContentHandler) FindAllContentsForStory(w http.Respons
 	contentsForStoriesJson, _ := json.Marshal(contentsForStories)
 
 	w.Write(contentsForStoriesJson)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryContentHandler",
+		"action":   "FIALCOFOSTV496",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found contents for story!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -99,6 +150,12 @@ func (handler *SingleStoryContentHandler) Upload(writer http.ResponseWriter, req
 
 	file, hand, err := request.FormFile("myStoryFile")
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryContentHandler",
+			"action":   "UPM253",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find the file!")
 		fmt.Println(err)
 		return
 	}
@@ -106,6 +163,12 @@ func (handler *SingleStoryContentHandler) Upload(writer http.ResponseWriter, req
 
 	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"),  "*" + hand.Filename)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryContentHandler",
+			"action":   "UPM253",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to create temporary file!")
 		fmt.Println(err)
 		return
 	}
@@ -113,13 +176,24 @@ func (handler *SingleStoryContentHandler) Upload(writer http.ResponseWriter, req
 
 	fileBytes, err := ioutil.ReadAll(file)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryContentHandler",
+			"action":   "UPM253",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to read from file!")
 		fmt.Println(err)
 		return
 	}
 	tempFile.Write(fileBytes)
 
 	pathStoryGlobal = tempFile.Name()[20:len(tempFile.Name())]
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryContentHandler",
+		"action":   "UPM253",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully uploaded the media!")
 	pathJson, _ := json.Marshal(tempFile.Name())
 	writer.Write(pathJson)
 }
@@ -154,9 +228,21 @@ func (handler *SingleStoryContentHandler) FindSingleStoryContentForStoryId(w htt
 	singleStoryContent := handler.Service.FindSingleStoryContentForStoryId(uuid.MustParse(id))
 	singleStoryContentJson, _ := json.Marshal(singleStoryContent)
 	if singleStoryContentJson != nil {
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location":   "SingleStoryContentHandler",
+			"action":   "FISISTCOFOSTH439",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully found single story content for story id!")
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(singleStoryContentJson)
 	}
+	handler.LogError.WithFields(logrus.Fields{
+		"status": "failure",
+		"location":   "SingleStoryContentHandler",
+		"action":   "FISISTCOFOSTH439",
+		"timestamp":   time.Now().String(),
+	}).Error("Single story content for story id wasn't found!")
 	w.WriteHeader(http.StatusBadRequest)
 }
