@@ -3,20 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/AdminHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/AdminHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/AgentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/AgentHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserCampaignsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserCampaignsHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserCloseFriendsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserCloseFriendsHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserFollowersHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserFollowersHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserFollowingsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserFollowingsHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ConfirmationTokenHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ConfirmationTokenHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RecoveryPasswordTokenHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/AdvertisementHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/AdvertisementHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignChosenGroupHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignChosenGroupHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/DisposableCampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/DisposableCampaignHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/MultiUseCampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/MultiUseCampaignHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,9 +63,10 @@
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/Nistagram/post-service/dto" />
     <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="go.vgo" />
+    <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
     <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\GoLand 2021.1.1\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RecentsManager">
@@ -93,27 +88,27 @@
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/Agent/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Agent/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <method v="2" />
     </configuration>
     <recent_temporary>
