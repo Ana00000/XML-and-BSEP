@@ -223,7 +223,7 @@ func (handler *UserTagHandler) CreateUserTagForRegisteredUser(w http.ResponseWri
 			Name:    userTagDTO.Name,
 			TagType: model.USER_TAG,
 		},
-		UserId: uuid.UUID{},
+		UserId: userTagDTO.UserId,
 	}
 
 	if err := handler.Service.CreateUserTag(&userTag); err != nil {

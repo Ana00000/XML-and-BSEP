@@ -132,8 +132,8 @@ func initStoryTagStoriesHandler(service *service.StoryTagStoriesService) *handle
 	return &handler.StoryTagStoriesHandler { Service: service }
 }
 
-func initCommentTagCommentsHandler(service *service.CommentTagCommentsService) *handler.CommentTagCommentsHandler{
-	return &handler.CommentTagCommentsHandler { Service: service }
+func initCommentTagCommentsHandler(service *service.CommentTagCommentsService,tagService *service.TagService) *handler.CommentTagCommentsHandler{
+	return &handler.CommentTagCommentsHandler { Service: service, TagService: tagService}
 }
 
 func initPostTagPostsHandler(service *service.PostTagPostsService) *handler.PostTagPostsHandler{
@@ -164,6 +164,7 @@ func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagH
 
 	router.HandleFunc("/tag/", handlerTag.CreateTag).Methods("POST")
 	router.HandleFunc("/get_tag_name_by_id/{id}", handlerTag.FindTagNameById).Methods("GET")
+	router.HandleFunc("/find_all_hashtags/", handlerTag.FindAllHashTags).Methods("GET")
 	router.HandleFunc("/user_tag/", handlerUserTag.CreateUserTag).Methods("POST")
 	router.HandleFunc("/create_user_tag_for_registered_user/", handlerUserTag.CreateUserTagForRegisteredUser).Methods("POST")
 	router.HandleFunc("/find_all_taggable_users_post/", handlerUserTag.FindAllTaggableUsersPost).Methods("GET")
@@ -175,6 +176,7 @@ func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagH
 	router.HandleFunc("/post_album_tag_post_albums/", handlerPostAlbumTagPostAlbums.CreatePostAlbumTagPostAlbums).Methods("POST")
 	router.HandleFunc("/story_album_tag_story_albums/", handlerStoryAlbumTagStoryAlbums.CreateStoryAlbumTagStoryAlbums).Methods("POST")
 
+	router.HandleFunc("/find_comment_tag_comments_for_comment/{id}", handlerCommentTagComments.FindAllCommentTagCommentsForComment).Methods("GET")
 	router.HandleFunc("/get_tag_by_name/{name}", handlerTag.FindTagByName).Methods("GET")
 
 	router.HandleFunc("/find_tag_id", handlerTag.FindTagForId).Methods("GET")
@@ -221,7 +223,7 @@ func main() {
 
 	repoCommentTagComments := initCommentTagCommentsRepo(database)
 	serviceCommentTagComments := initCommentTagCommentsServices(repoCommentTagComments)
-	handlerCommentTagComments := initCommentTagCommentsHandler(serviceCommentTagComments)
+	handlerCommentTagComments := initCommentTagCommentsHandler(serviceCommentTagComments, serviceTag)
 
 
 	repoPostAlbumTagPostAlbums := initPostAlbumTagPostAlbumsRepo(database)

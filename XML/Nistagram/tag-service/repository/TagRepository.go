@@ -31,6 +31,12 @@ func (repo *TagRepository) FindAll() []model.Tag {
 	return tags
 }
 
+func (repo *TagRepository) FindAllHashTags() []model.Tag {
+	var tags []model.Tag
+	repo.Database.Select("*").Where("tag_type = ?", 1).Find(&tags)
+	return tags
+}
+
 
 func (repo *TagRepository) FindTagByName(name string) *model.Tag {
 	tag := &model.Tag{}

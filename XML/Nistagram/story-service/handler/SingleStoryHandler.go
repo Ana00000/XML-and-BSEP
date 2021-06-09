@@ -78,8 +78,6 @@ func getJson(url string, target interface{}) error {
 	return json.NewDecoder(r.Body).Decode(target)
 }
 
-//doneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-
 // NEREGISTROVANI
 
 //// tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
@@ -728,7 +726,7 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories), contents, locations, tags)
+	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(allValidStories) ,contents,locations,tags)
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)

@@ -41,6 +41,14 @@ func (service *TagService) FindAll() []model.Tag {
 	return nil
 }
 
+func (service *TagService) FindAllHashTags() []model.Tag {
+	tags := service.Repo.FindAllHashTags()
+	if tags != nil {
+		return tags
+	}
+	return nil
+}
+
 func (service * TagService) FindTagForId(tagId uuid.UUID) model.Tag{
 	tag := service.Repo.FindTagForId(tagId)
 	return tag
