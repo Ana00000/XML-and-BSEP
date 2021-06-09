@@ -6,10 +6,10 @@ import (
 )
 
 type VerificationRequestService struct {
-	Repo * repository.VerificationRequestRepository
+	Repo *repository.VerificationRequestRepository
 }
 
-func (service * VerificationRequestService) CreateVerificationRequest(verificationRequest *model.VerificationRequest) error {
+func (service *VerificationRequestService) CreateVerificationRequest(verificationRequest *model.VerificationRequest) error {
 	err := service.Repo.CreateVerificationRequest(verificationRequest)
 	if err != nil {
 		return err
