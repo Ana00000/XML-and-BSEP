@@ -7,10 +7,10 @@ import (
 )
 
 type FollowRequestService struct {
-	Repo * repository.FollowRequestRepository
+	Repo *repository.FollowRequestRepository
 }
 
-func (service * FollowRequestService) CreateFollowRequest(followRequest *model.FollowRequest) error {
+func (service *FollowRequestService) CreateFollowRequest(followRequest *model.FollowRequest) error {
 	err := service.Repo.CreateFollowRequest(followRequest)
 	if err != nil {
 		return err
@@ -18,7 +18,7 @@ func (service * FollowRequestService) CreateFollowRequest(followRequest *model.F
 	return nil
 }
 
-func (service * FollowRequestService) FindById(id uuid.UUID) *model.FollowRequest{
+func (service *FollowRequestService) FindById(id uuid.UUID) *model.FollowRequest {
 	request := service.Repo.FindById(id)
 	if request != nil {
 		return request
@@ -26,7 +26,7 @@ func (service * FollowRequestService) FindById(id uuid.UUID) *model.FollowReques
 	return nil
 }
 
-func (service * FollowRequestService) FindAllFollowerRequestsForUser(userId uuid.UUID) []model.FollowRequest{
+func (service *FollowRequestService) FindAllFollowerRequestsForUser(userId uuid.UUID) []model.FollowRequest {
 	requests := service.Repo.FindAllFollowRequestsForUser(userId)
 	if requests != nil {
 		return requests
@@ -34,7 +34,7 @@ func (service * FollowRequestService) FindAllFollowerRequestsForUser(userId uuid
 	return nil
 }
 
-func (service * FollowRequestService) FindAllPendingFollowerRequestsForUser(userId uuid.UUID) []model.FollowRequest{
+func (service *FollowRequestService) FindAllPendingFollowerRequestsForUser(userId uuid.UUID) []model.FollowRequest {
 	requests := service.Repo.FindAllPendingFollowRequestsForUser(userId)
 	if requests != nil {
 		return requests
@@ -42,7 +42,7 @@ func (service * FollowRequestService) FindAllPendingFollowerRequestsForUser(user
 	return nil
 }
 
-func (service * FollowRequestService) FindFollowRequest(classicUserId uuid.UUID, followerUserId uuid.UUID) *model.FollowRequest{
+func (service *FollowRequestService) FindFollowRequest(classicUserId uuid.UUID, followerUserId uuid.UUID) *model.FollowRequest {
 	request := service.Repo.FindFollowRequest(classicUserId, followerUserId)
 	if request != nil {
 		return request
@@ -50,7 +50,7 @@ func (service * FollowRequestService) FindFollowRequest(classicUserId uuid.UUID,
 	return nil
 }
 
-func (service * FollowRequestService) UpdateFollowRequestPending(followRequestId uuid.UUID) error {
+func (service *FollowRequestService) UpdateFollowRequestPending(followRequestId uuid.UUID) error {
 	err := service.Repo.UpdateFollowRequestPending(followRequestId)
 	if err != nil {
 		return err
@@ -58,7 +58,7 @@ func (service * FollowRequestService) UpdateFollowRequestPending(followRequestId
 	return nil
 }
 
-func (service * FollowRequestService) UpdateFollowRequestAccepted(followRequestId uuid.UUID) error {
+func (service *FollowRequestService) UpdateFollowRequestAccepted(followRequestId uuid.UUID) error {
 	err := service.Repo.UpdateFollowRequestAccepted(followRequestId)
 	if err != nil {
 		return err
@@ -66,12 +66,10 @@ func (service * FollowRequestService) UpdateFollowRequestAccepted(followRequestI
 	return nil
 }
 
-func (service * FollowRequestService) UpdateFollowRequestRejected(followRequestId uuid.UUID) error {
+func (service *FollowRequestService) UpdateFollowRequestRejected(followRequestId uuid.UUID) error {
 	err := service.Repo.UpdateFollowRequestRejected(followRequestId)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-
-
