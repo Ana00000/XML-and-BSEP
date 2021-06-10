@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -56,7 +55,6 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 	}
 
 	if err := handler.Service.CreateComment(&comment); err != nil {
-		fmt.Println(err)
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "CommentHandler",
@@ -118,6 +116,7 @@ func (handler *CommentHandler) FindAllUserComments(w http.ResponseWriter, r *htt
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(commentsJson)
+		return
 	}
 
 	handler.LogError.WithFields(logrus.Fields{

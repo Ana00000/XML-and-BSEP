@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
@@ -43,7 +42,6 @@ func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Re
 
 	err = handler.Service.CreateActivity(&activity)
 	if err != nil {
-		fmt.Println(err)
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "ActivityHandler",
@@ -113,6 +111,7 @@ func (handler *ActivityHandler) FindAllDislikesForPost(w http.ResponseWriter, r 
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(activitiesJson)
+		return
 	}
 	handler.LogError.WithFields(logrus.Fields{
 		"status": "failure",
@@ -194,7 +193,6 @@ func (handler *ActivityHandler) UpdateActivity(w http.ResponseWriter, r *http.Re
 
 	err = handler.Service.UpdateActivity(&activityDTO)
 	if err != nil {
-		fmt.Println(err)
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "ActivityHandler",

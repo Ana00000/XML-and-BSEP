@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
@@ -42,7 +41,6 @@ func (handler *PostCollectionHandler) CreatePostCollection(w http.ResponseWriter
 
 	err = handler.Service.CreatePostCollection(&postCollection)
 	if err != nil {
-		fmt.Println(err)
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "PostCollectionHandler",

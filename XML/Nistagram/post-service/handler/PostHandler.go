@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
@@ -44,7 +43,6 @@ func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	err = handler.PostService.CreatePost(&post)
 	if err != nil {
-		fmt.Println(err)
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "PostHandler",
@@ -55,7 +53,7 @@ func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	handler.LogInfo.WithFields(logrus.Fields{
-		"status": "failure",
+		"status": "success",
 		"location":   "PostHandler",
 		"action":   "CPOST530",
 		"timestamp":   time.Now().String(),
@@ -81,7 +79,6 @@ func (handler *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 	err = handler.PostService.UpdatePost(&postDTO)
 	if err != nil {
-		fmt.Println(err)
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "PostHandler",
@@ -93,7 +90,7 @@ func (handler *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler.LogInfo.WithFields(logrus.Fields{
-		"status": "failure",
+		"status": "success",
 		"location":   "PostHandler",
 		"action":   "UPOST531",
 		"timestamp":   time.Now().String(),
