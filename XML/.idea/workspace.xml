@@ -3,7 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/AdvertisementHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/AdvertisementHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignChosenGroupHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignChosenGroupHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/CampaignHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/DisposableCampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/DisposableCampaignHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/handler/MultiUseCampaignHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/handler/MultiUseCampaignHandler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

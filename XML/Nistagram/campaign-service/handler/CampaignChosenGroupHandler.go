@@ -1,13 +1,12 @@
 package handler
 
 import (
+	"encoding/json"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/service"
-	"encoding/json"
-	"fmt"
-	"github.com/google/uuid"
 	"net/http"
 	_ "strconv"
 	"time"
@@ -47,8 +46,8 @@ func (handler *CampaignChosenGroupHandler) CreateCampaignChosenGroup(w http.Resp
 			"action":   "CRCACHGRB114",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating campaign chosen group!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	handler.LogInfo.WithFields(logrus.Fields{

@@ -1,13 +1,12 @@
 package handler
 
 import (
+	"encoding/json"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/service"
-	"encoding/json"
-	"fmt"
-	"github.com/google/uuid"
 	"net/http"
 	_ "strconv"
 	"time"
@@ -38,7 +37,6 @@ func (handler *MultiUseCampaignHandler) CreateMultiUseCampaign(w http.ResponseWr
 	multiUseCampaign := model.MultiUseCampaign{
 		Campaign:   model.Campaign{
 			ID:                     uuid.UUID{},
-			//Advertisements:         nil,
 			ExposureTime:           exposureTime,
 		},
 		ExpiryTime: expiryTime,
@@ -53,8 +51,8 @@ func (handler *MultiUseCampaignHandler) CreateMultiUseCampaign(w http.ResponseWr
 			"action":   "CRMUUSCAP780",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating multi use campaign!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	handler.LogInfo.WithFields(logrus.Fields{
