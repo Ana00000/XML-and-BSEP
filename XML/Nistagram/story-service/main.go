@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/repository"
@@ -91,24 +92,46 @@ func initStoryServices(repo *repository.StoryRepository) *service.StoryService{
 	return &service.StoryService { Repo: repo }
 }
 
-func initStoryHandler(service *service.StoryService) *handler.StoryHandler{
-	return &handler.StoryHandler { Service: service }
+func initStoryHandler(info *logrus.Logger, logError *logrus.Logger, service *service.StoryService) *handler.StoryHandler {
+	return &handler.StoryHandler{
+		Service:  service,
+		LogInfo:  info,
+		LogError: logError,
+	}
 }
 
-func initStoryAlbumHandler(service *service.StoryAlbumService, storyService *service.StoryService) *handler.StoryAlbumHandler{
-	return &handler.StoryAlbumHandler{ Service: service, StoryService: storyService}
+func initStoryAlbumHandler(info *logrus.Logger, logError *logrus.Logger, service *service.StoryAlbumService, storyService *service.StoryService) *handler.StoryAlbumHandler {
+	return &handler.StoryAlbumHandler{
+		Service:      service,
+		StoryService: storyService,
+		LogInfo:      info,
+		LogError:     logError,
+	}
 }
 
-func initSingleStoryHandler(singleStoryService *service.SingleStoryService, storyService *service.StoryService) *handler.SingleStoryHandler{
-	return &handler.SingleStoryHandler { SingleStoryService: singleStoryService, StoryService: storyService}
+func initSingleStoryHandler(info *logrus.Logger, logError *logrus.Logger, singleStoryService *service.SingleStoryService, storyService *service.StoryService) *handler.SingleStoryHandler {
+	return &handler.SingleStoryHandler{
+		SingleStoryService: singleStoryService,
+		StoryService:       storyService,
+		LogInfo:            info,
+		LogError:           logError,
+	}
 }
 
-func initStoryHighlightHandler(service *service.StoryHighlightService) *handler.StoryHighlightHandler{
-	return &handler.StoryHighlightHandler { Service: service }
+func initStoryHighlightHandler(info *logrus.Logger, logError *logrus.Logger, service *service.StoryHighlightService) *handler.StoryHighlightHandler {
+	return &handler.StoryHighlightHandler{
+		Service:  service,
+		LogInfo:  info,
+		LogError: logError,
+	}
 }
 
-func initSingleStoryStoryHighlightsHandler(service *service.SingleStoryStoryHighlightsService) *handler.SingleStoryStoryHighlightsHandler{
-	return &handler.SingleStoryStoryHighlightsHandler { Service: service }
+func initSingleStoryStoryHighlightsHandler(info *logrus.Logger, logError *logrus.Logger, service *service.SingleStoryStoryHighlightsService) *handler.SingleStoryStoryHighlightsHandler {
+	return &handler.SingleStoryStoryHighlightsHandler{
+		Service:  service,
+		LogInfo:  info,
+		LogError: logError,
+	}
 }
 
 func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.StoryAlbumHandler, handlerStoryHighlight *handler.StoryHighlightHandler,
@@ -158,26 +181,44 @@ func handleFunc(handlerStory *handler.StoryHandler, handlerStoryAlbum *handler.S
 }
 
 func main() {
+	logInfo := logrus.New()
+	logError := logrus.New()
+
+	LogInfoFile, err := os.OpenFile("logInfo.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+
+	LogErrorFile, err := os.OpenFile("logError.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+
+	logInfo.Out = LogInfoFile
+	logInfo.Formatter = &logrus.JSONFormatter{}
+	logError.Out = LogErrorFile
+	logError.Formatter = &logrus.JSONFormatter{}
+
 	database := initDB()
 	repoStory := initStoryRepo(database)
 	serviceStory := initStoryServices(repoStory)
-	handlerStory := initStoryHandler(serviceStory)
+	handlerStory := initStoryHandler(logInfo,logError,serviceStory)
 
 	repoStoryAlbum := initStoryAlbumRepo(database)
 	serviceStoryAlbum := initStoryAlbumServices(repoStoryAlbum)
-	handlerStoryAlbum := initStoryAlbumHandler(serviceStoryAlbum, serviceStory)
+	handlerStoryAlbum := initStoryAlbumHandler(logInfo,logError,serviceStoryAlbum, serviceStory)
 
 	repoSingleStory := initSingleStoryRepo(database)
 	serviceSingleStory := initSingleStoryServices(repoSingleStory)
-	handlerSingleStory := initSingleStoryHandler(serviceSingleStory, serviceStory)
+	handlerSingleStory := initSingleStoryHandler(logInfo,logError,serviceSingleStory, serviceStory)
 
 	repoStoryHighlight := initStoryHighlightRepo(database)
 	serviceStoryHighlight := initStoryHighlightServices(repoStoryHighlight)
-	handlerStoryHighlight := initStoryHighlightHandler(serviceStoryHighlight)
+	handlerStoryHighlight := initStoryHighlightHandler(logInfo,logError,serviceStoryHighlight)
 
 	repoSingleStoryStoryHighlights := initSingleStoryStoryHighlightsRepo(database)
 	serviceSingleStoryStoryHighlights := initSingleStoryStoryHighlightsServices(repoSingleStoryStoryHighlights)
-	handlerSingleStoryStoryHighlights := initSingleStoryStoryHighlightsHandler(serviceSingleStoryStoryHighlights)
+	handlerSingleStoryStoryHighlights := initSingleStoryStoryHighlightsHandler(logInfo,logError,serviceSingleStoryStoryHighlights)
 
 	handleFunc(handlerStory,handlerStoryAlbum,handlerStoryHighlight,handlerSingleStoryStoryHighlights,handlerSingleStory)
 }

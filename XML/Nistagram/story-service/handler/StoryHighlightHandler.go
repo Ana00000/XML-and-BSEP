@@ -2,23 +2,32 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
 	"net/http"
 	_ "strconv"
+	"time"
 )
 
 type StoryHighlightHandler struct {
 	Service * service.StoryHighlightService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
-
+//CRSTRYHIGHLHT0312
 func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter, r *http.Request) {
 	var storyHighlightDTO dto.StoryHighlightDTO
 	err := json.NewDecoder(r.Body).Decode(&storyHighlightDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryHighlightHandler",
+			"action":   "CRSTRYHIGHLHT0312",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to StoryHighlightDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -31,22 +40,48 @@ func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter
 
 	err = handler.Service.CreateStoryHighlight(&storyHighlight)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryHighlightHandler",
+			"action":   "CRSTRYHIGHLHT0312",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating story highlight!")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "StoryHighlightHandler",
+		"action":   "CRSTRYHIGHLHT0312",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created story highlight!")
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-
+//FIDALSTRYHIGHLHTSFORUS8882
 func (handler *StoryHighlightHandler) FindAllStoryHighlightsForUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	storyHighlights := handler.Service.FindAllStoryHighlightsForUser(uuid.MustParse(id))
 	storyHighlightsJson, _ := json.Marshal(storyHighlights)
 	if storyHighlightsJson != nil {
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location":   "StoryHighlightHandler",
+			"action":   "FIDALSTRYHIGHLHTSFORUS8882",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully founded all story highlights for user!")
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(storyHighlightsJson)
+		return
 	}
+	handler.LogError.WithFields(logrus.Fields{
+		"status": "failure",
+		"location":   "StoryHighlightHandler",
+		"action":   "FIDALSTRYHIGHLHTSFORUS8882",
+		"timestamp":   time.Now().String(),
+	}).Error("Failed finding all story highlights for user!")
 	w.WriteHeader(http.StatusBadRequest)
 }
