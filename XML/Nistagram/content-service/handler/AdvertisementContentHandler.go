@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
@@ -57,8 +56,8 @@ func (handler *AdvertisementContentHandler) CreateAdvertisementContent(w http.Re
 			"action":   "CRADCOO454",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating advertisement content!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	handler.LogInfo.WithFields(logrus.Fields{

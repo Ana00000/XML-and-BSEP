@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/dto"
@@ -54,8 +53,8 @@ func (handler *MessageHandler) CreateMessage(w http.ResponseWriter, r *http.Requ
 			"action":   "CRMEE454",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating message!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	handler.LogInfo.WithFields(logrus.Fields{

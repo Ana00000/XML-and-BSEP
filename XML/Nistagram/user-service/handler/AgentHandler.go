@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/go-playground/validator"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
@@ -46,7 +47,7 @@ func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request)
 			"location":   "AgentHandler",
 			"action":   "CRAGT823",
 			"timestamp":   time.Now().String(),
-		}).Error("AgentDTO fields aren't in valid format!")
+		}).Error("AgentDTO fields aren't in the valid format!")
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}

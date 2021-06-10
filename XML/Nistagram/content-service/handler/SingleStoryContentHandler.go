@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
@@ -62,8 +61,8 @@ func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.Respon
 			"action":   "CRSISTCOA197",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating single story content!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	err = handler.ContentService.CreateContent(&singleStoryContent.Content)
@@ -74,8 +73,8 @@ func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.Respon
 			"action":   "CRSISTCOA197",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating content!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	pathStoryGlobal = ""
@@ -156,7 +155,6 @@ func (handler *SingleStoryContentHandler) Upload(writer http.ResponseWriter, req
 			"action":   "UPM253",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to find the file!")
-		fmt.Println(err)
 		return
 	}
 	defer file.Close()
@@ -169,7 +167,6 @@ func (handler *SingleStoryContentHandler) Upload(writer http.ResponseWriter, req
 			"action":   "UPM253",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to create temporary file!")
-		fmt.Println(err)
 		return
 	}
 	defer tempFile.Close()
@@ -182,7 +179,6 @@ func (handler *SingleStoryContentHandler) Upload(writer http.ResponseWriter, req
 			"action":   "UPM253",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to read from file!")
-		fmt.Println(err)
 		return
 	}
 	tempFile.Write(fileBytes)
@@ -234,9 +230,10 @@ func (handler *SingleStoryContentHandler) FindSingleStoryContentForStoryId(w htt
 			"action":   "FISISTCOFOSTH439",
 			"timestamp":   time.Now().String(),
 		}).Info("Successfully found single story content for story id!")
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(singleStoryContentJson)
+		return
 	}
 	handler.LogError.WithFields(logrus.Fields{
 		"status": "failure",

@@ -2,14 +2,13 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/service"
 	"net/http"
 	_ "strconv"
-	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -46,8 +45,8 @@ func (handler *AdvertisementHandler) CreateAdvertisement(w http.ResponseWriter, 
 			"action":   "CRADA731",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating advertisement!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	handler.LogInfo.WithFields(logrus.Fields{

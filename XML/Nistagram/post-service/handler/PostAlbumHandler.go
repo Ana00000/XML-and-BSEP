@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
@@ -16,6 +17,8 @@ import (
 type PostAlbumHandler struct {
 	Service * service.PostAlbumService
 	PostService * service.PostService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +26,12 @@ func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.
 	err := json.NewDecoder(r.Body).Decode(&postAlbumDTO)
 
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "CRPAL580",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -41,18 +50,37 @@ func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.
 
 	err = handler.Service.CreatePostAlbum(&postAlbum)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "CRPAL580",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating post album!")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	err = handler.PostService.CreatePost(&postAlbum.Post)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "CRPAL580",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating post!")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	postAlbumIDJson, _ := json.Marshal(postAlbum.ID)
 	w.Write(postAlbumIDJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumHandler",
+		"action":   "CRPAL580",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created post album!")
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
@@ -66,17 +94,26 @@ func (handler *PostAlbumHandler) FindAllAlbumPostsForLoggedUser(w http.ResponseW
 	//var contents = handler.PostAlbumContentService.FindAllContentsForPostAlbums(albumPosts)
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_post_albums/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidPostsDTO, _ := json.Marshal(albumPosts)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidPostsDTO))
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAAPL581",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.PostAlbumContentFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAAPL581",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumContentFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -84,17 +121,26 @@ func (handler *PostAlbumHandler) FindAllAlbumPostsForLoggedUser(w http.ResponseW
 	//var locations = handler.LocationService.FindAllLocationsForPostAlbums(albumPosts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_post_albums/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(albumPosts)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAAPL581",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all locations for post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAAPL581",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -102,22 +148,39 @@ func (handler *PostAlbumHandler) FindAllAlbumPostsForLoggedUser(w http.ResponseW
 	//var tags = handler.PostAlbumTagPostAlbumsService.FindAllTagsForPostAlbumTagPostAlbums(albumPosts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post_album_tag_post_albums/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(albumPosts)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAAPL581",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post album tag post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostAlbumTagPostAlbumsFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAAPL581",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumTagPostAlbumsFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
 
 	var albumPostsDTOS = handler.CreatePostAlbumsDTOList(convertListPostAlbumDTOToListPostAlbum(albumPosts),contents,locations,tags)
+
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumHandler",
+		"action":   "FAAPL581",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all post albums for logged user!")
 
 	albumPostsJson, _ := json.Marshal(albumPostsDTOS)
 	w.Write(albumPostsJson)
@@ -155,12 +218,16 @@ func (handler *PostAlbumHandler) CreatePostAlbumsDTOList(albums []model.PostAlbu
 		var listOfTags []string
 		for p := 0; p < len(tags); p++ {
 			if tags[p].PostAlbumId == albums[i].ID {
-				//listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
 				var returnValueTagName  ReturnValueString
 				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].TagId.String())
 				err := getJson(reqUrl, &returnValueTagName)
 				if err!=nil{
-					fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+					handler.LogError.WithFields(logrus.Fields{
+						"status": "failure",
+						"location":   "PostAlbumHandler",
+						"action":   "CLADT587",
+						"timestamp":   time.Now().String(),
+					}).Error("Failed to get tag name by id!")
 					panic(err)
 				}
 				listOfTags = append(listOfTags, returnValueTagName.ReturnValue)
@@ -187,19 +254,34 @@ func (handler *PostAlbumHandler) FindSelectedPostAlbumByIdForLoggedUser(w http.R
 
 	var postAlbumFullDTO = convertPostAlbumToPostAlbumDTO(*postAlbum)
 	if postAlbum == nil {
-		fmt.Println("User not found")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("User not found!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
 	if postAlbum.IsDeleted == true{
-		fmt.Println("Deleted post album")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("Deleted post album!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
 	if postAlbum.UserID != uuid.MustParse(logId){
-		fmt.Println("Post album doesnt belong to user")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("Post album doesnt belong to user!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -207,17 +289,26 @@ func (handler *PostAlbumHandler) FindSelectedPostAlbumByIdForLoggedUser(w http.R
 	//var contents = handler.PostAlbumContentService.FindAllContentsForPostAlbum(postAlbum)
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_post_album/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidPostsDTO, _ := json.Marshal(postAlbumFullDTO)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidPostsDTO))
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for post album!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.PostAlbumContentFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumContentFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -225,35 +316,52 @@ func (handler *PostAlbumHandler) FindSelectedPostAlbumByIdForLoggedUser(w http.R
 	//var locations = handler.LocationService.FindAllLocationsForPostAlbum(postAlbum)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_post_album/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(postAlbumFullDTO)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all locations for post album!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-	//
 	//var tags = handler.PostAlbumTagPostAlbumsService.FindAllTagsForPostAlbum(postAlbum)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post_album/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(postAlbumFullDTO)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post album!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostAlbumTagPostAlbumsFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumTagPostAlbumsFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -262,6 +370,13 @@ func (handler *PostAlbumHandler) FindSelectedPostAlbumByIdForLoggedUser(w http.R
 
 	postAlbumJson, _ := json.Marshal(postAlbumDTO)
 	w.Write(postAlbumJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumHandler",
+		"action":   "FSPAL583",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfuly found selected post album by id for logged user!")
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -300,8 +415,14 @@ func (handler *PostAlbumHandler) CreatePostAlbumDTO(album *model.PostAlbum, cont
 			reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].TagId.String())
 			err := getJson(reqUrl, &returnValueTagName)
 			if err!=nil{
-				fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "PostAlbumHandler",
+					"action":   "CADTO588",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed to get tag name by id!")
 				panic(err)
+
 			}
 			listOfTags = append(listOfTags, returnValueTagName.ReturnValue)
 			//listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
@@ -324,7 +445,12 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAPAP584",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all users but logged in!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -332,17 +458,26 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 	//var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
 	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonClassicUsersDTO))
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAPAP584",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all public users!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var allPublicUsers []dto.ClassicUserDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allPublicUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAPAP584",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -351,17 +486,26 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 	//var contents = handler.PostAlbumContentService.FindAllContentsForPostAlbums(publicValidAlbumPosts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_post_albums/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidPostsDTO, _ := json.Marshal(publicValidAlbumPosts)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidPostsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAPAP584",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for post albums")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.PostAlbumContentFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAPAP584",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumContentFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -369,17 +513,26 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 	//var locations = handler.LocationService.FindAllLocationsForPostAlbums(publicValidAlbumPosts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_post_albums/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(publicValidAlbumPosts)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAPAP584",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all locations for post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAPAP584",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -387,17 +540,26 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 	//var tags = handler.PostAlbumTagPostAlbumsService.FindAllTagsForPostAlbumTagPostAlbums(publicValidAlbumPosts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post_album_tag_post_albums/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(publicValidAlbumPosts)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAPAP584",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post album tag post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostAlbumTagPostAlbumsFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAPAP584",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumTagPostAlbumsFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -406,6 +568,13 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 
 	postAlbumsJson, _ := json.Marshal(postAlbumsDTOS)
 	w.Write(postAlbumsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumHandler",
+		"action":   "FAPAP584",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all public post albums for registered user!")
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -418,7 +587,12 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FPAPN585",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all valid users!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -426,34 +600,56 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http
 	//var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
 	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonClassicUsersDTO))
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FPAPN585",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all public users!")
 		panic(err)
+		return
 	}
 	var allPublicUsers []dto.ClassicUserDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allPublicUsers); err != nil {
-		//w.WriteHeader(http.StatusConflict) //400
+
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FPAPN585",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
+
+		w.WriteHeader(http.StatusConflict) //400
 		panic(err)
+		return
 	}
 
 	var publicValidAlbumPosts = convertListPostAlbumToListPostAlbumDTO(handler.Service.FindAllPublicAndFriendsPostAlbumsValid(allPublicUsers))
 	//var contents = handler.PostAlbumContentService.FindAllContentsForPostAlbums(publicValidAlbumPosts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_post_albums/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidPostsDTO, _ := json.Marshal(publicValidAlbumPosts)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidPostsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FPAPN585",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.PostAlbumContentFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FPAPN585",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumContentFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -461,17 +657,26 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http
 	//var locations = handler.LocationService.FindAllLocationsForPostAlbums(publicValidAlbumPosts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_post_albums/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(publicValidAlbumPosts)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FPAPN585",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all locations for post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FPAPN585",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -479,17 +684,26 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http
 	//var tags = handler.PostAlbumTagPostAlbumsService.FindAllTagsForPostAlbumTagPostAlbums(publicValidAlbumPosts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post_album_tag_post_albums/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(publicValidAlbumPosts)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FPAPN585",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post album tag post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostAlbumTagPostAlbumsFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FPAPN585",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumTagPostAlbumsFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -498,6 +712,13 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http
 
 	postAlbumsJson, _ := json.Marshal(postAlbumsDTOS)
 	w.Write(postAlbumsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumHandler",
+		"action":   "FPAPN585",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all public post albums for not registered user! ")
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -512,7 +733,12 @@ func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWrite
 	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all users but logged in!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -521,17 +747,26 @@ func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWrite
 	//var followings = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_followings_for_user/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonClassicUsersDTO))
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all valid followings for user!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var followings []dto.ClassicUserFollowingsFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&followings); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserFollowingsFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -540,17 +775,26 @@ func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWrite
 	//var contents = handler.PostAlbumContentService.FindAllContentsForPostAlbums(postAlbums)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_post_albums/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidPostsDTO, _ := json.Marshal(postAlbums)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidPostsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.PostAlbumContentFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumContentFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -558,17 +802,26 @@ func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWrite
 	//var locations = handler.LocationService.FindAllLocationsForPostAlbums(postAlbums)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_post_albums/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(postAlbums)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all locations for post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -576,17 +829,26 @@ func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWrite
 	//var tags = handler.PostAlbumTagPostAlbumsService.FindAllTagsForPostAlbumTagPostAlbums(postAlbums)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post_album_tag_post_albums/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(postAlbums)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post album tag post albums!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostAlbumTagPostAlbumsFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostAlbumTagPostAlbumsFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -595,6 +857,14 @@ func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWrite
 
 	postAlbumsJson, _ := json.Marshal(postAlbumsDTOS)
 	w.Write(postAlbumsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumHandler",
+		"action":   "FAFPA586",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all following post albums!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 

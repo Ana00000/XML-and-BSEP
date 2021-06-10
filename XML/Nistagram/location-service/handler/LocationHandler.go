@@ -67,8 +67,8 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 			"action":   "CRLON001",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating location!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	locationIDJson, _ := json.Marshal(location.ID)
@@ -96,10 +96,9 @@ func (handler *LocationHandler) FindByID(w http.ResponseWriter, r *http.Request)
 			"action":   "FIBYIDI111",
 			"timestamp":   time.Now().String(),
 		}).Error("Location not found!")
-		fmt.Println("Location not found")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
-
 	locationJson, _ := json.Marshal(location)
 	w.Write(locationJson)
 	handler.LogInfo.WithFields(logrus.Fields{
