@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
@@ -62,8 +61,8 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 			"action":   "CRPOALCOL998",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating post album content!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	err = handler.ContentService.CreateContent(&postAlbumContent.Content)
@@ -74,8 +73,8 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 			"action":   "CRPOALCOL998",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating content!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	handler.LogInfo.WithFields(logrus.Fields{
@@ -99,7 +98,7 @@ func (handler *PostAlbumContentHandler) Upload(writer http.ResponseWriter, reque
 			"action":   "UPL887",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to find the file!")
-		fmt.Println(err)
+		return
 	}
 	defer file.Close()
 
@@ -111,7 +110,7 @@ func (handler *PostAlbumContentHandler) Upload(writer http.ResponseWriter, reque
 			"action":   "UPL887",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to create temporary file!")
-		fmt.Println(err)
+		return
 	}
 	defer tempFile.Close()
 
@@ -123,7 +122,7 @@ func (handler *PostAlbumContentHandler) Upload(writer http.ResponseWriter, reque
 			"action":   "UPL887",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to read from file!")
-		fmt.Println(err)
+		return
 	}
 	tempFile.Write(fileBytes)
 

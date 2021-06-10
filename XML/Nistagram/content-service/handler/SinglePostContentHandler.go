@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
@@ -62,8 +61,8 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 			"action":   "CRSIPOCOB123",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating single post content!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	err = handler.ContentService.CreateContent(&singlePostContent.Content)
@@ -74,8 +73,8 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 			"action":   "CRSIPOCOB123",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating content!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	pathPostGlobal = ""
@@ -161,8 +160,6 @@ func (handler *SinglePostContentHandler) Upload(writer http.ResponseWriter, requ
 			"action":   "UPK523",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to find the file!")
-		fmt.Println("Greska prvi if")
-		fmt.Println(err)
 		return
 	}
 	defer file.Close()
@@ -175,8 +172,6 @@ func (handler *SinglePostContentHandler) Upload(writer http.ResponseWriter, requ
 			"action":   "UPK523",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to create temporary file!")
-		fmt.Println("Greska drugi if")
-		fmt.Println(err)
 		return
 	}
 	defer tempFile.Close()
@@ -189,8 +184,6 @@ func (handler *SinglePostContentHandler) Upload(writer http.ResponseWriter, requ
 			"action":   "UPK523",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to read from file!")
-		fmt.Println("Greska treci if")
-		fmt.Println(err)
 		return
 	}
 	tempFile.Write(fileBytes)

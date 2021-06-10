@@ -1,13 +1,12 @@
 package handler
 
 import (
+	"encoding/json"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
-	"encoding/json"
-	"fmt"
-	"github.com/google/uuid"
 	"net/http"
 	_ "strconv"
 	"time"
@@ -56,8 +55,8 @@ func (handler *MessageContentHandler) CreateMessageContent(w http.ResponseWriter
 			"action":   "CRMECOK313",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating message content!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	handler.LogInfo.WithFields(logrus.Fields{
