@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
@@ -16,6 +17,8 @@ import (
 type SinglePostHandler struct {
 	SinglePostService * service.SinglePostService
 	PostService * service.PostService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +26,12 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 	err := json.NewDecoder(r.Body).Decode(&singlePostDTO)
 
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "CRESP670",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -41,6 +50,12 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 	err = handler.SinglePostService.CreateSinglePost(&singlePost)
 	if err != nil {
 		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "CRESP670",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating single post!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -48,12 +63,25 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 	err = handler.PostService.CreatePost(&singlePost.Post)
 	if err != nil {
 		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "CRESP670",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating post!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
 	singlePostIDJson, _ := json.Marshal(singlePost.ID)
 	w.Write(singlePostIDJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "CRESP670",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created single post!")
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
@@ -82,13 +110,25 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 	reqUrl := fmt.Sprintf("http://%s:%s/check_if_user_valid/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &userValidity)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		//fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to check if user valid!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 	var checkIfValid=userValidity.IsValid
 	if  checkIfValid == false {
 		fmt.Println("User NOT valid")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("User not valid!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -99,13 +139,25 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 	reqUrl = fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
 	err = getJson(reqUrl, &profileSettings)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		//fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
 	if profileSettings.UserVisibility == "PRIVATE_VISIBILITY"{
 		fmt.Println("User IS PRIVATE")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("User is private!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -123,12 +175,24 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SinglePostContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -142,12 +206,24 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all locations for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -163,12 +239,24 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -180,6 +268,14 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 
 	postsJson, _ := json.Marshal(postsDTOS)
 	w.Write(postsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FPFNR671",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all  posts for user not registered user!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
@@ -199,7 +295,13 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 	reqUrl := fmt.Sprintf("http://%s:%s/check_if_user_valid/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &userValidity)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		//fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFUR672",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to check if user valid!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -207,6 +309,12 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 
 	if  checkIfValid == false {
 		fmt.Println("User NOT valid")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFUR672",
+			"timestamp":   time.Now().String(),
+		}).Error("User not valid!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -216,7 +324,14 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 	reqUrl = fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
 	err = getJson(reqUrl, &profileSettings)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		//fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		//FindAllPostsForUserRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFUR672",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -230,7 +345,13 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 		reqUrl = fmt.Sprintf("http://%s:%s/check_if_following_post_story/%s/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id, logId)
 		err = getJson(reqUrl, &returnValueFollowing)
 		if err!=nil{
-			fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+			//fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FPFUR672",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to check if following post story!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
@@ -249,12 +370,24 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 			resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 			if err != nil || resp.StatusCode == 400 {
 				print("Fail")
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FPFUR672",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed to find all contents for posts!")
 				w.WriteHeader(http.StatusFailedDependency)
 				return
 			}
 			//defer resp.Body.Close() mozda treba dodati
 			var contents []dto.SinglePostContentDTO
 			if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FPFUR672",
+					"timestamp":   time.Now().String(),
+				}).Error("Wrong cast json to SinglePostContentDTO!")
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
@@ -268,12 +401,24 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 			resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 			if err != nil || resp.StatusCode == 400 {
 				print("Fail")
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FPFUR672",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed to find all locations for posts!")
 				w.WriteHeader(http.StatusFailedDependency)
 				return
 			}
 			//defer resp.Body.Close() mozda treba dodati
 			var locations []dto.LocationDTO
 			if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FPFUR672",
+					"timestamp":   time.Now().String(),
+				}).Error("Wrong cast json to LocationDTO!")
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
@@ -290,12 +435,24 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 			resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 			if err != nil || resp.StatusCode == 400 {
 				print("Fail")
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FPFUR672",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed to find all tags for posts!")
 				w.WriteHeader(http.StatusFailedDependency)
 				return
 			}
 			//defer resp.Body.Close() mozda treba dodati
 			var tags []dto.PostTagPostsDTO
 			if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FPFUR672",
+					"timestamp":   time.Now().String(),
+				}).Error("Wrong cast json to PostTagPostsDTO!")
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
@@ -305,12 +462,28 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 
 			postsJson, _ := json.Marshal(postsDTOS)
 			w.Write(postsJson)
+
+			//FindAllPostsForUserRegisteredUser
+			handler.LogInfo.WithFields(logrus.Fields{
+				"status": "success",
+				"location":   "SinglePostHandler",
+				"action":   "FPFUR672",
+				"timestamp":   time.Now().String(),
+			}).Info("Successfully found all posts for user registered user!")
+
 			w.WriteHeader(http.StatusOK)
 			w.Header().Set("Content-Type", "application/json")
+			return
 
 		}else{
 
 			fmt.Println("Not following private user")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FPFUR672",
+				"timestamp":   time.Now().String(),
+			}).Error("Not following private user!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
@@ -328,12 +501,24 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 		resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 		if err != nil || resp.StatusCode == 400 {
 			print("Fail")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FPFUR672",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find all contents for posts for not following!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var contents []dto.SinglePostContentDTO
 		if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FPFUR672",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to SinglePostContentDTO for not following!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -347,12 +532,24 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 		resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 		if err != nil || resp.StatusCode == 400 {
 			print("Fail")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FPFUR672",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find all locations for posts for not following!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var locations []dto.LocationDTO
 		if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FPFUR672",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to LocationDTO for not following!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -368,12 +565,24 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 		resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 		if err != nil || resp.StatusCode == 400 {
 			print("Fail")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FPFUR672",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find all tags for posts for not following!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var tags []dto.PostTagPostsDTO
 		if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FPFUR672",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to PostTagPostsDTO for not following!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -383,6 +592,15 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 
 		postsJson, _ := json.Marshal(postsDTOS)
 		w.Write(postsJson)
+
+		//FindAllPostsForUserRegisteredUser
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location":   "SinglePostHandler",
+			"action":   "FPFUR672",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully found all posts for user registered user for not following!")
+
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 
@@ -400,7 +618,13 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all users but logged in!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -417,12 +641,25 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all valid followings for user!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var followings []dto.ClassicUserFollowingsFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&followings); err != nil {
+		//FindAllFollowingPosts
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserFollowingsFullDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -442,12 +679,24 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SinglePostContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -461,12 +710,24 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all locations for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -482,12 +743,25 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		//FindAllFollowingPosts
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -497,6 +771,14 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 
 	postsJson, _ := json.Marshal(postsDTOS)
 	w.Write(postsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FAFPS673",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all following posts!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
@@ -510,7 +792,13 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 
 	var post = handler.SinglePostService.FindByID(uuid.MustParse(id))
 	if post == nil {
-		fmt.Println("User not found")
+		fmt.Println("Post not found")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPNR674",
+			"timestamp":   time.Now().String(),
+		}).Error("Post not found!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -520,7 +808,13 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 	reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), post.UserID)
 	err := getJson(reqUrl, &profileSettings)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		//fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPNR674",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -540,12 +834,25 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 		resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 		if err != nil || resp.StatusCode == 400 {
 			print("Fail")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPNR674",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find all contents for post!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var contents []dto.SinglePostContentDTO
 		if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+			//FindSelectedPostByIdForNotRegisteredUsers
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPNR674",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to SinglePostContentDTO!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -559,12 +866,25 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 		resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 		if err != nil || resp.StatusCode == 400 {
 			print("Fail")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPNR674",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find all locations for post!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var locations []dto.LocationDTO
 		if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+			//FindSelectedPostByIdForNotRegisteredUsers
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPNR674",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to LocationDTO!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -578,12 +898,25 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 		resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 		if err != nil || resp.StatusCode == 400 {
 			print("Fail")
+			//FindSelectedPostByIdForNotRegisteredUsers
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPNR674",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find all tags for posts!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var tags []dto.PostTagPostsDTO
 		if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPNR674",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to PostTagPostsDTO!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -594,16 +927,27 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 		postJson, _ := json.Marshal(postDTO)
 		w.Write(postJson)
 
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location":   "SinglePostHandler",
+			"action":   "FSPNR674",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully found selected post by id for note registered user!")
+
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 	}else{
 		// FOR POSTMAN CHECK (should redirect)
 		fmt.Println("Profile is private")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPNR674",
+			"timestamp":   time.Now().String(),
+		}).Error("Profile is private!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-
-
 
 }
 
@@ -617,7 +961,13 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 
 	var post = handler.SinglePostService.FindByID(uuid.MustParse(id))
 	if post == nil {
-		fmt.Println("User not found")
+		fmt.Println("Post not found")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPRU675",
+			"timestamp":   time.Now().String(),
+		}).Error("Post not found!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -627,7 +977,13 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 	reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), post.UserID)
 	err := getJson(reqUrl, &profileSettings)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		//fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPRU675",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -649,12 +1005,24 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 		resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 		if err != nil || resp.StatusCode == 400 {
 			print("Fail")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPRU675",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find all contents for post!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var contents []dto.SinglePostContentDTO
 		if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPRU675",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to SinglePostContentDTO!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -668,12 +1036,25 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 		resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 		if err != nil || resp.StatusCode == 400 {
 			print("Fail")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPRU675",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find locations for post!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var locations []dto.LocationDTO
 		if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+			//FindSelectedPostByIdForRegisteredUsers
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPRU675",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to LocationDTO!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -687,12 +1068,25 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 		resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 		if err != nil || resp.StatusCode == 400 {
 			print("Fail")
+			//FindSelectedPostByIdForRegisteredUsers
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPRU675",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find all tags for post!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var tags []dto.PostTagPostsDTO
 		if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPRU675",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to PostTagPostsDTO!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -701,6 +1095,13 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 
 		postJson, _ := json.Marshal(postDTO)
 		w.Write(postJson)
+
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPRU675",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully found selected post by id for registered users!")
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
@@ -712,7 +1113,14 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 		reqUrl = fmt.Sprintf("http://%s:%s/check_if_following_post_story/%s/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), logId, post.UserID.String())
 		err = getJson(reqUrl, &returnValueFollowing)
 		if err!=nil{
-			fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+			//fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+			//FindSelectedPostByIdForRegisteredUsers
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPRU675",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to check if following post story!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
@@ -733,12 +1141,24 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 			resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 			if err != nil || resp.StatusCode == 400 {
 				print("Fail")
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FSPRU675",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed to find all contents for post for following private user!")
 				w.WriteHeader(http.StatusFailedDependency)
 				return
 			}
 			//defer resp.Body.Close() mozda treba dodati
 			var contents []dto.SinglePostContentDTO
 			if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FSPRU675",
+					"timestamp":   time.Now().String(),
+				}).Error("Wrong cast json to SinglePostContentDTO for following private user!")
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
@@ -752,12 +1172,26 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 			resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 			if err != nil || resp.StatusCode == 400 {
 				print("Fail")
+				//FindSelectedPostByIdForRegisteredUsers
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FSPRU675",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed to find all locations for post for following private user!")
 				w.WriteHeader(http.StatusFailedDependency)
 				return
 			}
 			//defer resp.Body.Close() mozda treba dodati
 			var locations []dto.LocationDTO
 			if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+				//FindSelectedPostByIdForRegisteredUsers
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FSPRU675",
+					"timestamp":   time.Now().String(),
+				}).Error("Wrong cast json to LocationDTO for following private user!")
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
@@ -771,12 +1205,25 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 			resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 			if err != nil || resp.StatusCode == 400 {
 				print("Fail")
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FSPRU675",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed to find all tags for post for following private user!")
 				w.WriteHeader(http.StatusFailedDependency)
 				return
 			}
 			//defer resp.Body.Close() mozda treba dodati
 			var tags []dto.PostTagPostsDTO
 			if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+				//FindSelectedPostByIdForRegisteredUsers
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SinglePostHandler",
+					"action":   "FSPRU675",
+					"timestamp":   time.Now().String(),
+				}).Error("Wrong cast json to PostTagPostsDTO for following private user!")
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
@@ -786,10 +1233,23 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 			postJson, _ := json.Marshal(postFullDTO)
 			w.Write(postJson)
 
+			handler.LogInfo.WithFields(logrus.Fields{
+				"status": "success",
+				"location":   "SinglePostHandler",
+				"action":   "FSPRU675",
+				"timestamp":   time.Now().String(),
+			}).Info("Successfully found selected post by id for registered user for following private user!")
+
 			w.WriteHeader(http.StatusOK)
 			w.Header().Set("Content-Type", "application/json")
 		}else{
 			fmt.Println("Not following private user")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SinglePostHandler",
+				"action":   "FSPRU675",
+				"timestamp":   time.Now().String(),
+			}).Error("Not following private user!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
@@ -806,7 +1266,13 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPN676",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all valid users!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -820,12 +1286,26 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		//FindAllPublicPostsNotRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPN676",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all public users!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var allPublicUsers []dto.ClassicUserDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allPublicUsers); err != nil {
+		//FindAllPublicPostsNotRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPN676",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -844,12 +1324,25 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPN676",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SinglePostContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		//FindAllPublicPostsNotRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPN676",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -862,12 +1355,26 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		//FindAllPublicPostsNotRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPN676",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find locations for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		//FindAllPublicPostsNotRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPN676",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -883,12 +1390,25 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		//FindAllPublicPostsNotRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPN676",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post tag posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPN676",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -899,12 +1419,17 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 	postJson, _ := json.Marshal(postsDTOS)
 	w.Write(postJson)
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FAPPN676",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all public posts not registered user!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
 
-
-//FindAllPublicPostsRegisteredUser
 func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
@@ -915,7 +1440,13 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all classic users but logged in!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -928,11 +1459,25 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		//FindAllPublicPostsRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all public users!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	var allPublicUsers []dto.ClassicUserDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allPublicUsers); err != nil {
+		//FindAllPublicPostsRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -950,12 +1495,24 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SinglePostContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -968,12 +1525,25 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find locations for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		//FindAllPublicPostsRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -989,12 +1559,25 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		//FindAllPublicPostsRegisteredUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post tag posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1004,6 +1587,14 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 
 	postJson, _ := json.Marshal(postsDTOS)
 	w.Write(postJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FAPPR677",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all public posts registered user!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -1021,12 +1612,24 @@ func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWrite
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLU678",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SinglePostContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLU678",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1039,12 +1642,25 @@ func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWrite
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		//FindAllPostsForLoggedUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLU678",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find locations for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLU678",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1057,12 +1673,24 @@ func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWrite
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLU678",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post tag posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLU678",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1071,6 +1699,14 @@ func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWrite
 
 	postsJson, _ := json.Marshal(postsDTOS)
 	w.Write(postsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FAPLU678",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all posts for logged in user!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
@@ -1085,7 +1721,14 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.Respo
 
 	var post = handler.SinglePostService.FindByID(uuid.MustParse(id))
 	if post == nil {
-		fmt.Println("User not found")
+		fmt.Println("Post not found")
+		//FindSelectedPostByIdForLoggedUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPLU679",
+			"timestamp":   time.Now().String(),
+		}).Error("Post not found by id!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1093,15 +1736,27 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.Respo
 
 	if post.IsDeleted == true{
 		fmt.Println("Deleted post")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPLU679",
+			"timestamp":   time.Now().String(),
+		}).Error("Post is deleted!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
 	if post.UserID != uuid.MustParse(logId){
-			//POSTMAN CHECK
-			fmt.Println("Post doesnt belong to user")
-			w.WriteHeader(http.StatusExpectationFailed)
-			return
+		//POSTMAN CHECK
+		fmt.Println("Post doesnt belong to user")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPLU679",
+			"timestamp":   time.Now().String(),
+		}).Error("Post does not belong to user!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	//var contents = handler.PostContentService.FindAllContentsForPost(postDTO)
@@ -1112,12 +1767,24 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.Respo
 	resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPLU679",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for post!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SinglePostContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPLU679",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1131,12 +1798,25 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.Respo
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPLU679",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find locations for post!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		//FindSelectedPostByIdForLoggedUser
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPLU679",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1149,12 +1829,24 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.Respo
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPLU679",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FSPLU679",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1163,6 +1855,13 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.Respo
 
 	postJson, _ := json.Marshal(postDTOS)
 	w.Write(postJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FSPLU679",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found selected post by id for logged in user!")
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -1331,7 +2030,13 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FATPP631",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all valid users!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1344,11 +2049,23 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FATPP631",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all public users!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	var allPublicUsers []dto.ClassicUserDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allPublicUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FATPP631",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1363,12 +2080,24 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FATPP631",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post tag posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FATPP631",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1376,6 +2105,14 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 
 	tagsJson, _ := json.Marshal(tags)
 	w.Write(tagsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FATPP631",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all tags for public posts!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -1388,7 +2125,13 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicPosts(w http.Response
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FALPP632",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all valid users!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1401,11 +2144,23 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicPosts(w http.Response
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FALPP632",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all public users!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	var allPublicUsers []dto.ClassicUserDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allPublicUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FALPP632",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1419,18 +2174,38 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicPosts(w http.Response
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FALPP632",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find locations for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FALPP632",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
 
 	locationsJson, _ := json.Marshal(locations)
 	w.Write(locationsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FALPP632",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfuly found all locations for public posts!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -1451,7 +2226,13 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 	reqUrl := fmt.Sprintf("http://%s:%s/get_tag_by_name/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),tagName)
 	err := getJson(reqUrl, &tag)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFT633",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to get tag by name!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1461,7 +2242,13 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 	reqUrl = fmt.Sprintf("http://%s:%s/find_post_ids_by_tag_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tag.ID)
 	err = getJson(reqUrl, &listOfPostIds)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFT633",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find post ids by tag id!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1471,7 +2258,13 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err = getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFT633",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all valid users!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1490,12 +2283,24 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFT633",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SinglePostContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFT633",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1508,12 +2313,24 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFT633",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find locations for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFT633",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1526,12 +2343,24 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFT633",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post tag posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFT633",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1540,6 +2369,14 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 
 	postsJson, _ := json.Marshal(postDTO)
 	w.Write(postsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FAPFT633",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all posts for tag!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -1559,7 +2396,13 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 	reqUrl := fmt.Sprintf("http://%s:%s/find_location_id_by_location_string/%s", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"),locationString)
 	err := getJson(reqUrl, &locationId)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFL634",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find location id by location string!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1571,7 +2414,13 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err = getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFL634",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all valid users!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1587,12 +2436,24 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFL634",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SinglePostContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFL634",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1604,12 +2465,24 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFL634",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find locations for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFL634",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1622,12 +2495,24 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFL634",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post tag posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFL634",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1636,6 +2521,14 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 
 	postsJson, _ := json.Marshal(postDTO)
 	w.Write(postsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FAPFL634",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all posts for location!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -1687,8 +2580,15 @@ func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []d
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFU635",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all public and friends users!")
 		panic(err)
+		//return
 	}
 
 
@@ -1703,7 +2603,14 @@ func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []d
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFU635",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all public users!")
 		panic(err)
+		//return
 	}
 	var allPublicUsers []dto.ClassicUserDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allPublicUsers); err != nil {
@@ -1721,7 +2628,14 @@ func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []d
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonAllValidUsersButLoggedIn))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFU635",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all users who follow user id!")
 		panic(err)
+		//return
 	}
 	var allFollowings []dto.ClassicUserFollowingsFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allFollowings); err != nil {
@@ -1737,7 +2651,14 @@ func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []d
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonAllFollowings))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFU635",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all users by following ids!")
 		panic(err)
+		//return
 	}
 	var allFollowingUsers []dto.ClassicUserDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allFollowings); err != nil {
@@ -1750,6 +2671,14 @@ func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []d
 	var allUsers = handler.MergePublicAndFollowingUsers(allPublicUsers, allFollowingUsers)
 	fmt.Println("Duzina liste")
 	fmt.Println(len(allUsers))
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "failure",
+		"location":   "SinglePostHandler",
+		"action":   "FAPFU635",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all public and friends users!")
+
 
 	return allUsers
 }
@@ -1797,12 +2726,26 @@ func (handler *SinglePostHandler) FindAllTagsForPublicAndFollowingPosts(w http.R
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FATPF636",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.TagFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FATPF636",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to TagFullDTO!")
+
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1810,6 +2753,14 @@ func (handler *SinglePostHandler) FindAllTagsForPublicAndFollowingPosts(w http.R
 
 	tagsJson, _ := json.Marshal(tags)
 	w.Write(tagsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FATPF636",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all tags for public and following posts!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -1834,18 +2785,41 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicAndFollowingPosts(w h
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FALPF637",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find locations for posts!")
+
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FALPF637",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
+
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
 
 	locationsJson, _ := json.Marshal(locations)
 	w.Write(locationsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FALPF637",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all locations for public and following posts!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -1862,7 +2836,14 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 	reqUrl := fmt.Sprintf("http://%s:%s/get_tag_by_name/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tagName)
 	err := getJson(reqUrl, &tag)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPTR638",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to get tag by name!")
+
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1872,7 +2853,14 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 	reqUrl = fmt.Sprintf("http://%s:%s/find_post_ids_by_tag_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tag.ID)
 	err = getJson(reqUrl, &listOfPostIds)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list ListId!")
+		//fmt.Println("Wrong cast response body to list ListId!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPTR638",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find post ids by tag id!")
+
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1895,12 +2883,24 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPTR638",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SinglePostContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPTR638",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1913,12 +2913,24 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPTR638",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find locations for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPTR638",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1931,12 +2943,24 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPTR638",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post tag posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPTR638",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -1945,6 +2969,14 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 
 	postsJson, _ := json.Marshal(postDTO)
 	w.Write(postsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FAPTR638",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all posts for tag registered user!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -1962,7 +2994,14 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 	reqUrl := fmt.Sprintf("http://%s:%s/find_location_id_by_location_string/%s", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"),locationString)
 	err := getJson(reqUrl, &locationId)
 	if err!=nil{
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLR639",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find location id by location string!")
+
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -1983,12 +3022,24 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLR639",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SinglePostContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLR639",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -2001,12 +3052,24 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLR639",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find locations for posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLR639",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -2019,12 +3082,24 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
 		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLR639",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all tags for post tag posts!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.PostTagPostsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPLR639",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -2033,6 +3108,14 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 
 	postsJson, _ := json.Marshal(postDTO)
 	w.Write(postsJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FAPLR639",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found all posts for location registered user!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
