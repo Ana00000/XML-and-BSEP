@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/dto"
@@ -49,8 +48,8 @@ func (handler *PostMessageSubstanceHandler) CreatePostMessageSubstance(w http.Re
 			"action":   "CRPOMESUB667",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed creating post message substance!")
-		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	handler.LogInfo.WithFields(logrus.Fields{
