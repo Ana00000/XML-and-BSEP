@@ -71,8 +71,11 @@ services:
       PASSWORD: root
       DBNAME: campaigndb
       DBPORT: 5432
+      LOG_URL: '/app/public/logs'
     depends_on:
       - db
+    volumes:
+      - "./logs:/app/public/logs"
 
   content-service:
     restart: on-failure
@@ -92,10 +95,12 @@ services:
       DBNAME: contentdb
       DBPORT: 5432
       BASE_URL: '/app/public/uploads'
+      LOG_URL: '/app/public/logs'
     depends_on:
       - db
     volumes:
       - "./content-images:/app/public/uploads"
+      - "./logs:/app/public/logs"
 
   location-service:
     restart: on-failure
@@ -114,8 +119,11 @@ services:
       PASSWORD: root
       DBNAME: locationdb
       DBPORT: 5432
+      LOG_URL: '/app/public/logs'
     depends_on:
       - db
+    volumes:
+      - "./logs:/app/public/logs"
 
   message-service:
     restart: on-failure
@@ -134,8 +142,11 @@ services:
       PASSWORD: root
       DBNAME: messagedb
       DBPORT: 5432
+      LOG_URL: '/app/public/logs'
     depends_on:
       - db
+    volumes:
+      - "./logs:/app/public/logs"
 
   post-service:
     restart: on-failure
@@ -164,8 +175,11 @@ services:
       CONTENT_SERVICE_PORT: 8083
       LOCATION_SERVICE_DOMAIN: location-service
       LOCATION_SERVICE_PORT: 8084
+      LOG_URL: '/app/public/logs'
     depends_on:
       - db
+    volumes:
+      - "./logs:/app/public/logs"
 
   requests-service:
     restart: on-failure
@@ -184,8 +198,11 @@ services:
       PASSWORD: root
       DBNAME: requestsdb
       DBPORT: 5432
+      LOG_URL: '/app/public/logs'
     depends_on:
       - db
+    volumes:
+      - "./logs:/app/public/logs"
 
   settings-service:
     restart: on-failure
@@ -204,8 +221,11 @@ services:
       PASSWORD: root
       DBNAME: settingsdb
       DBPORT: 5432
+      LOG_URL: '/app/public/logs'
     depends_on:
       - db
+    volumes:
+      - "./logs:/app/public/logs"
 
   story-service:
     restart: on-failure
@@ -234,8 +254,11 @@ services:
       CONTENT_SERVICE_PORT: 8083
       LOCATION_SERVICE_DOMAIN: location-service
       LOCATION_SERVICE_PORT: 8084
+      LOG_URL: '/app/public/logs'
     depends_on:
       - db
+    volumes:
+      - "./logs:/app/public/logs"
 
   tag-service:
     restart: on-failure
@@ -256,6 +279,8 @@ services:
       DBPORT: 5432
     depends_on:
       - db
+    volumes:
+      - "./logs:/app/public/logs"
 
   user-service:
     restart: on-failure
@@ -280,12 +305,16 @@ services:
       REQUESTS_SERVICE_PORT: 8087
       TAG_SERVICE_DOMAIN: tag-service
       TAG_SERVICE_PORT: 8090
+      LOG_URL: '/app/public/logs'
     depends_on:
       - db
+    volumes:
+      - "./logs:/app/public/logs"
 
 volumes:
   node_modules:
   content-images:
+  logs:
 
 networks:
   backend:

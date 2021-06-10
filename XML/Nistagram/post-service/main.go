@@ -211,12 +211,12 @@ func main() {
 	logInfo := logrus.New()
 	logError := logrus.New()
 
-	LogInfoFile, err := os.OpenFile("logInfo.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	LogInfoFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logInfoPOST.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	if err != nil {
 		logrus.Fatalf("error opening file: %v", err)
 	}
 
-	LogErrorFile, err := os.OpenFile("logError.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	LogErrorFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logErrorPOST.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	if err != nil {
 		logrus.Fatalf("error opening file: %v", err)
 	}

@@ -20,8 +20,6 @@ import (
 	"os"
 	_ "os"
 	_ "strconv"
-	handler2 "tag-service/handler"
-	service2 "tag-service/service"
 )
 
 func initDB() *gorm.DB{
@@ -116,7 +114,7 @@ func initStoryAlbumTagStoryAlbumsServices(repo *repository.StoryAlbumTagStoryAlb
 	return &service.StoryAlbumTagStoryAlbumsService { Repo: repo }
 }
 
-func initTagHandler(info *logrus.Logger, logError *logrus.Logger, service *service2.TagService, validator *validator.Validate) *handler2.TagHandler {
+func initTagHandler(info *logrus.Logger, logError *logrus.Logger, service *service.TagService, validator *validator.Validate) *handler.TagHandler {
 	return &handler.TagHandler{
 		Service:   service,
 		Validator: validator,
@@ -125,7 +123,7 @@ func initTagHandler(info *logrus.Logger, logError *logrus.Logger, service *servi
 	}
 }
 
-func initUserTagHandler(info *logrus.Logger, logError *logrus.Logger, service *service2.UserTagService, tagService *service2.TagService, validator *validator.Validate) *handler2.UserTagHandler {
+func initUserTagHandler(info *logrus.Logger, logError *logrus.Logger, service *service.UserTagService, tagService *service.TagService, validator *validator.Validate) *handler.UserTagHandler {
 	return &handler.UserTagHandler{
 		Service:    service,
 		TagService: tagService,
@@ -135,7 +133,7 @@ func initUserTagHandler(info *logrus.Logger, logError *logrus.Logger, service *s
 	}
 }
 
-func initStoryTagStoriesHandler(info *logrus.Logger, logError *logrus.Logger, service *service2.StoryTagStoriesService) *handler2.StoryTagStoriesHandler {
+func initStoryTagStoriesHandler(info *logrus.Logger, logError *logrus.Logger, service *service.StoryTagStoriesService) *handler.StoryTagStoriesHandler {
 	return &handler.StoryTagStoriesHandler{
 		Service:  service,
 		LogInfo:  info,
@@ -143,7 +141,7 @@ func initStoryTagStoriesHandler(info *logrus.Logger, logError *logrus.Logger, se
 	}
 }
 
-func initCommentTagCommentsHandler(info *logrus.Logger, logError *logrus.Logger, service *service2.CommentTagCommentsService) *handler2.CommentTagCommentsHandler {
+func initCommentTagCommentsHandler(info *logrus.Logger, logError *logrus.Logger, service *service.CommentTagCommentsService) *handler.CommentTagCommentsHandler {
 	return &handler.CommentTagCommentsHandler{
 		Service:  service,
 		LogInfo:  info,
@@ -151,7 +149,7 @@ func initCommentTagCommentsHandler(info *logrus.Logger, logError *logrus.Logger,
 	}
 }
 
-func initPostTagPostsHandler(info *logrus.Logger, logError *logrus.Logger, service *service2.PostTagPostsService) *handler2.PostTagPostsHandler {
+func initPostTagPostsHandler(info *logrus.Logger, logError *logrus.Logger, service *service.PostTagPostsService) *handler.PostTagPostsHandler {
 	return &handler.PostTagPostsHandler{
 		Service:  service,
 		LogInfo:  info,
@@ -160,7 +158,7 @@ func initPostTagPostsHandler(info *logrus.Logger, logError *logrus.Logger, servi
 }
 
 
-func initPostAlbumTagPostAlbumsHandler(info *logrus.Logger, logError *logrus.Logger, service *service2.PostAlbumTagPostAlbumsService) *handler2.PostAlbumTagPostAlbumsHandler {
+func initPostAlbumTagPostAlbumsHandler(info *logrus.Logger, logError *logrus.Logger, service *service.PostAlbumTagPostAlbumsService) *handler.PostAlbumTagPostAlbumsHandler {
 	return &handler.PostAlbumTagPostAlbumsHandler{
 		Service:  service,
 		LogInfo:  info,
@@ -168,7 +166,7 @@ func initPostAlbumTagPostAlbumsHandler(info *logrus.Logger, logError *logrus.Log
 	}
 }
 
-func initStoryAlbumTagStoryAlbumsHandler(info *logrus.Logger, logError *logrus.Logger, service *service2.StoryAlbumTagStoryAlbumsService) *handler2.StoryAlbumTagStoryAlbumsHandler {
+func initStoryAlbumTagStoryAlbumsHandler(info *logrus.Logger, logError *logrus.Logger, service *service.StoryAlbumTagStoryAlbumsService) *handler.StoryAlbumTagStoryAlbumsHandler {
 	return &handler.StoryAlbumTagStoryAlbumsHandler{
 		Service:  service,
 		LogInfo:  info,
@@ -232,12 +230,12 @@ func main() {
 	logInfo := logrus.New()
 	logError := logrus.New()
 
-	LogInfoFile, err := os.OpenFile("logInfo.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	LogInfoFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logInfoTAG.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	if err != nil {
 		logrus.Fatalf("error opening file: %v", err)
 	}
 
-	LogErrorFile, err := os.OpenFile("logError.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	LogErrorFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logErrorTAG.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	if err != nil {
 		logrus.Fatalf("error opening file: %v", err)
 	}

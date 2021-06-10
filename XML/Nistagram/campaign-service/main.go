@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/repository"
@@ -17,7 +18,6 @@ import (
 	"os"
 	_ "os"
 	_ "strconv"
-	"github.com/sirupsen/logrus"
 )
 
 func initDB() *gorm.DB{
@@ -138,12 +138,12 @@ func main() {
 	logInfo := logrus.New()
 	logError := logrus.New()
 
-	LogInfoFile, err := os.OpenFile("logInfo.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	LogInfoFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logInfoCAMPAIGN.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	if err != nil {
 		logrus.Fatalf("error opening file: %v", err)
 	}
 
-	LogErrorFile, err := os.OpenFile("logError.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	LogErrorFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logErrorCAMPAIGN.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	if err != nil {
 		logrus.Fatalf("error opening file: %v", err)
 	}

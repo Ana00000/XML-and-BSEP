@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/go-playground/validator"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
