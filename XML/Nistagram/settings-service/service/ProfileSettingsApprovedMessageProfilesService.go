@@ -6,10 +6,10 @@ import (
 )
 
 type ProfileSettingsApprovedMessageProfilesService struct {
-	Repo * repository.ProfileSettingsApprovedMessageProfilesRepository
+	Repo *repository.ProfileSettingsApprovedMessageProfilesRepository
 }
 
-func (service * ProfileSettingsApprovedMessageProfilesService) CreateProfileSettingsApprovedMessageProfiles(profileSettingsApprovedMessageProfiles *model.ProfileSettingsApprovedMessageProfiles) error {
+func (service *ProfileSettingsApprovedMessageProfilesService) CreateProfileSettingsApprovedMessageProfiles(profileSettingsApprovedMessageProfiles *model.ProfileSettingsApprovedMessageProfiles) error {
 	err := service.Repo.CreateProfileSettingsApprovedMessageProfiles(profileSettingsApprovedMessageProfiles)
 	if err != nil {
 		return err

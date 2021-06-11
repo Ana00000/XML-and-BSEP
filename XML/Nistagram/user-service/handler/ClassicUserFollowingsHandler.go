@@ -6,17 +6,21 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 	"os"
 	_ "strconv"
+	"time"
 )
 
 type ClassicUserFollowingsHandler struct {
-	ClassicUserFollowingsService *service.ClassicUserFollowingsService
-	ClassicUserFollowersService  *service.ClassicUserFollowersService
+	ClassicUserFollowingsService * service.ClassicUserFollowingsService
+	ClassicUserFollowersService * service.ClassicUserFollowersService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 // CreateClassicUserFollowing KAD NEKO KLIKNE FOLLOW NEKOGA = NJEMU SE KREIRA PRVO FOLLOWING PA ONDA FOLLOWER OVOM DRUGOM
@@ -24,6 +28,12 @@ func (handler *ClassicUserFollowingsHandler) CreateClassicUserFollowing(w http.R
 	var classicUserFollowingDTO dto.ClassicUserFollowingsDTO
 	err := json.NewDecoder(r.Body).Decode(&classicUserFollowingDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "CRCLASUSFOLLING712",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast response body to list ClassicUserFollowingsDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -36,7 +46,12 @@ func (handler *ClassicUserFollowingsHandler) CreateClassicUserFollowing(w http.R
 
 	err = handler.ClassicUserFollowingsService.CreateClassicUserFollowings(&classicUserFollowings)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "CRCLASUSFOLLING712",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating claassic user followings!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -49,10 +64,21 @@ func (handler *ClassicUserFollowingsHandler) CreateClassicUserFollowing(w http.R
 
 	err = handler.ClassicUserFollowersService.CreateClassicUserFollowers(&classicUserFollower)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "CRCLASUSFOLLING712",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating claassic user followers!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "ClassicUserFollowingsHandler",
+		"action":   "CRCLASUSFOLLING712",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created followings and followers for classic user!")
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
@@ -62,6 +88,7 @@ type ReturnValueBool struct {
 	ReturnValue bool `json:"return_value"`
 }
 
+//FIDALVALFOLLINGSFRUS111
 func (handler *ClassicUserFollowingsHandler) FindAllValidFollowingsForUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -69,6 +96,12 @@ func (handler *ClassicUserFollowingsHandler) FindAllValidFollowingsForUser(w htt
 	var classicUserDTO []dto.ClassicUserDTO
 	err := json.NewDecoder(r.Body).Decode(&classicUserDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "FIDALVALFOLLINGSFRUS111",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast response body to list ClassicUserDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -79,12 +112,21 @@ func (handler *ClassicUserFollowingsHandler) FindAllValidFollowingsForUser(w htt
 	}
 
 	returnValueJson, _ := json.Marshal(convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(validFollowingsForUser))
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "ClassicUserFollowingsHandler",
+		"action":   "FIDALVALFOLLINGSFRUS111",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded all valid followings for user! Result : "+string(returnValueJson))
+
 	w.Write(returnValueJson)
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
 
+//FIDALUSFOLWUSID2672
 func (handler *ClassicUserFollowingsHandler) FindAllUserWhoFollowUserId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -92,6 +134,12 @@ func (handler *ClassicUserFollowingsHandler) FindAllUserWhoFollowUserId(w http.R
 	var classicUserDTO []dto.ClassicUserDTO
 	err := json.NewDecoder(r.Body).Decode(&classicUserDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "FIDALUSFOLWUSID2672",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast response body to ClassicUserDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -99,12 +147,21 @@ func (handler *ClassicUserFollowingsHandler) FindAllUserWhoFollowUserId(w http.R
 	var validFollowingsForUser = handler.ClassicUserFollowingsService.FindAllUserWhoFollowUserId(uuid.MustParse(id), convertListClassicUserDTOToListClassicUser(classicUserDTO))
 
 	returnValueJson, _ := json.Marshal(convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(validFollowingsForUser))
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "ClassicUserFollowingsHandler",
+		"action":   "FIDALUSFOLWUSID2672",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded all users who follow user id! Result : "+string(returnValueJson))
+
 	w.Write(returnValueJson)
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
 
+//CHEKFOLLINGPSTSTRY2111
 func (handler *ClassicUserFollowingsHandler) CheckIfFollowingPostStory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -114,6 +171,13 @@ func (handler *ClassicUserFollowingsHandler) CheckIfFollowingPostStory(w http.Re
 
 	var returnValue = ReturnValueBool{ReturnValue: check}
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "ClassicUserFollowingsHandler",
+		"action":   "CHEKFOLLINGPSTSTRY2111",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully checked following post/story! Result : "+convertBoolToString(check))
+
 	returnValueJson, _ := json.Marshal(returnValue)
 	w.Write(returnValueJson)
 
@@ -121,10 +185,17 @@ func (handler *ClassicUserFollowingsHandler) CheckIfFollowingPostStory(w http.Re
 	w.Header().Set("Content-Type", "application/json")
 }
 
+//ACCFOLLERREQ832
 func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.ResponseWriter, r *http.Request) {
 	var followRequestDTO dto.FollowRequestDTO
 	err := json.NewDecoder(r.Body).Decode(&followRequestDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "ACCFOLLERREQ832",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast response body to FollowRequestDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -132,8 +203,13 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	var followRequestForUser dto.FollowRequestForUserDTO
 	reqUrlFollowRequests := fmt.Sprintf("http://%s:%s/find_request_by_classic_user_and_follower_user_ids/%s/%s", os.Getenv("REQUESTS_SERVICE_DOMAIN"), os.Getenv("REQUESTS_SERVICE_PORT"), followRequestDTO.ClassicUserId, followRequestDTO.FollowerUserId)
 	err = getJson(reqUrlFollowRequests, &followRequestForUser)
-	if err != nil {
-		fmt.Println("Wrong cast response body to FollowRequestForUserDTO!")
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "ACCFOLLERREQ832",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast response body to FollowRequestForUserDTO or error with finding follow request!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -147,7 +223,12 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	fmt.Println(string(jsonOrders))
 	resp, err := http.Post(reqUrlUpdate, "application/json", bytes.NewBuffer(jsonOrders))
 	if err != nil || resp.StatusCode == 400 {
-		print("Failed creating profile settings for user")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "ACCFOLLERREQ832",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed accepting follow request!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
@@ -161,6 +242,12 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 
 	err = handler.ClassicUserFollowersService.CreateClassicUserFollowers(&classicUserFollowers)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "ACCFOLLERREQ832",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating follower for classic user!")
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
@@ -175,10 +262,21 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 
 	err = handler.ClassicUserFollowingsService.CreateClassicUserFollowings(&classicUserFollowings)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "ACCFOLLERREQ832",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating following for classic user!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "ClassicUserFollowingsHandler",
+		"action":   "ACCFOLLERREQ832",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully accepted follower request!")
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")

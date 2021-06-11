@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
@@ -15,14 +16,23 @@ import (
 )
 
 type SingleStoryHandler struct {
-	SingleStoryService *service.SingleStoryService
-	StoryService       *service.StoryService
+	SingleStoryService * service.SingleStoryService
+	StoryService * service.StoryService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
+//CRSINGLSTRY9023
 func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *http.Request) {
 	var singleStoryDTO dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "CRSINGLSTRY9023",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SingleStoryDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -51,18 +61,37 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 
 	err = handler.SingleStoryService.CreateSingleStory(&singleStory)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "CRSINGLSTRY9023",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating single story!")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	err = handler.StoryService.CreateStory(&singleStory.Story)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "CRSINGLSTRY9023",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating basic story!")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	singleStoryIDJson, _ := json.Marshal(singleStory.ID)
 	w.Write(singleStoryIDJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryHandler",
+		"action":   "CRSINGLSTRY9023",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created single story!")
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
@@ -78,33 +107,48 @@ func getJson(url string, target interface{}) error {
 	return json.NewDecoder(r.Body).Decode(target)
 }
 
-// NEREGISTROVANI
-
 //// tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
+//FIDALPUBSTORISNOTREGUS9329
 func (handler *SingleStoryHandler) FindAllPublicStoriesNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
-	if err != nil {
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISNOTREGUS9329",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all valid users or wrong cast response body to list ClassicUserDTO!!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 	//var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
 	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonClassicUsersDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonClassicUsersDTO))
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISNOTREGUS9329",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all public users!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var allPublicUsers []dto.ClassicUserDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allPublicUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISNOTREGUS9329",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list ClassicUserDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -114,34 +158,56 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesNotRegisteredUser(w http.
 	//var contents = handler.StoryContentService.FindAllContentsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidStoriesDTO, _ := json.Marshal(publicValidStories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidStoriesDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonValidStoriesDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISNOTREGUS9329",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding contents for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SingleStoryContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISNOTREGUS9329",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list SingleStoryContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
 	//var locations = handler.LocationService.FindAllLocationsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(publicValidStories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISNOTREGUS9329",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding locations for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISNOTREGUS9329",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -149,17 +215,28 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesNotRegisteredUser(w http.
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(publicValidStories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISNOTREGUS9329",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding tags for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.StoryTagStoriesDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISNOTREGUS9329",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list StoryTagStoriesDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -168,6 +245,13 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesNotRegisteredUser(w http.
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryHandler",
+		"action":   "FIDALPUBSTORISNOTREGUS9329",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded all public stories not registered user!")
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -178,6 +262,7 @@ type UserValid struct {
 }
 
 // kada neregistrovani user otvori PUBLIC usera sa spiska i onda na njegovom profilu vidi PUBLIC i NOT EXPIRED STORIJE
+//FIDALSTORISFORUSNOTREGUS8921
 func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	///check_if_user_valid/{userID}
@@ -185,49 +270,82 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 	var userValidity UserValid
 	reqUrl := fmt.Sprintf("http://%s:%s/check_if_user_valid/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &userValidity)
-	if err != nil {
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSNOTREGUS8921",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed checking if user valid or wrong cast json to UserValid!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	var checkIfValid = userValidity.IsValid
-	if checkIfValid == false {
-		fmt.Println("User NOT valid")
+	var checkIfValid=userValidity.IsValid
+	if  checkIfValid == false {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSNOTREGUS8921",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't valid!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
-	fmt.Println("User IS valid")
+	//fmt.Println("User IS valid")
 	//var profileSettings = handler.ProfileSettings.FindProfileSettingByUserId(uuid.MustParse(id))
 	var profileSettings dto.ProfileSettingsDTO
 	reqUrl = fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
 	err = getJson(reqUrl, &profileSettings)
-	if err != nil {
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSNOTREGUS8921",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding profile settings by user id or wrong cast json to ProfileSettingsDTO!")
+		//fmt.Println("Wrong cast response body to ProfileSettingDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
-	if profileSettings.UserVisibility == "PRIVATE_VISIBILITY" {
-		fmt.Println("User IS PRIVATE")
+	if profileSettings.UserVisibility == "PRIVATE_VISIBILITY"{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSNOTREGUS8921",
+			"timestamp":   time.Now().String(),
+		}).Error("User is private!")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	var stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllStoriesForUserNotReg(uuid.MustParse(id)))
 	//var contents = handler.StoryContentService.FindAllContentsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidStoriesDTO, _ := json.Marshal(stories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidStoriesDTO))
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonValidStoriesDTO))
+	resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSNOTREGUS8921",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all contents for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SingleStoryContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSNOTREGUS8921",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list SingleStoryContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -236,17 +354,28 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 	//var locations = handler.LocationService.FindAllLocationsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(stories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSNOTREGUS8921",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all locations for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSNOTREGUS8921",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -255,17 +384,28 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(stories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSNOTREGUS8921",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all tags for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.StoryTagStoriesDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSNOTREGUS8921",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list StoryTagStoriesDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -273,11 +413,20 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryHandler",
+		"action":   "FIDALSTORISFORUSNOTREGUS8921",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded all stories for user not registered user!")
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
 }
 
+//FIDALPUBSTORISREGUS9823
 func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
@@ -286,24 +435,40 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &allValidUsers)
-	if err != nil {
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all classic users without logged in or wrong cast json to list ClassicUserDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 	//var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
 	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonClassicUsersDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonClassicUsersDTO))
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all public users!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	var allPublicUsers []dto.ClassicUserDTO
 	if err := json.NewDecoder(resp.Body).Decode(&allPublicUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list ClassicUserDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -311,17 +476,28 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 	//var contents = handler.StoryContentService.FindAllContentsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidStoriesDTO, _ := json.Marshal(publicValidStories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidStoriesDTO))
-	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonValidStoriesDTO))
+	resp,err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all contents for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SingleStoryContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list SingleStoryContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -329,17 +505,28 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 	//var locations = handler.LocationService.FindAllLocationsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(publicValidStories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all locations for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -347,17 +534,28 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(publicValidStories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all tags for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.StoryTagStoriesDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list StoryTagStoriesDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -366,6 +564,13 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryHandler",
+		"action":   "FIDALPUBSTORISREGUS9823",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded all public stories registered user!")
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -376,6 +581,7 @@ type ReturnValueBool struct {
 }
 
 // metoda koja se poziva kada registrovani user udje na profil nekog usera
+//FIDALSTORISFORUSREGUS9322
 func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	logId := r.URL.Query().Get("logId")
@@ -384,14 +590,24 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 	var userValidity UserValid
 	reqUrl := fmt.Sprintf("http://%s:%s/check_if_user_valid/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &userValidity)
-	if err != nil {
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSREGUS9322",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed checking if user valid or wrong cast json to UserValid!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	var checkIfValid = userValidity.IsValid
-	if checkIfValid == false {
-		fmt.Println("User NOT valid")
+	var checkIfValid=userValidity.IsValid
+	if  checkIfValid == false {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSREGUS9322",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't valid!")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
@@ -399,8 +615,13 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 	var profileSettings dto.ProfileSettingsDTO
 	reqUrl = fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
 	err = getJson(reqUrl, &profileSettings)
-	if err != nil {
-		fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSREGUS9322",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding profile settings by user id or wrong cast json to ProfileSettingsDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
@@ -412,8 +633,13 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 		var returnValueFollowing ReturnValueBool
 		reqUrl = fmt.Sprintf("http://%s:%s/check_if_following_post_story/%s/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id, logId)
 		err = getJson(reqUrl, &returnValueFollowing)
-		if err != nil {
-			fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		if err!=nil{
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SingleStoryHandler",
+				"action":   "FIDALSTORISFORUSREGUS9322",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed checking if following post/story or wrong cast json to ReturnValueBool!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
@@ -425,8 +651,13 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			var returnValueCloseFriend ReturnValueBool
 			reqUrl = fmt.Sprintf("http://%s:%s/check_if_close_friend/%s/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id, logId)
 			err = getJson(reqUrl, &returnValueCloseFriend)
-			if err != nil {
-				fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+			if err!=nil{
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SingleStoryHandler",
+					"action":   "FIDALSTORISFORUSREGUS9322",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed checking if close friend or wrong cast json to ReturnValueBool!")
 				w.WriteHeader(http.StatusExpectationFailed)
 				return
 			}
@@ -446,17 +677,28 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			//var contents = handler.StoryContentService.FindAllContentsForStories(stories)
 			reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 			jsonValidStoriesDTO, _ := json.Marshal(stories)
-			fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-			fmt.Println(string(jsonValidStoriesDTO))
-			resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
+			//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+			//fmt.Println(string(jsonValidStoriesDTO))
+			resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 			if err != nil || resp.StatusCode == 400 {
-				print("Fail")
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SingleStoryHandler",
+					"action":   "FIDALSTORISFORUSREGUS9322",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed finding all contents for stories!")
 				w.WriteHeader(http.StatusFailedDependency)
 				return
 			}
 			//defer resp.Body.Close() mozda treba dodati
 			var contents []dto.SingleStoryContentDTO
 			if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SingleStoryHandler",
+					"action":   "FIDALSTORISFORUSREGUS9322",
+					"timestamp":   time.Now().String(),
+				}).Error("Wrong cast json to list SingleStoryContentDTO!")
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
@@ -464,17 +706,28 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 			reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 			jsonLocationsDTO, _ := json.Marshal(stories)
-			fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-			fmt.Println(string(jsonLocationsDTO))
+			//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+			//fmt.Println(string(jsonLocationsDTO))
 			resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 			if err != nil || resp.StatusCode == 400 {
-				print("Fail")
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SingleStoryHandler",
+					"action":   "FIDALSTORISFORUSREGUS9322",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed finding all locations for stories!")
 				w.WriteHeader(http.StatusFailedDependency)
 				return
 			}
 			//defer resp.Body.Close() mozda treba dodati
 			var locations []dto.LocationDTO
 			if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SingleStoryHandler",
+					"action":   "FIDALSTORISFORUSREGUS9322",
+					"timestamp":   time.Now().String(),
+				}).Error("Wrong cast json to list LocationDTO!")
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
@@ -482,17 +735,28 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 			reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 			jsonTagsDTO, _ := json.Marshal(stories)
-			fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-			fmt.Println(string(jsonTagsDTO))
+			//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+			//fmt.Println(string(jsonTagsDTO))
 			resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 			if err != nil || resp.StatusCode == 400 {
-				print("Fail")
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SingleStoryHandler",
+					"action":   "FIDALSTORISFORUSREGUS9322",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed finding all tags for stories!")
 				w.WriteHeader(http.StatusFailedDependency)
 				return
 			}
 			//defer resp.Body.Close() mozda treba dodati
 			var tags []dto.StoryTagStoriesDTO
 			if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SingleStoryHandler",
+					"action":   "FIDALSTORISFORUSREGUS9322",
+					"timestamp":   time.Now().String(),
+				}).Error("Wrong cast json to list StoryTagStoriesDTO!")
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
@@ -501,13 +765,25 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			storiesJson, _ := json.Marshal(storiesDTOS)
 			w.Write(storiesJson)
 			w.WriteHeader(http.StatusOK)
+
+			handler.LogInfo.WithFields(logrus.Fields{
+				"status": "success",
+				"location":   "SingleStoryHandler",
+				"action":   "FIDALSTORISFORUSREGUS9322",
+				"timestamp":   time.Now().String(),
+			}).Info("Successfully founded all stories for user registered user!")
+
 			w.Header().Set("Content-Type", "application/json")
 			return
 
 		} else {
 			// PRIVATE USER I NE PRATI GA = NE MOZE NISTA DA VIDI
-
-			fmt.Println("Not following private user")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SingleStoryHandler",
+				"action":   "FIDALSTORISFORUSREGUS9322",
+				"timestamp":   time.Now().String(),
+			}).Error("User doesn't following private user!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
@@ -517,8 +793,13 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 		var returnValueFollowing ReturnValueBool
 		reqUrl = fmt.Sprintf("http://%s:%s/check_if_following_post_story/%s/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id, logId)
 		err = getJson(reqUrl, &returnValueFollowing)
-		if err != nil {
-			fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+		if err!=nil{
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SingleStoryHandler",
+				"action":   "FIDALSTORISFORUSREGUS9322",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed checking if following post/story or wrong cast json to ReturnValueBool!")
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
@@ -531,8 +812,13 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			var returnValueCloseFriend ReturnValueBool
 			reqUrl = fmt.Sprintf("http://%s:%s/check_if_close_friend/%s/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id, logId)
 			err = getJson(reqUrl, &returnValueCloseFriend)
-			if err != nil {
-				fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+			if err!=nil{
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SingleStoryHandler",
+					"action":   "FIDALSTORISFORUSREGUS9322",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed checking if close friend or wrong cast json to ReturnValueBool!")
 				w.WriteHeader(http.StatusExpectationFailed)
 				return
 			}
@@ -555,17 +841,28 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 		//var contents = handler.StoryContentService.FindAllContentsForStories(stories)
 		reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 		jsonValidStoriesDTO, _ := json.Marshal(stories)
-		fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-		fmt.Println(string(jsonValidStoriesDTO))
-		resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
+		//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+		//fmt.Println(string(jsonValidStoriesDTO))
+		resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 		if err != nil || resp.StatusCode == 400 {
-			print("Fail")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SingleStoryHandler",
+				"action":   "FIDALSTORISFORUSREGUS9322",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed finding all contents for stories!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var contents []dto.SingleStoryContentDTO
 		if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SingleStoryHandler",
+				"action":   "FIDALSTORISFORUSREGUS9322",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to list SingleStoryContentDTO!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -573,17 +870,28 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 		//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 		reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 		jsonLocationsDTO, _ := json.Marshal(stories)
-		fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-		fmt.Println(string(jsonLocationsDTO))
+		//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+		//fmt.Println(string(jsonLocationsDTO))
 		resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 		if err != nil || resp.StatusCode == 400 {
-			print("Fail")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SingleStoryHandler",
+				"action":   "FIDALSTORISFORUSREGUS9322",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed finding all locations for stories!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var locations []dto.LocationDTO
 		if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SingleStoryHandler",
+				"action":   "FIDALSTORISFORUSREGUS9322",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to list LocationDTO!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -591,17 +899,28 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 		//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 		reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 		jsonTagsDTO, _ := json.Marshal(stories)
-		fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-		fmt.Println(string(jsonTagsDTO))
+		//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+		//fmt.Println(string(jsonTagsDTO))
 		resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 		if err != nil || resp.StatusCode == 400 {
-			print("Fail")
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SingleStoryHandler",
+				"action":   "FIDALSTORISFORUSREGUS9322",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed finding all tags for stories!")
 			w.WriteHeader(http.StatusFailedDependency)
 			return
 		}
 		//defer resp.Body.Close() mozda treba dodati
 		var tags []dto.StoryTagStoriesDTO
 		if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "SingleStoryHandler",
+				"action":   "FIDALSTORISFORUSREGUS9322",
+				"timestamp":   time.Now().String(),
+			}).Error("Wrong cast json to list StoryTagStoriesDTO!")
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
@@ -609,6 +928,13 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 
 		storiesJson, _ := json.Marshal(storiesDTOS)
 		w.Write(storiesJson)
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSREGUS9322",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully founded all stories for user registered user!")
+
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 
@@ -616,6 +942,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 }
 
 // returns all VALID stories from FOLLOWING users (FOR HOMEPAGE)
+//FIDALFOLLINGSTORIS8329
 func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
@@ -623,25 +950,41 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &allValidUsers)
-	if err != nil {
-		fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list ClassicUserDTO!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 	//var followings = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_followings_for_user/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonClassicUsersDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonClassicUsersDTO))
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all valid followings for user!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var followings []dto.ClassicUserFollowingsDTO
 	if err := json.NewDecoder(resp.Body).Decode(&followings); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list ClassicUserFollowingsDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -660,8 +1003,13 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 			var returnValueCloseFriend ReturnValueBool
 			reqUrl = fmt.Sprintf("http://%s:%s/check_if_close_friend/%s/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), stories[i].UserId, id)
 			err = getJson(reqUrl, &returnValueCloseFriend)
-			if err != nil {
-				fmt.Println("Wrong cast response body to ProfileSettingDTO!")
+			if err!=nil{
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SingleStoryHandler",
+					"action":   "FIDALFOLLINGSTORIS8329",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed checking if close friend or wrong cast json to ReturnValueBool!")
 				w.WriteHeader(http.StatusExpectationFailed)
 				return
 			}
@@ -676,17 +1024,28 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 	//var contents = handler.StoryContentService.FindAllContentsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidStoriesDTO, _ := json.Marshal(allValidStories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidStoriesDTO))
-	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonValidStoriesDTO))
+	resp,err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all contents for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SingleStoryContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list SingleStoryContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -694,17 +1053,28 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 	//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(allValidStories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all locations for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -712,17 +1082,28 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(allValidStories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all tags for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.StoryTagStoriesDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list StoryTagStoriesDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -730,12 +1111,19 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryHandler",
+		"action":   "FIDALFOLLINGSTORIS8329",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded all following stories!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
 }
 
 // FIND SELECTED STORY BY ID (ONLY IF NOT DELETED)!
+//FIDSELECTSTRYBYIDFORREGUSRS9031
 func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
@@ -743,14 +1131,24 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 
 	var story = handler.SingleStoryService.FindByID(uuid.MustParse(id))
 	if story == nil {
-		fmt.Println("User not found")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding single story by id!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
 	if story.IsDeleted == true {
 
-		fmt.Println("Deleted story")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Founded single story is deleted!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 
@@ -759,8 +1157,12 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 	if story.UserId != uuid.MustParse(logId) {
 		//POSTMAN CHECK
 		//NIJE STORI OD ULOGOVANOG USERA
-
-		fmt.Println("Unavailable story to this user")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Unavailable story to this user!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 
@@ -768,17 +1170,28 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_story/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidStoriesDTO, _ := json.Marshal(convertSingleStoryToSingleStoryDTO(*story))
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidStoriesDTO))
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonValidStoriesDTO))
+	resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all contents for story!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SingleStoryContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list SingleStoryContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -786,17 +1199,28 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 	//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_story/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(convertSingleStoryToSingleStoryDTO(*story))
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all locations for story!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -804,17 +1228,28 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_story/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(convertSingleStoryToSingleStoryDTO(*story))
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all tags for story!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.StoryTagStoriesDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list StoryTagStoriesDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -827,7 +1262,12 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 
 	storyJson, _ := json.Marshal(storyDTO)
 	w.Write(storyJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryHandler",
+		"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded selected story by ID for registered users!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
@@ -838,6 +1278,7 @@ type ReturnValueString struct {
 }
 
 // all stories (EXCEPT DELETED) for my current logged in user (expired and not expired, public, all_friend, close friends)
+//FIDALSTORISFORLOGGUS0213
 func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
@@ -845,34 +1286,56 @@ func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWr
 	//var contents = handler.StoryContentService.FindAllContentsForStories(stories)
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 	jsonValidStoriesDTO, _ := json.Marshal(stories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonValidStoriesDTO))
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonValidStoriesDTO))
+	resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORLOGGUS0213",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all contents for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var contents []dto.SingleStoryContentDTO
 	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORLOGGUS0213",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list SingleStoryContentDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
 	//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(stories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonLocationsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORLOGGUS0213",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all locations for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var locations []dto.LocationDTO
 	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORLOGGUS0213",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list LocationDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -880,17 +1343,28 @@ func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWr
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(stories)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonTagsDTO))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
-		print("Fail")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORLOGGUS0213",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding all tags for stories!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
 	var tags []dto.StoryTagStoriesDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORLOGGUS0213",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list StoryTagStoriesDTO!")
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
@@ -899,11 +1373,18 @@ func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWr
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)
 	w.WriteHeader(http.StatusOK)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryHandler",
+		"action":   "FIDALSTORISFORLOGGUS0213",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded all stories for logged user!")
 	w.Header().Set("Content-Type", "application/json")
 
 }
 
 //DTOS
+//CRSTORISDTOLST0914
 func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleStory, contents []dto.SingleStoryContentDTO, locations []dto.LocationDTO, tags []dto.StoryTagStoriesDTO) []dto.SelectedStoryDTO {
 	var listOfStoriesDTOs []dto.SelectedStoryDTO
 
@@ -938,8 +1419,13 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 				var returnValueTagName ReturnValueString
 				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tags[p].TagId.String())
 				err := getJson(reqUrl, &returnValueTagName)
-				if err != nil {
-					fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+				if err!=nil{
+					handler.LogError.WithFields(logrus.Fields{
+						"status": "failure",
+						"location":   "SingleStoryHandler",
+						"action":   "CRSTORISDTOLST0914",
+						"timestamp":   time.Now().String(),
+					}).Error("Wrong cast response body to list ReturnValueString!")
 					return nil
 				}
 				listOfTags = append(listOfTags, returnValueTagName.ReturnValue)
@@ -947,6 +1433,13 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 		}
 
 		storyDTO.Tags = listOfTags
+
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location":   "SingleStoryHandler",
+			"action":   "CRSTORISDTOLST0914",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully created StoryDTO objects!")
 
 		listOfStoriesDTOs = append(listOfStoriesDTOs, storyDTO)
 
@@ -956,10 +1449,11 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 
 }
 
+//CRSTRYDTO0912
 func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, contents []dto.SingleStoryContentDTO, locations []dto.LocationDTO, tags []dto.StoryTagStoriesDTO) dto.SelectedStoryDTO {
 
 	var storyDTO dto.SelectedStoryDTO
-	fmt.Println("STORIES")
+	//fmt.Println("STORIES")
 	storyDTO.StoryId = story.ID
 	storyDTO.Description = story.Description
 	storyDTO.CreationDate = story.CreationDate
@@ -987,8 +1481,13 @@ func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, cont
 			var returnValueTagName ReturnValueString
 			reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tags[p].TagId.String())
 			err := getJson(reqUrl, &returnValueTagName)
-			if err != nil {
-				fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
+			if err!=nil{
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "SingleStoryHandler",
+					"action":   "CRSTRYDTO0912",
+					"timestamp":   time.Now().String(),
+				}).Error("Wrong cast response body to list ReturnValueString!")
 				panic(err)
 			}
 			listOfTags = append(listOfTags, returnValueTagName.ReturnValue)
@@ -997,6 +1496,12 @@ func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, cont
 	}
 
 	storyDTO.Tags = listOfTags
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryHandler",
+		"action":   "CRSTRYDTO0912",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created StoryDTO object!")
 
 	return storyDTO
 
@@ -1067,15 +1572,29 @@ func convertSingleStoryDTOToSingleStory(singleStoryDTO dto.SingleStoryFullDTO) m
 	return singleStory
 }
 
+//FIDSINGSTRYFORID9102
 func (handler *SingleStoryHandler) FindSingleStoryForId(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	singleStory := handler.SingleStoryService.FindSingleStoryForId(uuid.MustParse(id))
 	singleStoryJson, _ := json.Marshal(singleStory)
 	if singleStoryJson != nil {
-		w.WriteHeader(http.StatusCreated)
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSINGSTRYFORID9102",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully founded single story for id!")
+		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(singleStoryJson)
+		return
 	}
+	handler.LogError.WithFields(logrus.Fields{
+		"status": "failure",
+		"location":   "SingleStoryHandler",
+		"action":   "FIDSINGSTRYFORID9102",
+		"timestamp":   time.Now().String(),
+	}).Error("Failed finding single story for id!")
 	w.WriteHeader(http.StatusBadRequest)
 }

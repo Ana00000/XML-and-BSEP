@@ -2,25 +2,34 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"net/http"
 	_ "strconv"
+	"time"
 )
 
 type PostTagPostsHandler struct {
-	Service *service.PostTagPostsService
+	Service * service.PostTagPostsService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
-
+//CRPOTGPSTS532
 func (handler *PostTagPostsHandler) CreatePostTagPosts(w http.ResponseWriter, r *http.Request) {
 	var postTagPostsDTO dto.PostTagPostsDTO
 	err := json.NewDecoder(r.Body).Decode(&postTagPostsDTO)
 
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostTagPostsHandler",
+			"action":   "CRPOTGPSTS532",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -33,18 +42,37 @@ func (handler *PostTagPostsHandler) CreatePostTagPosts(w http.ResponseWriter, r 
 
 	err = handler.Service.CreatePostTagPosts(&postTagPosts)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostTagPostsHandler",
+			"action":   "CRPOTGPSTS532",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed adding post tag for post!")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostTagPostsHandler",
+		"action":   "CRPOTGPSTS532",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully added post tag for post!")
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
 
+//FIDALTGSFORPST9128
 func (handler *PostTagPostsHandler) FindAllTagsForPost(w http.ResponseWriter, r *http.Request) {
 	var singlePostDTO dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostTagPostsHandler",
+			"action":   "FIDALTGSFORPST9128",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -53,26 +81,32 @@ func (handler *PostTagPostsHandler) FindAllTagsForPost(w http.ResponseWriter, r 
 
 	tagsForPostJson, _ := json.Marshal(tags)
 	w.Write(tagsForPostJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostTagPostsHandler",
+		"action":   "FIDALTGSFORPST9128",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded tags for post!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
 
+//FIDPSTIDSBYTGID9851
 func (handler *PostTagPostsHandler) FindPostIdsByTagId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tagId := vars["tagID"]
 	//var listIds []uuid.UUID
 	var tags = handler.Service.FindAllPostIdsWithTagId(uuid.MustParse(tagId))
-	fmt.Println("LISTA TAGOVA ID")
-	fmt.Println(tags)
-
-	fmt.Println("SALJE SE-->")
-	fmt.Println(tags)
 	tagsForPostJson, _ := json.Marshal(tags)
 	fmt.Println("ONO STO IDE NA BEK ----->")
 	fmt.Println(string(tagsForPostJson))
 	w.Write(tagsForPostJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostTagPostsHandler",
+		"action":   "FIDPSTIDSBYTGID9851",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded post ids with tag id!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -81,10 +115,17 @@ type ListId struct {
 	ID uuid.UUID `json:"id"`
 }
 
+//FIDALTGSFORPSTS9882
 func (handler *PostTagPostsHandler) FindAllTagsForPosts(w http.ResponseWriter, r *http.Request) {
 	var singlePostsDTO []dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostsDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostTagPostsHandler",
+			"action":   "FIDALTGSFORPSTS9882",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list SinglePostDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -93,7 +134,12 @@ func (handler *PostTagPostsHandler) FindAllTagsForPosts(w http.ResponseWriter, r
 
 	tagsJson, _ := json.Marshal(convertListTagToListTagFullDTO(tags))
 	w.Write(tagsJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostTagPostsHandler",
+		"action":   "FIDALTGSFORPSTS9882",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded tags for posts!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -121,21 +167,32 @@ func convertListTagToListTagFullDTO(tag []model.Tag) []dto.TagFullDTO {
 	return listTagDTO
 }
 
+//FIDALTGSFORPSTSTGPSTS9
 func (handler *PostTagPostsHandler) FindAllTagsForPostsTagPosts(w http.ResponseWriter, r *http.Request) {
 	var singlePostsDTO []dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostsDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostTagPostsHandler",
+			"action":   "FIDALTGSFORPSTSTGPSTS9",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to list SinglePostDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	var tags = handler.Service.FindAllTagsForPostsTagPosts(singlePostsDTO)
-	for i := 0; i < len(tags); i++ {
+	/*for i := 0; i < len(tags); i++ {
 		fmt.Println("----------Naziv taga : "+tags[i].TagId.String())
-
-	}
+	}*/
 	tagsForPostsJson, _ := json.Marshal(tags)
 	w.Write(tagsForPostsJson)
-
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostTagPostsHandler",
+		"action":   "FIDALTGSFORPSTS9882",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded tags for posts tag for posts!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }

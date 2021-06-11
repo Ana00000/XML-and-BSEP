@@ -2,8 +2,8 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/service"
@@ -11,11 +11,14 @@ import (
 	"net/http"
 	"os"
 	_ "strconv"
+	"time"
 )
 
 type SinglePostContentHandler struct {
-	Service        *service.SinglePostContentService
-	ContentService *service.ContentService
+	Service * service.SinglePostContentService
+	ContentService * service.ContentService
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
 var pathPostGlobal = ""
@@ -24,6 +27,12 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 	var singlePostContentDTO dto.SinglePostContentDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostContentDTO)
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "CRSIPOCOB123",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -46,18 +55,36 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 
 	err = handler.Service.CreateSinglePostContent(&singlePostContent)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "CRSIPOCOB123",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating single post content!")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	err = handler.ContentService.CreateContent(&singlePostContent.Content)
 	if err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "CRSIPOCOB123",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating content!")
 		w.WriteHeader(http.StatusExpectationFailed)
+		return
 	}
 
 	pathPostGlobal = ""
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostContentHandler",
+		"action":   "CRSIPOCOB123",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created single post content!")
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -67,6 +94,12 @@ func (handler *SinglePostContentHandler) FindAllContentsForPosts(w http.Response
 	err := json.NewDecoder(r.Body).Decode(&singlePostsDTOs)
 
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "FIALCOFOPOQ771",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostsDTOs!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -76,6 +109,12 @@ func (handler *SinglePostContentHandler) FindAllContentsForPosts(w http.Response
 	pathJson, _ := json.Marshal(contents)
 	w.Write(pathJson)
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostContentHandler",
+		"action":   "FIALCOFOPOQ771",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found contents for posts!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -85,6 +124,12 @@ func (handler *SinglePostContentHandler) FindAllContentsForPost(w http.ResponseW
 	err := json.NewDecoder(r.Body).Decode(&singlePostDTO)
 
 	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "FIALCOFOPOW474",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to SinglePostDTO!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -94,6 +139,12 @@ func (handler *SinglePostContentHandler) FindAllContentsForPost(w http.ResponseW
 	pathJson, _ := json.Marshal(contents)
 	w.Write(pathJson)
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostContentHandler",
+		"action":   "FIALCOFOPOW474",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found contents for post!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -103,30 +154,48 @@ func (handler *SinglePostContentHandler) Upload(writer http.ResponseWriter, requ
 
 	file, hand, err := request.FormFile("myPostFile")
 	if err != nil {
-		fmt.Println("Greska prvi if")
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "UPK523",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find the file!")
 		return
 	}
 	defer file.Close()
 
 	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"), "*"+hand.Filename)
 	if err != nil {
-		fmt.Println("Greska drugi if")
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "UPK523",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to create temporary file!")
 		return
 	}
 	defer tempFile.Close()
 
 	fileBytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		fmt.Println("Greska treci if")
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "UPK523",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to read from file!")
 		return
 	}
 	tempFile.Write(fileBytes)
 
 	pathPostGlobal = tempFile.Name()[20:len(tempFile.Name())]
 
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostContentHandler",
+		"action":   "UPK523",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully uploaded the media!")
 	pathJson, _ := json.Marshal(tempFile.Name())
 	writer.Write(pathJson)
 }
