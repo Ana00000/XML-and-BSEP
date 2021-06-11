@@ -15,7 +15,7 @@ import (
 )
 
 type TagHandler struct {
-	Service * service.TagService
+	Service   *service.TagService
 	Validator *validator.Validate
 	LogInfo *logrus.Logger
 	LogError *logrus.Logger
@@ -73,13 +73,13 @@ func (handler *TagHandler) CreateTag(w http.ResponseWriter, r *http.Request) {
 	findTag := handler.Service.FindTagByName(tagDTO.Name)
 	var tag model.Tag
 	var tagType model.TagType
-	if tagDTO.TagType=="HASH_TAG"{
-		tagType=model.HASH_TAG
-	} else if tagDTO.TagType=="USER_TAG"{
-		tagType=model.USER_TAG
+	if tagDTO.TagType == "HASH_TAG" {
+		tagType = model.HASH_TAG
+	} else if tagDTO.TagType == "USER_TAG" {
+		tagType = model.USER_TAG
 	}
 
-	if findTag != nil && findTag.TagType==tagType{
+	if findTag != nil && findTag.TagType == tagType {
 		tagJson, _ := json.Marshal(findTag.ID)
 		handler.LogInfo.WithFields(logrus.Fields{
 			"status": "success",
@@ -89,7 +89,7 @@ func (handler *TagHandler) CreateTag(w http.ResponseWriter, r *http.Request) {
 		}).Info("Successfully founded tag with same name!")
 		w.Write(tagJson)
 		w.WriteHeader(http.StatusAccepted)
-		w.Header().Set("Content-Type", "application/json")// 202
+		w.Header().Set("Content-Type", "application/json") // 202
 		return
 	} else {
 		var tagType model.TagType
@@ -232,4 +232,3 @@ func (handler *TagHandler) FindTagByName(w http.ResponseWriter, r *http.Request)
 	}).Error("Failed finding tag by name!")
 	w.WriteHeader(http.StatusBadRequest)
 }
-

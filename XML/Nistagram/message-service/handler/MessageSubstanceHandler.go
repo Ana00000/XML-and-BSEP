@@ -33,7 +33,7 @@ func (handler *MessageSubstanceHandler) CreateMessageSubstance(w http.ResponseWr
 	}
 
 	messageSubstance := model.MessageSubstance{
-		ID: uuid.UUID{},
+		ID:   uuid.UUID{},
 		Text: messageSubstanceDTO.Text,
 	}
 

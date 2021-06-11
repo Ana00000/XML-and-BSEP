@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
@@ -32,11 +33,10 @@ func (handler *CampaignHandler) CreateCampaign(w http.ResponseWriter, r *http.Re
 		return
 	}
 	layout := "2006-01-02T15:04:05.000Z"
-	expTime,_ :=time.Parse(layout,campaignDTO.ExposureTime)
+	expTime, _ := time.Parse(layout, campaignDTO.ExposureTime)
 	campaign := model.Campaign{
-		ID:                     uuid.UUID{},
-		//Advertisements:         nil,
-		ExposureTime:           expTime,
+		ID: uuid.UUID{},
+		ExposureTime: expTime,
 	}
 
 	err = handler.Service.CreateCampaign(&campaign)

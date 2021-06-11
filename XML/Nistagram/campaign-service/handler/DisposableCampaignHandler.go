@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
@@ -32,12 +33,11 @@ func (handler *DisposableCampaignHandler) CreateDisposableCampaign(w http.Respon
 		return
 	}
 	layout := "2006-01-02T15:04:05.000Z"
-	expTime,_ :=time.Parse(layout,disposableCampaignDTO.ExposureTime)
+	expTime, _ := time.Parse(layout, disposableCampaignDTO.ExposureTime)
 	disposableCampaign := model.DisposableCampaign{
-		Campaign:   model.Campaign{
-			ID:                     uuid.UUID{},
-			//Advertisements:         nil,
-			ExposureTime:           expTime,
+		Campaign: model.Campaign{
+			ID: uuid.UUID{},
+			ExposureTime: expTime,
 		},
 	}
 

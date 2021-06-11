@@ -37,13 +37,13 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 	}
 
 	singlePost := model.SinglePost{
-		Post : model.Post{
-			ID: uuid.New(),
-			Description: singlePostDTO.Description,
+		Post: model.Post{
+			ID:           uuid.New(),
+			Description:  singlePostDTO.Description,
 			CreationDate: time.Now(),
-			UserID: singlePostDTO.UserID,
-			LocationId: singlePostDTO.LocationID,
-			IsDeleted: false,
+			UserID:       singlePostDTO.UserID,
+			LocationId:   singlePostDTO.LocationID,
+			IsDeleted:    false,
 		},
 	}
 
@@ -244,10 +244,8 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 		return
 	}
 
-
 	//creates a list of dtos
-	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts),contents,locations,tags)
-
+	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
 
 	postsJson, _ := json.Marshal(postsDTOS)
 	w.Write(postsJson)
@@ -261,7 +259,6 @@ func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.Re
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-
 
 }
 
@@ -287,7 +284,7 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	var checkIfValid=userValidity.IsValid
+	var checkIfValid = userValidity.IsValid
 
 	if  checkIfValid == false {
 		handler.LogError.WithFields(logrus.Fields{
@@ -391,7 +388,6 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
-			
 
 			//var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts) //treba izmjeniti
 
@@ -424,7 +420,7 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 			}
 
 			//creates a list of dtos
-			var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts),contents,locations,tags)
+			var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
 
 			postsJson, _ := json.Marshal(postsDTOS)
 			w.Write(postsJson)
@@ -541,7 +537,7 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 		}
 
 		//creates a list of dtos
-		var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts),contents,locations,tags)
+		var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
 
 		postsJson, _ := json.Marshal(postsDTOS)
 		w.Write(postsJson)
@@ -559,15 +555,14 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 	}
 }
 
-
 // returns all VALID posts from FOLLOWING users (FOR HOMEPAGE)
 func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	// returns only valid users
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
-	var  allValidUsers []dto.ClassicUserDTO
-	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
+	var allValidUsers []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -699,7 +694,7 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 	}
 
 	//creates a list of dtos
-	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts),contents,locations,tags)
+	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
 
 	postsJson, _ := json.Marshal(postsDTOS)
 	w.Write(postsJson)
@@ -748,13 +743,13 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	if profileSettings.UserVisibility == "PUBLIC_VISIBILITY"{
+	if profileSettings.UserVisibility == "PUBLIC_VISIBILITY" {
 		// EVERYONE CAN SELECT THIS POST
 		//finds all conents
 		/*
-		var contents = handler.PostContentService.FindAllContentsForPost(post)
-		var locations = handler.LocationService.FindAllLocationsForPost(post)
-		var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
+			var contents = handler.PostContentService.FindAllContentsForPost(post)
+			var locations = handler.LocationService.FindAllLocationsForPost(post)
+			var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
 		*/
 
 		reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_post/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
@@ -783,7 +778,6 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 			return
 		}
 
-
 		//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 		reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_post/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 		jsonLocationsDTO, _ := json.Marshal(postDTO)
@@ -810,7 +804,6 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
-
 
 		//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 		reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
@@ -840,7 +833,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 		}
 		var postRet = convertSinglePostDTOToSinglePost(postDTO)
 		//creates a list of dtos
-		var postDTO = handler.CreatePostDTO(&postRet,contents,locations,tags)
+		var postDTO = handler.CreatePostDTO(&postRet, contents, locations, tags)
 
 		postJson, _ := json.Marshal(postDTO)
 		w.Write(postJson)
@@ -854,7 +847,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
-	}else{
+	} else {
 		// FOR POSTMAN CHECK (should redirect)
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -867,7 +860,6 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 	}
 
 }
-
 
 // FIND SELECTED POST BY ID (ONLY IF NOT DELETED)!
 // IF PUBLIC/ IF FOLLOWING PRIVATE PROFILE
@@ -903,16 +895,16 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 		return
 	}
 
-	if profileSettings.UserVisibility == "PUBLIC_VISIBILITY"{
+	if profileSettings.UserVisibility == "PUBLIC_VISIBILITY" {
 		// EVERYONE CAN SELECT THIS POST
 		//finds all conents
 		/*
 
-		var contents = handler.PostContentService.FindAllContentsForPost(post)
-		var locations = handler.LocationService.FindAllLocationsForPost(post)
+			var contents = handler.PostContentService.FindAllContentsForPost(post)
+			var locations = handler.LocationService.FindAllLocationsForPost(post)
 
-		//find all tags
-		var tags = handler.PostTagPostsService.FindAllTagsForPost(post)*/
+			//find all tags
+			var tags = handler.PostTagPostsService.FindAllTagsForPost(post)*/
 		reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_post/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 		jsonValidStoriesDTO, _ := json.Marshal(postDTO)
 		resp,err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoriesDTO))
@@ -938,7 +930,6 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
-
 
 		//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 		reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_post/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
@@ -967,7 +958,6 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 			return
 		}
 
-
 		//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 		reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 		jsonTagsDTO, _ := json.Marshal(postDTO)
@@ -995,7 +985,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 			return
 		}
 		//creates a list of dtos
-		var postDTO = handler.CreatePostDTO(post,contents,locations,tags)
+		var postDTO = handler.CreatePostDTO(post, contents, locations, tags)
 
 		postJson, _ := json.Marshal(postDTO)
 		w.Write(postJson)
@@ -1010,7 +1000,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		return
-	}else{
+	} else {
 		// CHECK IF LOGID FOLLOWING POST USERID
 		//var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(), post.UserID)
 		var returnValueFollowing ReturnValueBool
@@ -1028,13 +1018,13 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 		}
 		checkIfFollowing := returnValueFollowing.ReturnValue
 
-		if checkIfFollowing == true{
+		if checkIfFollowing == true {
 
 			//finds all conents
 			/*
-			var contents = handler.PostContentService.FindAllContentsForPost(post)
-			var locations = handler.LocationService.FindAllLocationsForPost(post)
-			var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
+				var contents = handler.PostContentService.FindAllContentsForPost(post)
+				var locations = handler.LocationService.FindAllLocationsForPost(post)
+				var tags = handler.PostTagPostsService.FindAllTagsForPost(post)
 			*/
 			reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_post/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
 			jsonValidStoriesDTO, _ := json.Marshal(postDTO)
@@ -1061,7 +1051,6 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
-
 
 			//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 			reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_post/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
@@ -1090,7 +1079,6 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 				return
 			}
 
-
 			//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 			reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 			jsonTagsDTO, _ := json.Marshal(postDTO)
@@ -1118,7 +1106,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 				return
 			}
 			//creates a list of dtos
-			var postFullDTO = handler.CreatePostDTO(post,contents,locations,tags)
+			var postFullDTO = handler.CreatePostDTO(post, contents, locations, tags)
 
 			postJson, _ := json.Marshal(postFullDTO)
 			w.Write(postJson)
@@ -1151,7 +1139,7 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 
 	// returns only VALID users
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var  allValidUsers []dto.ClassicUserDTO
+	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
@@ -1285,7 +1273,7 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 	}
 
 	//creates a list of dtos
-	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(publicValidPosts),contents,locations,tags)
+	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(publicValidPosts), contents, locations, tags)
 
 	postJson, _ := json.Marshal(postsDTOS)
 	w.Write(postJson)
@@ -1307,8 +1295,8 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 
 	// returns only VALID users but loggedIn user
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
-	var  allValidUsers []dto.ClassicUserDTO
-	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
+	var allValidUsers []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -1346,7 +1334,6 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-
 
 	// returns all POSTS of public and valid users
 	var publicValidPosts = convertListSinglePostsToSinglePostsDTO(handler.SinglePostService.FindAllPublicAndFriendsPostsValid(allPublicUsers))
@@ -1437,7 +1424,7 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	}
 
 	//creates a list of dtos
-	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(publicValidPosts),contents,locations,tags)
+	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(publicValidPosts), contents, locations, tags)
 
 	postJson, _ := json.Marshal(postsDTOS)
 	w.Write(postJson)
@@ -1452,7 +1439,7 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
-	
+
 // all posts (EXCEPT DELETED) for my current logged in user
 func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
@@ -1539,7 +1526,7 @@ func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWrite
 		return
 	}
 
-	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts),contents,locations,tags)
+	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
 
 	postsJson, _ := json.Marshal(postsDTOS)
 	w.Write(postsJson)
@@ -1556,11 +1543,10 @@ func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWrite
 
 }
 
-
 // FIND SELECTED POST FROM LOGGEDIN USER BY ID (ONLY IF NOT DELETED)
 func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.ResponseWriter, r *http.Request) {
 
-	id := r.URL.Query().Get("id") //post id
+	id := r.URL.Query().Get("id")       //post id
 	logId := r.URL.Query().Get("logId") //loged user id
 
 	var post = handler.SinglePostService.FindByID(uuid.MustParse(id))
@@ -1626,7 +1612,6 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.Respo
 		return
 	}
 
-
 	//var locations = handler.LocationService.FindAllLocationsForPost(postDTO)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_post/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(postDTO)
@@ -1681,7 +1666,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.Respo
 		return
 	}
 
-	var postDTOS = handler.CreatePostDTO(post,contents,locations,tags)
+	var postDTOS = handler.CreatePostDTO(post, contents, locations, tags)
 
 	postJson, _ := json.Marshal(postDTOS)
 	w.Write(postJson)
@@ -1760,7 +1745,6 @@ type ReturnValueString struct {
 
 func (handler *SinglePostHandler) CreatePostDTO(posts *model.SinglePost, contents []dto.SinglePostContentDTO, locations []dto.LocationDTO, tags []dto.PostTagPostsDTO) dto.SelectedPostDTO {
 
-
 	var postDTO dto.SelectedPostDTO
 	postDTO.PostId = posts.ID
 	postDTO.Description = posts.Description
@@ -1806,22 +1790,21 @@ func (handler *SinglePostHandler) CreatePostDTO(posts *model.SinglePost, content
 
 	postDTO.Tags = listOfTags
 
-
 	return postDTO
 
 }
 
-func convertListSinglePostsToSinglePostsDTO(singlePosts []model.SinglePost) []dto.SinglePostFullDTO{
+func convertListSinglePostsToSinglePostsDTO(singlePosts []model.SinglePost) []dto.SinglePostFullDTO {
 	var singlePostsDTO []dto.SinglePostFullDTO
 	for i := 0; i < len(singlePosts); i++ {
-		singlePostsDTO=append(singlePostsDTO,convertSinglePostToSinglePostDTO(singlePosts[i]))
+		singlePostsDTO = append(singlePostsDTO, convertSinglePostToSinglePostDTO(singlePosts[i]))
 	}
 	return singlePostsDTO
 }
 
-func convertSinglePostToSinglePostDTO(singlePost model.SinglePost) dto.SinglePostFullDTO{
+func convertSinglePostToSinglePostDTO(singlePost model.SinglePost) dto.SinglePostFullDTO {
 	layout := "2006-01-02T15:04:05.000Z"
-	var singlePostDTO= dto.SinglePostFullDTO{
+	var singlePostDTO = dto.SinglePostFullDTO{
 		ID:           singlePost.ID,
 		Description:  singlePost.Description,
 		CreationDate: singlePost.CreationDate.Format(layout),
@@ -1832,18 +1815,18 @@ func convertSinglePostToSinglePostDTO(singlePost model.SinglePost) dto.SinglePos
 	return singlePostDTO
 }
 
-func convertSinglePostsDTOToListSinglePosts(singlePostsDTO []dto.SinglePostFullDTO) []model.SinglePost{
+func convertSinglePostsDTOToListSinglePosts(singlePostsDTO []dto.SinglePostFullDTO) []model.SinglePost {
 	var singlePosts []model.SinglePost
 	for i := 0; i < len(singlePostsDTO); i++ {
-		singlePosts=append(singlePosts,convertSinglePostDTOToSinglePost(singlePostsDTO[i]))
+		singlePosts = append(singlePosts, convertSinglePostDTOToSinglePost(singlePostsDTO[i]))
 	}
 	return singlePosts
 }
 
-func convertSinglePostDTOToSinglePost(singlePostDTO dto.SinglePostFullDTO) model.SinglePost{
+func convertSinglePostDTOToSinglePost(singlePostDTO dto.SinglePostFullDTO) model.SinglePost {
 	layout := "2006-01-02T15:04:05.000Z"
-	creationDate,_ := time.Parse(layout,singlePostDTO.CreationDate)
-	var singlePost= model.SinglePost{
+	creationDate, _ := time.Parse(layout, singlePostDTO.CreationDate)
+	var singlePost = model.SinglePost{
 		Post: model.Post{
 			ID:           singlePostDTO.ID,
 			Description:  singlePostDTO.Description,
@@ -1862,7 +1845,7 @@ func convertSinglePostDTOToSinglePost(singlePostDTO dto.SinglePostFullDTO) model
 func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWriter, r *http.Request) {
 
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var  allValidUsers []dto.ClassicUserDTO
+	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
@@ -1931,7 +1914,6 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 		return
 	}
 
-
 	tagsJson, _ := json.Marshal(tags)
 	w.Write(tagsJson)
 
@@ -1950,7 +1932,7 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 func (handler *SinglePostHandler) FindAllLocationsForPublicPosts(w http.ResponseWriter, r *http.Request) {
 
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var  allValidUsers []dto.ClassicUserDTO
+	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
@@ -1990,7 +1972,7 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicPosts(w http.Response
 		return
 	}
 
-	var publicValidPosts =convertListSinglePostsToSinglePostsDTO(handler.SinglePostService.FindAllPublicAndFriendsPostsValid(allPublicUsers))
+	var publicValidPosts = convertListSinglePostsToSinglePostsDTO(handler.SinglePostService.FindAllPublicAndFriendsPostsValid(allPublicUsers))
 	//var locations = handler.LocationService.FindAllLocationsForPosts()
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_posts/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(publicValidPosts)
@@ -2077,7 +2059,7 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 	fmt.Println("List id  ---> ")
 	fmt.Println(string(jsonList))
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var  allValidUsers []dto.ClassicUserDTO
+	var allValidUsers []dto.ClassicUserDTO
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err = getJson(reqUrl, &allValidUsers)
 	if err!=nil{
@@ -2189,7 +2171,7 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 		return
 	}
 
-	var postDTO = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts),contents,locations,tags)
+	var postDTO = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
 
 	postsJson, _ := json.Marshal(postDTO)
 	w.Write(postsJson)
@@ -2216,8 +2198,8 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 	locationString := r.URL.Query().Get("locationString")
 	///find_location_id_by_location_string/{locationString}
 	//var location = handler.LocationService.FindLocationIdByLocationString(locationString)
-	var  locationId ReturnValueId
-	reqUrl := fmt.Sprintf("http://%s:%s/find_location_id_by_location_string/%s", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"),locationString)
+	var locationId ReturnValueId
+	reqUrl := fmt.Sprintf("http://%s:%s/find_location_id_by_location_string/%s", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"), locationString)
 	err := getJson(reqUrl, &locationId)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -2230,10 +2212,9 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 		return
 	}
 
-
 	var locationPosts = handler.SinglePostService.FindAllPostIdsWithLocationId(locationId.ID)
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var  allValidUsers []dto.ClassicUserDTO
+	var allValidUsers []dto.ClassicUserDTO
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err = getJson(reqUrl, &allValidUsers)
 	if err!=nil{
@@ -2248,7 +2229,6 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 	}
 
 	var posts = convertListSinglePostsToSinglePostsDTO(handler.SinglePostService.FindAllPublicAndFriendsPosts(locationPosts, allValidUsers))
-
 
 	//var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_posts/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
@@ -2330,7 +2310,7 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 		return
 	}
 
-	var postDTO = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts),contents,locations,tags)
+	var postDTO = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
 
 	postsJson, _ := json.Marshal(postDTO)
 	w.Write(postsJson)
@@ -2345,7 +2325,6 @@ func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter,
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
-
 
 // REGISTERED
 
@@ -2422,10 +2401,9 @@ func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []d
 		panic(err)
 	}
 
-
 	///find_all_user_who_follow_user_id/{id}
 	//var allFollowings = handler.ClassicUserFollowingsService.FindAllUserWhoFollowUserId(id, allValidUsersButLoggedIn) //moj user je classic user
-	reqUrl = fmt.Sprintf("http://%s:%s/find_all_user_who_follow_user_id/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_user_who_follow_user_id/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	jsonAllValidUsersButLoggedIn, _ := json.Marshal(allValidUsersButLoggedIn)
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonAllValidUsersButLoggedIn))
 	if err != nil || resp.StatusCode == 400 {
@@ -2475,7 +2453,6 @@ func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []d
 		panic(err)
 	}
 
-
 	// ALL PUBLIC AND FRIENDS USERS EXCEPT LOGGED
 	var allUsers = handler.MergePublicAndFollowingUsers(allPublicUsers, allFollowingUsers)
 
@@ -2495,7 +2472,7 @@ func (handler *SinglePostHandler) FindAllValidUsersButLoggedIn(id uuid.UUID, all
 	myUser := handler.FindMyUserById(id, allValidUsers)
 
 	for i := 0; i < len(allValidUsers); i++ {
-		found:= myUser.ID == allValidUsers[i].ID
+		found := myUser.ID == allValidUsers[i].ID
 		if !found {
 			allUsers = append(allUsers, allValidUsers[i])
 		}
@@ -2552,7 +2529,6 @@ func (handler *SinglePostHandler) FindAllTagsForPublicAndFollowingPosts(w http.R
 		return
 	}
 
-
 	tagsJson, _ := json.Marshal(tags)
 	w.Write(tagsJson)
 
@@ -2566,8 +2542,6 @@ func (handler *SinglePostHandler) FindAllTagsForPublicAndFollowingPosts(w http.R
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
-
-
 
 // SEARCH LOCATIONS FOR REGISTERED USER - FIND ALL LOCATIONS ON PUBLIC AND FOLLOWING POSTS
 func (handler *SinglePostHandler) FindAllLocationsForPublicAndFollowingPosts(w http.ResponseWriter, r *http.Request) {
@@ -2625,13 +2599,12 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicAndFollowingPosts(w h
 // FIND ALL PUBLIC OR FOLLOWING AND NOT DELETED POSTS WITH TAG - FOR REG USER S
 func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWriter, r *http.Request) {
 
-	id := r.URL.Query().Get("id") //logged in reg user id
+	id := r.URL.Query().Get("id")           //logged in reg user id
 	tagName := r.URL.Query().Get("tagName") //tag id
-
 
 	//var tag = handler.TagService.FindTagByName(tagName)
 	var tag dto.TagFullDTO
-	reqUrl := fmt.Sprintf("http://%s:%s/get_tag_by_name/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tagName)
+	reqUrl := fmt.Sprintf("http://%s:%s/get_tag_by_name/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tagName)
 	err := getJson(reqUrl, &tag)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -2646,7 +2619,7 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 	}
 	//var postIds = handler.PostTagPostsService.FindAllPostIdsWithTagId(tag.ID)
 	var listOfPostIds []uuid.UUID
-	reqUrl = fmt.Sprintf("http://%s:%s/find_post_ids_by_tag_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tag.ID)
+	reqUrl = fmt.Sprintf("http://%s:%s/find_post_ids_by_tag_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tag.ID)
 	err = getJson(reqUrl, &listOfPostIds)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -2749,7 +2722,7 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 		return
 	}
 
-	var postDTO = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts),contents,locations,tags)
+	var postDTO = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
 
 	postsJson, _ := json.Marshal(postDTO)
 	w.Write(postsJson)
@@ -2768,14 +2741,13 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 // FIND ALL PUBLIC OR FOLLOWING NOT DELETED POSTS WITH LOCATION - FOR REG USER S
 func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.ResponseWriter, r *http.Request) {
 
-
 	//county,city,streetName,streetNumber
 	locationString := r.URL.Query().Get("locationString")
 	id := r.URL.Query().Get("id") //logged in reg user id
 
 	//var location = handler.LocationService.FindLocationIdByLocationString(locationString)
-	var  locationId ReturnValueId
-	reqUrl := fmt.Sprintf("http://%s:%s/find_location_id_by_location_string/%s", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"),locationString)
+	var locationId ReturnValueId
+	reqUrl := fmt.Sprintf("http://%s:%s/find_location_id_by_location_string/%s", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"), locationString)
 	err := getJson(reqUrl, &locationId)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -2789,13 +2761,11 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 		return
 	}
 
-
 	var locationPosts = handler.SinglePostService.FindAllPostIdsWithLocationId(locationId.ID)
 
 	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
 	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(uuid.MustParse(id), allUsers)
 	var posts = convertListSinglePostsToSinglePostsDTO(handler.SinglePostService.FindAllPublicAndFriendsPosts(locationPosts, allValidUsersButLoggedIn))
-
 
 	//var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_posts/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
@@ -2878,7 +2848,7 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 		return
 	}
 
-	var postDTO = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts),contents,locations,tags)
+	var postDTO = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
 
 	postsJson, _ := json.Marshal(postDTO)
 	w.Write(postsJson)

@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/form3tech-oss/jwt-go"
 	"github.com/google/uuid"
 	"github.com/mikespook/gorbac"
 	"github.com/sirupsen/logrus"
@@ -20,15 +20,14 @@ import (
 )
 
 type UserHandler struct {
-
-	UserService * service.UserService
-	AdminService * service.AdminService
-	ClassicUserService * service.ClassicUserService
-	AgentService * service.AgentService
-	Rbac * gorbac.RBAC
-	PermissionFindAllUsers *gorbac.Permission
-	RegisteredUserService * service.RegisteredUserService
-	PermissionUpdateUserInfo * gorbac.Permission
+	UserService              *service.UserService
+	AdminService             *service.AdminService
+	ClassicUserService       *service.ClassicUserService
+	AgentService             *service.AgentService
+	Rbac                     *gorbac.RBAC
+	PermissionFindAllUsers   *gorbac.Permission
+	RegisteredUserService    *service.RegisteredUserService
+	PermissionUpdateUserInfo *gorbac.Permission
 	Validator                *validator.Validate
 	PasswordUtil			 *util.PasswordUtil
 	LogInfo *logrus.Logger
@@ -452,7 +451,6 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 		return
 	}
 
-
 	err := handler.UserService.UpdateUserProfileInfo(&userDTO)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -606,12 +604,11 @@ func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Re
 		}).Error("Wrong cast json to list ids!")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
-/*
-	var profileSettings = handler.ProfileSettingsService.FindAllProfileSettingsForPublicUsers()
-*/
+	/*
+		var profileSettings = handler.ProfileSettingsService.FindAllProfileSettingsForPublicUsers()
+	*/
 	var users []model.User
 	users = handler.UserService.FindAllPublicUsers(convertListDataToListUUID(profileSettings))
-
 
 	usersJson, _ := json.Marshal(users)
 	if usersJson != nil {
@@ -670,7 +667,7 @@ type Data struct {
 func convertListDataToListUUID(datas []Data) []uuid.UUID {
 	var uuids []uuid.UUID
 	for i := 0; i < len(datas); i++ {
-		uuids=append(uuids, datas[i].Uuid)
+		uuids = append(uuids, datas[i].Uuid)
 	}
 	return uuids
 }

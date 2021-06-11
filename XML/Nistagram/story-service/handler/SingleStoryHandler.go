@@ -54,7 +54,7 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 			UserId:       singleStoryDTO.UserId,
 			LocationId:   singleStoryDTO.LocationId,
 			IsDeleted:    false,
-			IsExpired: 	  false,
+			IsExpired:    false,
 			Type:         singleStoryType,
 		},
 	}
@@ -111,7 +111,7 @@ func getJson(url string, target interface{}) error {
 //FIDALPUBSTORISNOTREGUS9329
 func (handler *SingleStoryHandler) FindAllPublicStoriesNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var  allValidUsers []dto.ClassicUserDTO
+	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
@@ -241,7 +241,7 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesNotRegisteredUser(w http.
 		return
 	}
 
-	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(publicValidStories),contents,locations,tags)
+	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(publicValidStories), contents, locations, tags)
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)
@@ -320,7 +320,6 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 		return
 	}
 
-
 	var stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllStoriesForUserNotReg(uuid.MustParse(id)))
 	//var contents = handler.StoryContentService.FindAllContentsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
@@ -350,7 +349,6 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-
 
 	//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 	//var locations = handler.LocationService.FindAllLocationsForStories(publicValidStories)
@@ -382,7 +380,6 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 		return
 	}
 
-
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
@@ -412,7 +409,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories),contents,locations,tags)
+	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories), contents, locations, tags)
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)
@@ -427,7 +424,6 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
-
 }
 
 //FIDALPUBSTORISREGUS9823
@@ -436,8 +432,8 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
-	var  allValidUsers []dto.ClassicUserDTO
-	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
+	var allValidUsers []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -506,7 +502,6 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 		return
 	}
 
-
 	//var locations = handler.LocationService.FindAllLocationsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(publicValidStories)
@@ -535,7 +530,6 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-
 
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(publicValidStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
@@ -566,7 +560,7 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 		return
 	}
 
-	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(publicValidStories),contents,locations,tags)
+	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(publicValidStories), contents, locations, tags)
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)
@@ -631,7 +625,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	if profileSettings.UserVisibility == "PRIVATE_VISIBILITY"{
+	if profileSettings.UserVisibility == "PRIVATE_VISIBILITY" {
 
 		//PRIVATE USER
 
@@ -650,7 +644,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			return
 		}
 		checkIfFollowing := returnValueFollowing.ReturnValue
-		if checkIfFollowing == true{
+		if checkIfFollowing == true {
 
 			// PRATI GA
 			//var checkIfCloseFriend = handler.ClassicUserCloseFriendsService.CheckIfCloseFriend(uuid.MustParse(id), uuid.MustParse(logId))
@@ -669,20 +663,16 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			}
 			checkIfCloseFriend := returnValueCloseFriend.ReturnValue
 
-			if checkIfCloseFriend == true{
+			if checkIfCloseFriend == true {
 
 				// NALAZI SE U CLOSE FRIENDS
 
 				stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllStoriesForUserCloseFriend(uuid.MustParse(id)))
 
-
-			} else{
+			} else {
 				// NE NALAZI SE U CLOSE FRIENDS ALI GA PRATI - PUBLIC I ALL FRIENDS
 				stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllStoriesForUserPublicAllFriends(uuid.MustParse(id)))
 			}
-
-
-
 
 			//var contents = handler.StoryContentService.FindAllContentsForStories(stories)
 			reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_stories/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
@@ -713,7 +703,6 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 				return
 			}
 
-
 			//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 			reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 			jsonLocationsDTO, _ := json.Marshal(stories)
@@ -743,7 +732,6 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 				return
 			}
 
-
 			//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 			reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 			jsonTagsDTO, _ := json.Marshal(stories)
@@ -772,7 +760,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 				w.WriteHeader(http.StatusConflict) //400
 				return
 			}
-			var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories),contents,locations,tags)
+			var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories), contents, locations, tags)
 
 			storiesJson, _ := json.Marshal(storiesDTOS)
 			w.Write(storiesJson)
@@ -788,7 +776,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			w.Header().Set("Content-Type", "application/json")
 			return
 
-		}else{
+		} else {
 			// PRIVATE USER I NE PRATI GA = NE MOZE NISTA DA VIDI
 			handler.LogError.WithFields(logrus.Fields{
 				"status": "failure",
@@ -799,7 +787,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
-	}else{
+	} else {
 		//PUBLIC USER
 		//var checkIfFollowing = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(logId), uuid.MustParse(id))
 		var returnValueFollowing ReturnValueBool
@@ -817,7 +805,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 		}
 		checkIfFollowing := returnValueFollowing.ReturnValue
 
-		if checkIfFollowing == true{
+		if checkIfFollowing == true {
 
 			// PRATI GA
 			//var checkIfCloseFriend = handler.ClassicUserCloseFriendsService.CheckIfCloseFriend(uuid.MustParse(id), uuid.MustParse(logId))
@@ -836,18 +824,17 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			}
 			checkIfCloseFriend := returnValueCloseFriend.ReturnValue
 
-			if checkIfCloseFriend == true{
+			if checkIfCloseFriend == true {
 
 				// NALAZI SE U CLOSE FRIENDS
 				stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllStoriesForUserCloseFriend(uuid.MustParse(id)))
 
-
-			} else{
+			} else {
 				// NE NALAZI SE U CLOSE FRIENDS ALI GA PRATI - PUBLIC I ALL FRIENDS
 				stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllStoriesForUserPublicAllFriends(uuid.MustParse(id)))
 			}
 
-		}else{
+		} else {
 			//NE PRATI GA ALI POSTO JE PUBLIC SME DA VIDI PUBLIC STORIJE
 			stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllStoriesForUserPublic(uuid.MustParse(id)))
 		}
@@ -880,7 +867,6 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			return
 		}
 
-
 		//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 		reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 		jsonLocationsDTO, _ := json.Marshal(stories)
@@ -910,7 +896,6 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			return
 		}
 
-
 		//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 		reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 		jsonTagsDTO, _ := json.Marshal(stories)
@@ -939,7 +924,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			w.WriteHeader(http.StatusConflict) //400
 			return
 		}
-		var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories),contents,locations,tags)
+		var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories), contents, locations, tags)
 
 		storiesJson, _ := json.Marshal(storiesDTOS)
 		w.Write(storiesJson)
@@ -953,10 +938,8 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 
-
 	}
 }
-
 
 // returns all VALID stories from FOLLOWING users (FOR HOMEPAGE)
 //FIDALFOLLINGSTORIS8329
@@ -964,8 +947,8 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
-	var  allValidUsers []dto.ClassicUserDTO
-	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
+	var allValidUsers []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -1009,13 +992,12 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 	var allValidStories []dto.SingleStoryFullDTO
 	var stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllFollowingStories(followings))
 
-
-	for i:=0; i<len(stories);i++{
-		if stories[i].Type == "PUBLIC" || stories[i].Type == "ALL_FRIENDS"{
+	for i := 0; i < len(stories); i++ {
+		if stories[i].Type == "PUBLIC" || stories[i].Type == "ALL_FRIENDS" {
 
 			allValidStories = append(allValidStories, stories[i])
 
-		}else if stories[i].Type == "CLOSE_FRIENDS"{
+		} else if stories[i].Type == "CLOSE_FRIENDS" {
 
 			//var checkIfCloseFriend = handler.ClassicUserCloseFriendsService.CheckIfCloseFriend(stories[i].UserId, uuid.MustParse(id))
 			var returnValueCloseFriend ReturnValueBool
@@ -1032,7 +1014,7 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 				return
 			}
 			checkIfCloseFriend := returnValueCloseFriend.ReturnValue
-			if checkIfCloseFriend == true{
+			if checkIfCloseFriend == true {
 
 				allValidStories = append(allValidStories, stories[i])
 			}
@@ -1068,7 +1050,6 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 		return
 	}
 
-
 	//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_stories/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(allValidStories)
@@ -1097,7 +1078,6 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-
 
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_stories/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
@@ -1161,7 +1141,7 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 		return
 	}
 
-	if story.IsDeleted == true{
+	if story.IsDeleted == true {
 
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -1174,7 +1154,7 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 
 	}
 
-	if story.UserId != uuid.MustParse(logId){
+	if story.UserId != uuid.MustParse(logId) {
 		//POSTMAN CHECK
 		//NIJE STORI OD ULOGOVANOG USERA
 		handler.LogError.WithFields(logrus.Fields{
@@ -1216,7 +1196,6 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 		return
 	}
 
-
 	//var locations = handler.LocationService.FindAllLocationsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_story/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(convertSingleStoryToSingleStoryDTO(*story))
@@ -1245,7 +1224,6 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-
 
 	//var tags = handler.StoryTagStoriesService.FindAllTagsForStories(stories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_story/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
@@ -1276,11 +1254,11 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 		return
 	}
 	/*
-	var contents = handler.StoryContentService.FindAllContentsForStories(story)
-	var locations = handler.LocationService.FindAllLocationsForStory(story)
-	var tags = handler.StoryTagStoriesService.FindAllTagsForStory(story)
-	 */
-	var storyDTO = handler.CreateStoryDTO(story,contents,locations,tags)
+		var contents = handler.StoryContentService.FindAllContentsForStories(story)
+		var locations = handler.LocationService.FindAllLocationsForStory(story)
+		var tags = handler.StoryTagStoriesService.FindAllTagsForStory(story)
+	*/
+	var storyDTO = handler.CreateStoryDTO(story, contents, locations, tags)
 
 	storyJson, _ := json.Marshal(storyDTO)
 	w.Write(storyJson)
@@ -1293,13 +1271,11 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
-
 }
 
 type ReturnValueString struct {
 	ReturnValue string `json:"return_value"`
 }
-
 
 // all stories (EXCEPT DELETED) for my current logged in user (expired and not expired, public, all_friend, close friends)
 //FIDALSTORISFORLOGGUS0213
@@ -1392,7 +1368,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWr
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories),contents,locations,tags)
+	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories), contents, locations, tags)
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)
@@ -1419,8 +1395,6 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 		storyDTO.CreationDate = stories[i].CreationDate
 		storyDTO.UserId = stories[i].UserId
 
-
-
 		for j := 0; j < len(contents); j++ {
 			if contents[j].SingleStoryId == stories[i].ID {
 				storyDTO.Path = contents[j].Path
@@ -1442,8 +1416,8 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 		for p := 0; p < len(tags); p++ {
 			if tags[p].StoryId == stories[i].ID {
 				//{id}
-				var  returnValueTagName ReturnValueString
-				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].TagId.String())
+				var returnValueTagName ReturnValueString
+				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tags[p].TagId.String())
 				err := getJson(reqUrl, &returnValueTagName)
 				if err!=nil{
 					handler.LogError.WithFields(logrus.Fields{
@@ -1454,7 +1428,7 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 					}).Error("Wrong cast response body to list ReturnValueString!")
 					return nil
 				}
-				listOfTags = append(listOfTags,returnValueTagName.ReturnValue)
+				listOfTags = append(listOfTags, returnValueTagName.ReturnValue)
 			}
 		}
 
@@ -1477,7 +1451,6 @@ func (handler *SingleStoryHandler) CreateStoriesDTOList(stories []model.SingleSt
 
 //CRSTRYDTO0912
 func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, contents []dto.SingleStoryContentDTO, locations []dto.LocationDTO, tags []dto.StoryTagStoriesDTO) dto.SelectedStoryDTO {
-
 
 	var storyDTO dto.SelectedStoryDTO
 	//fmt.Println("STORIES")
@@ -1505,8 +1478,8 @@ func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, cont
 	var listOfTags []string
 	for p := 0; p < len(tags); p++ {
 		if tags[p].StoryId == story.ID {
-			var  returnValueTagName ReturnValueString
-			reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].TagId.String())
+			var returnValueTagName ReturnValueString
+			reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tags[p].TagId.String())
 			err := getJson(reqUrl, &returnValueTagName)
 			if err!=nil{
 				handler.LogError.WithFields(logrus.Fields{
@@ -1534,25 +1507,25 @@ func (handler *SingleStoryHandler) CreateStoryDTO(story *model.SingleStory, cont
 
 }
 
-func convertListSingleStoriesToSingleStoriesDTO(singleStories []model.SingleStory) []dto.SingleStoryFullDTO{
+func convertListSingleStoriesToSingleStoriesDTO(singleStories []model.SingleStory) []dto.SingleStoryFullDTO {
 	var singleStoriesDTO []dto.SingleStoryFullDTO
 	for i := 0; i < len(singleStories); i++ {
-		singleStoriesDTO=append(singleStoriesDTO,convertSingleStoryToSingleStoryDTO(singleStories[i]))
+		singleStoriesDTO = append(singleStoriesDTO, convertSingleStoryToSingleStoryDTO(singleStories[i]))
 	}
 	return singleStoriesDTO
 }
 
-func convertSingleStoryToSingleStoryDTO(singleStory model.SingleStory) dto.SingleStoryFullDTO{
+func convertSingleStoryToSingleStoryDTO(singleStory model.SingleStory) dto.SingleStoryFullDTO {
 	storyType := ""
-	if singleStory.Type==model.CLOSE_FRIENDS {
-		storyType="CLOSE_FRIENDS"
-	} else if singleStory.Type==model.PUBLIC{
-		storyType="PUBLIC"
-	} else if singleStory.Type==model.ALL_FRIENDS{
-		storyType="ALL_FRIENDS"
+	if singleStory.Type == model.CLOSE_FRIENDS {
+		storyType = "CLOSE_FRIENDS"
+	} else if singleStory.Type == model.PUBLIC {
+		storyType = "PUBLIC"
+	} else if singleStory.Type == model.ALL_FRIENDS {
+		storyType = "ALL_FRIENDS"
 	}
 	layout := "2006-01-02T15:04:05.000Z"
-	var singleStoryDTO= dto.SingleStoryFullDTO{
+	var singleStoryDTO = dto.SingleStoryFullDTO{
 		ID:           singleStory.ID,
 		Description:  singleStory.Description,
 		CreationDate: singleStory.CreationDate.Format(layout),
@@ -1565,27 +1538,27 @@ func convertSingleStoryToSingleStoryDTO(singleStory model.SingleStory) dto.Singl
 	return singleStoryDTO
 }
 
-func convertSingleStoriesDTOToListSingleStories(singleStoriesDTO []dto.SingleStoryFullDTO) []model.SingleStory{
+func convertSingleStoriesDTOToListSingleStories(singleStoriesDTO []dto.SingleStoryFullDTO) []model.SingleStory {
 	var singleStories []model.SingleStory
 	for i := 0; i < len(singleStoriesDTO); i++ {
-		singleStories=append(singleStories,convertSingleStoryDTOToSingleStory(singleStoriesDTO[i]))
+		singleStories = append(singleStories, convertSingleStoryDTOToSingleStory(singleStoriesDTO[i]))
 	}
 	return singleStories
 }
 
-func convertSingleStoryDTOToSingleStory(singleStoryDTO dto.SingleStoryFullDTO) model.SingleStory{
+func convertSingleStoryDTOToSingleStory(singleStoryDTO dto.SingleStoryFullDTO) model.SingleStory {
 	var storyType model.StoryType
-	if singleStoryDTO.Type=="CLOSE_FRIENDS" {
-		storyType=model.CLOSE_FRIENDS
-	} else if singleStoryDTO.Type=="PUBLIC"{
-		storyType=model.PUBLIC
-	} else if singleStoryDTO.Type=="ALL_FRIENDS"{
-		storyType=model.ALL_FRIENDS
+	if singleStoryDTO.Type == "CLOSE_FRIENDS" {
+		storyType = model.CLOSE_FRIENDS
+	} else if singleStoryDTO.Type == "PUBLIC" {
+		storyType = model.PUBLIC
+	} else if singleStoryDTO.Type == "ALL_FRIENDS" {
+		storyType = model.ALL_FRIENDS
 	}
 	layout := "2006-01-02T15:04:05.000Z"
-	creationDate,_ := time.Parse(layout,singleStoryDTO.CreationDate)
-	var singleStory= model.SingleStory{
-		Story:	model.Story{
+	creationDate, _ := time.Parse(layout, singleStoryDTO.CreationDate)
+	var singleStory = model.SingleStory{
+		Story: model.Story{
 			ID:           singleStoryDTO.ID,
 			Description:  singleStoryDTO.Description,
 			CreationDate: creationDate,

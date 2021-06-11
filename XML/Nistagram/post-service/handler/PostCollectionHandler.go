@@ -34,8 +34,8 @@ func (handler *PostCollectionHandler) CreatePostCollection(w http.ResponseWriter
 
 	id := uuid.New()
 	postCollection := model.PostCollection{
-		ID: id,
-		Title: postCollectionDTO.Title,
+		ID:     id,
+		Title:  postCollectionDTO.Title,
 		UserID: postCollectionDTO.UserID,
 	}
 
