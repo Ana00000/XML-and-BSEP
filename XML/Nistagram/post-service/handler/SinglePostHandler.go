@@ -1905,7 +1905,7 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 	var publicValidPosts = convertListSinglePostsToSinglePostsDTO(handler.SinglePostService.FindAllPublicAndFriendsPostsValid(allPublicUsers))
 
 	//var tags = handler.PostTagPostsService.FindAllTagsForPosts(publicValidPosts)
-	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post_tag_posts/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_posts/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(publicValidPosts)
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
 	if err != nil || resp.StatusCode == 400 {
@@ -1919,7 +1919,7 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 		return
 	}
 	//defer resp.Body.Close() mozda treba dodati
-	var tags []dto.PostTagPostsDTO
+	var tags []dto.TagFullDTO
 	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -2045,7 +2045,7 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 
 	//var tag = handler.TagService.FindTagByName(tagName)
 	var tag dto.TagFullDTO
-	reqUrl := fmt.Sprintf("http://%s:%s/get_tag_by_name/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),tagName)
+	reqUrl := fmt.Sprintf("http://%s:%s/get_tag_by_name/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tagName)
 	err := getJson(reqUrl, &tag)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -2059,8 +2059,9 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 	}
 	///find_post_ids_by_tag_id/{tagID}
 	//var postIds = handler.PostTagPostsService.FindAllPostIdsWithTagId(tag.ID)
-	var listOfPostIds []ListId
+	var listOfPostIds []uuid.UUID
 	reqUrl = fmt.Sprintf("http://%s:%s/find_post_ids_by_tag_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tag.ID)
+	fmt.Println("Req sent: "+reqUrl)
 	err = getJson(reqUrl, &listOfPostIds)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -2072,7 +2073,9 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-
+	jsonList,_ := json.Marshal(listOfPostIds)
+	fmt.Println("List id  ---> ")
+	fmt.Println(string(jsonList))
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var  allValidUsers []dto.ClassicUserDTO
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
@@ -2087,12 +2090,23 @@ func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *h
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	var postIds []uuid.UUID
-	for i := 0; i < len(postIds); i++ {
-		postIds=append(postIds,listOfPostIds[i].ID)
-	}
 
+	jsonListValidUser,_ := json.Marshal(allValidUsers)
+	fmt.Println("List valid users  ---> ")
+	fmt.Println(string(jsonListValidUser))
+
+	var postIds []uuid.UUID
+	for i := 0; i < len(listOfPostIds); i++ {
+		postIds=append(postIds,listOfPostIds[i])
+	}
+	jsonList2,_ := json.Marshal(listOfPostIds)
+	fmt.Println("List id  ---> ")
+	fmt.Println(string(jsonList2))
 	var posts = convertListSinglePostsToSinglePostsDTO(handler.SinglePostService.FindAllPublicPostsByIds(postIds, allValidUsers))
+
+	fmt.Println("List posts  ---> ")
+	jsonPosts, _ := json.Marshal(posts)
+	fmt.Println(string(jsonPosts))
 
 	//var contents = handler.PostContentService.FindAllContentsForPosts(posts)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_posts/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))

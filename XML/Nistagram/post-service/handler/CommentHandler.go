@@ -42,13 +42,9 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
-
-	layout := "2021-05-21T15:59:12.000Z"
-	creationDate, _ := time.Parse(layout, commentDTO.CreationDate)
-
 	comment := model.Comment{
 		ID:           uuid.UUID{},
-		CreationDate: creationDate,
+		CreationDate: time.Now(),
 		UserID:       commentDTO.UserID,
 		PostID:       commentDTO.PostID,
 		Text:         commentDTO.Text,
@@ -71,6 +67,10 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 		"action":   "CRCOM571",
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully created comment!")
+	
+	commentIDJson, _ := json.Marshal(comment.ID)
+	w.Write(commentIDJson)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

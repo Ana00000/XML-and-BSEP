@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"github.com/gorilla/mux"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
@@ -16,6 +17,7 @@ type CommentTagCommentsHandler struct {
 	Service * service.CommentTagCommentsService
 	LogInfo *logrus.Logger
 	LogError *logrus.Logger
+	TagService * service.TagService
 }
 
 //CRCOMMTAGCOMMTS9327
@@ -58,5 +60,21 @@ func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.Respon
 	}).Info("Successfully added comment tag for comment!")
 
 	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *CommentTagCommentsHandler) FindAllCommentTagCommentsForComment(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	var retValues []string
+	commentsTagComments := handler.Service.FindAllCommentTagCommentsByCommentId(uuid.MustParse(id))
+	for i := 0; i < len(commentsTagComments); i++ {
+		var tagName = handler.TagService.FindTagNameById(commentsTagComments[i].TagId)
+		retValues = append(retValues, tagName)
+	}
+	tagsJson, _ := json.Marshal(retValues)
+	w.Write(tagsJson)
+
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }

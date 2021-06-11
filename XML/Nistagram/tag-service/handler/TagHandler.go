@@ -157,12 +157,49 @@ func (handler *TagHandler) FindTagForId(w http.ResponseWriter, r *http.Request) 
 	}).Error("Failed finding tag for id!")
 	w.WriteHeader(http.StatusBadRequest)
 }
+
+//FIDALHASHTG9327
+func (handler *TagHandler) FindAllHashTags(w http.ResponseWriter, r *http.Request) {
+	tag := handler.Service.FindAllHashTags()
+	tagJson, _ := json.Marshal(tag)
+	if tagJson != nil {
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location":   "TagHandler",
+			"action":   "FIDALHASHTG9327",
+			"timestamp":   time.Now().String(),
+		}).Info("Successfully founded all hash tags!")
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(tagJson)
+		return
+	}
+	handler.LogError.WithFields(logrus.Fields{
+		"status": "failure",
+		"location":   "TagHandler",
+		"action":   "FIDALHASHTG9327",
+		"timestamp":   time.Now().String(),
+	}).Error("Failed finding all hash tags!")
+	w.WriteHeader(http.StatusBadRequest)
+}
+
 //FIDTGBYNM913
 func (handler *TagHandler) FindTagByName(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name := vars["name"]
-
+	fmt.Println("Finding tag with name "+name)
 	tag := handler.Service.FindTagByName(name)
+
+	if tag==nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "TagHandler",
+			"action":   "FIDTGBYNM913",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding tag by name!")
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	tagType :=""
 	if tag.TagType==model.USER_TAG{
 		tagType="USER_TAG"
@@ -195,3 +232,4 @@ func (handler *TagHandler) FindTagByName(w http.ResponseWriter, r *http.Request)
 	}).Error("Failed finding tag by name!")
 	w.WriteHeader(http.StatusBadRequest)
 }
+

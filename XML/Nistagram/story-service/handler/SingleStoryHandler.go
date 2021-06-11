@@ -1127,7 +1127,7 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(stories) ,contents,locations,tags)
+	var storiesDTOS = handler.CreateStoriesDTOList(convertSingleStoriesDTOToListSingleStories(allValidStories) ,contents,locations,tags)
 
 	storiesJson, _ := json.Marshal(storiesDTOS)
 	w.Write(storiesJson)

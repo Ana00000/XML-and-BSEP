@@ -239,6 +239,7 @@ export default {
       this.$http
         .get("https://localhost:8080/api/tag/find_all_taggable_users_post/")
         .then((response) => {
+          console.log(response.data);
           for (var i = 0; i < response.data.length; i++) {
             if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
               this.allUserTags.push(response.data[i]);
@@ -432,7 +433,7 @@ export default {
     },
     createPostUserTagPosts() {
       this.$http
-        .post("https://localhost:443s/api/tag/post_tag_posts/", {
+        .post("https://localhost:8080/api/tag/post_tag_posts/", {
           tag_id: this.userTag.id,
           post_id: this.postId,
         })

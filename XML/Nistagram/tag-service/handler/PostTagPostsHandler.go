@@ -98,6 +98,8 @@ func (handler *PostTagPostsHandler) FindPostIdsByTagId(w http.ResponseWriter, r 
 	//var listIds []uuid.UUID
 	var tags = handler.Service.FindAllPostIdsWithTagId(uuid.MustParse(tagId))
 	tagsForPostJson, _ := json.Marshal(tags)
+	fmt.Println("ONO STO IDE NA BEK ----->")
+	fmt.Println(string(tagsForPostJson))
 	w.Write(tagsForPostJson)
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status": "success",
@@ -128,7 +130,7 @@ func (handler *PostTagPostsHandler) FindAllTagsForPosts(w http.ResponseWriter, r
 		return
 	}
 
-	var tags = handler.Service.FindAllTagsForPosts(singlePostsDTO)
+	var tags =  handler.Service.FindAllTagsForPosts(singlePostsDTO)
 
 	tagsJson, _ := json.Marshal(convertListTagToListTagFullDTO(tags))
 	w.Write(tagsJson)
@@ -179,7 +181,6 @@ func (handler *PostTagPostsHandler) FindAllTagsForPostsTagPosts(w http.ResponseW
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
 	var tags = handler.Service.FindAllTagsForPostsTagPosts(singlePostsDTO)
 	/*for i := 0; i < len(tags); i++ {
 		fmt.Println("----------Naziv taga : "+tags[i].TagId.String())

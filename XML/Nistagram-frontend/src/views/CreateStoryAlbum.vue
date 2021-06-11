@@ -279,7 +279,7 @@ export default {
     types: ["PICTURE", "VIDEO"],
     selectedType: "PICTURE",
     label1: "Type",
-    storyTypes: ["CLOSE_FRIENDS", "ALL_FRIENDS", "PUBLIC"],
+    storyTypes: ["CLOSE_FRIENDS", "ALL_FRIENDS"],
     selectedStoryType: "CLOSE_FRIENDS",
     label2: "Story publicity type",
     storyAlbumId: null,
@@ -306,12 +306,19 @@ export default {
     userId: null,
     storyId: null,
   }),
+  mounted() {
+    this.init();
+  },
   methods: {
      init() {
+       if (localStorage.getItem("userPrivacy")=="PUBLIC") {
+          this.storyTypes = ["CLOSE_FRIENDS", "PUBLIC"]
+        }
       this.userId = localStorage.getItem("userId");
       this.$http
         .get("https://localhost:8080/api/tag/find_all_taggable_users_story/")
         .then((response) => {
+          console.log(response.data);
           for (var i = 0; i < response.data.length; i++) {
             if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
               this.allUserTags.push(response.data[i]);

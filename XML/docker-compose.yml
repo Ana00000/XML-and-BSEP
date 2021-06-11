@@ -277,6 +277,10 @@ services:
       PASSWORD: root
       DBNAME: tagdb
       DBPORT: 5432
+      SETTINGS_SERVICE_DOMAIN: settings-service
+      SETTINGS_SERVICE_PORT: 8088
+      USER_SERVICE_DOMAIN: user-service
+      USER_SERVICE_PORT: 8091
     depends_on:
       - db
     volumes:
