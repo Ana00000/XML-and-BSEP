@@ -34,6 +34,20 @@ func (handler *SingleStoryStoryHighlightsHandler) CreateSingleStoryStoryHighligh
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-create-single-story-story-highlights-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryStoryHighlightsHandler",
+			"action":   "CRSINGLSTRYSTRYHIGHLHTS9820",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -101,6 +115,19 @@ func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlig
 		return
 	}
 
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-single-story-story-highlights-for-story-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryStoryHighlightsHandler",
+			"action":   "FIDALSINGLSTRYSTRYHIGHLHTSFORSTRY9840",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -149,6 +176,19 @@ func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlig
 			"timestamp":   time.Now().String(),
 		}).Error("User doesn't logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-single-story-story-highlights-for-story-highlight-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryStoryHighlightsHandler",
+			"action":   "FIDALSINGLSTRYSTRYHIGHLHTSFORSTRYLHT9193",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
 

@@ -37,6 +37,19 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-create-single-story-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "CRSINGLSTRY9023",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
 	/*
 	if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -481,11 +494,20 @@ func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.Res
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
-	/*
-	if err := TokenValid(r); err != nil {
 
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-public-stories-registered-user-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
 	}
-	*/
+
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
@@ -652,6 +674,19 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 			"timestamp":   time.Now().String(),
 		}).Error("User doesn't logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-stories-for-user-registered-user-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSREGUS9322",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
 
@@ -1049,7 +1084,22 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 		}).Error("User doesn't logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
-	}/*
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-following-stories-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
+	/*
 	if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -1257,6 +1307,20 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-selected-story-by-id-for-registered-users-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -1438,6 +1502,20 @@ func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWr
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-stories-for-logged-user-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",

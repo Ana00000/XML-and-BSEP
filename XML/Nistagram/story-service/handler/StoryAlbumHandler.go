@@ -35,6 +35,20 @@ func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *htt
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-create-story-album-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "CRSTRYALB8542",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -131,6 +145,20 @@ func (handler *StoryAlbumHandler) FindAllAlbumStoriesForLoggedUser(w http.Respon
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-album-stories-for-logged-user-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALALBSTORISFORLOGGUS8293",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -315,6 +343,19 @@ func (handler *StoryAlbumHandler) FindSelectedStoryAlbumByIdForLoggedUser(w http
 			"timestamp":   time.Now().String(),
 		}).Error("User doesn't logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-selected-story-album-by-id-for-logged-user-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDSELECTSTRYALBBYIDFORLOGGUS983",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
 	/*
@@ -534,6 +575,18 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 		return
 	}
 
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-public-album-stories-registered-user-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALPUBALBSTORISREGUS9012",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -861,6 +914,20 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-following-story-albums-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALFOLLINGSTRYALBMS0910",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
