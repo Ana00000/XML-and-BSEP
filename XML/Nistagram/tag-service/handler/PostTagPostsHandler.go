@@ -22,7 +22,7 @@ type PostTagPostsHandler struct {
 func (handler *PostTagPostsHandler) CreatePostTagPosts(w http.ResponseWriter, r *http.Request) {
 	var postTagPostsDTO dto.PostTagPostsDTO
 	err := json.NewDecoder(r.Body).Decode(&postTagPostsDTO)
-	
+
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -35,9 +35,9 @@ func (handler *PostTagPostsHandler) CreatePostTagPosts(w http.ResponseWriter, r 
 	}
 
 	postTagPosts := model.PostTagPosts{
-		ID:        uuid.UUID{},
-		TagId: postTagPostsDTO.TagId,
-		PostId:    postTagPostsDTO.PostId,
+		ID:     uuid.UUID{},
+		TagId:  postTagPostsDTO.TagId,
+		PostId: postTagPostsDTO.PostId,
 	}
 
 	err = handler.Service.CreatePostTagPosts(&postTagPosts)
@@ -144,12 +144,12 @@ func (handler *PostTagPostsHandler) FindAllTagsForPosts(w http.ResponseWriter, r
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func convertTagToTagFullDTO(tag model.Tag) dto.TagFullDTO{
+func convertTagToTagFullDTO(tag model.Tag) dto.TagFullDTO {
 	tagType := ""
-	if tag.TagType==model.HASH_TAG{
-		tagType="HASH_TAG"
-	} else if tag.TagType ==model.USER_TAG{
-		tagType="USER_TAG"
+	if tag.TagType == model.HASH_TAG {
+		tagType = "HASH_TAG"
+	} else if tag.TagType == model.USER_TAG {
+		tagType = "USER_TAG"
 	}
 	var tagDTO = dto.TagFullDTO{
 		ID:      tag.ID,
@@ -159,7 +159,7 @@ func convertTagToTagFullDTO(tag model.Tag) dto.TagFullDTO{
 	return tagDTO
 }
 
-func convertListTagToListTagFullDTO(tag []model.Tag) []dto.TagFullDTO{
+func convertListTagToListTagFullDTO(tag []model.Tag) []dto.TagFullDTO {
 	var listTagDTO []dto.TagFullDTO
 	for i := 0; i < len(tag); i++ {
 		listTagDTO = append(listTagDTO, convertTagToTagFullDTO(tag[i]))

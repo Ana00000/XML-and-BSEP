@@ -157,7 +157,7 @@ func (handler *AgentHandler) CreateAgent(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	tagId:=uuid.New()
+	tagId := uuid.New()
 	var userTag = dto.UserTagFullDTO{
 		ID:     tagId,
 		Name:   agent.Username,

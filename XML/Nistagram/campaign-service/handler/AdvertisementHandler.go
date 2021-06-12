@@ -33,8 +33,8 @@ func (handler *AdvertisementHandler) CreateAdvertisement(w http.ResponseWriter, 
 	}
 
 	advertisement := model.Advertisement{
-		ID:                     uuid.UUID{},
-		CampaignId:          advertisementDTO.CampaignId,
+		ID:         uuid.UUID{},
+		CampaignId: advertisementDTO.CampaignId,
 	}
 
 	err = handler.Service.CreateAdvertisement(&advertisement)

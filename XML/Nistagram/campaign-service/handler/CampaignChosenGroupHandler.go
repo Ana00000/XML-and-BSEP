@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
@@ -33,8 +34,8 @@ func (handler *CampaignChosenGroupHandler) CreateCampaignChosenGroup(w http.Resp
 	}
 
 	campaignChosenGroup := model.CampaignChosenGroup{
-		ID:                uuid.UUID{},
-		CampaignId:        campaignChosenGroupDTO.CampaignId,
+		ID:                     uuid.UUID{},
+		CampaignId:             campaignChosenGroupDTO.CampaignId,
 		RegisteredUserCategory: campaignChosenGroupDTO.RegisteredUserCategory,
 	}
 
@@ -59,4 +60,3 @@ func (handler *CampaignChosenGroupHandler) CreateCampaignChosenGroup(w http.Resp
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-

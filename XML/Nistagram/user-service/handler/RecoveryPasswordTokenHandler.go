@@ -36,7 +36,7 @@ func (handler *RecoveryPasswordTokenHandler) SendRecoveryPasswordMail(user *mode
 	m.SetHeader("Subject", "Recovery password email")
 
 	// Set E-Mail body. You can set plain text or html with text/html
-	text:= "Dear "+user.FirstName+",\n\nPlease, click on link in below to change your password on our social network!\n\nhttps://localhost:8081/changePasswordByToken/"+token.String()+"/"+user.ID.String()+"\n\nBest regards,\nTim25"
+	text := "Dear " + user.FirstName + ",\n\nPlease, click on link in below to change your password on our social network!\n\nhttps://localhost:8081/changePasswordByToken/" + token.String() + "/" + user.ID.String() + "\n\nBest regards,\nTim25"
 	m.SetBody("text/plain", text)
 
 	// Settings for SMTP server
@@ -67,7 +67,7 @@ func (handler *RecoveryPasswordTokenHandler) SendRecoveryPasswordMail(user *mode
 
 //GENRECRYPASSTOK432
 //Function when user clicks -> FORGOT PASSWORD -> enters email -> clicks RECOVER to get email
-func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w http.ResponseWriter, r *http.Request) {
+func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken(w http.ResponseWriter, r *http.Request) {
 	var emailDTO dto.EmailDTO
 	if err := json.NewDecoder(r.Body).Decode(&emailDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -152,7 +152,7 @@ func (handler *RecoveryPasswordTokenHandler) VerifyRecoveryPasswordToken(w http.
 		return
 	}
 	userIdUUID := recoveryPasswordDTO.UserId
-	tokenUUID:= recoveryPasswordDTO.RecoveryPasswordToken
+	tokenUUID := recoveryPasswordDTO.RecoveryPasswordToken
 
 	var recoveryPasswordToken= handler.RecoveryPasswordTokenService.FindByToken(tokenUUID)
 	if !recoveryPasswordToken.IsValid{

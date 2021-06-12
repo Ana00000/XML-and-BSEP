@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
@@ -32,8 +33,8 @@ func (handler *MultiUseCampaignHandler) CreateMultiUseCampaign(w http.ResponseWr
 		return
 	}
 	layout := "2006-01-02T15:04:05.000Z"
-	exposureTime,_ :=time.Parse(layout,multiUseCampaignDTO.ExposureTime)
-	expiryTime,_ :=time.Parse(layout,multiUseCampaignDTO.ExpiryTime)
+	exposureTime, _ := time.Parse(layout, multiUseCampaignDTO.ExposureTime)
+	expiryTime, _ := time.Parse(layout, multiUseCampaignDTO.ExpiryTime)
 	multiUseCampaign := model.MultiUseCampaign{
 		Campaign:   model.Campaign{
 			ID:                     uuid.UUID{},

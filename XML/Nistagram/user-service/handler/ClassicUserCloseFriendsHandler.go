@@ -6,7 +6,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"time"
-
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -24,7 +23,7 @@ type ClassicUserCloseFriendsHandler struct {
 func (handler *ClassicUserCloseFriendsHandler) CheckIfCloseFriend(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	logId :=vars["logId"]
+	logId := vars["logId"]
 
 	var check = handler.ClassicUserCloseFriendsService.CheckIfCloseFriend(uuid.MustParse(id), uuid.MustParse(logId))
 
@@ -68,7 +67,6 @@ func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w ht
 		return
 	}
 
-
 	// PROVERA DA LI SE MEDJUSOBNO PRATE
 
 	var checkIfFollowingFirstUser = handler.ClassicUserFollowersService.CheckIfFollowers(classicUserCloseFriendsDTO.CloseFriendUserId, classicUserCloseFriendsDTO.ClassicUserId)
@@ -99,11 +97,10 @@ func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w ht
 		}
 	}
 
-
 	classicUserCloseFriends := model.ClassicUserCloseFriends{
-		ID:               uuid.UUID{},
-		ClassicUserId: classicUserCloseFriendsDTO.ClassicUserId,
-		CloseFriendUserId:   classicUserCloseFriendsDTO.CloseFriendUserId,
+		ID:                uuid.UUID{},
+		ClassicUserId:     classicUserCloseFriendsDTO.ClassicUserId,
+		CloseFriendUserId: classicUserCloseFriendsDTO.CloseFriendUserId,
 	}
 	err = handler.ClassicUserCloseFriendsService.CreateClassicUserCloseFriends(&classicUserCloseFriends)
 	if err != nil {
@@ -127,4 +124,3 @@ func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w ht
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-
