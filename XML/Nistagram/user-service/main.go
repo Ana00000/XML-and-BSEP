@@ -281,6 +281,21 @@ func initClassicUserCloseFriendsService(repo *repository.ClassicUserCloseFriends
 	return &service.ClassicUserCloseFriendsService { Repo: repo }
 }
 
+func initContentAuthorizationHandler(rbac *gorbac.RBAC, permissionCreateSinglePostContent *gorbac.Permission,permissionCreatePostAlbumContent *gorbac.Permission,
+	permissionCreateSingleStoryContent *gorbac.Permission,permissionCreateStoryAlbumContent *gorbac.Permission,
+	LogInfo *logrus.Logger,LogError *logrus.Logger,userService *service.UserService) *handler.ContentAuthorizationHandler{
+	return &handler.ContentAuthorizationHandler{
+		UserService:                                   userService,
+		Rbac:                                          rbac,
+		PermissionCreateSinglePostContent:             permissionCreateSinglePostContent,
+		PermissionCreatePostAlbumContent:              permissionCreatePostAlbumContent,
+		PermissionCreateSingleStoryContent:            permissionCreateSingleStoryContent,
+		PermissionCreateStoryAlbumContent:             permissionCreateStoryAlbumContent,
+		LogInfo:                                       LogInfo,
+		LogError:                                      LogError,
+	}
+}
+
 func initTagAuthorizationHandler(rbac *gorbac.RBAC, permissionCreateCommentTagComments *gorbac.Permission,permissionFindAllHashTags *gorbac.Permission,
 	permissionCreateStoryAlbumTagStoryAlbums *gorbac.Permission,permissionFindAllTaggableUsersStory *gorbac.Permission,permissionFindAllTaggableUsersComment *gorbac.Permission,
 	permissionCreatePostTagPosts *gorbac.Permission,permissionCreatePostAlbumTagPostAlbums *gorbac.Permission,permissionFindAllCommentTagCommentsForComment *gorbac.Permission,
@@ -329,7 +344,8 @@ func initClassicUserCloseFriendsHandler(userService *service.UserService,rbac *g
 	}
 }
 
-func handleFunc(requestAuthorizationHandler *handler.RequestsAuthorizationHandler, tagAuthorizationHandler *handler.TagAuthorizationHandler,userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, classicUserHandler *handler.ClassicUserHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler,classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler,classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler,classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler, classicUserCloseFriendsHandler *handler.ClassicUserCloseFriendsHandler){
+func handleFunc(requestAuthorizationHandler *handler.RequestsAuthorizationHandler, contentAuthorizationHandler *handler.ContentAuthorizationHandler, tagAuthorizationHandler *handler.TagAuthorizationHandler,userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, classicUserHandler *handler.ClassicUserHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler,classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler,classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler,classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler, classicUserCloseFriendsHandler *handler.ClassicUserCloseFriendsHandler){
+
 
 	router := mux.NewRouter().StrictSlash(true)
 
@@ -371,6 +387,11 @@ func handleFunc(requestAuthorizationHandler *handler.RequestsAuthorizationHandle
 	router.HandleFunc("/check_if_authentificated/", userHandler.CheckIfAuthentificated).Methods("GET")
 	router.HandleFunc("/get_user_id_by_jwt/", userHandler.GetUserIDFromJWTToken).Methods("GET")
 
+	//autorizacija content
+	router.HandleFunc("/auth/check-create-single-post-content-permission/", contentAuthorizationHandler.CheckCreateSinglePostContentPermission).Methods("POST")
+	router.HandleFunc("/auth/check-create-post-album-content-permission/", contentAuthorizationHandler.CheckCreatePostAlbumContentPermission).Methods("POST")
+	router.HandleFunc("/auth/check-create-single-story-content-permission/", contentAuthorizationHandler.CheckCreateSingleStoryContentPermission).Methods("POST")
+	router.HandleFunc("/auth/check-create-story-album-content-permission/", contentAuthorizationHandler.CheckCreateStoryAlbumContentPermission).Methods("POST")
 
 	//autorizacija tag
 	router.HandleFunc("/auth/check-create-comment-tag-comments-permission/", tagAuthorizationHandler.CheckCreateCommentTagCommentsPermission).Methods("GET")
@@ -438,6 +459,10 @@ func main() {
 	permissionFindAllCommentTagCommentsForComment := gorbac.NewStdPermission("permission-find-all-comment-tag-comments-for-comment")
 	permissionFindAllTaggableUsersComment := gorbac.NewStdPermission("permission-find-all-taggable-users-comment")
 	permissionFindAllHashTags := gorbac.NewStdPermission("permission-FindAllHashTags")
+	permissionCreateSinglePostContent := gorbac.NewStdPermission("permission-create-single-post-content")
+	permissionCreatePostAlbumContent := gorbac.NewStdPermission("permission-create-post-album-content")
+	permissionCreateSingleStoryContent := gorbac.NewStdPermission("permission-create-single-story-content")
+	permissionCreateStoryAlbumContent := gorbac.NewStdPermission("permission-create-story-album-content")
 
 	//REQUESTS MICROSERVICE
 	permissionCreateFollowRequest := gorbac.NewStdPermission("permission-create-follow-request")
@@ -469,6 +494,10 @@ func main() {
 	roleAgent.Assign(permissionFindAllCommentTagCommentsForComment)
 	roleAgent.Assign(permissionFindAllTaggableUsersComment)
 	roleAgent.Assign(permissionFindAllHashTags)
+	roleAgent.Assign(permissionCreateSinglePostContent)
+	roleAgent.Assign(permissionCreatePostAlbumContent)
+	roleAgent.Assign(permissionCreateSingleStoryContent)
+	roleAgent.Assign(permissionCreateStoryAlbumContent)
 
 	//REQUESTS MICROSERVICE
 	roleAgent.Assign(permissionCreateFollowRequest)
@@ -494,6 +523,10 @@ func main() {
 	roleRegisteredUser.Assign(permissionFindAllCommentTagCommentsForComment)
 	roleRegisteredUser.Assign(permissionFindAllTaggableUsersComment)
 	roleRegisteredUser.Assign(permissionFindAllHashTags)
+	roleRegisteredUser.Assign(permissionCreateSinglePostContent)
+	roleRegisteredUser.Assign(permissionCreatePostAlbumContent)
+	roleRegisteredUser.Assign(permissionCreateSingleStoryContent)
+	roleRegisteredUser.Assign(permissionCreateStoryAlbumContent)
 
 	//REQUESTS MICROSERVICE
 	roleRegisteredUser.Assign(permissionCreateFollowRequest)
@@ -536,7 +569,11 @@ func main() {
 		&permissionCreatePostTagPosts,&permissionCreatePostAlbumTagPostAlbums,&permissionFindAllCommentTagCommentsForComment,
 		&permissionCreateTag,&permissionFindAllTaggableUsersPost, logInfo,logError,userService)
 
-	requestsAuthorizationHandler := initRequestsAuthorizationHandler(rbac, &permissionCreateFollowRequest, &permissionRejectFollowRequest, &permissionFindRequestById, &permissionFindAllPendingFollowerRequestsForUser, logInfo,logError,userService)
+	requestsAuthorizationHandler := initRequestsAuthorizationHandler(rbac, &permissionCreateFollowRequest, &permissionRejectFollowRequest, 
+		&permissionFindRequestById, &permissionFindAllPendingFollowerRequestsForUser, logInfo,logError,userService)
+	
+	contentAuthorizationHandler := initContentAuthorizationHandler(rbac, &permissionCreateSinglePostContent,&permissionCreatePostAlbumContent,
+		 &permissionCreateSingleStoryContent,&permissionCreateStoryAlbumContent,logInfo,logError,userService)
 
 	passwordUtil := initPasswordUtil()
 	userHandler := initUserHandler(&permissionFindUserByID,logInfo,logError,recoveryPasswordTokenService,userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo, validator, passwordUtil)
@@ -550,6 +587,7 @@ func main() {
 	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(logInfo,logError,recoveryPasswordTokenService,userService, validator)
 	classicUserHandler := initClassicUserHandler(userService,&permissionFindAllUsersButLoggedIn,rbac,logInfo,logError,classicUserService, classicUserFollowingsService)
 	classicUserCloseFriendsHandler := initClassicUserCloseFriendsHandler( userService, rbac, &permissionCreateClassicUserCloseFriend, logInfo,logError,classicUserCloseFriendsService, classicUserFollowersService)
-	handleFunc(requestsAuthorizationHandler,tagAuthorizationHandler,userHandler, confirmationTokenHandler, adminHandler,classicUserHandler, agentHandler,registeredUserHandler,classicUserCampaignsHandler,classicUserFollowingsHandler,classicUserFollowersHandler,recoveryPasswordTokenHandler, classicUserCloseFriendsHandler)
+
+	handleFunc(requestsAuthorizationHandler, contentAuthorizationHandler,tagAuthorizationHandler,userHandler, confirmationTokenHandler, adminHandler,classicUserHandler, agentHandler,registeredUserHandler,classicUserCampaignsHandler,classicUserFollowingsHandler,classicUserFollowersHandler,recoveryPasswordTokenHandler, classicUserCloseFriendsHandler)
 
 }
