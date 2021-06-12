@@ -44,19 +44,9 @@ func (handler *PostAlbumTagPostAlbumsHandler) CreatePostAlbumTagPostAlbums(w htt
 			"action":   "CRPOALBTGPOALBMS9832",
 			"timestamp":   time.Now().String(),
 		}).Error("Forbidden method for logged in user!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "PostAlbumTagPostAlbumsHandler",
-			"action":   "CRPOALBTGPOALBMS9832",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	var postAlbumTagPostAlbumsDTO dto.PostAlbumTagPostAlbumsDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumTagPostAlbumsDTO)

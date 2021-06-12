@@ -34,6 +34,19 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-create-comment-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "CommentHandler",
+			"action":   "CRCOM571",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 401
+		return
+	}
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -111,6 +124,19 @@ func (handler *CommentHandler) FindAllCommentsForPost(w http.ResponseWriter, r *
 			"timestamp":   time.Now().String(),
 		}).Error("User doesn't logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-comments-for-post-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "CommentHandler",
+			"action":   "FACFP572",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 401
 		return
 	}
 	/*if err := TokenValid(r); err != nil {

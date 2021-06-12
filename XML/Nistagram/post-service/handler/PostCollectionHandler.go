@@ -34,6 +34,19 @@ func (handler *PostCollectionHandler) CreatePostCollection(w http.ResponseWriter
 		return
 	}
 
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-create-post-collection-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostCollectionHandler",
+			"action":   "CRPCL590",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 401
+		return
+	}
+
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -103,6 +116,19 @@ func (handler *PostCollectionHandler) FindAllPostCollectionsForUserRegisteredUse
 			"timestamp":   time.Now().String(),
 		}).Error("User doesn't logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-post-collections-for-user-registered-user-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostCollectionHandler",
+			"action":   "FAPCU591",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 401
 		return
 	}
 

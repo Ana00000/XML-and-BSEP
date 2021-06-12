@@ -44,20 +44,9 @@ func (handler *StoryTagStoriesHandler) CreateStoryTagStories(w http.ResponseWrit
 			"action":   "CRSTRYTGSTORIS92123",
 			"timestamp":   time.Now().String(),
 		}).Error("Forbidden method for logged in user!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "StoryTagStoriesHandler",
-			"action":   "CRSTRYTGSTORIS92123",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	var storyTagStoriesDTO dto.StoryTagStoriesDTO
 	err := json.NewDecoder(r.Body).Decode(&storyTagStoriesDTO)

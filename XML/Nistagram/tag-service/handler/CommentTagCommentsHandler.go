@@ -46,20 +46,9 @@ func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.Respon
 			"action":   "CRCOMMTAGCOMMTS9327",
 			"timestamp":   time.Now().String(),
 		}).Error("Forbidden method for logged in user!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "CommentTagCommentsHandler",
-			"action":   "CRCOMMTAGCOMMTS9327",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	var commentTagCommentsDTO dto.CommentTagCommentsDTO
 	err := json.NewDecoder(r.Body).Decode(&commentTagCommentsDTO)
@@ -137,20 +126,9 @@ func (handler *CommentTagCommentsHandler) FindAllCommentTagCommentsForComment(w 
 			"action":   "FIDALCOMMTGCOMMTSFORCOMM9027",
 			"timestamp":   time.Now().String(),
 		}).Error("Forbidden method for logged in user!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "CommentTagCommentsHandler",
-			"action":   "FIDALCOMMTGCOMMTSFORCOMM9027",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	vars := mux.Vars(r)
 	id := vars["id"]

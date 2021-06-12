@@ -39,16 +39,18 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 		return
 	}
 
-	/*if err := TokenValid(r); err != nil {
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-create-single-post-content-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "SinglePostContentHandler",
 			"action":   "CRSIPOCOB123",
 			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
-	}*/
+	}
 
 	var singlePostContentDTO dto.SinglePostContentDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostContentDTO)

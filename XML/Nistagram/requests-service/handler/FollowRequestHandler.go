@@ -76,6 +76,19 @@ func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, 
 		return
 	}
 
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-create-follow-request-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "CREFOLLOWREQ6319",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -169,6 +182,19 @@ func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, 
 			"timestamp":   time.Now().String(),
 		}).Error("User doesn't logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-reject-follow-request-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "REJFOLLOWREQ4939",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
 
@@ -274,6 +300,19 @@ func (handler *FollowRequestHandler) FindAllPendingFollowerRequestsForUser(w htt
 		return
 	}
 
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-pending-follower-requests-for-user-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "FIDALLPENFOLLOWERREQFORUS6700",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
 	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -324,6 +363,19 @@ func (handler *FollowRequestHandler) FindRequestById(w http.ResponseWriter, r *h
 			"timestamp":   time.Now().String(),
 		}).Error("User doesn't logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-request-by-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "FIDREQBYID2431",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
 
