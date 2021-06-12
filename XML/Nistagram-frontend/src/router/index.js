@@ -209,8 +209,17 @@ const routes = [
     path: '/postsForSelectedLocationRegistered',
     name: 'PostsForSelectedLocationRegistered',
     component: () => import('../views/PostsForSelectedLocationRegistered.vue')
+  },
+  {
+    path: '/unauthorizedPage',
+    name: 'UnauthorizedPage',
+    component: () => import('../views/UnauthorizedPage.vue')
+  },
+  {
+    path: '/forbiddenPage',
+    name: '/ForbiddenPage',
+    component: () => import('../views/ForbiddenPage.vue')
   }
-  
 ]
 
 const router = new VueRouter({
