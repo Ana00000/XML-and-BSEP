@@ -215,7 +215,11 @@ const routes = [
     name: 'UnauthorizedPage',
     component: () => import('../views/UnauthorizedPage.vue')
   },
-  
+  {
+    path: '/forbiddenPage',
+    name: '/ForbiddenPage',
+    component: () => import('../views/ForbiddenPage.vue')
+  }
 ]
 
 const router = new VueRouter({
