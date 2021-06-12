@@ -24,7 +24,7 @@ public class TokenUtils {
 	public String SECRET;
 
 	// Validity period
-	@Value("300000000")
+	@Value("3600000")
 	private int EXPIRES_IN;
 
 	private static final String AUDIENCE_WEB = "web";

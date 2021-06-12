@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -214,7 +213,7 @@ public class UserController {
 		try {
 
 			ConfirmationToken confirmationToken = confirmationTokenService.findByConfirmationToken(token);
-			if (confirmationToken != null) {
+			if (confirmationToken != null && LocalDateTime.now().isBefore(confirmationToken.getCreatedDate().plusDays(5))) {
 				setConfirmedAccount(confirmationToken);
 				loggerInfo.info("timestamp="+LocalDateTime.now().toString()+" action=CONFACC43 status=success ID="+confirmationToken.getUsers().getId());
 				return new ResponseEntity<>(HttpStatus.OK);

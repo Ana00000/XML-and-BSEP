@@ -1,6 +1,7 @@
 package bsep.bsep.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -30,8 +31,8 @@ public class ConfirmationToken {
     @Column(name="confirmation_token")
     private String confirmationToken;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd", timezone = "UTC")
-    private LocalDate createdDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+    private LocalDateTime createdDate;
 
     @OneToOne(targetEntity = Users.class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
@@ -41,7 +42,7 @@ public class ConfirmationToken {
     
     
 
-    public ConfirmationToken(Long id, String confirmationToken, LocalDate createdDate, Users users) {
+    public ConfirmationToken(Long id, String confirmationToken, LocalDateTime createdDate, Users users) {
 		super();
 		this.id = id;
 		this.confirmationToken = confirmationToken;
@@ -53,7 +54,7 @@ public class ConfirmationToken {
 
 	public ConfirmationToken(Users users) {
         this.users = users;
-        createdDate = LocalDate.now();
+        createdDate = LocalDateTime.now();
         confirmationToken = UUID.randomUUID().toString();
     }
 
@@ -73,11 +74,11 @@ public class ConfirmationToken {
 		this.confirmationToken = confirmationToken;
 	}
 
-	public LocalDate getCreatedDate() {
+	public LocalDateTime getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(LocalDate createdDate) {
+	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
 	}
 
