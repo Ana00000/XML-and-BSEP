@@ -9,6 +9,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
+	"log"
 	"net/http"
 	"os"
 	_ "strconv"
@@ -24,6 +25,30 @@ type SingleStoryHandler struct {
 
 //CRSINGLSTRY9023
 func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "CRSINGLSTRY9023",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "CRSINGLSTRY9023",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	*/
 	var singleStoryDTO dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
 	if err != nil {
@@ -105,6 +130,17 @@ func getJson(url string, target interface{}) error {
 	defer r.Body.Close()
 
 	return json.NewDecoder(r.Body).Decode(target)
+}
+
+func Request(url string, token string) *http.Response {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	tokenString := "Bearer "+token
+	req.Header.Set("Authorization", tokenString)
+	resp, err := http.DefaultClient.Do(req)
+	return resp
 }
 
 //// tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
@@ -433,6 +469,23 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 //FIDALPUBSTORISREGUS9823
 func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALPUBSTORISREGUS9823",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*
+	if err := TokenValid(r); err != nil {
+
+	}
+	*/
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
@@ -589,6 +642,30 @@ type ReturnValueBool struct {
 // metoda koja se poziva kada registrovani user udje na profil nekog usera
 //FIDALSTORISFORUSREGUS9322
 func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSREGUS9322",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORUSREGUS9322",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 	logId := r.URL.Query().Get("logId")
 	var stories []dto.SingleStoryFullDTO
@@ -961,6 +1038,29 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 // returns all VALID stories from FOLLOWING users (FOR HOMEPAGE)
 //FIDALFOLLINGSTORIS8329
 func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}/*
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALFOLLINGSTORIS8329",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
@@ -1145,6 +1245,28 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 // FIND SELECTED STORY BY ID (ONLY IF NOT DELETED)!
 //FIDSELECTSTRYBYIDFORREGUSRS9031
 func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
 
 	id := r.URL.Query().Get("id")
 	logId := r.URL.Query().Get("logId")
@@ -1304,6 +1426,29 @@ type ReturnValueString struct {
 // all stories (EXCEPT DELETED) for my current logged in user (expired and not expired, public, all_friend, close friends)
 //FIDALSTORISFORLOGGUS0213
 func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDSELECTSTRYBYIDFORREGUSRS9031",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "FIDALSTORISFORLOGGUS0213",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 
 	var stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllStoriesForLoggedUser(uuid.MustParse(id)))

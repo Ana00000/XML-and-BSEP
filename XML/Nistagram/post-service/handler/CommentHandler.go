@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -9,6 +10,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -20,6 +22,29 @@ type CommentHandler struct {
 }
 
 func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "CommentHandler",
+			"action":   "CRCOM571",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "CommentHandler",
+			"action":   "CRCOM571",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	var commentDTO dto.CommentDTO
 	if err := json.NewDecoder(r.Body).Decode(&commentDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -76,6 +101,29 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 }
 
 func (handler *CommentHandler) FindAllCommentsForPost(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "CommentHandler",
+			"action":   "FACFP572",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "CommentHandler",
+			"action":   "FACFP572",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 
 	comments := handler.Service.FindAllCommentsForPost(uuid.MustParse(id))

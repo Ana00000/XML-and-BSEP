@@ -61,6 +61,7 @@
 export default {
   name: "PostsForSelectedTagRegistered",
   data: () => ({
+    token: null,
     posts: [],
   }),
   mounted() {
@@ -68,8 +69,13 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       this.$http
-        .get("https://localhost:8080/api/post/find_all_posts_for_tag_reg_user?tagName="+localStorage.getItem("selectedTagName")+"&id=" + localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/post/find_all_posts_for_tag_reg_user?tagName="+localStorage.getItem("selectedTagName")+"&id=" + localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((response) => {
           this.posts = response.data;
         })

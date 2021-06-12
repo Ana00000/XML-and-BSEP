@@ -224,10 +224,12 @@ export default {
     stories: [],
     logId: null,
     albumPosts: [],
+    token: null,
     albumStories: [],
   }),
   mounted() {
     this.logId = localStorage.getItem("userId");
+    this.token = localStorage.getItem("token");
     this.init();
   },
   methods: {
@@ -241,7 +243,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_posts_for_logged_user?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        }
         )
         .then((response) => {
           this.posts = response.data;
@@ -252,7 +258,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_stories_for_logged_user?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.stories = response.data;
@@ -263,7 +273,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_album_posts_for_logged_user?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        }
         )
         .then((response) => {
           this.albumPosts = response.data;
@@ -274,7 +288,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_album_stories_for_logged_user?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.albumStories = response.data;

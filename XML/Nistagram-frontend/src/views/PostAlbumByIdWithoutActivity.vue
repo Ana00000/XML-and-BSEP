@@ -79,6 +79,7 @@ export default {
   name: "PostAlbumByIdWithoutActivity",
   data: () => ({
     postAlbum: null,
+    token: null,
     postAlbumContents: [],
   }),
   mounted() {
@@ -86,12 +87,17 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       this.$http
         .get(
           "https://localhost:8080/api/post/find_selected_post_album_for_logged_user?id=" +
             localStorage.getItem("mySelectedPostAlbumId") +
             "&logId=" +
-            localStorage.getItem("mySelectedUserId")
+            localStorage.getItem("mySelectedUserId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        }
         )
         .then((response) => {
           this.postAlbum = response.data;

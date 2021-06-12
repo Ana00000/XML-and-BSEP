@@ -28,6 +28,8 @@ type UserHandler struct {
 	Rbac * gorbac.RBAC
 	PermissionFindAllUsers *gorbac.Permission
 	RegisteredUserService * service.RegisteredUserService
+	RecoveryPasswordTokenService *service.RecoveryPasswordTokenService
+	PermissionFindUserByID * gorbac.Permission
 	PermissionUpdateUserInfo * gorbac.Permission
 	Validator                *validator.Validate
 	PasswordUtil			 *util.PasswordUtil
@@ -70,6 +72,7 @@ func TokenValid(r *http.Request) error {
 	}
 	return nil
 }
+
 //FIDALUSRS2330
 func (handler *UserHandler) FindAllUsers(w http.ResponseWriter, r *http.Request) {
 
@@ -143,10 +146,55 @@ func CreateToken(userName string) (string, error) {
 	}
 	return token, nil
 }
+
+func (handler *UserHandler) GetUserIDFromJWTToken(w http.ResponseWriter, r *http.Request){
+	token, err := VerifyToken(r)
+	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "GetUserIDFromJWTToken",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed verified token!")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		userId:= fmt.Sprintf("%s", claims["user_id"])
+		retValJson,_ := json.Marshal(userId)
+		w.Write(retValJson)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	handler.LogError.WithFields(logrus.Fields{
+		"status": "failure",
+		"location":   "UserHandler",
+		"action":   "GetUserIDFromJWTToken",
+		"timestamp":   time.Now().String(),
+	}).Error("Token doesn't valid!")
+	w.WriteHeader(http.StatusBadRequest)
+}
+
+func getUserNameFromJWT(r *http.Request) (string,error) {
+	token, err := VerifyToken(r)
+	if err!=nil{
+		return "",err
+	}
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		userId:= fmt.Sprintf("%s", claims["user_id"])
+		return userId, nil
+	}
+	return "",err
+}
+
+
+
 //CHUSPASS9112
 func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
 	var userChangePasswordDTO dto.UserChangePasswordDTO
-
 	err := json.NewDecoder(r.Body).Decode(&userChangePasswordDTO)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -156,6 +204,43 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 			"timestamp":   time.Now().String(),
 		}).Error("Wrong cast json to UserChangePasswordDTO!")
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var recoveryPasswordToken = handler.RecoveryPasswordTokenService.FindByID(userChangePasswordDTO.RecoveryPasswordTokenID)
+
+	if recoveryPasswordToken==nil || recoveryPasswordToken.Status!=model.VERIFIED{
+		if recoveryPasswordToken.Status!=model.VERIFIED{
+			err = handler.RecoveryPasswordTokenService.UpdateRecoveryPasswordTokenValidity(recoveryPasswordToken.RecoveryPasswordToken, model.INVALID)
+			if err != nil {
+				handler.LogError.WithFields(logrus.Fields{
+					"status": "failure",
+					"location":   "UserHandler",
+					"action":   "CHUSPASS9112",
+					"timestamp":   time.Now().String(),
+				}).Error("Failed updating recovery token to invalid!")
+				return
+			}
+		}
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "CHUSPASS9112",
+			"timestamp":   time.Now().String(),
+		}).Error("Recovery password token not found or his status not appropriate!")
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
+
+	var recoveryPasswordTokenUser = handler.UserService.FindByID(recoveryPasswordToken.UserId)
+	if recoveryPasswordTokenUser==nil || recoveryPasswordTokenUser.Email!=userChangePasswordDTO.Email{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "CHUSPASS9112",
+			"timestamp":   time.Now().String(),
+		}).Error("Recovery password user not exist or user email not match with recovery password token user!")
+		w.WriteHeader(http.StatusConflict)
 		return
 	}
 
@@ -270,6 +355,18 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 			return
 		}
 	}
+
+	err = handler.RecoveryPasswordTokenService.UpdateRecoveryPasswordTokenValidity(recoveryPasswordToken.RecoveryPasswordToken, model.INVALID)
+	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "CHUSPASS9112",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed updating recovery token to invalid!")
+		return
+	}
+
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status": "success",
 		"location":   "RegisteredUserHandler",
@@ -537,6 +634,42 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 
 //FIDBYID0329
 func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "FIDBYID0329",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	userName, err := getUserNameFromJWT(r)
+	if err!=nil	{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "FIDBYID0329",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding user from jwt token!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	var userSignIn = handler.UserService.FindByUserName(userName)
+	var userRole = getRoleByUser(userSignIn)
+
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionFindUserByID, nil) {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "FIDBYID0329",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
 	id := r.URL.Query().Get("id")
 
 	var user = handler.UserService.FindByID(uuid.MustParse(id))
@@ -661,6 +794,21 @@ func (handler *UserHandler) FindByUserName(w http.ResponseWriter, r *http.Reques
 	}).Info("Successfully founded user by username!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+//CHCKIFAUTH9342
+func (handler *UserHandler) CheckIfAuthentificated(w http.ResponseWriter, r *http.Request) {
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "CHCKIFAUTH9342",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
 
 type Data struct {

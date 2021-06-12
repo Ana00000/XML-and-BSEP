@@ -2,12 +2,14 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
 	"net/http"
+	"os"
 	_ "strconv"
 	"time"
 )
@@ -20,6 +22,29 @@ type SingleStoryStoryHighlightsHandler struct {
 
 //CRSINGLSTRYSTRYHIGHLHTS9820
 func (handler *SingleStoryStoryHighlightsHandler) CreateSingleStoryStoryHighlights(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryStoryHighlightsHandler",
+			"action":   "CRSINGLSTRYSTRYHIGHLHTS9820",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryStoryHighlightsHandler",
+			"action":   "CRSINGLSTRYSTRYHIGHLHTS9820",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	var singleStoryStoryHighlightsDTO dto.SingleStoryStoryHighlightsDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryStoryHighlightsDTO)
 	if err != nil {
@@ -62,6 +87,31 @@ func (handler *SingleStoryStoryHighlightsHandler) CreateSingleStoryStoryHighligh
 
 //FIDALSINGLSTRYSTRYHIGHLHTSFORSTRY9840
 func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlightsForStory(w http.ResponseWriter, r *http.Request) {
+
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryStoryHighlightsHandler",
+			"action":   "FIDALSINGLSTRYSTRYHIGHLHTSFORSTRY9840",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryStoryHighlightsHandler",
+			"action":   "FIDALSINGLSTRYSTRYHIGHLHTSFORSTRY9840",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 
 	singleStoryStoryHighlights := handler.Service.FindAllSingleStoryStoryHighlightsForStory(uuid.MustParse(id))
@@ -89,6 +139,30 @@ func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlig
 
 //FIDALSINGLSTRYSTRYHIGHLHTSFORSTRYLHT9193
 func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlightsForStoryHighlight(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryStoryHighlightsHandler",
+			"action":   "FIDALSINGLSTRYSTRYHIGHLHTSFORSTRYLHT9193",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryStoryHighlightsHandler",
+			"action":   "FIDALSINGLSTRYSTRYHIGHLHTSFORSTRYLHT9193",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 
 	singleStoryStoryHighlights := handler.Service.FindAllSingleStoryStoryHighlightsForStoryHighlight(uuid.MustParse(id))

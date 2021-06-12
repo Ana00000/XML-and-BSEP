@@ -220,6 +220,7 @@ export default {
     user: [],
     highlightedStories: [],
     title: "",
+    token: null,
   }),
   mounted() {
     this.init();
@@ -232,7 +233,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_story_highlights_for_user?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+            }
         )
         .then((response) => {
           this.highlightedStories = response.data;
@@ -240,7 +245,11 @@ export default {
         .catch(console.log);
 
       this.$http
-        .get("https://localhost:8080/api/user/find_user_by_id?id=" + this.id)
+        .get("https://localhost:8080/api/user/find_user_by_id?id=" + this.id,{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           this.user = response.data;
           this.setUserInfo(this.user);
@@ -333,6 +342,10 @@ export default {
         .post("https://localhost:8080/api/story/story_highlight/", {
           title: this.title,
           userID: localStorage.getItem("userId"),
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
         })
         .then((response) => {
           console.log(response);

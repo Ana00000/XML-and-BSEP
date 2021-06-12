@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/mikespook/gorbac"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
@@ -19,6 +20,9 @@ import (
 type ClassicUserHandler struct {
 	ClassicUserService * service.ClassicUserService
 	ClassicUserFollowingsService * service.ClassicUserFollowingsService
+	UserService *service.UserService
+	Rbac * gorbac.RBAC
+	PermissionFindAllUsersButLoggedIn *gorbac.Permission
 	LogInfo *logrus.Logger
 	LogError *logrus.Logger
 }
@@ -126,6 +130,42 @@ func getJson(url string, target interface{}) error {
 
 //FIDALUSRSBUTLOGEDIN3231
 func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *http.Request) {
+
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "FIDALUSRSBUTLOGEDIN3231",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	userName, err := getUserNameFromJWT(r)
+	if err!=nil	{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "FIDALUSRSBUTLOGEDIN3231",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding user from jwt token!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	var userSigned = handler.UserService.FindByUserName(userName)
+	var userRole = getRoleByUser(userSigned)
+
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionFindAllUsersButLoggedIn, nil) {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "FIDALUSRSBUTLOGEDIN3231",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 
 	id := r.URL.Query().Get("id")
 

@@ -81,6 +81,7 @@ export default {
     locations: [],
     locationsIds: [],
     locationsCopy: [],
+    token: null,
     selectedLocation: null,
     locationString: "",
   }),
@@ -89,8 +90,13 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       this.$http
-        .get("https://localhost:8080/api/post/find_all_locations_for_public_friends_posts?id="+localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/post/find_all_locations_for_public_friends_posts?id="+localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((resp) => {
           this.locations = resp.data;
           this.locationsCopy = resp.data;

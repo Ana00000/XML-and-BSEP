@@ -111,6 +111,7 @@
 export default {
   name: "FriendsStories",
   data: () => ({
+    token: null,
     stories: [],
     publicPath: process.env.VUE_APP_BASE_URL,
     albumStories: [],
@@ -120,8 +121,13 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       this.$http
-        .get("https://localhost:8080/api/story/find_all_following_stories?id=" + localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/story/find_all_following_stories?id=" + localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           this.stories = response.data;
           console.log(response.data);
@@ -134,8 +140,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_following_story_albums?id=" +
-            localStorage.getItem("userId")
-        )
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           this.albumStories = response.data;
         })

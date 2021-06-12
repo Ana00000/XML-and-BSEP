@@ -273,14 +273,23 @@ export default {
         .catch(console.log("Didn't set user info!"));
 
         this.$http
-        .get("https://localhost:8080/api/post/find_all_posts_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/post/find_all_posts_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        }
+        )
         .then((response) => {
           this.posts = response.data;
         })
         .catch(console.log);
 
         this.$http
-        .get("https://localhost:8080/api/story/find_all_stories_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/story/find_all_stories_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"),{
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
         .then((response) => {
           this.stories = response.data;
         })
@@ -301,7 +310,11 @@ export default {
         .post("https://localhost:8080/api/user/create_following/", {
           classic_user_id: this.logId,
           following_user_id: this.selectedUser,
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((resp) => {
           console.log(resp.data);
           alert("Successfully followed profile!");
@@ -319,6 +332,10 @@ export default {
         .post("https://localhost:8080/api/requests/create_follow_request/", {
           classic_user_id: this.logId,
           follower_user_id: this.selectedUser,
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
         })
         .then((resp) => {
           console.log(resp.data);

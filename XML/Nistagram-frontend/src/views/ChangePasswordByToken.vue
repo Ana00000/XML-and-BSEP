@@ -55,7 +55,8 @@ export default {
     confirmPassword:"",
     userEmail:"",
     showFields:false,
-    showHeader:false
+    showHeader:false,
+    recoveryPasswordTokenId:"",
   }),
   mounted() {
     this.init();
@@ -74,7 +75,8 @@ export default {
         })
         .then((res) => {
           alert(res.data)
-          this.userEmail = res.data;
+          this.userEmail = res.data.user_email;
+          this.recoveryPasswordTokenId = res.data.recovery_password_token_id;
           this.showFields = true;
           this.showHeader = false;
           alert("Successfully founded user!")
@@ -93,7 +95,8 @@ export default {
         .post("https://localhost:8080/api/user/change_user_password/", {
             email: this.userEmail,
             password: this.password,
-            confirmed_password: this.confirmPassword
+            confirmed_password: this.confirmPassword,
+            recovery_password_token_id: this.recoveryPasswordTokenId,
         })
         .then((res) => {
           console.log(res);

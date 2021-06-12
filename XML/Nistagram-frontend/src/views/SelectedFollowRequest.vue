@@ -78,7 +78,11 @@ export default {
     getRequest() {
       console.log(this.selectedRequestId);
       this.$http
-        .get("https://localhost:8080/api/requests/find_request_by_id?id=" + this.selectedRequestId)
+        .get("https://localhost:8080/api/requests/find_request_by_id?id=" + this.selectedRequestId,{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((resp) => {
           this.setRequestInfo(resp.data);
           this.requestFollower = resp.data.classic_user_id
@@ -101,8 +105,11 @@ export default {
         .post("https://localhost:8080/api/user/accept_follow_request/", {
           classic_user_id: this.requestFollower,
           follower_user_id: this.logId,
-      
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((resp) => {
           console.log(resp.data);
           alert("Accepted follow!");
@@ -113,7 +120,11 @@ export default {
     },
     rejectRequest(){
        this.$http
-        .post("https://localhost:8080/api/requests/reject_follow_request?id="+this.selectedRequestId, {})
+        .post("https://localhost:8080/api/requests/reject_follow_request?id="+this.selectedRequestId, {},{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((resp) => {
           console.log(resp.data);
           alert("Rejected  follow!");

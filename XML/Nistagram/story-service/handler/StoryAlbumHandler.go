@@ -23,6 +23,29 @@ type StoryAlbumHandler struct {
 }
 //CRSTRYALB8542
 func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "CRSTRYALB8542",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "CRSTRYALB8542",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	var storyAlbumDTO dto.StoryAlbumDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumDTO)
 	if err != nil {
@@ -96,6 +119,29 @@ func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *htt
 }
 //FIDALALBSTORISFORLOGGUS8293
 func (handler *StoryAlbumHandler) FindAllAlbumStoriesForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALALBSTORISFORLOGGUS8293",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALALBSTORISFORLOGGUS8293",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 
 	var albumStories = handler.Service.FindAllAlbumStoriesForUser(uuid.MustParse(id))
@@ -259,6 +305,29 @@ func (handler *StoryAlbumHandler) CreateStoryAlbumsDTOList(albums []model.StoryA
 }
 //FIDSELECTSTRYALBBYIDFORLOGGUS983
 func (handler *StoryAlbumHandler) FindSelectedStoryAlbumByIdForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDSELECTSTRYALBBYIDFORLOGGUS983",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDSELECTSTRYALBBYIDFORLOGGUS983",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
 
 	id := r.URL.Query().Get("id") //story album id
 	logId := r.URL.Query().Get("logId") //loged user id
@@ -452,6 +521,29 @@ func (handler *StoryAlbumHandler) CreateStoryAlbumDTO(album *model.StoryAlbum, c
 }
 //FIDALPUBALBSTORISREGUS9012
 func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALPUBALBSTORISREGUS9012",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALPUBALBSTORISREGUS9012",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
 
 	id := r.URL.Query().Get("id")
 
@@ -756,6 +848,30 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesNotRegisteredUser(w h
 //FIDALFOLLINGSTRYALBMS0910
 // returns all VALID story albums from FOLLOWING users (FOR HOMEPAGE)
 func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWriter, r *http.Request) {
+
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALFOLLINGSTRYALBMS0910",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALFOLLINGSTRYALBMS0910",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))

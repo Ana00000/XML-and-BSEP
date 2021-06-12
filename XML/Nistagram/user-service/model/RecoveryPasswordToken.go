@@ -11,5 +11,5 @@ type RecoveryPasswordToken struct {
 	UserId uuid.UUID `json:"user_id" gorm:"not null"`
 	CreatedTime time.Time `json:"created_time" gorm:"not null"`
 	ExpirationTime time.Time `json:"expiration_time" gorm:"not null"`
-	IsValid bool `json:"is_valid" gorm:"not null"`
+	Status RecoveryPasswordTokenStatus `json:"is_valid" gorm:"not null;column:is_valid"`
 }

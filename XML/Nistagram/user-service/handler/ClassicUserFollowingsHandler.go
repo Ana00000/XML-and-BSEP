@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/mikespook/gorbac"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
@@ -19,14 +20,56 @@ import (
 type ClassicUserFollowingsHandler struct {
 	ClassicUserFollowingsService * service.ClassicUserFollowingsService
 	ClassicUserFollowersService * service.ClassicUserFollowersService
+	UserService *service.UserService
+	Rbac * gorbac.RBAC
+	PermissionCreateClassicUserFollowing *gorbac.Permission
+	PermissionAcceptFollowerRequest *gorbac.Permission
 	LogInfo *logrus.Logger
 	LogError *logrus.Logger
 }
 
+//CRCLASUSFOLLING712
 // CreateClassicUserFollowing KAD NEKO KLIKNE FOLLOW NEKOGA = NJEMU SE KREIRA PRVO FOLLOWING PA ONDA FOLLOWER OVOM DRUGOM
 func (handler *ClassicUserFollowingsHandler) CreateClassicUserFollowing(w http.ResponseWriter, r *http.Request) {
+
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "CRCLASUSFOLLING712",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	userName, err := getUserNameFromJWT(r)
+	if err!=nil	{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "CRCLASUSFOLLING712",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding user from jwt token!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	var user = handler.UserService.FindByUserName(userName)
+	var userRole = getRoleByUser(user)
+
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionCreateClassicUserFollowing, nil) {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "CRCLASUSFOLLING712",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
 	var classicUserFollowingDTO dto.ClassicUserFollowingsDTO
-	err := json.NewDecoder(r.Body).Decode(&classicUserFollowingDTO)
+	err = json.NewDecoder(r.Body).Decode(&classicUserFollowingDTO)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -188,8 +231,44 @@ func (handler *ClassicUserFollowingsHandler) CheckIfFollowingPostStory(w http.Re
 
 //ACCFOLLERREQ832
 func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.ResponseWriter, r *http.Request) {
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "ACCFOLLERREQ832",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	userName, err := getUserNameFromJWT(r)
+	if err!=nil	{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "ACCFOLLERREQ832",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding user from jwt token!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	var user = handler.UserService.FindByUserName(userName)
+	var userRole = getRoleByUser(user)
+
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionAcceptFollowerRequest, nil) {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "ACCFOLLERREQ832",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
 	var followRequestDTO dto.FollowRequestDTO
-	err := json.NewDecoder(r.Body).Decode(&followRequestDTO)
+	err = json.NewDecoder(r.Body).Decode(&followRequestDTO)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -220,8 +299,8 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 
 	reqUrlUpdate := fmt.Sprintf("http://%s:%s/accept_follow_request/%s", os.Getenv("REQUESTS_SERVICE_DOMAIN"), os.Getenv("REQUESTS_SERVICE_PORT"), followRequestForUser.ID)
 	jsonOrders, _ := json.Marshal(nil)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrlUpdate)
-	fmt.Println(string(jsonOrders))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrlUpdate)
+	//fmt.Println(string(jsonOrders))
 	resp, err := http.Post(reqUrlUpdate, "application/json", bytes.NewBuffer(jsonOrders))
 	if err != nil || resp.StatusCode == 400 {
 		handler.LogError.WithFields(logrus.Fields{

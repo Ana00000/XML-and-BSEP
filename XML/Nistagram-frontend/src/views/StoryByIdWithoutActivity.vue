@@ -103,6 +103,7 @@ export default {
   name: "StoryByIdWithoutActivity",
   data: () => ({
     story: null,
+    token: null,
     highlightedStoryId: null,
     highlightedStories: [],
   }),
@@ -111,6 +112,7 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       alert(localStorage.getItem("mySelectedStoryId"));
       alert(localStorage.getItem("mySelectedUserId"));
       this.$http
@@ -118,8 +120,11 @@ export default {
           "https://localhost:8080/api/story/find_selected_story_reg?id=" +
             localStorage.getItem("mySelectedStoryId") +
             "&logId=" +
-            localStorage.getItem("mySelectedUserId")
-        )
+            localStorage.getItem("mySelectedUserId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((response) => {
           this.story = response.data;
         })
@@ -128,7 +133,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_story_highlights_for_user?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+            }
         )
         .then((response) => {
           this.highlightedStories = response.data;
@@ -147,7 +156,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_single_story_story_highlights_for_story?id=" +
-            localStorage.getItem("mySelectedStoryId")
+            localStorage.getItem("mySelectedStoryId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+            }
         )
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
@@ -164,6 +177,10 @@ export default {
             .post("https://localhost:8080/api/story/single_story_story_highlights/", {
               story_highlight_id: this.highlightedStoryId,
               single_story_id: localStorage.getItem("mySelectedStoryId"),
+            },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
             })
             .then((response) => {
               console.log(response.data);

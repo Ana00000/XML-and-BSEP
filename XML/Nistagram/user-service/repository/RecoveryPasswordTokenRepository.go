@@ -23,9 +23,15 @@ func (repo *RecoveryPasswordTokenRepository) FindByToken(token uuid.UUID) *model
 	return recoveryPasswordToken
 }
 
-func (repo *RecoveryPasswordTokenRepository) UpdateRecoveryPasswordTokenValidity(token uuid.UUID, isValid bool) error {
-	result := repo.Database.Model(&model.RecoveryPasswordToken{}).Where("recovery_password_token = ?", token).Update("is_valid", isValid)
+func (repo *RecoveryPasswordTokenRepository) UpdateRecoveryPasswordTokenValidity(token uuid.UUID, status model.RecoveryPasswordTokenStatus) error {
+	result := repo.Database.Model(&model.RecoveryPasswordToken{}).Where("recovery_password_token = ?", token).Update("is_valid", status)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating")
 	return nil
+}
+
+func (repo *RecoveryPasswordTokenRepository) FindByID(token uuid.UUID) *model.RecoveryPasswordToken {
+	recoveryPasswordToken := &model.RecoveryPasswordToken{}
+	repo.Database.First(&recoveryPasswordToken, "id = ?", token)
+	return recoveryPasswordToken
 }

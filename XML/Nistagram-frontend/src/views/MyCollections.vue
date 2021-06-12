@@ -52,6 +52,7 @@ export default {
   data: () => ({
     title: "",
     postCollectionId: null,
+    token: null,
     postCollections: [],
   }),
   mounted() {
@@ -59,10 +60,15 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_post_collections_for_reg?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.postCollections = response.data;
@@ -83,7 +89,11 @@ export default {
         .post("https://localhost:8080/api/post/post_collection/", {
           title: this.title,
           userID: localStorage.getItem("userId"),
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           this.postCollectionId = response.data;
           alert("Successful creation of collection.");

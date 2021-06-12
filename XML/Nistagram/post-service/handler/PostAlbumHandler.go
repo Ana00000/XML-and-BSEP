@@ -22,6 +22,31 @@ type PostAlbumHandler struct {
 }
 
 func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.Request) {
+
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "CRPAL580",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "CRPAL580",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	var postAlbumDTO dto.PostAlbumDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumDTO)
 
@@ -87,6 +112,31 @@ func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.
 }
 
 func (handler *PostAlbumHandler) FindAllAlbumPostsForLoggedUser(w http.ResponseWriter, r *http.Request) {
+
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAAPL581",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAAPL581",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 
 	var albumPosts = convertListPostAlbumToListPostAlbumDTO(handler.Service.FindAllAlbumPostsForUser(uuid.MustParse(id)))
@@ -246,6 +296,30 @@ func (handler *PostAlbumHandler) CreatePostAlbumsDTOList(albums []model.PostAlbu
 }
 
 func (handler *PostAlbumHandler) FindSelectedPostAlbumByIdForLoggedUser(w http.ResponseWriter, r *http.Request) {
+
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FSPAL583",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
 
 	id := r.URL.Query().Get("id") //post album id
 	logId := r.URL.Query().Get("logId") //loged user id
@@ -725,6 +799,31 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http
 }
 
 func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWriter, r *http.Request) {
+
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "FAFPA586",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 
 	// returns only valid users

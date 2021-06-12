@@ -68,6 +68,7 @@ export default {
     searchInput: "",
     tags: [],
     tagsCopy: [],
+    token: null,
     selectedTag: null,
   }),
   mounted() {
@@ -75,8 +76,13 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       this.$http
-        .get("https://localhost:8080/api/post/find_all_tags_for_public_and_friends_posts?id="+localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/post/find_all_tags_for_public_and_friends_posts?id="+localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((resp) => {
           this.tags = resp.data;
           this.tagsCopy = resp.data;

@@ -112,6 +112,7 @@ export default {
   name: "PublicStoriesAll",
   data: () => ({
     stories: [],
+    token: null,
     publicPath: process.env.VUE_APP_BASE_URL,
     albumStories: [],
   }),
@@ -120,8 +121,13 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       this.$http
-        .get("https://localhost:8080/api/story/find_all_public_stories_reg?id=" + localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/story/find_all_public_stories_reg?id=" + localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           this.stories = response.data;
         })
@@ -133,7 +139,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_public_album_stories_reg?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }    
         )
         .then((response) => {
           this.albumStories = response.data;

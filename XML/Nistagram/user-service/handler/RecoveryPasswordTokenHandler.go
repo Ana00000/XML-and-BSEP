@@ -109,7 +109,7 @@ func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken (w ht
 		UserId:                user.ID,
 		CreatedTime:           time.Now(),
 		ExpirationTime:        time.Now().Add(time.Minute * 5),
-		IsValid:               true,
+		Status:               model.VALID,
 	}
 
 	err := handler.RecoveryPasswordTokenService.CreateRecoveryPasswordToken(&recoveryPasswordToken)
@@ -155,13 +155,13 @@ func (handler *RecoveryPasswordTokenHandler) VerifyRecoveryPasswordToken(w http.
 	tokenUUID:= recoveryPasswordDTO.RecoveryPasswordToken
 
 	var recoveryPasswordToken= handler.RecoveryPasswordTokenService.FindByToken(tokenUUID)
-	if !recoveryPasswordToken.IsValid{
+	if recoveryPasswordToken.Status==model.INVALID || recoveryPasswordToken.Status==model.VERIFIED{
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "ConfirmationTokenHandler",
 			"action":   "VERFYRECRYPASSTOK1010",
 			"timestamp":   time.Now().String(),
-		}).Error("Recovery password token isn't valid!")
+		}).Error("Recovery password token isn't valid or already verified!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -172,7 +172,7 @@ func (handler *RecoveryPasswordTokenHandler) VerifyRecoveryPasswordToken(w http.
 			"action":   "VERFYRECRYPASSTOK1010",
 			"timestamp":   time.Now().String(),
 		}).Error("Token does not belong to the user or he is expired!")
-		err := handler.RecoveryPasswordTokenService.UpdateRecoveryPasswordTokenValidity(recoveryPasswordToken.RecoveryPasswordToken, false)
+		err := handler.RecoveryPasswordTokenService.UpdateRecoveryPasswordTokenValidity(recoveryPasswordToken.RecoveryPasswordToken, model.INVALID)
 		if err != nil {
 			handler.LogError.WithFields(logrus.Fields{
 				"status": "failure",
@@ -186,8 +186,26 @@ func (handler *RecoveryPasswordTokenHandler) VerifyRecoveryPasswordToken(w http.
 		return
 	}
 
+	err = handler.RecoveryPasswordTokenService.UpdateRecoveryPasswordTokenValidity(recoveryPasswordToken.RecoveryPasswordToken, model.VERIFIED)
+	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ConfirmationTokenHandler",
+			"action":   "VERFYRECRYPASSTOK1010",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed updating recovery token to verified!")
+		return
+	}
+
+
 	var user = handler.UserService.FindByID(userIdUUID)
-	emailJson, _ := json.Marshal(user.Email)
+
+	var returnValue = dto.VerifiedReturnDTO{
+		UserEmail:               user.Email,
+		RecoveryPasswordTokenID: recoveryPasswordToken.ID,
+	}
+
+	returnValueJson, _ := json.Marshal(returnValue)
 
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status": "success",
@@ -196,7 +214,7 @@ func (handler *RecoveryPasswordTokenHandler) VerifyRecoveryPasswordToken(w http.
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully verified password for user!")
 
-	w.Write(emailJson)
+	w.Write(returnValueJson)
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")

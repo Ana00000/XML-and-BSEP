@@ -51,6 +51,7 @@ export default {
     name: 'FollowRequests',   
     data: () => ({
       requests: [],
+      token: null,
       selectedRequest: null,
     }),
     mounted() {
@@ -65,7 +66,11 @@ export default {
       console.log(this.id)
       console.log(this.token)
       this.$http
-        .get("https://localhost:8080/api/requests/find_all_pending_requests_for_user?id=" + this.id)
+        .get("https://localhost:8080/api/requests/find_all_pending_requests_for_user?id=" + this.id,{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((resp) => {
           console.log("USAO")
           this.requests = resp.data

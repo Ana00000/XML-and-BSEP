@@ -241,6 +241,7 @@ export default {
     isVisibleTags: false,
     allUserTags: [],
     userTag: null,
+    token: null,
     userId: null,
   }),
   mounted() {
@@ -249,11 +250,16 @@ export default {
   methods: {
     init() {
         this.userId = localStorage.getItem("userId");
+        this.token = localStorage.getItem("token");
         if (localStorage.getItem("userPrivacy")=="PUBLIC") {
           this.storyTypes = ["CLOSE_FRIENDS", "PUBLIC"]
         }
         this.$http
-        .get("https://localhost:8080/api/tag/find_all_taggable_users_story/")
+        .get("https://localhost:8080/api/tag/find_all_taggable_users_story/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
             if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
@@ -345,6 +351,10 @@ export default {
             city: this.city,
             streetName: this.streetName,
             streetNumber: this.streetNumber,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.locationId = response.data;
@@ -365,6 +375,10 @@ export default {
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
             storyType: this.selectedStoryType,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.storyId = response.data;
@@ -380,6 +394,10 @@ export default {
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
             storyType: this.selectedStoryType,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.storyId = response.data;
@@ -396,6 +414,10 @@ export default {
           path: this.path,
           type: this.selectedType,
           single_story_id: this.storyId,
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
         })
         .then((response) => {
           console.log(response.data);
@@ -422,6 +444,10 @@ export default {
           .post("https://localhost:8080/api/tag/tag/", {
             name: this.tagName,
             tag_type: this.selectedTagType,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.storyTagId = response.data;
@@ -437,7 +463,11 @@ export default {
         .post("https://localhost:8080/api/tag/story_tag_stories/", {
           tag_id: this.storyTagId,
           story_id: this.storyId,
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");
@@ -452,7 +482,11 @@ export default {
         .post("https://localhost:8080/api/tag/story_tag_stories/", {
           tag_id: this.userTag.id,
           story_id: this.storyId,
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");

@@ -112,6 +112,7 @@ export default {
   name: "PublicPostsAll",
   data: () => ({
     posts: [],
+    token: null,
     publicPath: process.env.VUE_APP_BASE_URL,
     albumPosts: [],
   }),
@@ -120,8 +121,13 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       this.$http
-        .get("https://localhost:8080/api/post/find_all_public_posts_reg?id=" + localStorage.getItem("userId"))
+        .get("https://localhost:8080/api/post/find_all_public_posts_reg?id=" + localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           this.posts = response.data;
         })
@@ -139,7 +145,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_public_album_posts_reg?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.albumPosts = response.data;

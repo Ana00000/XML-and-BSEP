@@ -79,20 +79,26 @@ export default {
   name: "StoryAlbumByIdWithoutActivity",
   data: () => ({
     storyAlbum: null,
+    token: null,
     storyAlbumContents: [],
   }),
   mounted() {
     this.init();
   },
   methods: {
+    
     init() {
+      this.token = localStorage.getItem("token");
       this.$http
         .get(
           "https://localhost:8080/api/story/find_selected_story_album_for_logged_user?id=" +
             localStorage.getItem("mySelectedStoryAlbumId") +
             "&logId=" +
-            localStorage.getItem("mySelectedUserId")
-        )
+            localStorage.getItem("mySelectedUserId"),{
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
         .then((response) => {
           this.storyAlbum = response.data;
           console.log(response.data)

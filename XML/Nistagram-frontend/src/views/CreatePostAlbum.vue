@@ -264,6 +264,7 @@ export default {
     isVisibleTags: false,
     userId: null,
     postId: null,
+    token: null,
   }),
   mounted() {
     this.init();
@@ -271,8 +272,13 @@ export default {
   methods: {
     init() {
       this.userId = localStorage.getItem("userId");
+      this.token = localStorage.getItem("token");
       this.$http
-        .get("https://localhost:8080/api/tag/find_all_taggable_users_post/")
+        .get("https://localhost:8080/api/tag/find_all_taggable_users_post/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
             if (response.data[i].tag_type == 0 && response.data[i].user_id != this.userId) {
@@ -380,6 +386,10 @@ export default {
             city: this.city,
             streetName: this.streetName,
             streetNumber: this.streetNumber,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.locationId = response.data;
@@ -399,6 +409,10 @@ export default {
             description: this.postAlbumDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.postAlbumId = response.data;
@@ -413,6 +427,10 @@ export default {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.postAlbumId = response.data;
@@ -429,6 +447,10 @@ export default {
           path: this.path,
           type: this.selectedType,
           post_album_id: this.postAlbumId,
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
         })
         .then((response) => {
           console.log(response.data);
@@ -449,6 +471,10 @@ export default {
           path: this.path,
           type: this.selectedType,
           post_album_id: this.postAlbumId,
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
         })
         .then((response) => {
           console.log(response.data);
@@ -477,6 +503,10 @@ export default {
           .post("https://localhost:8080/api/tag/tag/", {
             name: this.tagName,
             tag_type: this.selectedTagType,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.postAlbumTagId = response.data;
@@ -502,7 +532,11 @@ export default {
         .post("https://localhost:8080/api/tag/post_album_tag_post_albums/", {
           tag_id: this.userTag.id,
           postAlbumId: this.postAlbumId,
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");
@@ -517,7 +551,11 @@ export default {
         .post("https://localhost:8080/api/tag/post_album_tag_post_albums/", {
           tag_id: this.postAlbumTagId,
           postAlbumId: this.postAlbumId,
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");

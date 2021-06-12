@@ -2,12 +2,14 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/service"
 	"net/http"
+	"os"
 	_ "strconv"
 	"time"
 )
@@ -20,6 +22,42 @@ type PostAlbumTagPostAlbumsHandler struct {
 
 //CRPOALBTGPOALBMS9832
 func (handler *PostAlbumTagPostAlbumsHandler) CreatePostAlbumTagPostAlbums(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumTagPostAlbumsHandler",
+			"action":   "CRPOALBTGPOALBMS9832",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-create-post-album-tag-post-albums-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumTagPostAlbumsHandler",
+			"action":   "CRPOALBTGPOALBMS9832",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumTagPostAlbumsHandler",
+			"action":   "CRPOALBTGPOALBMS9832",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	var postAlbumTagPostAlbumsDTO dto.PostAlbumTagPostAlbumsDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumTagPostAlbumsDTO)
 	if err != nil {

@@ -304,6 +304,7 @@ export default {
     userTag: null,
     isVisibleTags: false,
     userId: null,
+    token: null,
     storyId: null,
   }),
   mounted() {
@@ -311,12 +312,17 @@ export default {
   },
   methods: {
      init() {
+       this.token = localStorage.getItem("token");
        if (localStorage.getItem("userPrivacy")=="PUBLIC") {
           this.storyTypes = ["CLOSE_FRIENDS", "PUBLIC"]
         }
       this.userId = localStorage.getItem("userId");
       this.$http
-        .get("https://localhost:8080/api/tag/find_all_taggable_users_story/")
+        .get("https://localhost:8080/api/tag/find_all_taggable_users_story/",{
+          headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((response) => {
           console.log(response.data);
           for (var i = 0; i < response.data.length; i++) {
@@ -442,6 +448,10 @@ export default {
             city: this.city,
             streetName: this.streetName,
             streetNumber: this.streetNumber,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.locationId = response.data;
@@ -462,6 +472,10 @@ export default {
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
             storyType: this.selectedStoryType,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.storyAlbumId = response.data;
@@ -477,6 +491,10 @@ export default {
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
             storyType: this.selectedStoryType,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.storyAlbumId = response.data;
@@ -493,6 +511,10 @@ export default {
           path: this.path,
           type: this.selectedType,
           story_album_id: this.storyAlbumId,
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
         })
         .then((response) => {
           console.log(response.data);
@@ -513,6 +535,10 @@ export default {
           path: this.path,
           type: this.selectedType,
           story_album_id: this.storyAlbumId,
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
         })
         .then((response) => {
           console.log(response.data);
@@ -540,6 +566,10 @@ export default {
           .post("https://localhost:8080/api/tag/tag/", {
             name: this.tagName,
             tag_type: this.selectedTagType,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.storyAlbumTagId = response.data;
@@ -563,6 +593,10 @@ export default {
         .post("https://localhost:8080/api/tag/story_album_tag_story_albums/", {
           tag_id: this.storyAlbumTagId,
           story_album_id: this.storyAlbumId,
+        },{
+          headers: {
+              Authorization: "Bearer " + this.token,
+            },
         })
         .then((response) => {
           console.log(response.data);
@@ -578,6 +612,10 @@ export default {
         .post("https://localhost:8080/api/tag/story_album_tag_story_albums/", {
           tag_id: this.userTag.id,
           story_album_id: this.storyAlbumId,
+        },{
+          headers: {
+              Authorization: "Bearer " + this.token,
+            },
         })
         .then((response) => {
           console.log(response.data);

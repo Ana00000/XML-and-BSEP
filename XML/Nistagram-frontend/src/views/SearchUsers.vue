@@ -62,7 +62,8 @@ export default {
       searchInput: "",
       users: [],
       usersCopy : [],
-      selectedUser: null,
+      token: null,
+      selectedUser: null,   
     }),
     mounted() {
         this.init();
@@ -76,7 +77,11 @@ export default {
       console.log(this.id)
       console.log(this.token)
       this.$http
-        .get("https://localhost:8080/api/user/find_all_classic_users_but_logged_in?id=" + this.id)
+        .get("https://localhost:8080/api/user/find_all_classic_users_but_logged_in?id=" + this.id,{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((resp) => {
           console.log("USAO")
           this.users = resp.data

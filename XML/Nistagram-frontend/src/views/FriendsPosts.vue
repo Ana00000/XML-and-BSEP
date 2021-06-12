@@ -115,6 +115,7 @@ export default {
   name: "FriendsPosts",
   data: () => ({
     posts: [],
+    token: null,
     publicPath: process.env.VUE_APP_BASE_URL,
     albumPosts: [],
   }),
@@ -123,11 +124,16 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       alert(localStorage.getItem("userId"));
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_following_posts?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.posts = response.data;
@@ -147,7 +153,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_following_post_albums?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.albumPosts = response.data;

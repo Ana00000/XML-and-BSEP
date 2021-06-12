@@ -1,0 +1,2 @@
+{"action":"FAAPL581","level":"error","location":"PostAlbumHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-12T14:25:36Z","timestamp":"2021-06-12 14:25:36.4156383 +0000 UTC m=+218.620281901"}
+{"action":"FAPLU678","level":"error","location":"SinglePostHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-12T14:25:36Z","timestamp":"2021-06-12 14:25:36.4191965 +0000 UTC m=+218.623840001"}

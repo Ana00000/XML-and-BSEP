@@ -2,12 +2,14 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/story-service/service"
 	"net/http"
+	"os"
 	_ "strconv"
 	"time"
 )
@@ -19,6 +21,31 @@ type StoryHighlightHandler struct {
 }
 //CRSTRYHIGHLHT0312
 func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter, r *http.Request) {
+
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryHighlightHandler",
+			"action":   "CRSTRYHIGHLHT0312",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryHighlightHandler",
+			"action":   "CRSTRYHIGHLHT0312",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	*/
 	var storyHighlightDTO dto.StoryHighlightDTO
 	err := json.NewDecoder(r.Body).Decode(&storyHighlightDTO)
 	if err != nil {
@@ -61,6 +88,29 @@ func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter
 }
 //FIDALSTRYHIGHLHTSFORUS8882
 func (handler *StoryHighlightHandler) FindAllStoryHighlightsForUser(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryHighlightHandler",
+			"action":   "FIDALSTRYHIGHLHTSFORUS8882",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryHighlightHandler",
+			"action":   "FIDALSTRYHIGHLHTSFORUS8882",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}*/
+
 	id := r.URL.Query().Get("id")
 
 	storyHighlights := handler.Service.FindAllStoryHighlightsForUser(uuid.MustParse(id))

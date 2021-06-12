@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/mikespook/gorbac"
 	"github.com/sirupsen/logrus"
 	"time"
 
@@ -17,6 +18,9 @@ import (
 type ClassicUserCloseFriendsHandler struct {
 	ClassicUserCloseFriendsService * service.ClassicUserCloseFriendsService
 	ClassicUserFollowersService * service.ClassicUserFollowersService
+	Rbac * gorbac.RBAC
+	PermissionCreateClassicUserCloseFriend *gorbac.Permission
+	UserService * service.UserService
 	LogInfo *logrus.Logger
 	LogError *logrus.Logger
 }
@@ -53,10 +57,58 @@ func convertBoolToString(boolVal bool) string{
 	}
 }
 
+func getRoleByUser(user *model.User) string{
+	if user.UserType==model.REGISTERED_USER{
+		return "role-registered-user"
+	} else if user.UserType==model.AGENT{
+		return "role-agent"
+	} else if user.UserType==model.ADMIN{
+		return "role-admin"
+	}
+	return ""
+}
+
 //CRCLOFR833
 func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w http.ResponseWriter, r *http.Request) {
+
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserCloseFriendsHandler",
+			"action":   "CRCLOFR833",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	userName, err := getUserNameFromJWT(r)
+	if err!=nil	{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserCloseFriendsHandler",
+			"action":   "CRCLOFR833",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed finding user from jwt token!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	var user = handler.UserService.FindByUserName(userName)
+	var userRole = getRoleByUser(user)
+
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionCreateClassicUserCloseFriend, nil) {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserCloseFriendsHandler",
+			"action":   "CRCLOFR833",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
 	var classicUserCloseFriendsDTO dto.ClassicUserCloseFriendsDTO
-	err := json.NewDecoder(r.Body).Decode(&classicUserCloseFriendsDTO)
+	err = json.NewDecoder(r.Body).Decode(&classicUserCloseFriendsDTO)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
