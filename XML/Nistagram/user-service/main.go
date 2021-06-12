@@ -304,6 +304,19 @@ func initTagAuthorizationHandler(rbac *gorbac.RBAC, permissionCreateCommentTagCo
 	}
 }
 
+func initRequestsAuthorizationHandler(rbac *gorbac.RBAC, permissionCreateFollowRequest *gorbac.Permission, permissionRejectFollowRequest *gorbac.Permission,  permissionFindRequestById *gorbac.Permission,  permissionFindAllPendingFollowerRequestsForUser *gorbac.Permission, LogInfo *logrus.Logger,LogError *logrus.Logger,userService *service.UserService) *handler.RequestsAuthorizationHandler{
+	return &handler.RequestsAuthorizationHandler{
+		UserService:                                   userService,
+		Rbac:                                          rbac,
+		PermissionCreateFollowRequest:				   permissionCreateFollowRequest,
+		PermissionRejectFollowRequest:				   permissionRejectFollowRequest,
+		PermissionFindRequestById:					   permissionFindRequestById,
+		PermissionFindAllPendingFollowerRequestsForUser: permissionFindAllPendingFollowerRequestsForUser,
+		LogInfo:                                       LogInfo,
+		LogError:                                      LogError,
+	}
+}
+
 func initClassicUserCloseFriendsHandler(userService *service.UserService,rbac *gorbac.RBAC, permissionCreateClassicUserCloseFriend *gorbac.Permission, LogInfo *logrus.Logger,LogError *logrus.Logger,classicUserCloseFirendsService *service.ClassicUserCloseFriendsService, classicUserFollowersService *service.ClassicUserFollowersService ) *handler.ClassicUserCloseFriendsHandler{
 	return &handler.ClassicUserCloseFriendsHandler{
 		ClassicUserCloseFriendsService:         classicUserCloseFirendsService,
@@ -316,7 +329,7 @@ func initClassicUserCloseFriendsHandler(userService *service.UserService,rbac *g
 	}
 }
 
-func handleFunc(tagAuthorizationHandler *handler.TagAuthorizationHandler,userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, classicUserHandler *handler.ClassicUserHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler,classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler,classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler,classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler, classicUserCloseFriendsHandler *handler.ClassicUserCloseFriendsHandler){
+func handleFunc(requestAuthorizationHandler *handler.RequestsAuthorizationHandler, tagAuthorizationHandler *handler.TagAuthorizationHandler,userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, classicUserHandler *handler.ClassicUserHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler,classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler,classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler,classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler, classicUserCloseFriendsHandler *handler.ClassicUserCloseFriendsHandler){
 
 	router := mux.NewRouter().StrictSlash(true)
 
@@ -372,6 +385,12 @@ func handleFunc(tagAuthorizationHandler *handler.TagAuthorizationHandler,userHan
 	router.HandleFunc("/auth/check-create-tag-permission/", tagAuthorizationHandler.CheckCreateTagPermission).Methods("GET")
 	router.HandleFunc("/auth/check-find-all-hashtags-permission/", tagAuthorizationHandler.CheckFindAllHashTagsPermission).Methods("GET")
 
+	//REQUEST MICROSERVICE AUTHORIZATION
+	router.HandleFunc("/auth/check-create-follow-request-permission/", requestAuthorizationHandler.CheckCreateFollowRequestPermission).Methods("GET")
+	router.HandleFunc("/auth/check-reject-follow-request-permission/", requestAuthorizationHandler.CheckRejectFollowRequestPermission).Methods("GET")
+	router.HandleFunc("/auth/check-find-request-by-id-permission/", requestAuthorizationHandler.CheckFindRequestByIdPermission).Methods("GET")
+	router.HandleFunc("/auth/check-find-all-pending-follower-requests-for-user-permission/", requestAuthorizationHandler.CheckFindAllPendingFollowerRequestsForUserPermission).Methods("GET")
+
 	//FindAllValidFollowingsForUser
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
@@ -420,6 +439,14 @@ func main() {
 	permissionFindAllTaggableUsersComment := gorbac.NewStdPermission("permission-find-all-taggable-users-comment")
 	permissionFindAllHashTags := gorbac.NewStdPermission("permission-FindAllHashTags")
 
+	//REQUESTS MICROSERVICE
+	permissionCreateFollowRequest := gorbac.NewStdPermission("permission-create-follow-request")
+	permissionRejectFollowRequest := gorbac.NewStdPermission("permission-reject-follow-request")
+	permissionFindRequestById := gorbac.NewStdPermission("permission-find-request-by-id")
+	permissionFindAllPendingFollowerRequestsForUser := gorbac.NewStdPermission("permission-find-all-pending-follower-requests-for-user")
+
+
+
 	roleAdmin.Assign(permissionFindAllUsers)
 	roleAdmin.Assign(permissionUpdateUserInfo)
 	roleAdmin.Assign(permissionFindUserByID)
@@ -443,6 +470,12 @@ func main() {
 	roleAgent.Assign(permissionFindAllTaggableUsersComment)
 	roleAgent.Assign(permissionFindAllHashTags)
 
+	//REQUESTS MICROSERVICE
+	roleAgent.Assign(permissionCreateFollowRequest)
+	roleAgent.Assign(permissionRejectFollowRequest)
+	roleAgent.Assign(permissionFindRequestById)
+	roleAgent.Assign(permissionFindAllPendingFollowerRequestsForUser)
+
 	roleRegisteredUser.Assign(permissionUpdateUserInfo)
 	roleRegisteredUser.Assign(permissionCreateClassicUserCloseFriend)
 	roleRegisteredUser.Assign(permissionFindAllMutualFollowerForUser)
@@ -462,9 +495,16 @@ func main() {
 	roleRegisteredUser.Assign(permissionFindAllTaggableUsersComment)
 	roleRegisteredUser.Assign(permissionFindAllHashTags)
 
+	//REQUESTS MICROSERVICE
+	roleRegisteredUser.Assign(permissionCreateFollowRequest)
+	roleRegisteredUser.Assign(permissionRejectFollowRequest)
+	roleRegisteredUser.Assign(permissionFindRequestById)
+	roleRegisteredUser.Assign(permissionFindAllPendingFollowerRequestsForUser)
+
 	rbac.Add(roleAdmin)
 	rbac.Add(roleAgent)
 	rbac.Add(roleRegisteredUser)
+
 
 	database := initDB()
 	userRepo := initUserRepo(database)
@@ -495,6 +535,9 @@ func main() {
 		&permissionCreateStoryAlbumTagStoryAlbums,&permissionFindAllTaggableUsersStory,&permissionFindAllTaggableUsersComment,
 		&permissionCreatePostTagPosts,&permissionCreatePostAlbumTagPostAlbums,&permissionFindAllCommentTagCommentsForComment,
 		&permissionCreateTag,&permissionFindAllTaggableUsersPost, logInfo,logError,userService)
+
+	requestsAuthorizationHandler := initRequestsAuthorizationHandler(rbac, &permissionCreateFollowRequest, &permissionRejectFollowRequest, &permissionFindRequestById, &permissionFindAllPendingFollowerRequestsForUser, logInfo,logError,userService)
+
 	passwordUtil := initPasswordUtil()
 	userHandler := initUserHandler(&permissionFindUserByID,logInfo,logError,recoveryPasswordTokenService,userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo, validator, passwordUtil)
 	adminHandler := initAdminHandler(logInfo,logError,adminService, userService, validator, passwordUtil)
@@ -507,6 +550,6 @@ func main() {
 	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(logInfo,logError,recoveryPasswordTokenService,userService, validator)
 	classicUserHandler := initClassicUserHandler(userService,&permissionFindAllUsersButLoggedIn,rbac,logInfo,logError,classicUserService, classicUserFollowingsService)
 	classicUserCloseFriendsHandler := initClassicUserCloseFriendsHandler( userService, rbac, &permissionCreateClassicUserCloseFriend, logInfo,logError,classicUserCloseFriendsService, classicUserFollowersService)
-	handleFunc(tagAuthorizationHandler,userHandler, confirmationTokenHandler, adminHandler,classicUserHandler, agentHandler,registeredUserHandler,classicUserCampaignsHandler,classicUserFollowingsHandler,classicUserFollowersHandler,recoveryPasswordTokenHandler, classicUserCloseFriendsHandler)
+	handleFunc(requestsAuthorizationHandler,tagAuthorizationHandler,userHandler, confirmationTokenHandler, adminHandler,classicUserHandler, agentHandler,registeredUserHandler,classicUserCampaignsHandler,classicUserFollowingsHandler,classicUserFollowersHandler,recoveryPasswordTokenHandler, classicUserCloseFriendsHandler)
 
 }
