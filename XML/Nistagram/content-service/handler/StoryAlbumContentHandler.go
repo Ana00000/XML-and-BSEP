@@ -39,16 +39,18 @@ func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.Response
 		return
 	}
 
-	/*if err := TokenValid(r); err != nil {
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-create-story-album-content-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "StoryAlbumContentHandler",
 			"action":   "CRSTALCOX866",
 			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
-	}*/
+	}
 
 	var storyAlbumContentDTO dto.StoryAlbumContentDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumContentDTO)

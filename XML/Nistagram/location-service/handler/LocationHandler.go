@@ -84,16 +84,18 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	/*if err := TokenValid(r); err != nil {
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-create-location-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "LocationHandler",
 			"action":   "CRLON001",
 			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
-	}*/
+	}
 
 	var locationDTO dto.LocationDTO
 	err := json.NewDecoder(r.Body).Decode(&locationDTO)

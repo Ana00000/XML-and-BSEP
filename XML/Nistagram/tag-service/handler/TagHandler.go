@@ -222,20 +222,9 @@ func (handler *TagHandler) FindAllHashTags(w http.ResponseWriter, r *http.Reques
 			"action":   "FIDALHASHTG9327",
 			"timestamp":   time.Now().String(),
 		}).Error("Forbidden method for logged in user!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "TagHandler",
-			"action":   "FIDALHASHTG9327",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	tag := handler.Service.FindAllHashTags()
 	tagJson, _ := json.Marshal(tag)
