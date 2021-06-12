@@ -333,5 +333,6 @@
 *FindAllPublicUsers - FIDALPUBUSRS0291
 *FindAllUsersButLoggedIn - FIDALUSRSBUTLOGGIN212
 *FindByUserName - FIDBYUSNAM9482
+*CheckIfAuthentificated - CHCKIFAUTH9342
 
 
