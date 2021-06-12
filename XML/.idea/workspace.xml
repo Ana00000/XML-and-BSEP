@@ -2,21 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/campaign-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/campaign-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/location-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/location-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/message-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/message-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/AgentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/AgentHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram-frontend/src/assets/403.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/UnauthorizedPage.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/portfinder/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/portfinder/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/portfinder/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/portfinder/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/portfinder/lib/portfinder.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/portfinder/lib/portfinder.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/portfinder/lib/portfinder.js" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/portfinder/lib/portfinder.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/node_modules/portfinder/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/node_modules/portfinder/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/router/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

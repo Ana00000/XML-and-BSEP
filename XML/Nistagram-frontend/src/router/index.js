@@ -209,7 +209,12 @@ const routes = [
     path: '/postsForSelectedLocationRegistered',
     name: 'PostsForSelectedLocationRegistered',
     component: () => import('../views/PostsForSelectedLocationRegistered.vue')
-  }
+  },
+  {
+    path: '/unauthorizedPage',
+    name: 'UnauthorizedPage',
+    component: () => import('../views/UnauthorizedPage.vue')
+  },
   
 ]
 
