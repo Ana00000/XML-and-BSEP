@@ -51,16 +51,6 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "SinglePostContentHandler",
-			"action":   "CRSIPOCOB123",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	var singlePostContentDTO dto.SinglePostContentDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostContentDTO)

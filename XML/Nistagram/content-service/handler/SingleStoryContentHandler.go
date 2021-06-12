@@ -51,17 +51,6 @@ func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.Respon
 		return
 	}
 
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "SingleStoryContentHandler",
-			"action":   "CRSISTCOA197",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
-
 	var singleStoryContentDTO dto.SingleStoryContentDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryContentDTO)
 	if err != nil {
