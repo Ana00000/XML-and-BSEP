@@ -3,9 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ContentAuthorizationHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ContentAuthorizationHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/LocationAuthorizationHandler.vue.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/LocationAuthorizationHandler.vue.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RequestsAuthorizationHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RequestsAuthorizationHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/CommentTagCommentsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/CommentTagCommentsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostAlbumTagPostAlbumsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostAlbumTagPostAlbumsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostTagPostsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostTagPostsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryAlbumTagStoryAlbumsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryAlbumTagStoryAlbumsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryTagStoriesHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/StoryTagStoriesHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/TagHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/TagHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/UserTagHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/UserTagHandler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,27 +87,27 @@
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/Agent/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Agent/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <method v="2" />
     </configuration>
     <recent_temporary>

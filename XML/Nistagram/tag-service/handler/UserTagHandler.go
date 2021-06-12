@@ -140,20 +140,9 @@ func (handler *UserTagHandler) FindAllTaggableUsersPost(w http.ResponseWriter, r
 			"action":   "FIDALTAGBLUSRSPST2889",
 			"timestamp":   time.Now().String(),
 		}).Error("Forbidden method for logged in user!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "UserTagHandler",
-			"action":   "FIDALTAGBLUSRSPST2889",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	var allUserTags []model.UserTag
 	var userAllTags []model.UserTag
@@ -244,20 +233,9 @@ func (handler *UserTagHandler) FindAllTaggableUsersStory(w http.ResponseWriter, 
 			"action":   "FIDALTAGBLUSRSSTRY8229",
 			"timestamp":   time.Now().String(),
 		}).Error("Forbidden method for logged in user!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "UserTagHandler",
-			"action":   "FIDALTAGBLUSRSSTRY8229",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	var allUserTags []model.UserTag
 	var userAllTags []model.UserTag
@@ -339,20 +317,9 @@ func (handler *UserTagHandler) FindAllTaggableUsersComment(w http.ResponseWriter
 			"action":   "FIDALTAGBLUSRSCOMM9882",
 			"timestamp":   time.Now().String(),
 		}).Error("Forbidden method for logged in user!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
+		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "UserTagHandler",
-			"action":   "FIDALTAGBLUSRSCOMM9882",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	var allUserTags []model.UserTag
 	var userAllTags []model.UserTag
