@@ -3,9 +3,9 @@ package handler
 import (
 	"github.com/mikespook/gorbac"
 	"github.com/sirupsen/logrus"
+	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
 	"net/http"
 	"time"
-	"user-service/service"
 )
 
 type ContentAuthorizationHandler struct {
