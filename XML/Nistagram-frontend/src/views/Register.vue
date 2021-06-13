@@ -73,6 +73,16 @@
             v-model="biography"
             prepend-icon="mdi-address-circle"
           />
+          <v-text-field
+            label="Question"
+            v-model="question"
+            prepend-icon="mdi-name-circle"
+          />
+          <v-text-field
+            label="Answer"
+            v-model="answer"
+            prepend-icon="mdi-name-circle"
+          />
         </v-form>
       </v-card-text>
       <v-card-actions class="justify-center mb-5">
@@ -100,20 +110,32 @@ export default {
     dateOfBirth: "",
     website: "",
     biography: "",
-    users: []
+    question: "",
+    answer: "",
+    users: [],
   }),
   methods: {
     register() {
-      if (!this.validUsername() || !this.validEmail() || !this.validPassword() ||
-          !this.validFirstName() || !this.validLastName() || !this.validPhoneNumber() 
-          || !this.validDateOfBirth() || !this.validWebsite() || !this.validBiography())  
-          return;
-      
+      if (
+        !this.validUsername() ||
+        !this.validEmail() ||
+        !this.validPassword() ||
+        !this.validFirstName() ||
+        !this.validLastName() ||
+        !this.validPhoneNumber() ||
+        !this.validDateOfBirth() ||
+        !this.validWebsite() ||
+        !this.validBiography() ||
+        !this.validQuestion() ||
+        !this.validAnswer()
+      )
+        return;
+
       this.$http
         .post("https://localhost:8080/api/user/registered_user/", {
           username: this.username,
           password: this.password,
-          email : this.userEmail,
+          email: this.userEmail,
           phoneNumber: this.phoneNumber,
           firstName: this.firstName,
           lastName: this.lastName,
@@ -121,7 +143,9 @@ export default {
           dateOfBirth: this.dateOfBirth + "T11:45:26.371Z",
           website: this.website,
           biography: this.biography,
-          is_blocked: false
+          question: this.question,
+          answer: this.answer,
+          is_blocked: false,
         })
         .then((response) => {
           console.log(response.data.firstName);
@@ -129,31 +153,32 @@ export default {
           window.location.href = "https://localhost:8081/logIn";
         })
         .catch((er) => {
-          if(er.response.status == 409)
-            alert("Username already exists.");
-          else if(er.response.status == 417)
-            alert("Email already exists.");
-          else
-             alert("Registration failed!");
+          if (er.response.status == 409) alert("Username already exists.");
+          else if (er.response.status == 417) alert("Email already exists.");
+          else alert("Registration failed!");
           console.log("Error while registering in");
           console.log(er.response.data);
         });
     },
-    validUsername(){
+    validUsername() {
       if (this.username.length < 1) {
         alert("Your username should contain at least 1 character!");
         return false;
       } else if (this.username.length > 20) {
         alert("Your username shouldn't contain more than 20 characters!");
         return false;
-      } else if(this.username.match(/[!@#$%^&*'<>+/\\"]/g)) { 
-          alert("Your username shouldn't contain special characters.");
-          return false;
+      } else if (this.username.match(/[!@#$%^&*'<>+/\\"]/g)) {
+        alert("Your username shouldn't contain special characters.");
+        return false;
       }
       return true;
     },
     validEmail() {
-      if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.userEmail)) {
+      if (
+        !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+          this.userEmail
+        )
+      ) {
         alert("You have entered an invalid email address!");
         return false;
       } else if (this.userEmail.length > 35) {
@@ -169,31 +194,33 @@ export default {
       } else if (this.password.length > 30) {
         alert("Your password shouldn't contain more than 30 characters!");
         return false;
-      } else if(!this.password.match(/[a-z]/g)) {
-          alert("Your password should contain at least one small letter.");
-          this.passwordAgain='';
-          return false;
-      } else if(!this.password.match(/[A-Z]/g)) {
-          alert("Your password should contain at least one big letter.");
-          this.passwordAgain='';
-          return false;
-      } else if(!this.password.match(/[0-9]/g)) {
-          alert("Your password should contain at least one number.");
-          this.passwordAgain='';
-          return false;
-      } else if(!this.password.match(/[!@#$%^&*.,:'+-/\\"]/g)) { 
-          alert("Your password should contain at least one special character (other than <>).");
-          return false;
-      } else if(this.password.match(/[<>]/g)) { 
-          alert("Your password shouldn't contain special character < or >.");
-          return false;
+      } else if (!this.password.match(/[a-z]/g)) {
+        alert("Your password should contain at least one small letter.");
+        this.passwordAgain = "";
+        return false;
+      } else if (!this.password.match(/[A-Z]/g)) {
+        alert("Your password should contain at least one big letter.");
+        this.passwordAgain = "";
+        return false;
+      } else if (!this.password.match(/[0-9]/g)) {
+        alert("Your password should contain at least one number.");
+        this.passwordAgain = "";
+        return false;
+      } else if (!this.password.match(/[!@#$%^&*.,:'+-/\\"]/g)) {
+        alert(
+          "Your password should contain at least one special character (other than <>)."
+        );
+        return false;
+      } else if (this.password.match(/[<>]/g)) {
+        alert("Your password shouldn't contain special character < or >.");
+        return false;
       } else if (this.password.match(/[ ]/g)) {
         alert("Your password shouldn't contain spaces!");
         return false;
-      } else if (this.password !== this.passwordAgain){
-          alert("Passwords don't match !!!");
-          this.passwordAgain='';
-          return false;
+      } else if (this.password !== this.passwordAgain) {
+        alert("Passwords don't match !!!");
+        this.passwordAgain = "";
+        return false;
       }
       return true;
     },
@@ -204,9 +231,9 @@ export default {
       } else if (this.firstName.length > 20) {
         alert("Your first name shouldn't contain more than 20 characters!");
         return false;
-      } else if(this.firstName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
-          alert("Your first name shouldn't contain special characters.");
-          return false;
+      } else if (this.firstName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) {
+        alert("Your first name shouldn't contain special characters.");
+        return false;
       } else if (this.firstName.match(/[ ]/g)) {
         alert("Your first name shouldn't contain spaces!");
         return false;
@@ -226,9 +253,9 @@ export default {
       } else if (this.lastName.length > 35) {
         alert("Your last name shouldn't contain more than 35 characters!");
         return false;
-      } else if(this.lastName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) { 
-          alert("Your last name shouldn't contain special characters.");
-          return false;
+      } else if (this.lastName.match(/[!@#$%^&*.,:'<>+-/\\"]/g)) {
+        alert("Your last name shouldn't contain special characters.");
+        return false;
       } else if (this.lastName.match(/[ ]/g)) {
         alert("Your last name shouldn't contain spaces!");
         return false;
@@ -242,20 +269,22 @@ export default {
       return true;
     },
     validPhoneNumber() {
-      if(this.phoneNumber.match(/[a-zA-Z]/g)) {
-          alert("Your phone number shouldn't contain letters.");
-          return false;
+      if (this.phoneNumber.match(/[a-zA-Z]/g)) {
+        alert("Your phone number shouldn't contain letters.");
+        return false;
       } else if (this.phoneNumber.match(/[ ]/g)) {
-          alert("Your phone number shouldn't contain spaces!");
-          return false;
-      } else if (!/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\\s./0-9]*$/.test(this.phoneNumber)) {
-          alert("Your phone number is not in right form!");
-          return false;
+        alert("Your phone number shouldn't contain spaces!");
+        return false;
+      } else if (
+        !/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\\s./0-9]*$/.test(this.phoneNumber)
+      ) {
+        alert("Your phone number is not in right form!");
+        return false;
       }
       return true;
     },
     validDateOfBirth() {
-       if(this.dateOfBirth.match(/\d/g) == null){
+      if (this.dateOfBirth.match(/\d/g) == null) {
         alert("Your date of birth needs numbers!");
         return false;
       } else if (this.dateOfBirth.match(/\d/g).length < 6) {
@@ -264,33 +293,39 @@ export default {
       } else if (this.dateOfBirth.match(/\d/g).length > 8) {
         alert("Your date of birth shouldn't contain more than 8 numbers!");
         return false;
-      } else if(this.dateOfBirth.match(/[a-zA-Z]/g)) {
-          alert("Your date of birth shouldn't contain letters.");
-          return false;
-      } else if(this.dateOfBirth.match(/[!@#$%^&*,:'/.<>+\\"]/g)) {
-          alert("Your date of birth shouldn't contain special character other than [-].");
-          return false;
+      } else if (this.dateOfBirth.match(/[a-zA-Z]/g)) {
+        alert("Your date of birth shouldn't contain letters.");
+        return false;
+      } else if (this.dateOfBirth.match(/[!@#$%^&*,:'/.<>+\\"]/g)) {
+        alert(
+          "Your date of birth shouldn't contain special character other than [-]."
+        );
+        return false;
       } else if (this.dateOfBirth.match(/[ ]/g)) {
         alert("Your date of birth shouldn't contain spaces!");
         return false;
-      } else if(!this.dateOfBirth.match(/[1-2][0-9]{3}-[0-1][0-9]-[0-3][0-9]/g)) {
-          alert("Your date of birth is not set in right format.");
-          return false;
-      } else if(this.dateOfBirth.match(/[1-2][0-9]{3}-[0-1][0-9]-[0-3][0-9][-]+/g)) {
-          alert("Your date of birth can't contain - at end of input.");
-          return false;
+      } else if (
+        !this.dateOfBirth.match(/[1-2][0-9]{3}-[0-1][0-9]-[0-3][0-9]/g)
+      ) {
+        alert("Your date of birth is not set in right format.");
+        return false;
+      } else if (
+        this.dateOfBirth.match(/[1-2][0-9]{3}-[0-1][0-9]-[0-3][0-9][-]+/g)
+      ) {
+        alert("Your date of birth can't contain - at end of input.");
+        return false;
       }
-      var dateOfBirthSplit = this.dateOfBirth.split('-');
+      var dateOfBirthSplit = this.dateOfBirth.split("-");
       var dOBSYear = dateOfBirthSplit[0];
       var dOBSMonth = dateOfBirthSplit[1];
       var dOBSDay = dateOfBirthSplit[2];
-      if (dOBSYear > 2021 || dOBSYear < 1900){
+      if (dOBSYear > 2021 || dOBSYear < 1900) {
         alert("Year of date of birth isn't valid");
         return false;
-      } else if (dOBSMonth > 12 || dOBSMonth < 0){
+      } else if (dOBSMonth > 12 || dOBSMonth < 0) {
         alert("Month of date of birth isn't valid");
         return false;
-      }else if (dOBSDay > 31 || dOBSDay < 1){
+      } else if (dOBSDay > 31 || dOBSDay < 1) {
         alert("Day of date of birth isn't valid");
         return false;
       }
@@ -303,9 +338,9 @@ export default {
       } else if (this.website.length > 25) {
         alert("Your website shouldn't contain more than 25 characters!");
         return false;
-      } else if(this.website.match(/[!@#$%^&*,'<>+"]/g)) { 
-          alert("Your website shouldn't contain special characters.");
-          return false;
+      } else if (this.website.match(/[!@#$%^&*,'<>+"]/g)) {
+        alert("Your website shouldn't contain special characters.");
+        return false;
       } else if (this.website.match(/[ ]/g)) {
         alert("Your website name shouldn't contain spaces!");
         return false;
@@ -321,19 +356,39 @@ export default {
         return false;
       }
       return true;
-    }
+    },
+    validQuestion() {
+      if (this.question.length < 1) {
+        alert("Your question should contain at least 1 character!");
+        return false;
+      } else if (this.question.length > 70) {
+        alert("Your question shouldn't contain more than 70 characters!");
+        return false;
+      }
+      return true;
+    },
+    validAnswer() {
+      if (this.answer.length < 1) {
+        alert("Your answer should contain at least 1 character!");
+        return false;
+      } else if (this.answer.length > 70) {
+        alert("Your answer shouldn't contain more than 70 characters!");
+        return false;
+      }
+      return true;
+    },
   },
 };
 </script>
 
 <style scoped>
 .genderCombo {
-    width: 45%;
-    margin-left: 25%;
+  width: 45%;
+  margin-left: 25%;
 }
 
 .userCategoryCombo {
-    width: 45%;
-    margin-left: 25%;
+  width: 45%;
+  margin-left: 25%;
 }
 </style>
