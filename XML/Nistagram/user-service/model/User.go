@@ -20,4 +20,7 @@ type User struct {
 	Salt string `json:"salt" gorm:"not null"`
 	IsConfirmed bool `json:"is_confirmed" gorm:"not null"`
 	UserType UserType `json:"user_type" gorm:"not null"`
+	Question string `json:"question" gorm:"not null"`
+	Answer string `json:"answer" gorm:"not null"`
+	AnswerSalt string `json:"answer_salt" gorm:"not null"`
 }

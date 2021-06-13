@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/repository"
@@ -58,8 +59,8 @@ func initCampaignChosenGroupServices(repo *repository.CampaignChosenGroupReposit
 	return &service.CampaignChosenGroupService { Repo: repo }
 }
 
-func initCampaignChosenGroupHandler(service *service.CampaignChosenGroupService) *handler.CampaignChosenGroupHandler{
-	return &handler.CampaignChosenGroupHandler { Service: service }
+func initCampaignChosenGroupHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.CampaignChosenGroupService) *handler.CampaignChosenGroupHandler{
+	return &handler.CampaignChosenGroupHandler { LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
 func initCampaignRepo(database *gorm.DB) *repository.CampaignRepository{
@@ -94,20 +95,20 @@ func initCampaignServices(repo *repository.CampaignRepository) *service.Campaign
 	return &service.CampaignService { Repo: repo }
 }
 
-func initAdvertisementHandler(service *service.AdvertisementService) *handler.AdvertisementHandler{
-	return &handler.AdvertisementHandler { Service: service }
+func initAdvertisementHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.AdvertisementService) *handler.AdvertisementHandler{
+	return &handler.AdvertisementHandler { LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
-func initCampaignHandler(service *service.CampaignService) *handler.CampaignHandler{
-	return &handler.CampaignHandler { Service: service }
+func initCampaignHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.CampaignService) *handler.CampaignHandler{
+	return &handler.CampaignHandler { LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
-func initDisposableCampaignHandler(service *service.DisposableCampaignService) *handler.DisposableCampaignHandler{
-	return &handler.DisposableCampaignHandler { Service: service }
+func initDisposableCampaignHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.DisposableCampaignService) *handler.DisposableCampaignHandler{
+	return &handler.DisposableCampaignHandler { LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
-func initMultiUseCampaignHandler(service *service.MultiUseCampaignService) *handler.MultiUseCampaignHandler{
-	return &handler.MultiUseCampaignHandler { Service: service }
+func initMultiUseCampaignHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.MultiUseCampaignService) *handler.MultiUseCampaignHandler{
+	return &handler.MultiUseCampaignHandler { LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
 
@@ -134,6 +135,23 @@ func handleFunc(handlerMultiUseCampaign *handler.MultiUseCampaignHandler,handler
 }
 
 func main() {
+	logInfo := logrus.New()
+	logError := logrus.New()
+
+	LogInfoFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logInfoCAMPAIGN.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+
+	LogErrorFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logErrorCAMPAIGN.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+	logInfo.Out = LogInfoFile
+	logInfo.Formatter = &logrus.JSONFormatter{}
+	logError.Out = LogErrorFile
+	logError.Formatter = &logrus.JSONFormatter{}
+
 	database := initDB()
 
 	repoMultiUseCampaign := initMultiUseCampaignRepo(database)
@@ -146,13 +164,13 @@ func main() {
 	serviceCampaign := initCampaignServices(repoCampaign)
 	serviceAdvertisement := initAdvertisementServices(repoAdvertisement)
 
-	handlerMultiUseCampaign := initMultiUseCampaignHandler(serviceMultiUseCampaign)
-	handlerDisposableCampaign := initDisposableCampaignHandler(serviceDisposableCampaign)
-	handlerCampaign := initCampaignHandler(serviceCampaign)
-	handlerAdvertisement := initAdvertisementHandler(serviceAdvertisement)
+	handlerMultiUseCampaign := initMultiUseCampaignHandler(logInfo,logError,serviceMultiUseCampaign)
+	handlerDisposableCampaign := initDisposableCampaignHandler(logInfo,logError,serviceDisposableCampaign)
+	handlerCampaign := initCampaignHandler(logInfo,logError,serviceCampaign)
+	handlerAdvertisement := initAdvertisementHandler(logInfo,logError,serviceAdvertisement)
 
 	repoCampaignChosenGroup := initCampaignChosenGroupRepo(database)
 	serviceCampaignChosenGroup := initCampaignChosenGroupServices(repoCampaignChosenGroup)
-	handlerCampaignChosenGroup := initCampaignChosenGroupHandler(serviceCampaignChosenGroup)
+	handlerCampaignChosenGroup := initCampaignChosenGroupHandler(logInfo,logError,serviceCampaignChosenGroup)
 	handleFunc(handlerMultiUseCampaign,handlerDisposableCampaign,handlerCampaign,handlerAdvertisement,handlerCampaignChosenGroup)
 }

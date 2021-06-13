@@ -62,7 +62,8 @@ export default {
       searchInput: "",
       users: [],
       usersCopy : [],
-      selectedUser: null,
+      token: null,
+      selectedUser: null,   
     }),
     mounted() {
         this.init();
@@ -73,10 +74,31 @@ export default {
       this.id = localStorage.getItem("userId");
       this.token = localStorage.getItem("token");
 
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+          console.log(er);
+        });
+
       console.log(this.id)
       console.log(this.token)
       this.$http
-        .get("https://localhost:8080/api/user/find_all_classic_users_but_logged_in?id=" + this.id)
+        .get("https://localhost:8080/api/user/find_all_classic_users_but_logged_in?id=" + this.id,{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((resp) => {
           console.log("USAO")
           this.users = resp.data

@@ -229,6 +229,7 @@ export default {
     userTag: null,
     isVisibleTags: false,
     userId: null,
+    token: null,
   }),
   mounted() {
     this.init();
@@ -236,8 +237,48 @@ export default {
   methods: {
     init() {
       this.userId = localStorage.getItem("userId");
+      this.token = localStorage.getItem("token");
       this.$http
-        .get("https://localhost:8080/api/tag/find_all_taggable_users_post/")
+        .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+           console.log(resp.data);
+        })
+        .catch((er) => {
+           console.log(er);
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+        });
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/auth/check-create-single-post-permission/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authorized!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/forbiddenPage";
+          console.log(er);
+        });
+
+
+      this.$http
+        .get("https://localhost:8080/api/tag/find_all_taggable_users_post/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           console.log(response.data);
           for (var i = 0; i < response.data.length; i++) {
@@ -330,6 +371,10 @@ export default {
             city: this.city,
             streetName: this.streetName,
             streetNumber: this.streetNumber,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.locationId = response.data;
@@ -349,6 +394,10 @@ export default {
             description: this.postDescription,
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.postId = response.data;
@@ -363,6 +412,10 @@ export default {
             description: "",
             userID: localStorage.getItem("userId"),
             locationId: this.locationId,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.postId = response.data;
@@ -379,6 +432,10 @@ export default {
           path: this.path,
           type: this.selectedType,
           single_post_id: this.postId,
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
         })
         .then((response) => {
           console.log(response.data);
@@ -405,6 +462,10 @@ export default {
           .post("https://localhost:8080/api/tag/tag/", {
             name: this.tagName,
             tag_type: this.selectedTagType,
+          },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
           })
           .then((response) => {
             this.postTagId = response.data;
@@ -421,7 +482,11 @@ export default {
         .post("https://localhost:8080/api/tag/post_tag_posts/", {
           tag_id: this.postTagId,
           post_id: this.postId,
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");
@@ -436,7 +501,11 @@ export default {
         .post("https://localhost:8080/api/tag/post_tag_posts/", {
           tag_id: this.userTag.id,
           post_id: this.postId,
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           console.log(response.data);
           alert("Tag is created! Add more tags or finish creation.");

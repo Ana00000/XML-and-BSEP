@@ -23,10 +23,15 @@ func (service * RecoveryPasswordTokenService) FindByToken(token uuid.UUID) *mode
 	return recoveryPasswordToken
 }
 
-func (service * RecoveryPasswordTokenService) UpdateRecoveryPasswordTokenValidity(token uuid.UUID, isValid bool) error {
-	err := service.Repo.UpdateRecoveryPasswordTokenValidity(token,isValid)
+func (service * RecoveryPasswordTokenService) UpdateRecoveryPasswordTokenValidity(token uuid.UUID, status model.RecoveryPasswordTokenStatus) error {
+	err := service.Repo.UpdateRecoveryPasswordTokenValidity(token,status)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (service * RecoveryPasswordTokenService) FindByID(token uuid.UUID) *model.RecoveryPasswordToken{
+	recoveryPasswordToken := service.Repo.FindByID(token)
+	return recoveryPasswordToken
 }

@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-playground/validator"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/repository"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
+	"gopkg.in/go-playground/validator.v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -73,6 +74,10 @@ func initSinglePostRepo(database *gorm.DB) *repository.SinglePostRepository{
 	return &repository.SinglePostRepository{ Database: database }
 }
 
+func initPostCollectionPostsRepo(database *gorm.DB) *repository.PostCollectionPostsRepository{
+	return &repository.PostCollectionPostsRepository { Database: database }
+}
+
 func initActivityService(repo *repository.ActivityRepository) *service.ActivityService{
 	return &service.ActivityService{ Repo: repo }
 }
@@ -97,43 +102,36 @@ func initSinglePostService(repo *repository.SinglePostRepository) *service.Singl
 	return &service.SinglePostService{ Repo: repo }
 }
 
-func initActivityHandler(service *service.ActivityService) *handler.ActivityHandler{
-	return &handler.ActivityHandler{ Service: service }
-}
-
-func initCommentHandler(service *service.CommentService, validate *validator.Validate) *handler.CommentHandler{
-	return &handler.CommentHandler{
-		Service: service,
-		Validator: validate,
-	}
-}
-
-func initPostHandler(postService *service.PostService) *handler.PostHandler{
-	return &handler.PostHandler{ PostService: postService}
-}
-
-func initPostAlbumHandler(service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
-	return &handler.PostAlbumHandler{ Service: service, PostService: postService}
-}
-
-func initPostCollectionHandler(service *service.PostCollectionService) *handler.PostCollectionHandler{
-	return &handler.PostCollectionHandler{ Service: service }
-}
-
-func initSinglePostHandler(singlePostService *service.SinglePostService, postService *service.PostService,) *handler.SinglePostHandler{
-	return &handler.SinglePostHandler{ SinglePostService: singlePostService, PostService: postService}
-}
-
-func initPostCollectionPostsRepo(database *gorm.DB) *repository.PostCollectionPostsRepository{
-	return &repository.PostCollectionPostsRepository { Database: database }
-}
-
 func initPostCollectionPostsServices(repo *repository.PostCollectionPostsRepository) *service.PostCollectionPostsService{
 	return &service.PostCollectionPostsService { Repo: repo }
 }
 
-func initPostCollectionPostsHandler(service *service.PostCollectionPostsService) *handler.PostCollectionPostsHandler{
-	return &handler.PostCollectionPostsHandler { Service: service }
+func initActivityHandler(logInfo *logrus.Logger, logError *logrus.Logger,service *service.ActivityService) *handler.ActivityHandler{
+	return &handler.ActivityHandler{ LogInfo: logInfo, LogError: logError, Service: service }
+}
+
+func initCommentHandler(logInfo *logrus.Logger, logError *logrus.Logger,service *service.CommentService, validate *validator.Validate) *handler.CommentHandler{
+	return &handler.CommentHandler{ LogInfo: logInfo, LogError: logError, Service: service, Validator: validate}
+}
+
+func initPostHandler(logInfo *logrus.Logger, logError *logrus.Logger,postService *service.PostService) *handler.PostHandler{
+	return &handler.PostHandler{ LogInfo: logInfo, LogError: logError, PostService: postService}
+}
+
+func initPostAlbumHandler(logInfo *logrus.Logger, logError *logrus.Logger, service *service.PostAlbumService, postService *service.PostService) *handler.PostAlbumHandler{
+	return &handler.PostAlbumHandler{ LogInfo: logInfo, LogError: logError, Service: service, PostService: postService}
+}
+
+func initPostCollectionHandler(logInfo *logrus.Logger, logError *logrus.Logger, service *service.PostCollectionService) *handler.PostCollectionHandler{
+	return &handler.PostCollectionHandler{ LogInfo: logInfo, LogError: logError, Service: service }
+}
+
+func initSinglePostHandler(logInfo *logrus.Logger, logError *logrus.Logger, singlePostService *service.SinglePostService, postService *service.PostService,) *handler.SinglePostHandler{
+	return &handler.SinglePostHandler{ LogInfo: logInfo, LogError: logError, SinglePostService: singlePostService, PostService: postService}
+}
+
+func initPostCollectionPostsHandler(logInfo *logrus.Logger, logError *logrus.Logger, service *service.PostCollectionPostsService) *handler.PostCollectionPostsHandler{
+	return &handler.PostCollectionPostsHandler { LogInfo: logInfo, LogError: logError, Service: service }
 }
 
 
@@ -210,11 +208,25 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 }
 
 func main() {
+	logInfo := logrus.New()
+	logError := logrus.New()
+
+	LogInfoFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logInfoPOST.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+
+	LogErrorFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logErrorPOST.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+	logInfo.Out = LogInfoFile
+	logInfo.Formatter = &logrus.JSONFormatter{}
+	logError.Out = LogErrorFile
+	logError.Formatter = &logrus.JSONFormatter{}
+
 	database := initDB()
 	validator := validator.New()
-	repoPostCollectionPosts := initPostCollectionPostsRepo(database)
-	servicePostCollectionPosts := initPostCollectionPostsServices(repoPostCollectionPosts)
-	handlerPostCollectionPosts := initPostCollectionPostsHandler(servicePostCollectionPosts)
 
 	repoActivity := initActivityRepo(database)
 	repoComment := initCommentRepo(database)
@@ -222,6 +234,7 @@ func main() {
 	repoPostAlbum := initPostAlbumRepo(database)
 	repoPostCollection := initPostCollectionRepo(database)
 	repoSinglePost := initSinglePostRepo(database)
+	repoPostCollectionPosts := initPostCollectionPostsRepo(database)
 
 	serviceActivity := initActivityService(repoActivity)
 	serviceComment := initCommentService(repoComment)
@@ -229,13 +242,15 @@ func main() {
 	servicePostAlbum := initPostAlbumService(repoPostAlbum)
 	servicePostCollection := initPostCollectionService(repoPostCollection)
 	serviceSinglePost := initSinglePostService(repoSinglePost)
+	servicePostCollectionPosts := initPostCollectionPostsServices(repoPostCollectionPosts)
 
-	handlerActivity := initActivityHandler(serviceActivity)
-	handlerComment := initCommentHandler(serviceComment, validator)
-	handlerPost := initPostHandler(servicePost)
-	handlerPostAlbum := initPostAlbumHandler(servicePostAlbum, servicePost)
-	handlerPostCollection := initPostCollectionHandler(servicePostCollection)
-	handlerSinglePost := initSinglePostHandler(serviceSinglePost, servicePost)
+	handlerActivity := initActivityHandler(logInfo, logError, serviceActivity)
+	handlerComment := initCommentHandler(logInfo, logError, serviceComment, validator)
+	handlerPost := initPostHandler(logInfo, logError, servicePost)
+	handlerPostAlbum := initPostAlbumHandler(logInfo, logError, servicePostAlbum, servicePost)
+	handlerPostCollection := initPostCollectionHandler(logInfo, logError, servicePostCollection)
+	handlerSinglePost := initSinglePostHandler(logInfo, logError, serviceSinglePost, servicePost)
+	handlerPostCollectionPosts := initPostCollectionPostsHandler(logInfo, logError, servicePostCollectionPosts)
 
 	handleFunc(handlerActivity, handlerComment, handlerPost, handlerPostAlbum, handlerPostCollection, handlerSinglePost, handlerPostCollectionPosts)
 }

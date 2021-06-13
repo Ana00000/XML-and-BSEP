@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
@@ -18,15 +19,18 @@ import (
 )
 
 type RegisteredUserHandler struct {
-	RegisteredUserService * service. RegisteredUserService
-	UserService * service.UserService
-	ClassicUserService * service.ClassicUserService
-	ConfirmationTokenService * service.ConfirmationTokenService
+	RegisteredUserService    *service.RegisteredUserService
+	UserService              *service.UserService
+	ClassicUserService       *service.ClassicUserService
+	ConfirmationTokenService *service.ConfirmationTokenService
 	Validator                *validator.Validate
 	PasswordUtil             *util.PasswordUtil
+	LogInfo *logrus.Logger
+	LogError *logrus.Logger
 }
 
-func SendConfirmationMail(user model.User, token uuid.UUID) {
+//SEDCONFMAIL227
+func (handler *RegisteredUserHandler) SendConfirmationMail(user model.User, token uuid.UUID) {
 	m := gomail.NewMessage()
 
 	// Set E-Mail sender
@@ -51,40 +55,97 @@ func SendConfirmationMail(user model.User, token uuid.UUID) {
 
 	// Now send E-Mail
 	if err := d.DialAndSend(m); err != nil {
-		fmt.Println(err)
+		//fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "SEDCONFMAIL227",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed sending email with confirmation token!")
 		panic(err)
 	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "RegisteredUserHandler",
+		"action":   "SEDCONFMAIL227",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully sended email with confirmation token!")
+
 }
 
+//CRREGUS032
 func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var registeredUserDTO dto.RegisteredUserDTO
 	if err := json.NewDecoder(r.Body).Decode(&registeredUserDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to RegisteredUserDTO!")
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
 
 	if err := handler.Validator.Struct(&registeredUserDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("RegisteredUserDTO fields doesn't entered in valid format!")
 		w.WriteHeader(http.StatusExpectationFailed) //400
 		return
 	}
 
 	if handler.UserService.FindByUserName(registeredUserDTO.Username) != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("User already exist with entered username!")
 		w.WriteHeader(http.StatusConflict) //409
 		return
 	}
 
 	if handler.UserService.FindByEmail(registeredUserDTO.Email) != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("User already exist with entered email!")
 		w.WriteHeader(http.StatusExpectationFailed) //417
 		return
 	}
 
 	salt := ""
 	password := ""
+
+	answer:=""
+	answerSalt:=""
+
+
+
 	validPassword := handler.PasswordUtil.IsValidPassword(registeredUserDTO.Password)
 
 	if validPassword {
+		//PASSWORD SALT
 		salt, password = handler.PasswordUtil.GeneratePasswordWithSalt(registeredUserDTO.Password)
+
+		//ANSWER SALT
+		answerSalt, answer = handler.PasswordUtil.GeneratePasswordWithSalt(registeredUserDTO.Answer)
+
 	} else {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("Password doesn't in valid format!")
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
@@ -117,6 +178,9 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 				Salt:        salt,
 				IsConfirmed: false,
 				UserType:    model.REGISTERED_USER,
+				Question: registeredUserDTO.Question,
+				Answer: answer,
+				AnswerSalt: answerSalt,
 			},
 			IsDeleted: false,
 		},
@@ -125,23 +189,38 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	}
 
 	if err := handler.RegisteredUserService.CreateRegisteredUser(&registeredUser); err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating registered user!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
 	if err := handler.ClassicUserService.CreateClassicUser(&registeredUser.ClassicUser); err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating classic user!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
 	if err := handler.UserService.CreateUser(&registeredUser.ClassicUser.User); err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating basic user!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	tagId:=uuid.New()
+	tagId := uuid.New()
 	var userTag = dto.UserTagFullDTO{
 		ID:     tagId,
 		Name:   registeredUser.Username,
@@ -150,16 +229,20 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 
 	reqUrl := fmt.Sprintf("http://%s:%s/create_user_tag_for_registered_user/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonOrders, _ := json.Marshal(userTag)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonOrders))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonOrders))
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonOrders))
 	if err != nil || resp.StatusCode == 404 {
-		print("Failed creating profile settings for user")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating user tag for user!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
 
-	
 	fmt.Println(registeredUser.ClassicUser.User.ID)
 	confirmationToken := model.ConfirmationToken{
 		ID:                uuid.New(),
@@ -171,24 +254,40 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	}
 
 	if err := handler.ConfirmationTokenService.CreateConfirmationToken(&confirmationToken); err != nil {
-		fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating confirmation token for user!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
 
-	SendConfirmationMail(registeredUser.ClassicUser.User, confirmationToken.ConfirmationToken)
-
+	handler.SendConfirmationMail(registeredUser.ClassicUser.User, confirmationToken.ConfirmationToken)
 
 	reqUrl = fmt.Sprintf("http://%s:%s/profile_settings/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), userId)
 	jsonOrders, _ = json.Marshal(nil)
-	fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
-	fmt.Println(string(jsonOrders))
+	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
+	//fmt.Println(string(jsonOrders))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonOrders))
 	if err != nil || resp.StatusCode == 404 {
-		print("Failed creating profile settings for user")
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "CRREGUS032",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed creating profile settings for user!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "RegisteredUserHandler",
+		"action":   "CRREGUS032",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully created registered user!")
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")

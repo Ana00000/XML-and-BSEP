@@ -68,6 +68,7 @@ export default {
     searchInput: "",
     tags: [],
     tagsCopy: [],
+    token: null,
     selectedTag: null,
   }),
   mounted() {
@@ -75,8 +76,48 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
+
       this.$http
-        .get("https://localhost:8080/api/post/find_all_tags_for_public_and_friends_posts?id="+localStorage.getItem("userId"))
+        .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+          console.log(er);
+        });
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/auth/check-find-all-tags-for-public-and-following-posts-permission/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authorized!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/forbiddenPage";
+          console.log(er);
+        });
+
+      this.$http
+        .get("https://localhost:8080/api/post/find_all_tags_for_public_and_friends_posts?id="+localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((resp) => {
           this.tags = resp.data;
           this.tagsCopy = resp.data;

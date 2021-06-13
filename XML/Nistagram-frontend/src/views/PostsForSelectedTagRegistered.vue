@@ -61,6 +61,7 @@
 export default {
   name: "PostsForSelectedTagRegistered",
   data: () => ({
+    token: null,
     posts: [],
   }),
   mounted() {
@@ -68,8 +69,48 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
+
       this.$http
-        .get("https://localhost:8080/api/post/find_all_posts_for_tag_reg_user?tagName="+localStorage.getItem("selectedTagName")+"&id=" + localStorage.getItem("userId"))
+        .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+          console.log(er);
+        });
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/auth/check-find-all-posts-for-tag-reg-user-permission/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authorized!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/forbiddenPage";
+          console.log(er);
+        });
+
+      this.$http
+        .get("https://localhost:8080/api/post/find_all_posts_for_tag_reg_user?tagName="+localStorage.getItem("selectedTagName")+"&id=" + localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((response) => {
           this.posts = response.data;
         })

@@ -1,0 +1,338 @@
+-------------------------------------------------------campaign service----------------------------------------------
+
+---- ADVERTISMENT HANDLER ----
+*CreateAdvertisment - CRADA731
+
+---- CAMPAIGN CHOSEN GROUP HANDLER ----
+*CreateCampaignChosenGroup - CRCACHGRB114
+
+---- CAMPAIGN HANDLER ----
+*CreateCampaign - CRCAE175
+
+---- DISPOSABLE CAMPAIGN HANDLER ----
+*CreateDisposableCampaign - CRDICAF756
+
+---- MULTI USE CAMPAIGN HANDLER ----
+*CreateMultiUseCampaign - CRMUUSCAP780
+
+
+-------------------------------------------------------content service----------------------------------------------
+
+---- ADVERTISMENT CONTENT HANDLER ----
+*CreateAdvertismentContent - CRADCOO454
+
+---- CONTENT HANDLER ----
+*CreateContent - CRCOU658
+
+---- MESSAGE CONTENT HANDLER ----
+*CreateMessageContent - CRMECOK313
+
+---- POST ALBUM CONTENT HANDLER ----
+*CreatePostAlbumContent - CRPOALCOL998
+*Upload - UPL887
+*FindAllContentsForPostAlbums - FIALCOFOPOALO555
+*FindAllContentsForPostAlbum - FIALCOFOPOALO673
+
+---- SINGLE POST CONTENT HANDLER ----
+*CreateSinglePostContent - CRSIPOCOB123
+*FindAllContentsForPosts - FIALCOFOPOQ771
+*FindAllContentsForPost - FIALCOFOPOW474
+*Upload - UPK523
+
+---- SINGLE STORY CONTENT HANDLER ----
+*CreateSingleStoryContent - CRSISTCOA197
+*FindAllContentsForStories - FIALCOFOSTF439
+*FindAllContentsForStory - FIALCOFOSTV496
+*Upload - UPM253
+*FindSingleStoryContentForStoryId - FISISTCOFOSTH439
+
+---- STORY ALBUM CONTENT HANDLER ----
+*CreateStoryAlbumContent - CRSTALCOX866
+*Upload - UPQ799
+*FindAllContentsForStoryAlbums - FIALCOFOSTALJ710
+*FindAllContentsForStoryAlbum - FIALCOFOSTALS400
+
+
+-------------------------------------------------------location service----------------------------------------------
+
+---- LOCATION HANDLER ----
+*CreateLocation - CRLON001
+*FindByID - FIBYIDI111
+*FindLocationIdByLocationString - FILOIDBYLOSTR670
+*FindAllLocationsForStories - FIALLOFOSTH070
+*FindAllLocationsForStory - FIALLOFOSTD780
+*FindAllLocationsForPosts - FIALLOFOPOP066
+*FindAllLocationsForPost - FIALLOFOPOG429
+*FindAllLocationsForStoryAlbums - FIALLOFOSTALK777
+*FindAllLocationsForStoryAlbum - FIALLOFOSTALJ927
+*FindAllLocationsForPostAlbums - FIALLOFOPOALP969
+*FindAllLocationsForPostAlbum - FIALLOFOPOALA073
+
+
+-------------------------------------------------------message service----------------------------------------------
+
+---- MESSAGE HANDLER ----
+*CreateMessage - CRMEE454
+
+---- MESSAGE SUBSTANCE HANDLER ----
+*CreateMessageSubstance - CRMESUE700
+
+---- POST MESSAGE SUBSTANCE HANDLER ----
+*CreatePostMessageSubstance - CRPOMESUB667
+
+---- STORY MESSAAGE SUBSTANCE HANDLER ----
+*CreateStoryMessageSubstance - CRSTMESUJ400
+
+
+-------------------------------------------------------post service----------------------------------------------
+
+---- ACTIVITY HANDLER ----
+*CreateActivity - CRACT467
+*FindAllLikesForPost - FALF468
+*FindAllDislikesForPost - FADFP469
+*FindAllFavoritesForPost - FAFFP470
+*FindAllActivitesForPost - FAAFP471
+*UpdateActivity - UPACT472
+
+---- COMMENT HANDLER ----
+*CreateComment - CRCOM571
+*FindAllCommentsForPost - FACFP572
+*FindAllUserComments - FAUCM573
+
+---- POST ALBUM HANDLER ----
+*CreatePostAlbum - CRPAL580
+*FindAllAlbumPostsForLoggedUser - FAAPL581
+*FindSelectedPostAlbumByIdForLoggedUser - FSPAL583
+*FindAllPublicAlbumPostsRegisteredUser - FAPAP584
+*FindAllPublicAlbumPostsNotRegisteredUser - FPAPN585
+*FindAllFollowingPostAlbums - FAFPA586
+*CreatePostAlbumsDTOList - CLADT587
+*CreatePostAlbumDTO - CADTO588
+
+---- POST COLLECTION HANDLER ----
+*CreatePostCollection - CRPCL590
+*FindAllPostCollectionsForUserRegisteredUser - FAPCU591
+
+---- POST COLLECTION POSTS HANDLER ----
+*CreatePostCollectionPosts - CRPCP690
+*FindAllPostCollectionPostsForPost - FAPCP691
+
+---- POST HANDLER ----
+*CreatePost - CPOST530
+*UpdatePost - UPOST531
+
+---- SINGLE POST HANDLER ----
+*CreateSinglePost - CRESP670
+*FindAllPostsForUserNotRegisteredUser - FPFNR671
+*FaindAllPostsForUserRegisteredUser - FPFUR672
+*FindAllFollowingPosts - FAFPS673
+*FindSelectedPostByIdForNotRegisteredUsers - FSPNR674
+*FindSelectedPostByIdForRegisteredUsers - FSPRU675
+*FindAllPublicPostsNotRegisteredUser - FAPPN676
+*FindAllPublicPostsRegisteredUser - FAPPR677
+*FindAllPostsForLoggedUser - FAPLU678
+*FindSelectedPostByIdForLoggedUser - FSPLU679
+*CreatePostsDTOLust - CLDTO620 
+*CreatePostDTO - CPDTO621 
+*FindAllTagsForPublicPosts - FATPP631
+*FindAllLocationsForPublicPosts - FALPP632
+*FindAllPostsForTag - FAPFT633
+*FindAllPostsForLocation - FAPFL634
+*FindAllPublicAndFriendsUsers - FAPFU635
+*FindAllTagsForPublicAndFollowingPosts - FATPF636
+*FindAllLocationsForPublicAndFollowingPosts - FALPF637
+*FindAllPostsForTagRegUser - FAPTR638
+*FindAllPostsForLocationRegUser - FAPLR639
+
+
+-------------------------------------------------------requests service----------------------------------------------
+
+--- INAPPROPRIATE CONTENT REQUEST HANDLER---
+*CreateInappropriateContentRequest - CRINAPPROPCONTREQ4255
+
+--- AGENT REGISTRATION REQUEST HANDLER ---
+*CreateAgentRegistrationRequest - CRAGREGREQ2010
+
+--- COMMENT ICR HANDLER ---
+*CreateCommentICR - CRCOMICR9998
+
+--- FOLLOW REQUEST HANDLER---
+*CreateFollowRequest - CREFOLLOWREQ6319
+*RejectFollowRequest - REJFOLLOWREQ4939
+*FindFollowRequestByIDsClassicUserAndHisFollower - FIDFOLLREQBYIDCLASUSANDHISFOLL3333
+*UpdateFollowRequestToAccepted - UPDFOLLOWREQTOACCEP7710
+*FindAllPendingFollowerRequestsForUser - FIDALLPENFOLLOWERREQFORUS6700
+*FindRequestById - FIDREQBYID2431
+*FindAllFollowerRequestsForUser - FIDALLFOLLREQFORUS2491
+
+--- POST ICR HANDLER---
+*CreatePostICR - CREPOSTICR2544
+
+---STORY ICR HANDLER---
+*CreateStoryICR - CRESTORYICR3443
+
+--VERIFICATION REQUEST HANDLER---
+*CreateVerificationRequest - CREVERIFREQ6631
+
+
+-------------------------------------------------------settings service----------------------------------------------
+--- PROFILE SETTINGS APPROVED MESSAGE PROFILES HANDLER ---
+*CreateProfileSettingsApprovedMessageProfiles - CRPROFSETTINGSAPPROVEDMESPROF967
+
+--- PROFILE SETTINGS BLOCKED PROFILES HANDLER ---
+*CreateProfileSettingsBlockedProfiles - CRPROFSETTINGSBLOCPROF101
+
+--- PROFILE SETTINGS HANDLER --- 
+*CreateProfileSettings - CRPROFSETTINGS2712
+*FindProfileSettingByUserId - FINDPROFSETTINGSBYUSID1411
+*FindProfileSettingsForPublicUsers - FIDPROFSETTINGSFORPUBUS0906
+*FindAllPublicUsers - FIDALLPUBUS3110
+
+--- PROFILE SETTINGS MUTED PROFILES HANDLER ---
+*CreateProfileSettingsMutedProfiles - CRPROFSETTINGSMUTPROF7777
+
+--- PROFILE SETTINGS REJECTED MESSAGES PROFILES HANDLER ---
+*CreateProfileSettingsRejectedMessageProfiles - CRPROFSETTINGSREJCTMESSPROF1802
+
+
+-------------------------------------------------------story service----------------------------------------------
+
+--- SINGLE STORY HANDLER ---
+*FindSingleStoryForId - FIDSINGSTRYFORID9102
+*CreateStoryDTO - CRSTRYDTO0912
+*CreateStoriesDTOList - CRSTORISDTOLST0914
+*FindAllStoriesForLoggedUser - FIDALSTORISFORLOGGUS0213
+*FindSelectedStoryByIdForRegisteredUsers - FIDSELECTSTRYBYIDFORREGUSRS9031
+*FindAllFollowingStories - FIDALFOLLINGSTORIS8329
+*FindAllStoriesForUserRegisteredUser - FIDALSTORISFORUSREGUS9322
+*FindAllPublicStoriesRegisteredUser - FIDALPUBSTORISREGUS9823
+*FindAllStoriesForUserNotRegisteredUser - FIDALSTORISFORUSNOTREGUS8921
+*FindAllPublicStoriesNotRegisteredUser - FIDALPUBSTORISNOTREGUS9329
+*CreateSingleStory - CRSINGLSTRY9023
+
+--- SINGLE STORY STORY HIGHLIGHTS HANDLER ---
+*CreateSingleStoryStoryHighlights - CRSINGLSTRYSTRYHIGHLHTS9820
+*FindAllSingleStoryStoryHighlightsForStory - FIDALSINGLSTRYSTRYHIGHLHTSFORSTRY9840
+*FindAllSingleStoryStoryHighlightsForStoryHighlight - FIDALSINGLSTRYSTRYHIGHLHTSFORSTRYLHT9193
+
+--- STORY ALBUM HANDLER ---
+*CreateStoryAlbum - CRSTRYALB8542
+*FindAllAlbumStoriesForLoggedUser - FIDALALBSTORISFORLOGGUS8293
+*CreateStoryAlbumsDTOList - CRSTRYALBMSDTOLST0330
+*FindSelectedStoryAlbumByIdForLoggedUser - FIDSELECTSTRYALBBYIDFORLOGGUS983
+*CreateStoryAlbumDTO - CRSTRYALBDTO9810
+*FindAllPublicAlbumStoriesRegisteredUser - FIDALPUBALBSTORISREGUS9012
+*FindAllPublicAlbumStoriesNotRegisteredUser - FIDALPUBALBSTORISNOTREGUS9021
+*FindAllFollowingStoryAlbums - FIDALFOLLINGSTRYALBMS0910
+
+--- STORY HANDLER ---
+*CreateStory - CRSTRY90211
+
+--- STORY HIGHLIGHT HANDLER ---
+*CreateStoryHighlight - CRSTRYHIGHLHT0312
+*FindAllStoryHighlightsForUser - FIDALSTRYHIGHLHTSFORUS8882
+
+
+-------------------------------------------------------tag service----------------------------------------------
+
+--- COMMENT TAG COMMENTS HANDLER ---
+*CreateCommentTagComments - CRCOMMTAGCOMMTS9327
+*FindAllCommentTagCommentsForComment - FIDALCOMMTGCOMMTSFORCOMM9027 
+
+--- POST ALBUM TAG POST ALBUMS HANDLER ---
+*CreatePostAlbumTagPostAlbums - CRPOALBTGPOALBMS9832
+*FindAllTagsForPostAlbumTagPostAlbums - FIDALTGSFRPOALBTGPSTALBMS321
+*FindAllTagsForPostAlbum - FIDALTGSFRPOALB9231
+
+--- POST TAG POSTS HANDLER ---
+*CreatePostTagPosts - CRPOTGPSTS532
+*FindAllTagsForPost - FIDALTGSFORPST9128
+*FindPostIdsByTagId - FIDPSTIDSBYTGID9851
+*FindAllTagsForPosts - FIDALTGSFORPSTS9882
+*FindAllTagsForPostsTagPosts - FIDALTGSFORPSTSTGPSTS9
+
+--- STORY ALBUM TAG STORY ALBUMS HANDLER ---
+*CreateStoryAlbumTagStoryAlbums - CRSTRYALBTGSTRYALBMS7677
+*FindAllTagsForStoryAlbumTagStoryAlbums - FIDALTGSFORSTRYALBTGSTRYALBMS6765
+*FindAllTagsForStoryAlbum - FIDALTGSFORSTRYALB1980
+
+--- STORY TAG STORIES HANDLER --- 
+*CreateStoryTagStories - CRSTRYTGSTORIS92123
+*FindAllTagsForStory - FIDALTGSFORSTRY8212
+*FindAllTagsForStories - FIDALTGSFORSORIS8223
+*FindStoryTagStoriesForStoryId - FIDSTRYTGSTORISFORSTRYID7664
+
+--- TAG HANDLER ---
+*FindTagNameById - FIDTGNMBYID0921
+*CreateTag - CRTG7821
+*FindTagForId - FIDTGFORID9180
+*FindTagByName - FIDTGBYNM913
+*FindAllHashTags - FIDALHASHTG9327
+
+--- USER TAG HANDLER ---
+*CreateUserTag - CRUSRTG9821
+*FindAllTaggableUsersPost - FIDALTAGBLUSRSPST2889
+*FindAllTaggableUsersStory - FIDALTAGBLUSRSSTRY8229
+*FindAllTaggableUsersComment - FIDALTAGBLUSRSCOMM9882
+*CreateUserTagForRegisteredUser - CRUSRTGFORREGUSR7772
+
+
+
+-------------------------------------------------------user service----------------------------------------------
+--- ADMIN HANDLER---
+*CreateAdmin - CRADM524
+
+--- AGENT HANDLER---
+*CreateAgent - CRAGT823
+
+--- CLASSIC USER CAMPAIGNS HANDLER---
+*CreateClassicUserCampaigns - CRCLASUSCAMP802
+
+--- CLASSIC USER CLOSE FRIENDS HANDLER---
+*CheckIfCloseFriend - CHEKCLOFR219
+*CreateClassicUserCloseFriend - CRCLOFR833
+
+--- CLASSIC USER FOLLOWERS HANDLER---
+*FindAllMutualFollowerForUser - FIDALMUTFOLLERFRUS921
+
+--- CLASSIC USER FOLLOWINGS HANDLER---
+*AcceptFollowerRequest - ACCFOLLERREQ832
+*CheckIfFollowingPostStory - CHEKFOLLINGPSTSTRY2111
+*FindAllUserWhoFollowUserId - FIDALUSFOLWUSID2672
+*FindAllValidFollowingsForUser - FIDALVALFOLLINGSFRUS111
+*CreateClassicUserFollowing - CRCLASUSFOLLING712
+
+--- CLASSIC USER HANDLER---
+*FindClassicUserById - FIDCLASSUSBYID943
+*FindAllValidUsers - FIDALVALUSRS999
+*FindAllPublicUsers - FIDALPUBUSRS431
+*CheckIfUserValid - CHKIFUSVAL9929
+*FindAllUsersByFollowingIds - FIDALUSRSBYFOLLINGIDS9442
+*FindAllUsersButLoggedInDTOs - FIDALUSRSBUTLOGEDINDTO32
+*FindAllUsersButLoggedIn - FIDALUSRSBUTLOGEDIN3231
+*FindSelectedUserById - FIDSELUSBYID9993
+
+--- CONFIRMATION TOKEN HANDLER ---
+*VerifyConfirmationToken - VERFYCONFTOK322
+
+--- RECOVERY PASSWORD TOKEN HANDLER --- 
+*SendRecoveryPasswordMail - SEDRECRYPASSMAL924 
+*GenerateRecoveryPasswordToken - GENRECRYPASSTOK432
+*VerifyRecoveryPasswordToken - VERFYRECRYPASSTOK1010
+
+--- REGISTERED USER HANDLER ---
+*SendConfirmationMail - SEDCONFMAIL227
+*CreateRegisteredUser - CRREGUS032
+
+--- USER HANDLER ---
+*FindAllUsers - FIDALUSRS2330
+*ChangeUserPassword - CHUSPASS9112
+*LogIn - LOG85310
+*UpdateUserProfileInfo - UPDUSPROFINF393
+*FindByID - FIDBYID0329
+*FindAllPublicUsers - FIDALPUBUSRS0291
+*FindAllUsersButLoggedIn - FIDALUSRSBUTLOGGIN212
+*FindByUserName - FIDBYUSNAM9482
+*CheckIfAuthentificated - CHCKIFAUTH9342
+
+

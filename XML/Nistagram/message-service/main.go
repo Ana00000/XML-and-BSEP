@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/message-service/repository"
@@ -78,20 +79,20 @@ func initPostMessageSubstanceService(repo *repository.PostMessageSubstanceReposi
 	return &service.PostMessageSubstanceService{ Repo: repo }
 }
 
-func initMessageHandler(service *service.MessageService) *handler.MessageHandler{
-	return &handler.MessageHandler{ Service: service }
+func initMessageHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.MessageService) *handler.MessageHandler{
+	return &handler.MessageHandler{ LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
-func initMessageSubstanceHandler(service *service.MessageSubstanceService) *handler.MessageSubstanceHandler{
-	return &handler.MessageSubstanceHandler{ Service: service }
+func initMessageSubstanceHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.MessageSubstanceService) *handler.MessageSubstanceHandler{
+	return &handler.MessageSubstanceHandler{ LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
-func initStoryMessageSubstanceHandler(service *service.StoryMessageSubstanceService) *handler.StoryMessageSubstanceHandler{
-	return &handler.StoryMessageSubstanceHandler{ Service: service }
+func initStoryMessageSubstanceHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.StoryMessageSubstanceService) *handler.StoryMessageSubstanceHandler{
+	return &handler.StoryMessageSubstanceHandler{ LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
-func initPostMessageSubstanceHandler(service *service.PostMessageSubstanceService) *handler.PostMessageSubstanceHandler{
-	return &handler.PostMessageSubstanceHandler{ Service: service }
+func initPostMessageSubstanceHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,service *service.PostMessageSubstanceService) *handler.PostMessageSubstanceHandler{
+	return &handler.PostMessageSubstanceHandler{ LogInfo: LogInfo, LogError: LogError, Service: service }
 }
 
 func handleFunc(handlerMessage *handler.MessageHandler, handlerMessageSubstance *handler.MessageSubstanceHandler,
@@ -115,6 +116,23 @@ func handleFunc(handlerMessage *handler.MessageHandler, handlerMessageSubstance 
 }
 
 func main() {
+	logInfo := logrus.New()
+	logError := logrus.New()
+
+	LogInfoFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logInfoMESSAGE.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+
+	LogErrorFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logErrorMESSAGE.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+	logInfo.Out = LogInfoFile
+	logInfo.Formatter = &logrus.JSONFormatter{}
+	logError.Out = LogErrorFile
+	logError.Formatter = &logrus.JSONFormatter{}
+
 	database := initDB()
 	repoMessage := initMessageRepo(database)
 	repoMessageSubstance := initMessageSubstanceRepo(database)
@@ -124,9 +142,9 @@ func main() {
 	serviceMessageSubstance := initMessageSubstanceService(repoMessageSubstance)
 	serviceStoryMessageSubstance := initStoryMessageSubstanceService(repoStoryMessageSubstance)
 	servicePostMessageSubstance := initPostMessageSubstanceService(repoPostMessageSubstance)
-	handlerMessage := initMessageHandler(serviceMessage)
-	handlerMessageSubstance := initMessageSubstanceHandler(serviceMessageSubstance)
-	handlerStoryMessageSubstance := initStoryMessageSubstanceHandler(serviceStoryMessageSubstance)
-	handlerPostMessageSubstance := initPostMessageSubstanceHandler(servicePostMessageSubstance)
+	handlerMessage := initMessageHandler(logInfo,logError,serviceMessage)
+	handlerMessageSubstance := initMessageSubstanceHandler(logInfo,logError,serviceMessageSubstance)
+	handlerStoryMessageSubstance := initStoryMessageSubstanceHandler(logInfo,logError,serviceStoryMessageSubstance)
+	handlerPostMessageSubstance := initPostMessageSubstanceHandler(logInfo,logError,servicePostMessageSubstance)
 	handleFunc(handlerMessage, handlerMessageSubstance, handlerStoryMessageSubstance, handlerPostMessageSubstance)
 }

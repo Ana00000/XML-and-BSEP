@@ -160,20 +160,61 @@ export default {
     text: "",
     userName: "",
     gender: "",
+    token: null,
     isHiddenComment: true,
   }),
   mounted() {
     this.init();
   },
   methods: {
+    
     init() {
+      this.token = localStorage.getItem("token");
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log(resp.data);
+          console.log("User is authentificated!");
+        })
+        .catch((er) => {
+          console.log(er);
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+        });
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/auth/check-find-selected-post-by-id-for-logged-user-permission/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authorized!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          console.log(er);
+          window.location.href = "https://localhost:8081/forbiddenPage";
+        });
+
       this.$http
         .get(
           "https://localhost:8080/api/post/find_selected_post_for_logged_user?id=" +
             localStorage.getItem("mySelectedPostId") +
             "&logId=" +
-            localStorage.getItem("mySelectedUserId")
-        )
+            localStorage.getItem("mySelectedUserId"),{
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
         .then((response) => {
           this.post = response.data;
         })
@@ -182,8 +223,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_comments_for_post?id=" +
-            localStorage.getItem("mySelectedPostId")
-        )
+            localStorage.getItem("mySelectedPostId"),{
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
         .then((response) => {
           alert(response.data);
           this.allPostComments = response.data;
@@ -202,7 +246,11 @@ export default {
     getItem(item) {
       console.log(item);
       this.$http
-        .get("https://localhost:8080/api/user/find_user_by_id?id=" + item.user_id)
+        .get("https://localhost:8080/api/user/find_user_by_id?id=" + item.user_id,{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((r) => {
           this.userName = r.data.username;
           if (r.data.gender == 0) {
@@ -235,7 +283,11 @@ export default {
         user_id: localStorage.getItem("userId"),
         post_id: this.post.post_id,
         text: this.text,
-      }).then((r) => {
+      },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        }).then((r) => {
           console.log(r);
           alert("Successfully created comment");
           window.location.href = "https://localhost:8081/postByIdWithoutActivity"

@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/handler"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/tag-service/repository"
@@ -113,40 +114,65 @@ func initStoryAlbumTagStoryAlbumsServices(repo *repository.StoryAlbumTagStoryAlb
 	return &service.StoryAlbumTagStoryAlbumsService { Repo: repo }
 }
 
-func initTagHandler(service *service.TagService, validator *validator.Validate) *handler.TagHandler{
-	return &handler.TagHandler {
-		Service: service,
+func initTagHandler(info *logrus.Logger, logError *logrus.Logger, service *service.TagService, validator *validator.Validate) *handler.TagHandler {
+	return &handler.TagHandler{
+		Service:   service,
 		Validator: validator,
+		LogInfo:   info,
+		LogError:  logError,
 	}
 }
 
-func initUserTagHandler(service *service.UserTagService, tagService * service.TagService, validator *validator.Validate) *handler.UserTagHandler{
-	return &handler.UserTagHandler {
-		Service: service,
+func initUserTagHandler(info *logrus.Logger, logError *logrus.Logger, service *service.UserTagService, tagService *service.TagService, validator *validator.Validate) *handler.UserTagHandler {
+	return &handler.UserTagHandler{
+		Service:    service,
 		TagService: tagService,
-		Validator: validator,
+		Validator:  validator,
+		LogInfo:    info,
+		LogError:   logError,
 	}
 }
 
-func initStoryTagStoriesHandler(service *service.StoryTagStoriesService) *handler.StoryTagStoriesHandler{
-	return &handler.StoryTagStoriesHandler { Service: service }
+func initStoryTagStoriesHandler(info *logrus.Logger, logError *logrus.Logger, service *service.StoryTagStoriesService) *handler.StoryTagStoriesHandler {
+	return &handler.StoryTagStoriesHandler{
+		Service:  service,
+		LogInfo:  info,
+		LogError: logError,
+	}
 }
 
-func initCommentTagCommentsHandler(service *service.CommentTagCommentsService,tagService *service.TagService) *handler.CommentTagCommentsHandler{
-	return &handler.CommentTagCommentsHandler { Service: service, TagService: tagService}
+func initCommentTagCommentsHandler(info *logrus.Logger, logError *logrus.Logger, service *service.CommentTagCommentsService, tagService *service.TagService) *handler.CommentTagCommentsHandler {
+	return &handler.CommentTagCommentsHandler{
+		Service:  service,
+		LogInfo:  info,
+		LogError: logError,
+		TagService: tagService,
+	}
 }
 
-func initPostTagPostsHandler(service *service.PostTagPostsService) *handler.PostTagPostsHandler{
-	return &handler.PostTagPostsHandler { Service: service }
+func initPostTagPostsHandler(info *logrus.Logger, logError *logrus.Logger, service *service.PostTagPostsService) *handler.PostTagPostsHandler {
+	return &handler.PostTagPostsHandler{
+		Service:  service,
+		LogInfo:  info,
+		LogError: logError,
+	}
 }
 
 
-func initPostAlbumTagPostAlbumsHandler(service *service.PostAlbumTagPostAlbumsService) *handler.PostAlbumTagPostAlbumsHandler{
-	return &handler.PostAlbumTagPostAlbumsHandler { Service: service }
+func initPostAlbumTagPostAlbumsHandler(info *logrus.Logger, logError *logrus.Logger, service *service.PostAlbumTagPostAlbumsService) *handler.PostAlbumTagPostAlbumsHandler {
+	return &handler.PostAlbumTagPostAlbumsHandler{
+		Service:  service,
+		LogInfo:  info,
+		LogError: logError,
+	}
 }
 
-func initStoryAlbumTagStoryAlbumsHandler(service *service.StoryAlbumTagStoryAlbumsService) *handler.StoryAlbumTagStoryAlbumsHandler{
-	return &handler.StoryAlbumTagStoryAlbumsHandler { Service: service }
+func initStoryAlbumTagStoryAlbumsHandler(info *logrus.Logger, logError *logrus.Logger, service *service.StoryAlbumTagStoryAlbumsService) *handler.StoryAlbumTagStoryAlbumsHandler {
+	return &handler.StoryAlbumTagStoryAlbumsHandler{
+		Service:  service,
+		LogInfo:  info,
+		LogError: logError,
+	}
 }
 
 func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagHandler, handlerCommentTagComments *handler.CommentTagCommentsHandler,
@@ -204,36 +230,52 @@ func handleFunc(handlerTag *handler.TagHandler, handlerUserTag *handler.UserTagH
 func main() {
 	database := initDB()
 	validator := validator.New()
+	logInfo := logrus.New()
+	logError := logrus.New()
+
+	LogInfoFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logInfoTAG.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+
+	LogErrorFile, err := os.OpenFile(os.Getenv("LOG_URL")+"/logErrorTAG.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatalf("error opening file: %v", err)
+	}
+	logInfo.Out = LogInfoFile
+	logInfo.Formatter = &logrus.JSONFormatter{}
+	logError.Out = LogErrorFile
+	logError.Formatter = &logrus.JSONFormatter{}
 
 	repoTag := initTagRepo(database)
 	serviceTag := initTagServices(repoTag)
-	handlerTag := initTagHandler(serviceTag, validator)
+	handlerTag := initTagHandler(logInfo,logError,serviceTag, validator)
 
 	repoUserTag := initUserTagRepo(database)
 	serviceUserTag := initUserTagServices(repoUserTag)
-	handlerUserTag := initUserTagHandler(serviceUserTag, serviceTag, validator)
+	handlerUserTag := initUserTagHandler(logInfo,logError,serviceUserTag, serviceTag, validator)
 
 	repoPostTagPosts := initPostTagPostsRepo(database)
 	servicePostTagPosts := initPostTagPostsServices(repoPostTagPosts)
-	handlerPostTagPosts := initPostTagPostsHandler(servicePostTagPosts)
+	handlerPostTagPosts := initPostTagPostsHandler(logInfo,logError,servicePostTagPosts)
 
 	repoStoryTagStories := initStoryTagStoriesRepo(database)
 	serviceStoryTagStories := initStoryTagStoriesServices(repoStoryTagStories)
-	handlerStoryTagStories := initStoryTagStoriesHandler(serviceStoryTagStories)
+	handlerStoryTagStories := initStoryTagStoriesHandler(logInfo,logError,serviceStoryTagStories)
 
 	repoCommentTagComments := initCommentTagCommentsRepo(database)
 	serviceCommentTagComments := initCommentTagCommentsServices(repoCommentTagComments)
-	handlerCommentTagComments := initCommentTagCommentsHandler(serviceCommentTagComments, serviceTag)
+	handlerCommentTagComments := initCommentTagCommentsHandler(logInfo,logError,serviceCommentTagComments,serviceTag)
 
 
 	repoPostAlbumTagPostAlbums := initPostAlbumTagPostAlbumsRepo(database)
 	servicePostAlbumTagPostAlbums := initPostAlbumTagPostAlbumsServices(repoPostAlbumTagPostAlbums)
-	handlerPostAlbumTagPostAlbums := initPostAlbumTagPostAlbumsHandler(servicePostAlbumTagPostAlbums)
+	handlerPostAlbumTagPostAlbums := initPostAlbumTagPostAlbumsHandler(logInfo,logError,servicePostAlbumTagPostAlbums)
 
 
 	repoStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsRepo(database)
 	serviceStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsServices(repoStoryAlbumTagStoryAlbums)
-	handlerStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsHandler(serviceStoryAlbumTagStoryAlbums)
+	handlerStoryAlbumTagStoryAlbums := initStoryAlbumTagStoryAlbumsHandler(logInfo,logError,serviceStoryAlbumTagStoryAlbums)
 
 	handleFunc(handlerTag, handlerUserTag, handlerCommentTagComments,handlerPostTagPosts, handlerStoryTagStories, handlerPostAlbumTagPostAlbums, handlerStoryAlbumTagStoryAlbums)
 }

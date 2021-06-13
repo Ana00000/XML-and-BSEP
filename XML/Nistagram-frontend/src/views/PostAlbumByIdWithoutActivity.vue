@@ -79,6 +79,7 @@ export default {
   name: "PostAlbumByIdWithoutActivity",
   data: () => ({
     postAlbum: null,
+    token: null,
     postAlbumContents: [],
   }),
   mounted() {
@@ -86,12 +87,52 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+          console.log(er);
+        });
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/auth/check-find-selected-post-album-by-id-for-logged-user-permission/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authorized!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/forbiddenPage";
+          console.log(er);
+        });
+
       this.$http
         .get(
           "https://localhost:8080/api/post/find_selected_post_album_for_logged_user?id=" +
             localStorage.getItem("mySelectedPostAlbumId") +
             "&logId=" +
-            localStorage.getItem("mySelectedUserId")
+            localStorage.getItem("mySelectedUserId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        }
         )
         .then((response) => {
           this.postAlbum = response.data;

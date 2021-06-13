@@ -83,17 +83,45 @@ export default {
     selectedUser: null,
     classicUserId: "",
     followerUserId: "",
+    token: null,
+    id: "",
   }),
   mounted() {
     this.init();
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
       this.id = localStorage.getItem("userId");
       this.$http
         .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          console.log(er);
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+        });
+
+      
+
+
+      this.$http
+        .get(
           "https://localhost:8080/api/user/find_all_mutual_followers_for_user?id=" +
-            this.id
+            this.id,
+          {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((resp) => {
           console.log(resp.data);
@@ -124,7 +152,13 @@ export default {
         .post("https://localhost:8080/api/user/create_close_friend/", {
           classic_user_id: this.classicUserId,
           close_friend_user_id: this.followerUserId,
-        })
+        },
+          {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+          )
         .then((response) => {
           console.log(response)
           alert("You have added this friend as close friend.");

@@ -72,6 +72,7 @@ export default {
   data: () => ({
     stories: [],
     logId: null,
+    token: null,
     allStoriesIds: [],
   }),
   mounted() {
@@ -79,10 +80,51 @@ export default {
   },
   methods: {
     init() {
+      this.logId = localStorage.getItem("userId");
+      this.token = localStorage.getItem("token");
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+          console.log(er);
+        });
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/auth/check-find-all-stories-for-logged-user-permission/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authorized!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/forbiddenPage";
+          console.log(er);
+        });
+
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_single_story_story_highlights_for_story_highlight?id=" +
-            localStorage.getItem("selectedStoryHighlightId")
+            localStorage.getItem("selectedStoryHighlightId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
@@ -96,7 +138,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_stories_for_logged_user?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {

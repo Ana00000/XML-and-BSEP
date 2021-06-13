@@ -1,107 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/content-images/148490044BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/157547740BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/352519872BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/367581040BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/420771916BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/433308600BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/437524830preuzmi.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/524181208BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/581990400BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/77545810738_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/919153572BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/987802551preuzmi.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/994524804BrckoGrad.jpg" afterDir="false" />
+    <list default="true" id="d09c2dcf-763b-4e85-9087-41b1e7136b80" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/content-images/998448880preuzmi.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/AddCloseFriends.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/AddCloseFriends.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePostAlbum.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePostAlbum.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStoryAlbum.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStoryAlbum.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/FollowRequests.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/FollowRequests.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/FriendsPosts.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/FriendsPosts.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/FriendsStories.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/FriendsStories.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/MyCollections.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/MyCollections.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/MyMedia.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/MyMedia.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostAlbumByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostAlbumByIdWithoutActivity.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostByIdWithoutActivity.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostsForSelectedLocationRegistered.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostsForSelectedLocationRegistered.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostsForSelectedTagRegistered.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostsForSelectedTagRegistered.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicPostsAll.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicPostsAll.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicStoriesAll.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicStoriesAll.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchLocationsRegistered.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchLocationsRegistered.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchTagsRegistered.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchTagsRegistered.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchUsers.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchUsers.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedFollowRequest.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedFollowRequest.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoriesOfStoryHighlight.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoriesOfStoryHighlight.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryAlbumByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryAlbumByIdWithoutActivity.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryByIdWithoutActivity.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateProfile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateProfile.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/content-service/handler/ContentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/content-service/handler/ContentHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/CommentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/CommentHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/PostCollectionPostsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/PostCollectionPostsHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/repository/SinglePostRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/repository/SinglePostRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/handler/SingleStoryHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/handler/SingleStoryHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/CommentTagCommentsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/CommentTagCommentsHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostTagPostsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/PostTagPostsHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/TagHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/TagHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/handler/UserTagHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/handler/UserTagHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/CommentTagCommentsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/repository/CommentTagCommentsRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/repository/TagRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/repository/TagRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/CommentTagCommentsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/service/CommentTagCommentsService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/tag-service/service/TagService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/tag-service/service/TagService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/000029315BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/022026642BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/035189000BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/050147748BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/05941266438_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/073308708BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/07477870838_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/10786492838_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/129681468user-microservice.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/137986619user-microservice.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/141967232BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/145555712BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/156895460BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/165415401BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/170025655preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/179789230preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/17981963538_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/197893019received_1226440287798216.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/21805317038_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/221010812BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/231440106BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/261909092BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/273372524BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/277875145user-microservice.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/303947444user-microservice.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/31692286838_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/339662876BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/38305872438_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/391140727preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/402176428BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/433341534preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/450309684preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/54830019638_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/551668227user-microservice.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/564629652preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/57597815538_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/580220734BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/586066620preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/608818763BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/609678748preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/619887696preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/644129580preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/669555774preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/669935732preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/681711148user-microservice.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/697108494BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/722208232BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/739342655BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/75293566838_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/764653096BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/771584667user-microservice.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/77832150338_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/786216439preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/78777162438_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/80719466138_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/837316856BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/86491712538_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/86654329638_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/893624440BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/918276403preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/925099340BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/932864879user-microservice.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/961169099BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/97326368138_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/985555376BrckoGrad.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content-images/986034416preuzmi.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/TagAuthorizationHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/TagAuthorizationHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorPOST.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorPOST.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorSTORY.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorSTORY.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorUSER.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoCONTENT.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoCONTENT.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoLOCATION.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoLOCATION.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoPOST.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoPOST.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoSTORY.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSTORY.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoTAG.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoTAG.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoUSER.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -154,6 +100,7 @@
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/Nistagram/post-service/dto" />
     <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="go.vgo" />

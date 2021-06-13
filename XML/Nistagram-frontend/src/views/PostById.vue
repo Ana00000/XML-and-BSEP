@@ -307,6 +307,7 @@ export default {
     selectedTags: [],
     selectedUserTags: [],
     selectedHashTags: [],
+    token: null,
     isHiddenTagComment: true,
   }),
   mounted() {
@@ -314,10 +315,50 @@ export default {
   },
   methods: {
     init() {
+      this.token = localStorage.getItem("token");
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+          console.log(er);
+        });
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/auth/check-create-activity-permission/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authorized!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/forbiddenPage";
+          console.log(er);
+        });
+
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_post_collections_for_reg?id=" +
-            localStorage.getItem("userId")
+            localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.postCollections = response.data;
@@ -329,7 +370,11 @@ export default {
           "https://localhost:8080/api/post/find_selected_post_for_logged_user?id=" +
             localStorage.getItem("selectedPostId") +
             "&logId=" +
-            localStorage.getItem("selectedUserId")
+            localStorage.getItem("selectedUserId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.post = response.data;
@@ -339,7 +384,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_comments_for_post?id=" +
-            localStorage.getItem("selectedPostId")
+            localStorage.getItem("selectedPostId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           console.log(response)
@@ -349,7 +398,11 @@ export default {
         .catch(console.log);
       
       this.$http
-        .get("https://localhost:8080/api/tag/find_all_taggable_users_comment/")
+        .get("https://localhost:8080/api/tag/find_all_taggable_users_comment/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           console.log(response.data);
           for (var i = 0; i < response.data.length; i++) {
@@ -362,7 +415,11 @@ export default {
         .catch(console.log);
         ///find_all_hashtags/
       this.$http
-        .get("https://localhost:8080/api/tag/find_all_hashtags/")
+        .get("https://localhost:8080/api/tag/find_all_hashtags/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((response) => {
           console.log(response.data);
           for (var i = 0; i < response.data.length; i++) {
@@ -391,7 +448,11 @@ export default {
     getItem(item){
       console.log(item);
        this.$http
-          .get("https://localhost:8080/api/user/find_user_by_id?id=" + item.user_id)
+          .get("https://localhost:8080/api/user/find_user_by_id?id=" + item.user_id,{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
           .then((r) => {
             this.userName = r.data.username;
             if (r.data.gender == 0) {
@@ -402,7 +463,11 @@ export default {
               this.gender = "OTHER";
             }
             this.$http
-              .get("https://localhost:8080/api/tag/find_comment_tag_comments_for_comment/"+item.id )
+              .get("https://localhost:8080/api/tag/find_comment_tag_comments_for_comment/"+item.id,{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
               .then((resp) => {
                 console.log(resp.data)
                 this.allData.push({
@@ -422,7 +487,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
-            localStorage.getItem("selectedPostId")
+            localStorage.getItem("selectedPostId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.activities = response.data;
@@ -448,6 +517,10 @@ export default {
                   id: this.likeActivityId,
                   likedStatus: 0,
                   IsFavorite: false,
+                },{
+                  headers: {
+                    Authorization: "Bearer " + this.token,
+                  },
                 })
                 .then((response) => {
                   console.log(response);
@@ -468,6 +541,10 @@ export default {
               userID: localStorage.getItem("selectedUserId"),
               likedStatus: 0,
               IsFavorite: false,
+            },{
+              headers: {
+                Authorization: "Bearer " + this.token,
+              },
             })
             .then((response) => {
               this.likeActivityId = response.data;
@@ -485,7 +562,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
-            localStorage.getItem("selectedPostId")
+            localStorage.getItem("selectedPostId"),{
+              headers: {
+                Authorization: "Bearer " + this.token,
+              },
+            }
         )
         .then((response) => {
           this.activities = response.data;
@@ -511,6 +592,10 @@ export default {
                   id: this.dislikeActivityId,
                   likedStatus: 1,
                   IsFavorite: false,
+                },{
+                  headers: {
+                    Authorization: "Bearer " + this.token,
+                  },
                 })
                 .then((response) => {
                   console.log(response);
@@ -531,6 +616,10 @@ export default {
               userID: localStorage.getItem("selectedUserId"),
               likedStatus: 1,
               IsFavorite: false,
+            },{
+                  headers: {
+                    Authorization: "Bearer " + this.token,
+                  },
             })
             .then((response) => {
               this.dislikeActivityId = response.data;
@@ -548,7 +637,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
-            localStorage.getItem("selectedPostId")
+            localStorage.getItem("selectedPostId"),{
+                  headers: {
+                    Authorization: "Bearer " + this.token,
+                  },
+                }
         )
         .then((response) => {
           this.activities = response.data;
@@ -578,6 +671,10 @@ export default {
                   id: this.favoriteActivityId,
                   likedStatus: this.likeabilityStatus,
                   IsFavorite: true,
+                },{
+                  headers: {
+                    Authorization: "Bearer " + this.token,
+                  },
                 })
                 .then((response) => {
                   console.log(response);
@@ -601,6 +698,10 @@ export default {
               userID: localStorage.getItem("selectedUserId"),
               likedStatus: this.likeabilityStatus,
               IsFavorite: true,
+            },{
+                  headers: {
+                    Authorization: "Bearer " + this.token,
+                  },
             })
             .then((response) => {
               this.favoriteActivityId = response.data;
@@ -620,7 +721,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
-            localStorage.getItem("selectedPostId")
+            localStorage.getItem("selectedPostId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.activities = response.data;
@@ -650,6 +755,10 @@ export default {
           id: this.favoriteActivityId,
           likedStatus: this.likeabilityStatus,
           IsFavorite: false,
+        },{
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
         })
         .then((response) => {
           console.log(response);
@@ -665,7 +774,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
-            localStorage.getItem("selectedPostId")
+            localStorage.getItem("selectedPostId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           this.activities = response.data;
@@ -700,6 +813,10 @@ export default {
           id: this.likeActivityId,
           likedStatus: 2,
           IsFavorite: false,
+        },{
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
         })
         .then((response) => {
           console.log(response);
@@ -714,7 +831,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_activities_for_post?id=" +
-            localStorage.getItem("selectedPostId")
+            localStorage.getItem("selectedPostId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }  
         )
         .then((response) => {
           this.activities = response.data;
@@ -749,6 +870,10 @@ export default {
           id: this.dislikeActivityId,
           likedStatus: 2,
           IsFavorite: false,
+        },{
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
         })
         .then((response) => {
           console.log(response);
@@ -771,7 +896,11 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/post/find_all_post_collection_posts_for_post?id=" +
-            localStorage.getItem("selectedPostId")
+            localStorage.getItem("selectedPostId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
         )
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
@@ -784,7 +913,11 @@ export default {
             .post("https://localhost:8080/api/post/post_collection_posts/", {
               post_collection_id: this.postCollectionId,
               single_post_id: localStorage.getItem("selectedPostId"),
-            })
+            },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
             .then((response) => {
               console.log(response.data);
               alert("You have added this post to your collection.");
@@ -810,6 +943,10 @@ export default {
         user_id: localStorage.getItem("userId"),
         post_id: localStorage.getItem("selectedPostId"),
         text: this.text,
+      },{
+        headers: {
+          Authorization: "Bearer " + this.token,
+        },
       }).then((response) => {
         if(this.selectedUserTags.length != 0) {
           for(var i = 0; i < this.selectedUserTags.length; i++) {
@@ -817,7 +954,11 @@ export default {
               .post("https://localhost:8080/api/tag/comment_tag_comments/", {
                 tag_id: this.selectedUserTags[i].id,
                 comment_id: response.data,
-              })
+              },{
+                  headers: {
+                    Authorization: "Bearer " + this.token,
+                  },
+               })
               .then((r) => {
                 console.log(r.data);
               })
@@ -833,6 +974,10 @@ export default {
               .post("https://localhost:8080/api/tag/comment_tag_comments/", {
                 tag_id: this.selectedHashTags[j].id,
                 comment_id: response.data,
+              },{
+                headers: {
+                  Authorization: "Bearer " + this.token,
+                },
               })
               .then((response) => {
                 console.log(response.data);

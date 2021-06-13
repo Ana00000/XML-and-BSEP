@@ -8,10 +8,10 @@ import (
 )
 
 type ProfileSettingsService struct {
-	Repo * repository.ProfileSettingsRepository
+	Repo *repository.ProfileSettingsRepository
 }
 
-func (service * ProfileSettingsService) CreateProfileSettings(profileSettings *model.ProfileSettings) error {
+func (service *ProfileSettingsService) CreateProfileSettings(profileSettings *model.ProfileSettings) error {
 	err := service.Repo.CreateProfileSettings(profileSettings)
 	if err != nil {
 		return err
@@ -19,7 +19,7 @@ func (service * ProfileSettingsService) CreateProfileSettings(profileSettings *m
 	return nil
 }
 
-func (service * ProfileSettingsService) FindAllProfileSettings() []model.ProfileSettings{
+func (service *ProfileSettingsService) FindAllProfileSettings() []model.ProfileSettings {
 	profileSettings := service.Repo.FindAllProfileSettings()
 	if profileSettings != nil {
 		return profileSettings
@@ -27,7 +27,7 @@ func (service * ProfileSettingsService) FindAllProfileSettings() []model.Profile
 	return nil
 }
 
-func (service * ProfileSettingsService) FindAllProfileSettingsForPublicUsers() []uuid.UUID{
+func (service *ProfileSettingsService) FindAllProfileSettingsForPublicUsers() []uuid.UUID {
 	profileSettings := service.Repo.FindAllProfileSettingsForPublicUsers()
 	if profileSettings != nil {
 		return profileSettings
@@ -40,7 +40,7 @@ func (service *ProfileSettingsService) FindProfileSettingByUserId(id uuid.UUID) 
 	return user
 }
 
-func (service * ProfileSettingsService) FindAllPublicUsers(allValidUsers []dto.ClassicUserDTO) []dto.ClassicUserDTO{
+func (service *ProfileSettingsService) FindAllPublicUsers(allValidUsers []dto.ClassicUserDTO) []dto.ClassicUserDTO {
 	publicUsers := service.Repo.FindAllPublicUsers(allValidUsers)
 	if publicUsers != nil {
 		return publicUsers

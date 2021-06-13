@@ -6,10 +6,10 @@ import (
 )
 
 type PostICRService struct {
-	Repo * repository.PostICRRepository
+	Repo *repository.PostICRRepository
 }
 
-func (service * PostICRService) CreatePostICR(postICR *model.PostICR) error {
+func (service *PostICRService) CreatePostICR(postICR *model.PostICR) error {
 	err := service.Repo.CreatePostICR(postICR)
 	if err != nil {
 		return err

@@ -9,7 +9,7 @@
           label="Username"
           v-model="username"
           prepend-icon="mdi-account-circle"
-        /> 
+        />
         <v-text-field
           :type="showPassword ? 'text' : 'password'"
           label="Password"
@@ -18,13 +18,22 @@
           :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append="showPassword = !showPassword"
         />
-        <a class="center" href="/recoverPasswordEmail">You forget your password?</a>
+        <v-text-field
+          label="Question"
+          v-model="question"
+          prepend-icon="mdi-name-circle"
+        />
+        <v-text-field
+          label="Answer"
+          v-model="answer"
+          prepend-icon="mdi-name-circle"
+        />
+        <a class="center" href="/recoverPasswordEmail"
+          >You forget your password?</a
+        >
       </v-form>
-      
     </v-card-text>
-    <div >
-        
-    </div>
+    <div></div>
     <v-card-actions>
       <v-btn color="primary" class="mx-auto mb-5" large v-on:click="logIn">
         Log in
@@ -40,6 +49,8 @@ export default {
     showPassword: false,
     username: "",
     password: "",
+    question: "",
+    answer: "",
     users: [],
   }),
   computed: {
@@ -51,44 +62,48 @@ export default {
     logIn() {
       this.$http
         .post("https://localhost:8080/api/user/login/", {
-           username: this.username,
-           password: this.password
+          username: this.username,
+          password: this.password,
+          question: this.question,
+          answer: this.answer,
         })
         .then((resp) => {
           console.log(resp.data);
           localStorage.setItem("username", this.user.username);
-          localStorage.setItem("token", resp.data.token)
-          localStorage.setItem("userId", resp.data.id)
-          localStorage.setItem("userType", resp.data.userType)
-         
+          localStorage.setItem("token", resp.data.token);
+          localStorage.setItem("userId", resp.data.id);
+          localStorage.setItem("userType", resp.data.userType);
+
           this.$http
-          .get("https://localhost:8080/api/settings/find_profile_settings_by_user_id/"+resp.data.id)
-          .then((resp) => {
-          console.log("FOUND PROFILE SETTINGS")
-          console.log("USER PRIVACY")
-          console.log(resp.data.user_visibility)
+            .get(
+              "https://localhost:8080/api/settings/find_profile_settings_by_user_id/" +
+                resp.data.id
+            )
+            .then((resp) => {
+              console.log("FOUND PROFILE SETTINGS");
+              console.log("USER PRIVACY");
+              console.log(resp.data.user_visibility);
 
-          if (resp.data.user_visibility == "PRIVATE_VISIBILITY"){
-            console.log("u 0")
-             localStorage.setItem("userPrivacy", "PRIVATE")
-          }else if (resp.data.user_visibility == "PUBLIC_VISIBILITY"){
-            console.log("u 1")
-             localStorage.setItem("userPrivacy", "PUBLIC")
-          }
+              if (resp.data.user_visibility == "PRIVATE_VISIBILITY") {
+                console.log("u 0");
+                localStorage.setItem("userPrivacy", "PRIVATE");
+              } else if (resp.data.user_visibility == "PUBLIC_VISIBILITY") {
+                console.log("u 1");
+                localStorage.setItem("userPrivacy", "PUBLIC");
+              }
 
-          window.location.href = "https://localhost:8081/";
-
-         }).catch(console.log);
-         
+              window.location.href = "https://localhost:8081/";
+            })
+            .catch(console.log);
         })
         .catch((er) => {
           alert("Invalid username and/or password! Please, try again!");
-          this.username = '';
-          this.password = '';
+          this.username = "";
+          this.password = "";
           console.log(er.response.data);
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

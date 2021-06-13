@@ -73,12 +73,51 @@ export default {
   },
   methods: {
     init() {
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+          console.log(er);
+        });
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/auth/check-find-request-by-id-permission/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authorized!");
+          console.log(resp.data);
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/forbiddenPage";
+          console.log(er);
+        });
+
       this.getRequest();
     },
     getRequest() {
       console.log(this.selectedRequestId);
       this.$http
-        .get("https://localhost:8080/api/requests/find_request_by_id?id=" + this.selectedRequestId)
+        .get("https://localhost:8080/api/requests/find_request_by_id?id=" + this.selectedRequestId,{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((resp) => {
           this.setRequestInfo(resp.data);
           this.requestFollower = resp.data.classic_user_id
@@ -101,8 +140,11 @@ export default {
         .post("https://localhost:8080/api/user/accept_follow_request/", {
           classic_user_id: this.requestFollower,
           follower_user_id: this.logId,
-      
-        })
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
         .then((resp) => {
           console.log(resp.data);
           alert("Accepted follow!");
@@ -113,7 +155,11 @@ export default {
     },
     rejectRequest(){
        this.$http
-        .post("https://localhost:8080/api/requests/reject_follow_request?id="+this.selectedRequestId, {})
+        .post("https://localhost:8080/api/requests/reject_follow_request?id="+this.selectedRequestId, {},{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
         .then((resp) => {
           console.log(resp.data);
           alert("Rejected  follow!");
