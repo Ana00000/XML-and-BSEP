@@ -123,10 +123,21 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 
 	salt := ""
 	password := ""
+
+	answer:=""
+	answerSalt:=""
+
+
+
 	validPassword := handler.PasswordUtil.IsValidPassword(registeredUserDTO.Password)
 
 	if validPassword {
+		//PASSWORD SALT
 		salt, password = handler.PasswordUtil.GeneratePasswordWithSalt(registeredUserDTO.Password)
+
+		//ANSWER SALT
+		answerSalt, answer = handler.PasswordUtil.GeneratePasswordWithSalt(registeredUserDTO.Answer)
+
 	} else {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -166,6 +177,9 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 				Salt:        salt,
 				IsConfirmed: false,
 				UserType:    model.REGISTERED_USER,
+				Question: registeredUserDTO.Question,
+				Answer: answer,
+				AnswerSalt: answerSalt,
 			},
 			IsDeleted: false,
 		},

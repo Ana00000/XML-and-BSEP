@@ -11,4 +11,6 @@ type RegisteredUserDTO struct {
 	DateOfBirth string `json:"dateOfBirth" validate:"required"`
 	Website string `json:"website" validate:"required"`
 	Biography string `json:"biography" validate:"required"`
+	Question string `json:"question"`
+	Answer string `json:"answer"`
 }

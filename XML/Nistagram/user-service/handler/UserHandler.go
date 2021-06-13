@@ -411,7 +411,7 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 				"location":   "UserHandler",
 				"action":   "LOG85310",
 				"timestamp":   time.Now().String(),
-			}).Error("Admin doesn't confirmed!")
+			}).Error("Admin is not confirmed!")
 			w.WriteHeader(http.StatusBadRequest) //400
 			return
 		}
@@ -423,7 +423,7 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 				"location":   "UserHandler",
 				"action":   "LOG85310",
 				"timestamp":   time.Now().String(),
-			}).Error("Classic user doesn't valid!")
+			}).Error("Classic user is not valid!")
 			w.WriteHeader(http.StatusBadRequest) //400
 			return
 		}
@@ -460,6 +460,41 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//QUESTION CHECK
+	if logInUserDTO.Question != user.Question{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "LOG85310",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong question for user!")
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
+
+	//ANSWER CHECK
+
+	//ANSWER AND QUESTION
+	plainAnswer := ""
+	var ab strings.Builder
+	answerSalt := user.AnswerSalt
+	ab.WriteString(logInUserDTO.Answer)
+	ab.WriteString(answerSalt)
+	plainAnswer = ab.String()
+
+	if !handler.PasswordUtil.CheckPasswordHash(plainAnswer, user.Answer){
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "LOG85310",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong answer to user question!")
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
+	//ANSWER CHECK END
+
+	//token
 	token, err := CreateToken(user.Username)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
