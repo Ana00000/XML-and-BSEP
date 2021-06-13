@@ -22,6 +22,7 @@ type PostAlbumHandler struct {
 }
 
 func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postAlbumDTO dto.PostAlbumDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumDTO)
 
@@ -87,6 +88,7 @@ func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.
 }
 
 func (handler *PostAlbumHandler) FindAllAlbumPostsForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var albumPosts = convertListPostAlbumToListPostAlbumDTO(handler.Service.FindAllAlbumPostsForUser(uuid.MustParse(id)))
@@ -246,6 +248,7 @@ func (handler *PostAlbumHandler) CreatePostAlbumsDTOList(albums []model.PostAlbu
 }
 
 func (handler *PostAlbumHandler) FindSelectedPostAlbumByIdForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	id := r.URL.Query().Get("id")       //post album id
 	logId := r.URL.Query().Get("logId") //loged user id
@@ -436,6 +439,7 @@ func (handler *PostAlbumHandler) CreatePostAlbumDTO(album *model.PostAlbum, cont
 
 func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	// returns only VALID users but loggedIn user
@@ -581,6 +585,7 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsRegisteredUser(w http.Re
 
 func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
@@ -724,6 +729,7 @@ func (handler *PostAlbumHandler) FindAllPublicAlbumPostsNotRegisteredUser(w http
 }
 
 func (handler *PostAlbumHandler) FindAllFollowingPostAlbums(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	// returns only valid users

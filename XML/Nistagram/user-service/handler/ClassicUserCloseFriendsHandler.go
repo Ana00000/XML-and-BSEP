@@ -21,6 +21,7 @@ type ClassicUserCloseFriendsHandler struct {
 }
 //CHEKCLOFR219
 func (handler *ClassicUserCloseFriendsHandler) CheckIfCloseFriend(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	id := vars["id"]
 	logId := vars["logId"]
@@ -54,6 +55,7 @@ func convertBoolToString(boolVal bool) string{
 
 //CRCLOFR833
 func (handler *ClassicUserCloseFriendsHandler) CreateClassicUserCloseFriend(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var classicUserCloseFriendsDTO dto.ClassicUserCloseFriendsDTO
 	err := json.NewDecoder(r.Body).Decode(&classicUserCloseFriendsDTO)
 	if err != nil {

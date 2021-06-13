@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -20,6 +21,7 @@ type PostTagPostsHandler struct {
 }
 //CRPOTGPSTS532
 func (handler *PostTagPostsHandler) CreatePostTagPosts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postTagPostsDTO dto.PostTagPostsDTO
 	err := json.NewDecoder(r.Body).Decode(&postTagPostsDTO)
 
@@ -64,6 +66,7 @@ func (handler *PostTagPostsHandler) CreatePostTagPosts(w http.ResponseWriter, r 
 
 //FIDALTGSFORPST9128
 func (handler *PostTagPostsHandler) FindAllTagsForPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singlePostDTO dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostDTO)
 	if err != nil {
@@ -93,6 +96,7 @@ func (handler *PostTagPostsHandler) FindAllTagsForPost(w http.ResponseWriter, r 
 
 //FIDPSTIDSBYTGID9851
 func (handler *PostTagPostsHandler) FindPostIdsByTagId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	tagId := vars["tagID"]
 	//var listIds []uuid.UUID
@@ -117,6 +121,7 @@ type ListId struct {
 
 //FIDALTGSFORPSTS9882
 func (handler *PostTagPostsHandler) FindAllTagsForPosts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singlePostsDTO []dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostsDTO)
 	if err != nil {
@@ -169,6 +174,7 @@ func convertListTagToListTagFullDTO(tag []model.Tag) []dto.TagFullDTO {
 
 //FIDALTGSFORPSTSTGPSTS9
 func (handler *PostTagPostsHandler) FindAllTagsForPostsTagPosts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singlePostsDTO []dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostsDTO)
 	if err != nil {

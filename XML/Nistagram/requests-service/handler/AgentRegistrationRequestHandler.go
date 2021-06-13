@@ -22,6 +22,7 @@ type AgentRegistrationRequestHandler struct {
 }
 
 func (handler *AgentRegistrationRequestHandler) CreateAgentRegistrationRequest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var agentRegistrationRequestDTO dto.AgentRegistrationRequestDTO
 	if err := json.NewDecoder(r.Body).Decode(&agentRegistrationRequestDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{

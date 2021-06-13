@@ -19,6 +19,7 @@ type AdvertisementHandler struct {
 }
 
 func (handler *AdvertisementHandler) CreateAdvertisement(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var advertisementDTO dto.AdvertisementDTO
 	err := json.NewDecoder(r.Body).Decode(&advertisementDTO)
 	if err != nil {

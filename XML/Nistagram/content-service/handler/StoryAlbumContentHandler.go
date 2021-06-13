@@ -24,6 +24,7 @@ type StoryAlbumContentHandler struct {
 var pathStoryAlbumGlobal = ""
 
 func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyAlbumContentDTO dto.StoryAlbumContentDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumContentDTO)
 	if err != nil {
@@ -88,6 +89,7 @@ func (handler *StoryAlbumContentHandler) CreateStoryAlbumContent(w http.Response
 }
 
 func (handler *StoryAlbumContentHandler) Upload(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("X-XSS-Protection", "1; mode=block")
 	request.ParseMultipartForm(10 << 20)
 
 	file, hand, err := request.FormFile("myStoryAlbumFile")
@@ -138,6 +140,7 @@ func (handler *StoryAlbumContentHandler) Upload(writer http.ResponseWriter, requ
 }
 
 func (handler *StoryAlbumContentHandler) FindAllContentsForStoryAlbums(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyAlbumFullDTO []dto.StoryAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumFullDTO)
 	if err != nil {
@@ -166,6 +169,7 @@ func (handler *StoryAlbumContentHandler) FindAllContentsForStoryAlbums(w http.Re
 }
 
 func (handler *StoryAlbumContentHandler) FindAllContentsForStoryAlbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyAlbumFullDTO dto.StoryAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumFullDTO)
 	if err != nil {

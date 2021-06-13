@@ -19,6 +19,7 @@ type StoryHighlightHandler struct {
 }
 //CRSTRYHIGHLHT0312
 func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyHighlightDTO dto.StoryHighlightDTO
 	err := json.NewDecoder(r.Body).Decode(&storyHighlightDTO)
 	if err != nil {
@@ -61,6 +62,7 @@ func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter
 }
 //FIDALSTRYHIGHLHTSFORUS8882
 func (handler *StoryHighlightHandler) FindAllStoryHighlightsForUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	storyHighlights := handler.Service.FindAllStoryHighlightsForUser(uuid.MustParse(id))

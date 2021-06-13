@@ -20,6 +20,7 @@ type StoryTagStoriesHandler struct {
 
 //CRSTRYTGSTORIS92123
 func (handler *StoryTagStoriesHandler) CreateStoryTagStories(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyTagStoriesDTO dto.StoryTagStoriesDTO
 	err := json.NewDecoder(r.Body).Decode(&storyTagStoriesDTO)
 	if err != nil {
@@ -63,6 +64,7 @@ func (handler *StoryTagStoriesHandler) CreateStoryTagStories(w http.ResponseWrit
 
 //FIDALTGSFORSTRY8212
 func (handler *StoryTagStoriesHandler) FindAllTagsForStory(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singleStoryDTO dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
 	if err != nil {
@@ -94,6 +96,7 @@ func (handler *StoryTagStoriesHandler) FindAllTagsForStory(w http.ResponseWriter
 
 //FIDALTGSFORSORIS8223
 func (handler *StoryTagStoriesHandler) FindAllTagsForStories(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singleStoriesDTO []dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoriesDTO)
 	if err != nil {
@@ -124,6 +127,7 @@ func (handler *StoryTagStoriesHandler) FindAllTagsForStories(w http.ResponseWrit
 
 //FIDSTRYTGSTORISFORSTRYID7664
 func (handler *StoryTagStoriesHandler) FindStoryTagStoriesForStoryId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	storyTagStories := handler.Service.FindStoryTagStoriesForStoryId(uuid.MustParse(id))

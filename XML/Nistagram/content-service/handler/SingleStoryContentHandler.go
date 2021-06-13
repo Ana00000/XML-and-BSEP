@@ -24,6 +24,7 @@ type SingleStoryContentHandler struct {
 var pathStoryGlobal = ""
 
 func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singleStoryContentDTO dto.SingleStoryContentDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryContentDTO)
 	if err != nil {
@@ -89,6 +90,7 @@ func (handler *SingleStoryContentHandler) CreateSingleStoryContent(w http.Respon
 }
 
 func (handler *SingleStoryContentHandler) FindAllContentsForStories(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singleStoriesDTO []dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoriesDTO)
 	if err != nil {
@@ -117,6 +119,7 @@ func (handler *SingleStoryContentHandler) FindAllContentsForStories(w http.Respo
 }
 
 func (handler *SingleStoryContentHandler) FindAllContentsForStory(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singleStoryDTO dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
 	if err != nil {
@@ -145,6 +148,7 @@ func (handler *SingleStoryContentHandler) FindAllContentsForStory(w http.Respons
 }
 
 func (handler *SingleStoryContentHandler) Upload(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("X-XSS-Protection", "1; mode=block")
 	request.ParseMultipartForm(10 << 20)
 
 	file, hand, err := request.FormFile("myStoryFile")
@@ -219,6 +223,7 @@ func convertListSingleStoriesContentToSingleStoriesContentForSingleStoryDTO(sing
 }
 
 func (handler *SingleStoryContentHandler) FindSingleStoryContentForStoryId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	singleStoryContent := handler.Service.FindSingleStoryContentForStoryId(uuid.MustParse(id))

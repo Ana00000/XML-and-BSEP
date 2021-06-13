@@ -18,6 +18,7 @@ type ActivityHandler struct {
 }
 
 func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var activityDTO dto.ActivityDTO
 	err := json.NewDecoder(r.Body).Decode(&activityDTO)
 
@@ -67,6 +68,7 @@ func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Re
 }
 
 func (handler *ActivityHandler) FindAllLikesForPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	id := r.URL.Query().Get("id")
 
@@ -95,6 +97,7 @@ func (handler *ActivityHandler) FindAllLikesForPost(w http.ResponseWriter, r *ht
 }
 
 func (handler *ActivityHandler) FindAllDislikesForPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	id := r.URL.Query().Get("id")
 
@@ -122,6 +125,7 @@ func (handler *ActivityHandler) FindAllDislikesForPost(w http.ResponseWriter, r 
 }
 
 func (handler *ActivityHandler) FindAllFavoritesForPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	id := r.URL.Query().Get("id")
 
@@ -149,6 +153,7 @@ func (handler *ActivityHandler) FindAllFavoritesForPost(w http.ResponseWriter, r
 }
 
 func (handler *ActivityHandler) FindAllActivitiesForPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	id := r.URL.Query().Get("id")
 
@@ -176,6 +181,7 @@ func (handler *ActivityHandler) FindAllActivitiesForPost(w http.ResponseWriter, 
 }
 
 func (handler *ActivityHandler) UpdateActivity(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var activityDTO dto.ActivityDTO
 
 	err := json.NewDecoder(r.Body).Decode(&activityDTO)

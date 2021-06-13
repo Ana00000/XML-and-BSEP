@@ -18,6 +18,7 @@ type PostCollectionHandler struct {
 }
 
 func (handler *PostCollectionHandler) CreatePostCollection(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postCollectionDTO dto.PostCollectionDTO
 	err := json.NewDecoder(r.Body).Decode(&postCollectionDTO)
 
@@ -65,6 +66,7 @@ func (handler *PostCollectionHandler) CreatePostCollection(w http.ResponseWriter
 }
 
 func (handler *PostCollectionHandler) FindAllPostCollectionsForUserRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	postCollections := handler.Service.FindAllPostCollectionsForUserRegisteredUser(uuid.MustParse(id))

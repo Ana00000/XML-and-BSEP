@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
@@ -19,6 +18,7 @@ type PostCollectionPostsHandler struct {
 }
 
 func (handler *PostCollectionPostsHandler) CreatePostCollectionPosts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postCollectionPostsDTO dto.PostCollectionPostsDTO
 	err := json.NewDecoder(r.Body).Decode(&postCollectionPostsDTO)
 
@@ -61,6 +61,7 @@ func (handler *PostCollectionPostsHandler) CreatePostCollectionPosts(w http.Resp
 }
 
 func (handler *PostCollectionPostsHandler) FindAllPostCollectionPostsForPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	postCollectionPosts := handler.Service.FindAllPostCollectionPostsForPost(uuid.MustParse(id))

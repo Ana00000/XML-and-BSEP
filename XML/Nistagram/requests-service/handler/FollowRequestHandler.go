@@ -23,6 +23,7 @@ type FollowRequestHandler struct {
 }
 
 func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var followRequestDTO dto.FollowRequestDTO
 	if err := json.NewDecoder(r.Body).Decode(&followRequestDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -95,6 +96,7 @@ func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, 
 }
 
 func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 	var request = handler.Service.FindById(uuid.MustParse(id))
 	if request == nil {
@@ -120,6 +122,7 @@ func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, 
 }
 
 func (handler *FollowRequestHandler) FindFollowRequestByIDsClassicUserAndHisFollower(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	classicUserId := vars["classicUserID"]
 	followerUserId := vars["followerUserID"]
@@ -149,6 +152,7 @@ func (handler *FollowRequestHandler) FindFollowRequestByIDsClassicUserAndHisFoll
 }
 
 func (handler *FollowRequestHandler) UpdateFollowRequestToAccepted(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	requestId := vars["requestID"]
 	if err := handler.Service.UpdateFollowRequestAccepted(uuid.MustParse(requestId)); err != nil {
@@ -173,6 +177,7 @@ func (handler *FollowRequestHandler) UpdateFollowRequestToAccepted(w http.Respon
 }
 
 func (handler *FollowRequestHandler) FindAllPendingFollowerRequestsForUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var requests = handler.Service.FindAllPendingFollowerRequestsForUser(uuid.MustParse(id))
@@ -191,6 +196,7 @@ func (handler *FollowRequestHandler) FindAllPendingFollowerRequestsForUser(w htt
 }
 
 func (handler *FollowRequestHandler) FindRequestById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var request = handler.Service.FindById(uuid.MustParse(id))
@@ -219,6 +225,7 @@ func (handler *FollowRequestHandler) FindRequestById(w http.ResponseWriter, r *h
 }
 
 func (handler *FollowRequestHandler) FindAllFollowerRequestsForUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	userId := vars["userID"]
 

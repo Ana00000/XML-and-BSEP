@@ -22,6 +22,7 @@ type StoryICRHandler struct {
 }
 
 func (handler *StoryICRHandler) CreateStoryICR(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyICRDTO dto.StoryICRDTO
 
 	if err := json.NewDecoder(r.Body).Decode(&storyICRDTO); err != nil {

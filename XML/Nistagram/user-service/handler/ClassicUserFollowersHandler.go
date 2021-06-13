@@ -19,6 +19,7 @@ type ClassicUserFollowersHandler struct {
 //FIDALMUTFOLLERFRUS921
 func (handler *ClassicUserFollowersHandler) FindAllMutualFollowerForUser(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var mutuals = handler.ClassicUserFollowersService.FindAllMutualFollowerForUser(uuid.MustParse(id))

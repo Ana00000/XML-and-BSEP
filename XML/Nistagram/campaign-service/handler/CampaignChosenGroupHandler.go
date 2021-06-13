@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/campaign-service/dto"
@@ -20,6 +19,7 @@ type CampaignChosenGroupHandler struct {
 }
 
 func (handler *CampaignChosenGroupHandler) CreateCampaignChosenGroup(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var campaignChosenGroupDTO dto.CampaignChosenGroupDTO
 	err := json.NewDecoder(r.Body).Decode(&campaignChosenGroupDTO)
 	if err != nil {

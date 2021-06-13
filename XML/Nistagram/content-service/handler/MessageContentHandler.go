@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/content-service/dto"
@@ -20,6 +19,7 @@ type MessageContentHandler struct {
 }
 
 func (handler *MessageContentHandler) CreateMessageContent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var messageContentDTO dto.MessageContentDTO
 	err := json.NewDecoder(r.Body).Decode(&messageContentDTO)
 	if err != nil {

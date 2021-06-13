@@ -22,6 +22,7 @@ type CommentTagCommentsHandler struct {
 
 //CRCOMMTAGCOMMTS9327
 func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var commentTagCommentsDTO dto.CommentTagCommentsDTO
 	err := json.NewDecoder(r.Body).Decode(&commentTagCommentsDTO)
 	if err != nil {
@@ -64,6 +65,7 @@ func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.Respon
 }
 
 func (handler *CommentTagCommentsHandler) FindAllCommentTagCommentsForComment(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	id := vars["id"]
 	var retValues []string

@@ -68,6 +68,7 @@ func (handler *RecoveryPasswordTokenHandler) SendRecoveryPasswordMail(user *mode
 //GENRECRYPASSTOK432
 //Function when user clicks -> FORGOT PASSWORD -> enters email -> clicks RECOVER to get email
 func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var emailDTO dto.EmailDTO
 	if err := json.NewDecoder(r.Body).Decode(&emailDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -137,6 +138,7 @@ func (handler *RecoveryPasswordTokenHandler) GenerateRecoveryPasswordToken(w htt
 //VERFYRECRYPASSTOK1010
 //Function that gets called when USER clicks on the link in the email
 func (handler *RecoveryPasswordTokenHandler) VerifyRecoveryPasswordToken(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	var recoveryPasswordDTO dto.RecoveryPasswordDTO
 

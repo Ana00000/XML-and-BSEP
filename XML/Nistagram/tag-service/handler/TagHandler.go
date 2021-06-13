@@ -26,6 +26,7 @@ type ReturnValueString struct {
 }
 //FIDTGNMBYID0921
 func (handler *TagHandler) FindTagNameById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	id := vars["id"]
 	//fmt.Println("Dobijeni ID : "+id)
@@ -47,6 +48,7 @@ func (handler *TagHandler) FindTagNameById(w http.ResponseWriter, r *http.Reques
 }
 //CRTG7821
 func (handler *TagHandler) CreateTag(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var tagDTO dto.TagDTO
 	if err := json.NewDecoder(r.Body).Decode(&tagDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -133,6 +135,7 @@ func (handler *TagHandler) CreateTag(w http.ResponseWriter, r *http.Request) {
 }
 //FIDTGFORID9180
 func (handler *TagHandler) FindTagForId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	tag := handler.Service.FindTagForId(uuid.MustParse(id))
@@ -160,6 +163,7 @@ func (handler *TagHandler) FindTagForId(w http.ResponseWriter, r *http.Request) 
 
 //FIDALHASHTG9327
 func (handler *TagHandler) FindAllHashTags(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	tag := handler.Service.FindAllHashTags()
 	tagJson, _ := json.Marshal(tag)
 	if tagJson != nil {
@@ -185,9 +189,9 @@ func (handler *TagHandler) FindAllHashTags(w http.ResponseWriter, r *http.Reques
 
 //FIDTGBYNM913
 func (handler *TagHandler) FindTagByName(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	name := vars["name"]
-	fmt.Println("Finding tag with name "+name)
 	tag := handler.Service.FindTagByName(name)
 
 	if tag==nil{

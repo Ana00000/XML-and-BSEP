@@ -20,6 +20,7 @@ type SingleStoryStoryHighlightsHandler struct {
 
 //CRSINGLSTRYSTRYHIGHLHTS9820
 func (handler *SingleStoryStoryHighlightsHandler) CreateSingleStoryStoryHighlights(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singleStoryStoryHighlightsDTO dto.SingleStoryStoryHighlightsDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryStoryHighlightsDTO)
 	if err != nil {
@@ -62,6 +63,7 @@ func (handler *SingleStoryStoryHighlightsHandler) CreateSingleStoryStoryHighligh
 
 //FIDALSINGLSTRYSTRYHIGHLHTSFORSTRY9840
 func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlightsForStory(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	singleStoryStoryHighlights := handler.Service.FindAllSingleStoryStoryHighlightsForStory(uuid.MustParse(id))
@@ -89,6 +91,7 @@ func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlig
 
 //FIDALSINGLSTRYSTRYHIGHLHTSFORSTRYLHT9193
 func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlightsForStoryHighlight(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	singleStoryStoryHighlights := handler.Service.FindAllSingleStoryStoryHighlightsForStoryHighlight(uuid.MustParse(id))

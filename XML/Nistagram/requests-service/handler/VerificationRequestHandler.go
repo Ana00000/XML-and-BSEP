@@ -22,6 +22,7 @@ type VerificationRequestHandler struct {
 }
 
 func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var verificationRequestDTO dto.VerificationRequestDTO
 
 	if err := json.NewDecoder(r.Body).Decode(&verificationRequestDTO); err != nil {

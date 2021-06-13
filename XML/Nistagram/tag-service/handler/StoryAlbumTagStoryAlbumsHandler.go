@@ -20,6 +20,7 @@ type StoryAlbumTagStoryAlbumsHandler struct {
 
 //CRSTRYALBTGSTRYALBMS7677
 func (handler *StoryAlbumTagStoryAlbumsHandler) CreateStoryAlbumTagStoryAlbums(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyAlbumTagStoryAlbumsDTO dto.StoryAlbumTagStoryAlbumsDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumTagStoryAlbumsDTO)
 	if err != nil {
@@ -65,6 +66,7 @@ func (handler *StoryAlbumTagStoryAlbumsHandler) CreateStoryAlbumTagStoryAlbums(w
 
 //FIDALTGSFORSTRYALBTGSTRYALBMS6765
 func (handler *StoryAlbumTagStoryAlbumsHandler) FindAllTagsForStoryAlbumTagStoryAlbums(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyAlbumFullDTO []dto.StoryAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumFullDTO)
 	if err != nil {
@@ -96,6 +98,7 @@ func (handler *StoryAlbumTagStoryAlbumsHandler) FindAllTagsForStoryAlbumTagStory
 
 //FIDALTGSFORSTRYALB1980
 func (handler *StoryAlbumTagStoryAlbumsHandler) FindAllTagsForStoryAlbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyAlbumFullDTO dto.StoryAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumFullDTO)
 	if err != nil {
