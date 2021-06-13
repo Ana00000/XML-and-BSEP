@@ -159,7 +159,7 @@ func (handler *ProfileSettingsHandler) FindAllPublicUsers(w http.ResponseWriter,
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
-	if err := handler.Validator.Struct(&classicUsersDTO); err != nil {
+	/*if err := handler.Validator.Struct(&classicUsersDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status":    "failure",
 			"location":  "ProfileSettingsHandler",
@@ -168,7 +168,7 @@ func (handler *ProfileSettingsHandler) FindAllPublicUsers(w http.ResponseWriter,
 		}).Error("ClassicUsersDTO fields aren't in valid format!")
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
-	}
+	}*/
 
 	var classicUsers = handler.Service.FindAllPublicUsers(classicUsersDTO)
 	/*if classicUsers == nil {
