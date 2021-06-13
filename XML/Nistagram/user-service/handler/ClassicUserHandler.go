@@ -30,6 +30,7 @@ type ClassicUserHandler struct {
 //FIDSELUSBYID9993
 func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 	logId := r.URL.Query().Get("logId")
 
@@ -166,6 +167,7 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var user = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
@@ -192,6 +194,7 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter
 //FIDALUSRSBUTLOGEDINDTO32
 func (handler *ClassicUserHandler) FindAllUsersButLoggedInDTOs(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var user = convertListClassicUserToListClassicUserDTO(handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id)))
@@ -218,6 +221,7 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedInDTOs(w http.ResponseWr
 //FIDALUSRSBYFOLLINGIDS9442
 func (handler *ClassicUserHandler) FindAllUsersByFollowingIds(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var classicUserFollowingsFullDTO []dto.ClassicUserFollowingsFullDTO
 	err := json.NewDecoder(r.Body).Decode(&classicUserFollowingsFullDTO)
 	if err != nil {
@@ -254,6 +258,7 @@ func (handler *ClassicUserHandler) FindAllUsersByFollowingIds(w http.ResponseWri
 
 //CHKIFUSVAL9929
 func (handler *ClassicUserHandler) CheckIfUserValid(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	userId := vars["userID"]
 	var isValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(userId))
@@ -285,6 +290,7 @@ type UserValidDTO struct {
 //FIDALPUBUSRS431
 func (handler *ClassicUserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	reqUrlUpdate := fmt.Sprintf("http://%s:%s/find_all_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
 	jsonClassicUsersDTO, _ := json.Marshal(convertListClassicUserToListClassicUserDTO(allValidUsers))
@@ -331,6 +337,7 @@ func (handler *ClassicUserHandler) FindAllPublicUsers(w http.ResponseWriter, r *
 
 //FIDALVALUSRS999
 func (handler *ClassicUserHandler) FindAllValidUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	validJson, _ := json.Marshal(convertListClassicUserToListClassicUserDTO(allValidUsers))
 	w.Write(validJson)
@@ -394,6 +401,7 @@ func convertClassicUserToClassicUserDTO(classicUser model.ClassicUser) dto.Class
 
 //FIDCLASSUSBYID943
 func (handler *ClassicUserHandler) FindClassicUserById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	userId := vars["userID"]
 	var classicUser = handler.ClassicUserService.FindById(uuid.MustParse(userId))

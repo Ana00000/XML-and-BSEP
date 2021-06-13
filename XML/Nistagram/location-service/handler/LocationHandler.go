@@ -97,6 +97,7 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var locationDTO dto.LocationDTO
 	err := json.NewDecoder(r.Body).Decode(&locationDTO)
 	if err != nil {
@@ -161,6 +162,7 @@ func (handler *LocationHandler) CreateLocation(w http.ResponseWriter, r *http.Re
 }
 
 func (handler *LocationHandler) FindByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	id := r.URL.Query().Get("id")
 
@@ -192,6 +194,7 @@ type ReturnValueId struct {
 }
 
 func (handler *LocationHandler) FindLocationIdByLocationString(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	vars := mux.Vars(r)
 	locationString := vars["locationString"]
@@ -216,6 +219,7 @@ func (handler *LocationHandler) FindLocationIdByLocationString(w http.ResponseWr
 }
 
 func (handler *LocationHandler) FindAllLocationsForStories(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singleStoriesDTO []dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoriesDTO)
 	if err != nil {
@@ -243,6 +247,7 @@ func (handler *LocationHandler) FindAllLocationsForStories(w http.ResponseWriter
 }
 
 func (handler *LocationHandler) FindAllLocationsForStory(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singleStoryDTO dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
 	if err != nil {
@@ -270,6 +275,7 @@ func (handler *LocationHandler) FindAllLocationsForStory(w http.ResponseWriter, 
 }
 
 func (handler *LocationHandler) FindAllLocationsForPosts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singlePostsDTO []dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostsDTO)
 	if err != nil {
@@ -297,6 +303,7 @@ func (handler *LocationHandler) FindAllLocationsForPosts(w http.ResponseWriter, 
 }
 
 func (handler *LocationHandler) FindAllLocationsForPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singlePostDTO dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostDTO)
 	if err != nil {
@@ -324,6 +331,7 @@ func (handler *LocationHandler) FindAllLocationsForPost(w http.ResponseWriter, r
 }
 
 func (handler *LocationHandler) FindAllLocationsForStoryAlbums(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyAlbumsFullDTO []dto.StoryAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumsFullDTO)
 	if err != nil {
@@ -351,6 +359,7 @@ func (handler *LocationHandler) FindAllLocationsForStoryAlbums(w http.ResponseWr
 }
 
 func (handler *LocationHandler) FindAllLocationsForStoryAlbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyAlbumFullDTO dto.StoryAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumFullDTO)
 	if err != nil {
@@ -378,6 +387,7 @@ func (handler *LocationHandler) FindAllLocationsForStoryAlbum(w http.ResponseWri
 }
 
 func (handler *LocationHandler) FindAllLocationsForPostAlbums(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postAlbumsFullDTO []dto.PostAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumsFullDTO)
 	if err != nil {
@@ -405,6 +415,7 @@ func (handler *LocationHandler) FindAllLocationsForPostAlbums(w http.ResponseWri
 }
 
 func (handler *LocationHandler) FindAllLocationsForPostAlbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postAlbumFullDTO dto.PostAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
 	if err != nil {

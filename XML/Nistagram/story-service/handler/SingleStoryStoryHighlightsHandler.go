@@ -59,6 +59,7 @@ func (handler *SingleStoryStoryHighlightsHandler) CreateSingleStoryStoryHighligh
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singleStoryStoryHighlightsDTO dto.SingleStoryStoryHighlightsDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryStoryHighlightsDTO)
 	if err != nil {
@@ -139,6 +140,7 @@ func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlig
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	singleStoryStoryHighlights := handler.Service.FindAllSingleStoryStoryHighlightsForStory(uuid.MustParse(id))
@@ -203,6 +205,7 @@ func (handler *SingleStoryStoryHighlightsHandler) FindAllSingleStoryStoryHighlig
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	singleStoryStoryHighlights := handler.Service.FindAllSingleStoryStoryHighlightsForStoryHighlight(uuid.MustParse(id))

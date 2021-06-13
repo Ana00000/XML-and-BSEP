@@ -52,6 +52,7 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postAlbumContentDTO dto.PostAlbumContentDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumContentDTO)
 	if err != nil {
@@ -116,6 +117,7 @@ func (handler *PostAlbumContentHandler) CreatePostAlbumContent(w http.ResponseWr
 }
 
 func (handler *PostAlbumContentHandler) Upload(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("X-XSS-Protection", "1; mode=block")
 	request.ParseMultipartForm(10 << 20)
 
 	file, hand, err := request.FormFile("myPostAlbumFile")
@@ -167,6 +169,7 @@ func (handler *PostAlbumContentHandler) Upload(writer http.ResponseWriter, reque
 }
 
 func (handler *PostAlbumContentHandler) FindAllContentsForPostAlbums(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postAlbumFullDTO []dto.PostAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
 	if err != nil {
@@ -196,6 +199,7 @@ func (handler *PostAlbumContentHandler) FindAllContentsForPostAlbums(w http.Resp
 }
 
 func (handler *PostAlbumContentHandler) FindAllContentsForPostAlbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postAlbumFullDTO dto.PostAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
 	if err != nil {

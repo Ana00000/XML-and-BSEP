@@ -50,6 +50,7 @@ func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.Respon
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var commentTagCommentsDTO dto.CommentTagCommentsDTO
 	err := json.NewDecoder(r.Body).Decode(&commentTagCommentsDTO)
 	if err != nil {
@@ -130,6 +131,7 @@ func (handler *CommentTagCommentsHandler) FindAllCommentTagCommentsForComment(w 
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	id := vars["id"]
 	var retValues []string

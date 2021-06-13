@@ -22,6 +22,7 @@ type CommentICRHandler struct {
 }
 
 func (handler *CommentICRHandler) CreateCommentICR(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var commentICRDTO dto.CommentICRDTO
 	if err := json.NewDecoder(r.Body).Decode(&commentICRDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{

@@ -52,6 +52,7 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singlePostContentDTO dto.SinglePostContentDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostContentDTO)
 	if err != nil {
@@ -118,6 +119,7 @@ func (handler *SinglePostContentHandler) CreateSinglePostContent(w http.Response
 }
 
 func (handler *SinglePostContentHandler) FindAllContentsForPosts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singlePostsDTOs []dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostsDTOs)
 
@@ -148,6 +150,7 @@ func (handler *SinglePostContentHandler) FindAllContentsForPosts(w http.Response
 }
 
 func (handler *SinglePostContentHandler) FindAllContentsForPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singlePostDTO dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostDTO)
 
@@ -178,6 +181,7 @@ func (handler *SinglePostContentHandler) FindAllContentsForPost(w http.ResponseW
 }
 
 func (handler *SinglePostContentHandler) Upload(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("X-XSS-Protection", "1; mode=block")
 	request.ParseMultipartForm(10 << 20)
 
 	file, hand, err := request.FormFile("myPostFile")

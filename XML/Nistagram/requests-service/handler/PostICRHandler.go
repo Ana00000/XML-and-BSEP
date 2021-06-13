@@ -22,6 +22,7 @@ type PostICRHandler struct {
 }
 
 func (handler *PostICRHandler) CreatePostICR(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postICRDTO dto.PostICRDTO
 	if err := json.NewDecoder(r.Body).Decode(&postICRDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{

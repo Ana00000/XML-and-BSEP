@@ -62,6 +62,7 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 		return
 	}
 	*/
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singleStoryDTO dto.SingleStoryDTO
 	err := json.NewDecoder(r.Body).Decode(&singleStoryDTO)
 	if err != nil {
@@ -159,6 +160,7 @@ func Request(url string, token string) *http.Response {
 //// tab PUBLIC STORIES kada neregistroviani korisnik otvori sve PUBLIC, NOT EXPIRED I OD PUBLIC USERA
 //FIDALPUBSTORISNOTREGUS9329
 func (handler *SingleStoryHandler) FindAllPublicStoriesNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
@@ -313,6 +315,7 @@ type UserValid struct {
 // kada neregistrovani user otvori PUBLIC usera sa spiska i onda na njegovom profilu vidi PUBLIC i NOT EXPIRED STORIJE
 //FIDALSTORISFORUSNOTREGUS8921
 func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 	///check_if_user_valid/{userID}
 	//var checkIfValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(id))
@@ -477,6 +480,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserNotRegisteredUser(w http
 
 //FIDALPUBSTORISREGUS9823
 func (handler *SingleStoryHandler) FindAllPublicStoriesRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	response:=Request(reqUrlAuth,ExtractToken(r))
@@ -695,6 +699,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForUserRegisteredUser(w http.Re
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 	logId := r.URL.Query().Get("logId")
 	var stories []dto.SingleStoryFullDTO
@@ -1094,6 +1099,7 @@ func (handler *SingleStoryHandler) FindAllFollowingStories(w http.ResponseWriter
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
@@ -1311,6 +1317,7 @@ func (handler *SingleStoryHandler) FindSelectedStoryByIdForRegisteredUsers(w htt
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}*/
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	id := r.URL.Query().Get("id")
 	logId := r.URL.Query().Get("logId")
@@ -1503,6 +1510,7 @@ func (handler *SingleStoryHandler) FindAllStoriesForLoggedUser(w http.ResponseWr
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var stories = convertListSingleStoriesToSingleStoriesDTO(handler.SingleStoryService.FindAllStoriesForLoggedUser(uuid.MustParse(id)))
@@ -1797,6 +1805,7 @@ func convertSingleStoryDTOToSingleStory(singleStoryDTO dto.SingleStoryFullDTO) m
 
 //FIDSINGSTRYFORID9102
 func (handler *SingleStoryHandler) FindSingleStoryForId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	singleStory := handler.SingleStoryService.FindSingleStoryForId(uuid.MustParse(id))

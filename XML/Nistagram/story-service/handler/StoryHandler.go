@@ -60,6 +60,7 @@ func TokenValid(r *http.Request) error {
 
 //CRSTRY90211
 func (handler *StoryHandler) CreateStory(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyDTO dto.StoryDTO
 	err := json.NewDecoder(r.Body).Decode(&storyDTO)
 	if err != nil {

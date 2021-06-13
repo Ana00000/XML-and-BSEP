@@ -60,6 +60,7 @@ func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter
 		return
 	}
 	*/
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyHighlightDTO dto.StoryHighlightDTO
 	err := json.NewDecoder(r.Body).Decode(&storyHighlightDTO)
 	if err != nil {
@@ -139,6 +140,7 @@ func (handler *StoryHighlightHandler) FindAllStoryHighlightsForUser(w http.Respo
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	storyHighlights := handler.Service.FindAllStoryHighlightsForUser(uuid.MustParse(id))

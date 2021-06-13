@@ -18,6 +18,7 @@ type MessageHandler struct {
 }
 
 func (handler *MessageHandler) CreateMessage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var messageDTO dto.MessageDTO
 	err := json.NewDecoder(r.Body).Decode(&messageDTO)
 

@@ -23,6 +23,7 @@ type ProfileSettingsHandler struct {
 }
 
 func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	userId := vars["userID"]
 
@@ -59,6 +60,7 @@ func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWrit
 }
 
 func (handler *ProfileSettingsHandler) FindProfileSettingByUserId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	userId := vars["userID"]
 
@@ -115,6 +117,7 @@ func (handler *ProfileSettingsHandler) FindProfileSettingByUserId(w http.Respons
 }
 
 func (handler *ProfileSettingsHandler) FindProfileSettingsForPublicUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	var profileSettings = handler.Service.FindAllProfileSettingsForPublicUsers()
 	if profileSettings == nil {
@@ -144,6 +147,7 @@ func (handler *ProfileSettingsHandler) FindProfileSettingsForPublicUsers(w http.
 }
 
 func (handler *ProfileSettingsHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var classicUsersDTO []dto.ClassicUserDTO
 	if err := json.NewDecoder(r.Body).Decode(&classicUsersDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{

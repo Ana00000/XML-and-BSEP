@@ -60,6 +60,7 @@ func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *htt
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var storyAlbumDTO dto.StoryAlbumDTO
 	err := json.NewDecoder(r.Body).Decode(&storyAlbumDTO)
 	if err != nil {
@@ -170,6 +171,7 @@ func (handler *StoryAlbumHandler) FindAllAlbumStoriesForLoggedUser(w http.Respon
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var albumStories = handler.Service.FindAllAlbumStoriesForUser(uuid.MustParse(id))
@@ -370,6 +372,7 @@ func (handler *StoryAlbumHandler) FindSelectedStoryAlbumByIdForLoggedUser(w http
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")       //story album id
 	logId := r.URL.Query().Get("logId") //loged user id
 
@@ -597,6 +600,7 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
@@ -748,6 +752,7 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 //FIDALPUBALBSTORISNOTREGUS9021
 func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
@@ -935,6 +940,7 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))

@@ -98,6 +98,7 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singlePostDTO dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostDTO)
 
@@ -176,6 +177,7 @@ func getJson(url string, target interface{}) error {
 
 // for selected user (you can only select VALID users)
 func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	//var checkIfValid = handler.ClassicUserService.CheckIfUserValid(uuid.MustParse(id))
@@ -381,6 +383,7 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 	logId := r.URL.Query().Get("logId")
 
@@ -709,6 +712,7 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	// returns only valid users
@@ -866,6 +870,7 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 // FIND SELECTED POST BY ID (ONLY IF NOT DELETED)!
 // IF PUBLIC/ IF FOLLOWING PRIVATE PROFILE
 func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	id := r.URL.Query().Get("id")
 
@@ -1016,6 +1021,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForNotRegisteredUsers(w ht
 // FIND SELECTED POST BY ID (ONLY IF NOT DELETED)!
 // IF PUBLIC/ IF FOLLOWING PRIVATE PROFILE
 func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	id := r.URL.Query().Get("id")
 	logId := r.URL.Query().Get("logId")
@@ -1288,6 +1294,7 @@ func (handler *SinglePostHandler) FindSelectedPostByIdForRegisteredUsers(w http.
 
 //FIND ALL PUBLIC POSTS (for not registered users)
 func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	// returns only VALID users
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
@@ -1442,6 +1449,7 @@ func (handler *SinglePostHandler) FindAllPublicPostsNotRegisteredUser(w http.Res
 }
 
 func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	response:=Request(reqUrlAuth,ExtractToken(r))
@@ -1669,6 +1677,7 @@ func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWrite
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var posts = convertListSinglePostsToSinglePostsDTO(handler.SinglePostService.FindAllPostsForUser(uuid.MustParse(id)))
@@ -1772,6 +1781,7 @@ func (handler *SinglePostHandler) FindAllPostsForLoggedUser(w http.ResponseWrite
 
 // FIND SELECTED POST FROM LOGGEDIN USER BY ID (ONLY IF NOT DELETED)
 func (handler *SinglePostHandler) FindSelectedPostByIdForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	response:=Request(reqUrlAuth,ExtractToken(r))
@@ -2108,6 +2118,7 @@ func convertSinglePostDTOToSinglePost(singlePostDTO dto.SinglePostFullDTO) model
 // SEARCH TAGS FOR NOT REGISTERED USER
 func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
@@ -2195,6 +2206,7 @@ func (handler *SinglePostHandler) FindAllTagsForPublicPosts(w http.ResponseWrite
 // SEARCH LOCATIONS FOR NOT REGISTERED USER
 func (handler *SinglePostHandler) FindAllLocationsForPublicPosts(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
 	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
@@ -2285,6 +2297,7 @@ type ListId struct {
 // FIND ALL PUBLIC NOT DELETED POSTS WITH TAG - FOR NOT REG USER S
 func (handler *SinglePostHandler) FindAllPostsForTag(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	tagName := r.URL.Query().Get("tagName") //tag id
 
 	///get_tag_by_name/{name}
@@ -2458,6 +2471,7 @@ type ReturnValueId struct {
 // FIND ALL PUBLIC NOT DELETED POSTS WITH LOCATION - FOR NOT REG USER S
 func (handler *SinglePostHandler) FindAllPostsForLocation(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	//county,city,streetName,streetNumber
 	locationString := r.URL.Query().Get("locationString")
 	///find_location_id_by_location_string/{locationString}
@@ -2796,6 +2810,7 @@ func (handler *SinglePostHandler) FindAllTagsForPublicAndFollowingPosts(w http.R
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id") //logged in reg user id
 
 	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
@@ -2884,6 +2899,7 @@ func (handler *SinglePostHandler) FindAllLocationsForPublicAndFollowingPosts(w h
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id") //logged in reg user id
 
 	var allUsers = handler.FindAllPublicAndFriendsUsers(uuid.MustParse(id))
@@ -2975,6 +2991,8 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 	}*/
 
 	id := r.URL.Query().Get("id") //logged in reg user id
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	id := r.URL.Query().Get("id")           //logged in reg user id
 	tagName := r.URL.Query().Get("tagName") //tag id
 
 	//var tag = handler.TagService.FindTagByName(tagName)
@@ -3153,6 +3171,7 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	//county,city,streetName,streetNumber
 	locationString := r.URL.Query().Get("locationString")
 	id := r.URL.Query().Get("id") //logged in reg user id

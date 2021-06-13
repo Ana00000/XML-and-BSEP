@@ -21,6 +21,7 @@ type ConfirmationTokenHandler struct {
 
 //VERFYCONFTOK322
 func (handler *ConfirmationTokenHandler) VerifyConfirmationToken(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var confirmationAccountDTO dto.ConfirmationAccountDTO
 	err := json.NewDecoder(r.Body).Decode(&confirmationAccountDTO)
 	if err!=nil{

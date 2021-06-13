@@ -18,6 +18,7 @@ type PostHandler struct {
 }
 
 func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postDTO dto.PostDTO
 	err := json.NewDecoder(r.Body).Decode(&postDTO)
 
@@ -63,6 +64,7 @@ func (handler *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handler *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postDTO dto.PostUpdateDTO
 
 	err := json.NewDecoder(r.Body).Decode(&postDTO)

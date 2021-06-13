@@ -59,6 +59,7 @@ func (handler *ClassicUserFollowersHandler) FindAllMutualFollowerForUser(w http.
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var mutuals = handler.ClassicUserFollowersService.FindAllMutualFollowerForUser(uuid.MustParse(id))

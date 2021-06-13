@@ -22,6 +22,7 @@ type ProfileSettingsRejectedMessageProfilesHandler struct {
 }
 
 func (handler *ProfileSettingsRejectedMessageProfilesHandler) CreateProfileSettingsRejectedMessageProfiles(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var profileSettingsRejectedMessageProfilesDTO dto.ProfileSettingsRejectedMessageProfilesDTO
 	if err := json.NewDecoder(r.Body).Decode(&profileSettingsRejectedMessageProfilesDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{

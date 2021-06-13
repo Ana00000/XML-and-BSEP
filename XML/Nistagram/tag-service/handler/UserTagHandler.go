@@ -23,6 +23,7 @@ type UserTagHandler struct {
 }
 //CRUSRTG9821
 func (handler *UserTagHandler) CreateUserTag(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var userTagDTO dto.UserTagDTO
 	if err := json.NewDecoder(r.Body).Decode(&userTagDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -144,6 +145,7 @@ func (handler *UserTagHandler) FindAllTaggableUsersPost(w http.ResponseWriter, r
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var allUserTags []model.UserTag
 	var userAllTags []model.UserTag
 
@@ -237,6 +239,7 @@ func (handler *UserTagHandler) FindAllTaggableUsersStory(w http.ResponseWriter, 
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var allUserTags []model.UserTag
 	var userAllTags []model.UserTag
 
@@ -321,6 +324,7 @@ func (handler *UserTagHandler) FindAllTaggableUsersComment(w http.ResponseWriter
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var allUserTags []model.UserTag
 	var userAllTags []model.UserTag
 
@@ -379,6 +383,7 @@ func (handler *UserTagHandler) FindAllTaggableUsersComment(w http.ResponseWriter
 }
 //CRUSRTGFORREGUSR7772
 func (handler *UserTagHandler) CreateUserTagForRegisteredUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var userTagDTO dto.UserTagFullDTO
 	if err := json.NewDecoder(r.Body).Decode(&userTagDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{

@@ -22,6 +22,7 @@ type ProfileSettingsApprovedMessageProfilesHandler struct {
 }
 
 func (handler *ProfileSettingsApprovedMessageProfilesHandler) CreateProfileSettingsApprovedMessageProfiles(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var profileSettingsApprovedMessageProfilesDTO dto.ProfileSettingsApprovedMessageProfilesDTO
 
 	if err := json.NewDecoder(r.Body).Decode(&profileSettingsApprovedMessageProfilesDTO); err != nil {

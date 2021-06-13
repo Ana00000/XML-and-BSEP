@@ -68,6 +68,7 @@ func (handler *ClassicUserFollowingsHandler) CreateClassicUserFollowing(w http.R
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var classicUserFollowingDTO dto.ClassicUserFollowingsDTO
 	err = json.NewDecoder(r.Body).Decode(&classicUserFollowingDTO)
 	if err != nil {
@@ -133,6 +134,7 @@ type ReturnValueBool struct {
 
 //FIDALVALFOLLINGSFRUS111
 func (handler *ClassicUserFollowingsHandler) FindAllValidFollowingsForUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	id := vars["id"]
 
@@ -171,6 +173,7 @@ func (handler *ClassicUserFollowingsHandler) FindAllValidFollowingsForUser(w htt
 
 //FIDALUSFOLWUSID2672
 func (handler *ClassicUserFollowingsHandler) FindAllUserWhoFollowUserId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	id := vars["id"]
 
@@ -206,6 +209,7 @@ func (handler *ClassicUserFollowingsHandler) FindAllUserWhoFollowUserId(w http.R
 
 //CHEKFOLLINGPSTSTRY2111
 func (handler *ClassicUserFollowingsHandler) CheckIfFollowingPostStory(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	id := vars["id"]
 	logId := vars["logId"]
@@ -266,6 +270,7 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var followRequestDTO dto.FollowRequestDTO
 	err = json.NewDecoder(r.Body).Decode(&followRequestDTO)
 	if err != nil {

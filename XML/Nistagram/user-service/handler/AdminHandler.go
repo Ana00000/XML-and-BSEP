@@ -24,6 +24,7 @@ type AdminHandler struct {
 }
 
 func (handler *AdminHandler) CreateAdmin(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var adminDTO dto.AdminDTO
 	if err := json.NewDecoder(r.Body).Decode(&adminDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{

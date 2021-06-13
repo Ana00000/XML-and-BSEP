@@ -76,6 +76,7 @@ func TokenValid(r *http.Request) error {
 //FIDALUSRS2330
 func (handler *UserHandler) FindAllUsers(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	err := TokenValid(r)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -194,6 +195,7 @@ func getUserNameFromJWT(r *http.Request) (string,error) {
 
 //CHUSPASS9112
 func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var userChangePasswordDTO dto.UserChangePasswordDTO
 	err := json.NewDecoder(r.Body).Decode(&userChangePasswordDTO)
 	if err != nil {
@@ -379,6 +381,7 @@ func (handler *UserHandler) ChangeUserPassword(w http.ResponseWriter, r *http.Re
 
 //LOG85310
 func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var logInUserDTO dto.LogInUserDTO
 	if err := json.NewDecoder(r.Body).Decode(&logInUserDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -529,6 +532,7 @@ func (handler *UserHandler) LogIn(w http.ResponseWriter, r *http.Request) {
 //UPDUSPROFINF393
 func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -704,6 +708,7 @@ func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var user = handler.UserService.FindByID(uuid.MustParse(id))
@@ -734,6 +739,7 @@ func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 //FIDALUSRSBUTLOGGIN212
 func (handler *UserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	var user = handler.UserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
@@ -761,6 +767,7 @@ func (handler *UserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *ht
 
 //FIDALPUBUSRS0291
 func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var profileSettings []Data
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_for_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
 	err := getJson(reqUrl, &profileSettings)
@@ -804,6 +811,7 @@ func (handler *UserHandler) FindAllPublicUsers(w http.ResponseWriter, r *http.Re
 //FIDBYUSNAM9482
 func (handler *UserHandler) FindByUserName(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	username := r.URL.Query().Get("username")
 
 	var user = handler.UserService.FindByUserName(username)

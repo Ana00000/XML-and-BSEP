@@ -48,6 +48,7 @@ func (handler *PostAlbumTagPostAlbumsHandler) CreatePostAlbumTagPostAlbums(w htt
 		return
 	}
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postAlbumTagPostAlbumsDTO dto.PostAlbumTagPostAlbumsDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumTagPostAlbumsDTO)
 	if err != nil {
@@ -92,6 +93,7 @@ func (handler *PostAlbumTagPostAlbumsHandler) CreatePostAlbumTagPostAlbums(w htt
 
 //FIDALTGSFRPOALBTGPSTALBMS321
 func (handler *PostAlbumTagPostAlbumsHandler) FindAllTagsForPostAlbumTagPostAlbums(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postAlbumFullDTO []dto.PostAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
 	if err != nil {
@@ -122,6 +124,7 @@ func (handler *PostAlbumTagPostAlbumsHandler) FindAllTagsForPostAlbumTagPostAlbu
 
 //FIDALTGSFRPOALB9231
 func (handler *PostAlbumTagPostAlbumsHandler) FindAllTagsForPostAlbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var postAlbumFullDTO dto.PostAlbumFullDTO
 	err := json.NewDecoder(r.Body).Decode(&postAlbumFullDTO)
 	if err != nil {

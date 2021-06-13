@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"gopkg.in/go-playground/validator.v9"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -58,6 +57,7 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var commentDTO dto.CommentDTO
 	if err := json.NewDecoder(r.Body).Decode(&commentDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
@@ -150,6 +150,7 @@ func (handler *CommentHandler) FindAllCommentsForPost(w http.ResponseWriter, r *
 		return
 	}*/
 
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	comments := handler.Service.FindAllCommentsForPost(uuid.MustParse(id))
@@ -176,6 +177,7 @@ func (handler *CommentHandler) FindAllCommentsForPost(w http.ResponseWriter, r *
 }
 
 func (handler *CommentHandler) FindAllUserComments(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
 
 	comments := handler.Service.FindAllUserComments(uuid.MustParse(id))

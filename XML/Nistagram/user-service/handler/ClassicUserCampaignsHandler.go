@@ -19,6 +19,7 @@ type ClassicUserCampaignsHandler struct {
 }
 
 func (handler *ClassicUserCampaignsHandler) CreateClassicUserCampaigns(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var classicUserCampaignsDTO dto.ClassicUserCampaignsDTO
 	err := json.NewDecoder(r.Body).Decode(&classicUserCampaignsDTO)
 	if err != nil {
