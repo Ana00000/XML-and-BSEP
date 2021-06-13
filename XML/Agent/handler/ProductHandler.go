@@ -13,8 +13,8 @@ import (
 )
 
 type ProductHandler struct {
-	ProductService * service.ProductService
-	Validator * validator.Validate
+	ProductService *service.ProductService
+	Validator      *validator.Validate
 }
 
 func (handler *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +38,6 @@ func (handler *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Requ
 		AgentUserID: productDTO.AgentUserID,
 	}
 
-
 	if err := handler.ProductService.CreateProduct(&product); err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
@@ -48,4 +47,3 @@ func (handler *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Requ
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-

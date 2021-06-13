@@ -83,13 +83,13 @@ func (handler *StoryHandler) CreateStory(w http.ResponseWriter, r *http.Request)
 
 	id := uuid.New()
 	story := model.Story{
-		ID:          	id,
-		CreationDate: 	time.Now(),
-		Description:    storyDTO.Description,
-		UserId:      	storyDTO.UserId,
-		LocationId: 	storyDTO.LocationId,
-		IsDeleted:      false,
-		Type:      		storyType,
+		ID:           id,
+		CreationDate: time.Now(),
+		Description:  storyDTO.Description,
+		UserId:       storyDTO.UserId,
+		LocationId:   storyDTO.LocationId,
+		IsDeleted:    false,
+		Type:         storyType,
 	}
 
 	err = handler.Service.CreateStory(&story)
@@ -113,4 +113,3 @@ func (handler *StoryHandler) CreateStory(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
-

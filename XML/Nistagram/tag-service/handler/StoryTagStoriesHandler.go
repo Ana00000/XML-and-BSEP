@@ -62,9 +62,9 @@ func (handler *StoryTagStoriesHandler) CreateStoryTagStories(w http.ResponseWrit
 	}
 
 	storyTagStories := model.StoryTagStories{
-		ID:         uuid.UUID{},
-		TagId: storyTagStoriesDTO.TagId,
-		StoryId:    storyTagStoriesDTO.StoryId,
+		ID:      uuid.UUID{},
+		TagId:   storyTagStoriesDTO.TagId,
+		StoryId: storyTagStoriesDTO.StoryId,
 	}
 
 	err = handler.Service.CreateStoryTagStories(&storyTagStories)

@@ -15,7 +15,7 @@ import (
 )
 
 type UserTagHandler struct {
-	Service *service.UserTagService
+	Service    *service.UserTagService
 	TagService *service.TagService
 	Validator *validator.Validate
 	LogInfo *logrus.Logger
@@ -62,8 +62,8 @@ func (handler *UserTagHandler) CreateUserTag(w http.ResponseWriter, r *http.Requ
 		id := uuid.New()
 		userTag = model.UserTag{
 			Tag: model.Tag{
-				ID: id,
-				Name: userTagDTO.Name,
+				ID:      id,
+				Name:    userTagDTO.Name,
 				TagType: model.USER_TAG,
 			},
 			UserId: userTagDTO.UserId,
@@ -242,7 +242,7 @@ func (handler *UserTagHandler) FindAllTaggableUsersStory(w http.ResponseWriter, 
 
 	allUserTags = handler.Service.FindAll()
 
-	for _,userTags := range allUserTags {
+	for _, userTags := range allUserTags {
 		var userId = userTags.UserId
 		//fmt.Println("The is user ID: ", userId)
 		//var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
@@ -326,7 +326,7 @@ func (handler *UserTagHandler) FindAllTaggableUsersComment(w http.ResponseWriter
 
 	allUserTags = handler.Service.FindAll()
 
-	for _,userTags := range allUserTags {
+	for _, userTags := range allUserTags {
 		var userId = userTags.UserId
 		//fmt.Println("The is user ID: ", userId)
 		//var userProfileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(userId)
@@ -392,7 +392,7 @@ func (handler *UserTagHandler) CreateUserTagForRegisteredUser(w http.ResponseWri
 	}
 
 	var userTag = model.UserTag{
-		Tag:    model.Tag{
+		Tag: model.Tag{
 			ID:      userTagDTO.ID,
 			Name:    userTagDTO.Name,
 			TagType: model.USER_TAG,

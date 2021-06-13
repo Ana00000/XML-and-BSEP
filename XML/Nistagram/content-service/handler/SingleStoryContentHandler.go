@@ -186,7 +186,7 @@ func (handler *SingleStoryContentHandler) Upload(writer http.ResponseWriter, req
 	}
 	defer file.Close()
 
-	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"),  "*" + hand.Filename)
+	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"), "*"+hand.Filename)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -221,12 +221,12 @@ func (handler *SingleStoryContentHandler) Upload(writer http.ResponseWriter, req
 	writer.Write(pathJson)
 }
 
-func convertSingleStoryContentToSingleStoryContentForSingleStoryDTO(singleStoryContent model.SingleStoryContent) dto.SingleStoryContentForSingleStoryDTO{
-	contentType:= ""
-	if singleStoryContent.Type==model.VIDEO{
-		contentType="VIDEO"
-	} else if singleStoryContent.Type==model.PICTURE{
-		contentType="PICTURE"
+func convertSingleStoryContentToSingleStoryContentForSingleStoryDTO(singleStoryContent model.SingleStoryContent) dto.SingleStoryContentForSingleStoryDTO {
+	contentType := ""
+	if singleStoryContent.Type == model.VIDEO {
+		contentType = "VIDEO"
+	} else if singleStoryContent.Type == model.PICTURE {
+		contentType = "PICTURE"
 	}
 	var singleStoryContentForSingleStoryDTO = dto.SingleStoryContentForSingleStoryDTO{
 		ID:            singleStoryContent.ID,
@@ -237,7 +237,7 @@ func convertSingleStoryContentToSingleStoryContentForSingleStoryDTO(singleStoryC
 	return singleStoryContentForSingleStoryDTO
 }
 
-func convertListSingleStoriesContentToSingleStoriesContentForSingleStoryDTO(singleStoryContents []model.SingleStoryContent) []dto.SingleStoryContentForSingleStoryDTO{
+func convertListSingleStoriesContentToSingleStoriesContentForSingleStoryDTO(singleStoryContents []model.SingleStoryContent) []dto.SingleStoryContentForSingleStoryDTO {
 	var listSingleStoryContentForSingleStoryDTO []dto.SingleStoryContentForSingleStoryDTO
 	for i := 0; i < len(singleStoryContents); i++ {
 		listSingleStoryContentForSingleStoryDTO = append(listSingleStoryContentForSingleStoryDTO, convertSingleStoryContentToSingleStoryContentForSingleStoryDTO(singleStoryContents[i]))

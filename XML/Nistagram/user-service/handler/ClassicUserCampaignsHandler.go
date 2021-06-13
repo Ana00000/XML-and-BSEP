@@ -32,9 +32,9 @@ func (handler *ClassicUserCampaignsHandler) CreateClassicUserCampaigns(w http.Re
 		return
 	}
 	classicUserCampaigns := model.ClassicUserCampaigns{
-		ID:               uuid.UUID{},
+		ID:            uuid.UUID{},
 		ClassicUserId: classicUserCampaignsDTO.ClassicUserId,
-		CampaignId:       classicUserCampaignsDTO.CampaignId,
+		CampaignId:    classicUserCampaignsDTO.CampaignId,
 	}
 
 	err = handler.Service.CreateClassicUserCampaigns(&classicUserCampaigns)

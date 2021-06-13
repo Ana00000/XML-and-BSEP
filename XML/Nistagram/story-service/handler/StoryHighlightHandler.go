@@ -74,9 +74,9 @@ func (handler *StoryHighlightHandler) CreateStoryHighlight(w http.ResponseWriter
 	}
 
 	storyHighlight := model.StoryHighlight{
-		ID:          uuid.UUID{},
-		Title: storyHighlightDTO.Title,
-		UserId:      storyHighlightDTO.UserId,
+		ID:     uuid.UUID{},
+		Title:  storyHighlightDTO.Title,
+		UserId: storyHighlightDTO.UserId,
 	}
 
 	err = handler.Service.CreateStoryHighlight(&storyHighlight)

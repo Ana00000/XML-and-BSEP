@@ -63,9 +63,9 @@ func (handler *StoryAlbumTagStoryAlbumsHandler) CreateStoryAlbumTagStoryAlbums(w
 
 	id := uuid.New()
 	storyAlbumTagStoryAlbums := model.StoryAlbumTagStoryAlbums{
-		ID:        			id,
-		TagId: 	storyAlbumTagStoryAlbumsDTO.TagId,
-		StoryAlbumId:    	storyAlbumTagStoryAlbumsDTO.StoryAlbumId,
+		ID:           id,
+		TagId:        storyAlbumTagStoryAlbumsDTO.TagId,
+		StoryAlbumId: storyAlbumTagStoryAlbumsDTO.StoryAlbumId,
 	}
 
 	err = handler.Service.CreateStoryAlbumTagStoryAlbums(&storyAlbumTagStoryAlbums)

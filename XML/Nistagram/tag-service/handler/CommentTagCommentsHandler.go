@@ -64,8 +64,8 @@ func (handler *CommentTagCommentsHandler) CreateCommentTagComments(w http.Respon
 	}
 
 	commentTagComments := model.CommentTagComments{
-		ID:          uuid.UUID{},
-		TagId: 		commentTagCommentsDTO.TagId,
+		ID:        uuid.UUID{},
+		TagId:     commentTagCommentsDTO.TagId,
 		CommentId: commentTagCommentsDTO.CommentId,
 	}
 

@@ -83,14 +83,14 @@ func (handler *StoryAlbumHandler) CreateStoryAlbum(w http.ResponseWriter, r *htt
 
 	id := uuid.New()
 	storyAlbum := model.StoryAlbum{
-		Story : model.Story{
-			ID:          	id,
-			CreationDate: 	time.Now(),
-			Description:    storyAlbumDTO.Description,
-			UserId:      	storyAlbumDTO.UserId,
-			LocationId:     storyAlbumDTO.LocationId,
-			IsDeleted:      false,
-			Type:      		storyAlbumType,
+		Story: model.Story{
+			ID:           id,
+			CreationDate: time.Now(),
+			Description:  storyAlbumDTO.Description,
+			UserId:       storyAlbumDTO.UserId,
+			LocationId:   storyAlbumDTO.LocationId,
+			IsDeleted:    false,
+			Type:         storyAlbumType,
 		},
 	}
 
@@ -260,7 +260,7 @@ func (handler *StoryAlbumHandler) FindAllAlbumStoriesForLoggedUser(w http.Respon
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-	var albumStoriesDTOS = handler.CreateStoryAlbumsDTOList(albumStories,contents,locations,tags)
+	var albumStoriesDTOS = handler.CreateStoryAlbumsDTOList(albumStories, contents, locations, tags)
 
 	albumStoriesJson, _ := json.Marshal(albumStoriesDTOS)
 	w.Write(albumStoriesJson)
@@ -306,8 +306,8 @@ func (handler *StoryAlbumHandler) CreateStoryAlbumsDTOList(albums []model.StoryA
 		var listOfTags []string
 		for p := 0; p < len(tags); p++ {
 			if tags[p].StoryAlbumId == albums[i].ID {
-				var  returnValueTagName ReturnValueString
-				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].TagId.String())
+				var returnValueTagName ReturnValueString
+				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tags[p].TagId.String())
 				err := getJson(reqUrl, &returnValueTagName)
 				if err!=nil{
 					handler.LogError.WithFields(logrus.Fields{
@@ -319,7 +319,7 @@ func (handler *StoryAlbumHandler) CreateStoryAlbumsDTOList(albums []model.StoryA
 					//fmt.Println("Wrong cast response body to list FollowerRequestForUserDTO!")
 					return nil
 				}
-				listOfTags = append(listOfTags,returnValueTagName.ReturnValue)
+				listOfTags = append(listOfTags, returnValueTagName.ReturnValue)
 
 				//listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
 			}
@@ -370,7 +370,7 @@ func (handler *StoryAlbumHandler) FindSelectedStoryAlbumByIdForLoggedUser(w http
 		return
 	}*/
 
-	id := r.URL.Query().Get("id") //story album id
+	id := r.URL.Query().Get("id")       //story album id
 	logId := r.URL.Query().Get("logId") //loged user id
 
 	var storyAlbum = handler.Service.FindByID(uuid.MustParse(id))
@@ -406,7 +406,7 @@ func (handler *StoryAlbumHandler) FindSelectedStoryAlbumByIdForLoggedUser(w http
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	storyAlbumFullDTO:=convertStoryAlbumToStoryAlbumDTO(*storyAlbum)
+	storyAlbumFullDTO := convertStoryAlbumToStoryAlbumDTO(*storyAlbum)
 	///find_all_contents_for_story_album/
 	//var contents = handler.StoryAlbumContentService.FindAllContentsForStoryAlbum(storyAlbum)
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_story_album/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
@@ -495,7 +495,7 @@ func (handler *StoryAlbumHandler) FindSelectedStoryAlbumByIdForLoggedUser(w http
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-	var storyAlbumDTO = handler.CreateStoryAlbumDTO(storyAlbum,contents,locations,tags)
+	var storyAlbumDTO = handler.CreateStoryAlbumDTO(storyAlbum, contents, locations, tags)
 
 	storyAlbumJson, _ := json.Marshal(storyAlbumDTO)
 	w.Write(storyAlbumJson)
@@ -519,7 +519,6 @@ func (handler *StoryAlbumHandler) CreateStoryAlbumDTO(album *model.StoryAlbum, c
 	storyAlbumDTO.Description = album.Description
 	storyAlbumDTO.CreationDate = album.CreationDate
 
-
 	for j := 0; j < len(contents); j++ {
 		if contents[j].StoryAlbumId == album.ID {
 			storyAlbumDTO.Path = append(storyAlbumDTO.Path, contents[j].Path)
@@ -540,8 +539,8 @@ func (handler *StoryAlbumHandler) CreateStoryAlbumDTO(album *model.StoryAlbum, c
 	var listOfTags []string
 	for p := 0; p < len(tags); p++ {
 		if tags[p].StoryAlbumId == album.ID {
-			var  returnValueTagName ReturnValueString
-			reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"),tags[p].TagId.String())
+			var returnValueTagName ReturnValueString
+			reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tags[p].TagId.String())
 			err := getJson(reqUrl, &returnValueTagName)
 			if err!=nil{
 				handler.LogError.WithFields(logrus.Fields{
@@ -552,7 +551,7 @@ func (handler *StoryAlbumHandler) CreateStoryAlbumDTO(album *model.StoryAlbum, c
 				}).Error("Failed finding tag name by ID or wrong cast json to ReturnValueString!")
 				panic(err)
 			}
-			listOfTags = append(listOfTags,returnValueTagName.ReturnValue)
+			listOfTags = append(listOfTags, returnValueTagName.ReturnValue)
 			//listOfTags = append(listOfTags, handler.TagService.FindTagNameById(tags[p].TagId))
 		}
 	}
@@ -601,8 +600,8 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
-	var  allValidUsers []dto.ClassicUserDTO
-	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
+	var allValidUsers []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -672,7 +671,6 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 		return
 	}
 
-
 	//var locations = handler.LocationService.FindAllLocationsForStoryAlbums(publicValidStoryAlbums)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_story_albums/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
 	jsonLocationsDTO, _ := json.Marshal(publicValidStoryAlbums)
@@ -732,7 +730,7 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 		return
 	}
 
-	var storyAlbumsDTOS = handler.CreateStoryAlbumsDTOList(publicValidStoryAlbums,contents,locations,tags)
+	var storyAlbumsDTOS = handler.CreateStoryAlbumsDTOList(publicValidStoryAlbums, contents, locations, tags)
 
 	storyAlbumsJson, _ := json.Marshal(storyAlbumsDTOS)
 	w.Write(storyAlbumsJson)
@@ -751,7 +749,7 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 
 	//var allValidUsers = handler.ClassicUserService.FinAllValidUsers()
-	var  allValidUsers []dto.ClassicUserDTO
+	var allValidUsers []dto.ClassicUserDTO
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_users/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
@@ -881,9 +879,7 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesNotRegisteredUser(w h
 		return
 	}
 
-
-
-	var storyAlbumsDTOS = handler.CreateStoryAlbumsDTOList(publicValidAlbumStories,contents,locations,tags)
+	var storyAlbumsDTOS = handler.CreateStoryAlbumsDTOList(publicValidAlbumStories, contents, locations, tags)
 
 	storyAlbumsJson, _ := json.Marshal(storyAlbumsDTOS)
 	w.Write(storyAlbumsJson)
@@ -942,8 +938,8 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 	id := r.URL.Query().Get("id")
 
 	//var allValidUsers = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
-	var  allValidUsers []dto.ClassicUserDTO
-	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"),id)
+	var allValidUsers []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/dto/find_all_classic_users_but_logged_in?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
 	err := getJson(reqUrl, &allValidUsers)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -955,7 +951,6 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-
 
 	//var followings = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_followings_for_user/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
@@ -989,12 +984,12 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 	var allValidStoryAlbums []model.StoryAlbum
 	var storyAlbums = handler.Service.FindAllFollowingStoryAlbums(followings)
 
-	for i:=0; i<len(storyAlbums);i++{
-		if storyAlbums[i].Type == model.PUBLIC || storyAlbums[i].Type == model.ALL_FRIENDS{
+	for i := 0; i < len(storyAlbums); i++ {
+		if storyAlbums[i].Type == model.PUBLIC || storyAlbums[i].Type == model.ALL_FRIENDS {
 
 			allValidStoryAlbums = append(allValidStoryAlbums, storyAlbums[i])
 
-		}else if storyAlbums[i].Type == model.CLOSE_FRIENDS{
+		} else if storyAlbums[i].Type == model.CLOSE_FRIENDS {
 			//var checkIfCloseFriend = handler.ClassicUserCloseFriendsService.CheckIfCloseFriend(storyAlbums[i].UserId, uuid.MustParse(id))
 			var returnValueCloseFriend ReturnValueBool
 			reqUrl = fmt.Sprintf("http://%s:%s/check_if_close_friend/%s/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), storyAlbums[i].UserId, id)
@@ -1011,7 +1006,7 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 			}
 			checkIfCloseFriend := returnValueCloseFriend.ReturnValue
 
-			if checkIfCloseFriend == true{
+			if checkIfCloseFriend == true {
 
 				allValidStoryAlbums = append(allValidStoryAlbums, storyAlbums[i])
 			}
@@ -1046,7 +1041,6 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 		w.WriteHeader(http.StatusConflict) //400
 		return
 	}
-
 
 	//var locations = handler.LocationService.FindAllLocationsForStoryAlbums(storyAlbums)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_story_albums/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
@@ -1107,7 +1101,7 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 		return
 	}
 
-	var storyAlbumsDTOS = handler.CreateStoryAlbumsDTOList(storyAlbums,contents,locations,tags)
+	var storyAlbumsDTOS = handler.CreateStoryAlbumsDTOList(storyAlbums, contents, locations, tags)
 
 	storyAlbumsJson, _ := json.Marshal(storyAlbumsDTOS)
 	w.Write(storyAlbumsJson)
@@ -1123,18 +1117,17 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 	w.Header().Set("Content-Type", "application/json")
 }
 
-
-func convertListStoryAlbumsToStoryAlbumsDTO(storyAlbums []model.StoryAlbum) []dto.StoryAlbumFullDTO{
+func convertListStoryAlbumsToStoryAlbumsDTO(storyAlbums []model.StoryAlbum) []dto.StoryAlbumFullDTO {
 	var storyAlbumsDTO []dto.StoryAlbumFullDTO
 	for i := 0; i < len(storyAlbums); i++ {
-		storyAlbumsDTO=append(storyAlbumsDTO,convertStoryAlbumToStoryAlbumDTO(storyAlbums[i]))
+		storyAlbumsDTO = append(storyAlbumsDTO, convertStoryAlbumToStoryAlbumDTO(storyAlbums[i]))
 	}
 	return storyAlbumsDTO
 }
 
-func convertStoryAlbumToStoryAlbumDTO(storyAlbum model.StoryAlbum) dto.StoryAlbumFullDTO{
+func convertStoryAlbumToStoryAlbumDTO(storyAlbum model.StoryAlbum) dto.StoryAlbumFullDTO {
 	layout := "2006-01-02T15:04:05.000Z"
-	var storyAlbumDTO= dto.StoryAlbumFullDTO{
+	var storyAlbumDTO = dto.StoryAlbumFullDTO{
 		ID:           storyAlbum.ID,
 		Description:  storyAlbum.Description,
 		CreationDate: storyAlbum.CreationDate.Format(layout),
@@ -1145,18 +1138,18 @@ func convertStoryAlbumToStoryAlbumDTO(storyAlbum model.StoryAlbum) dto.StoryAlbu
 	return storyAlbumDTO
 }
 
-func convertStoryAlbumsDTOToListStoryAlbums(storyAlbumsDTO []dto.StoryAlbumFullDTO) []model.StoryAlbum{
+func convertStoryAlbumsDTOToListStoryAlbums(storyAlbumsDTO []dto.StoryAlbumFullDTO) []model.StoryAlbum {
 	var storyAlbums []model.StoryAlbum
 	for i := 0; i < len(storyAlbumsDTO); i++ {
-		storyAlbums=append(storyAlbums,convertStoryAlbumDTOToStoryAlbum(storyAlbumsDTO[i]))
+		storyAlbums = append(storyAlbums, convertStoryAlbumDTOToStoryAlbum(storyAlbumsDTO[i]))
 	}
 	return storyAlbums
 }
 
-func convertStoryAlbumDTOToStoryAlbum(storyAlbumDTO dto.StoryAlbumFullDTO) model.StoryAlbum{
+func convertStoryAlbumDTOToStoryAlbum(storyAlbumDTO dto.StoryAlbumFullDTO) model.StoryAlbum {
 	layout := "2006-01-02T15:04:05.000Z"
-	creationDate,_ := time.Parse(layout,storyAlbumDTO.CreationDate)
-	var storyAlbum= model.StoryAlbum{
+	creationDate, _ := time.Parse(layout, storyAlbumDTO.CreationDate)
+	var storyAlbum = model.StoryAlbum{
 		Story: model.Story{
 			ID:           storyAlbumDTO.ID,
 			Description:  storyAlbumDTO.Description,

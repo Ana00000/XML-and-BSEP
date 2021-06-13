@@ -82,9 +82,9 @@ func (handler *ClassicUserFollowingsHandler) CreateClassicUserFollowing(w http.R
 	}
 
 	classicUserFollowings := model.ClassicUserFollowings{
-		ID:               uuid.UUID{},
-		ClassicUserId: classicUserFollowingDTO.ClassicUserId,
-		FollowingUserId:   classicUserFollowingDTO.FollowingUserId,
+		ID:              uuid.UUID{},
+		ClassicUserId:   classicUserFollowingDTO.ClassicUserId,
+		FollowingUserId: classicUserFollowingDTO.FollowingUserId,
 	}
 
 	err = handler.ClassicUserFollowingsService.CreateClassicUserFollowings(&classicUserFollowings)
@@ -100,9 +100,9 @@ func (handler *ClassicUserFollowingsHandler) CreateClassicUserFollowing(w http.R
 	}
 
 	classicUserFollower := model.ClassicUserFollowers{
-		ID:               uuid.UUID{},
-		ClassicUserId:    classicUserFollowingDTO.FollowingUserId,
-		FollowerUserId:   classicUserFollowingDTO.ClassicUserId,
+		ID:             uuid.UUID{},
+		ClassicUserId:  classicUserFollowingDTO.FollowingUserId,
+		FollowerUserId: classicUserFollowingDTO.ClassicUserId,
 	}
 
 	err = handler.ClassicUserFollowersService.CreateClassicUserFollowers(&classicUserFollower)
@@ -149,11 +149,10 @@ func (handler *ClassicUserFollowingsHandler) FindAllValidFollowingsForUser(w htt
 		return
 	}
 
-	var validFollowingsForUser = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id),convertListClassicUserDTOToListClassicUser(classicUserDTO))
+	var validFollowingsForUser = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), convertListClassicUserDTOToListClassicUser(classicUserDTO))
 	for i := 0; i < len(validFollowingsForUser); i++ {
 		fmt.Println(validFollowingsForUser[i].FollowingUserId)
 	}
-
 
 	returnValueJson, _ := json.Marshal(convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(validFollowingsForUser))
 
@@ -188,7 +187,7 @@ func (handler *ClassicUserFollowingsHandler) FindAllUserWhoFollowUserId(w http.R
 		return
 	}
 
-	var validFollowingsForUser = handler.ClassicUserFollowingsService.FindAllUserWhoFollowUserId(uuid.MustParse(id),convertListClassicUserDTOToListClassicUser(classicUserDTO))
+	var validFollowingsForUser = handler.ClassicUserFollowingsService.FindAllUserWhoFollowUserId(uuid.MustParse(id), convertListClassicUserDTOToListClassicUser(classicUserDTO))
 
 	returnValueJson, _ := json.Marshal(convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(validFollowingsForUser))
 
@@ -209,7 +208,7 @@ func (handler *ClassicUserFollowingsHandler) FindAllUserWhoFollowUserId(w http.R
 func (handler *ClassicUserFollowingsHandler) CheckIfFollowingPostStory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	logId :=vars["logId"]
+	logId := vars["logId"]
 	//izmjenio
 	var check = handler.ClassicUserFollowingsService.CheckIfFollowingPostStory(uuid.MustParse(id), uuid.MustParse(logId))
 
@@ -281,7 +280,7 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	}
 
 	var followRequestForUser dto.FollowRequestForUserDTO
-	reqUrlFollowRequests := fmt.Sprintf("http://%s:%s/find_request_by_classic_user_and_follower_user_ids/%s/%s", os.Getenv("REQUESTS_SERVICE_DOMAIN"), os.Getenv("REQUESTS_SERVICE_PORT"),followRequestDTO.ClassicUserId, followRequestDTO.FollowerUserId)
+	reqUrlFollowRequests := fmt.Sprintf("http://%s:%s/find_request_by_classic_user_and_follower_user_ids/%s/%s", os.Getenv("REQUESTS_SERVICE_DOMAIN"), os.Getenv("REQUESTS_SERVICE_PORT"), followRequestDTO.ClassicUserId, followRequestDTO.FollowerUserId)
 	err = getJson(reqUrlFollowRequests, &followRequestForUser)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -313,12 +312,11 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 		return
 	}
 
-
 	// CREATE FOLLOWER
 	classicUserFollowers := model.ClassicUserFollowers{
-		ID:               uuid.UUID{},
-		ClassicUserId: followRequestDTO.FollowerUserId,
-		FollowerUserId:   followRequestDTO.ClassicUserId,
+		ID:             uuid.UUID{},
+		ClassicUserId:  followRequestDTO.FollowerUserId,
+		FollowerUserId: followRequestDTO.ClassicUserId,
 	}
 
 	err = handler.ClassicUserFollowersService.CreateClassicUserFollowers(&classicUserFollowers)
@@ -336,9 +334,9 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 
 	// CREATE FOLLOWING
 	classicUserFollowings := model.ClassicUserFollowings{
-		ID:               uuid.UUID{},
-		ClassicUserId:    followRequestDTO.ClassicUserId,
-		FollowingUserId:   followRequestDTO.FollowerUserId,
+		ID:              uuid.UUID{},
+		ClassicUserId:   followRequestDTO.ClassicUserId,
+		FollowingUserId: followRequestDTO.FollowerUserId,
 	}
 
 	err = handler.ClassicUserFollowingsService.CreateClassicUserFollowings(&classicUserFollowings)
@@ -363,7 +361,7 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(classicUserFollowings []model.ClassicUserFollowings) []dto.ClassicUserFollowingsFullDTO{
+func convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(classicUserFollowings []model.ClassicUserFollowings) []dto.ClassicUserFollowingsFullDTO {
 	var classicUserFollowingsDTO []dto.ClassicUserFollowingsFullDTO
 	for i := 0; i < len(classicUserFollowings); i++ {
 		classicUserFollowingsDTO = append(classicUserFollowingsDTO, convertClassicUserFollowingsToClassicUserFollowingsDTO(classicUserFollowings[i]))
@@ -371,7 +369,7 @@ func convertListClassicUsersFollowingsToListClassicUsersFollowingsDTO(classicUse
 	return classicUserFollowingsDTO
 }
 
-func convertClassicUserFollowingsToClassicUserFollowingsDTO(classicUserFollowings model.ClassicUserFollowings) dto.ClassicUserFollowingsFullDTO{
+func convertClassicUserFollowingsToClassicUserFollowingsDTO(classicUserFollowings model.ClassicUserFollowings) dto.ClassicUserFollowingsFullDTO {
 	var classicUserFollowingsFullDTO = dto.ClassicUserFollowingsFullDTO{
 		ID:              classicUserFollowings.ID,
 		ClassicUserId:   classicUserFollowings.ClassicUserId,

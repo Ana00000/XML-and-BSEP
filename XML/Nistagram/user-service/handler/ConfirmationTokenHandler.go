@@ -34,7 +34,7 @@ func (handler *ConfirmationTokenHandler) VerifyConfirmationToken(w http.Response
 		return
 	}
 	userIdUUID := confirmationAccountDTO.UserId
-	tokenUUID:= confirmationAccountDTO.ConfirmationToken
+	tokenUUID := confirmationAccountDTO.ConfirmationToken
 
 	var confirmationToken= handler.ConfirmationTokenService.FindByToken(tokenUUID)
 	if !confirmationToken.IsValid{
@@ -47,10 +47,10 @@ func (handler *ConfirmationTokenHandler) VerifyConfirmationToken(w http.Response
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if confirmationToken.UserId!=userIdUUID || confirmationToken.ExpiredTime.Before(time.Now()){
+	if confirmationToken.UserId != userIdUUID || confirmationToken.ExpiredTime.Before(time.Now()) {
 		err := handler.ConfirmationTokenService.UpdateConfirmationTokenValidity(confirmationToken.ConfirmationToken, false)
 		if err != nil {
-			return 
+			return
 		}
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",

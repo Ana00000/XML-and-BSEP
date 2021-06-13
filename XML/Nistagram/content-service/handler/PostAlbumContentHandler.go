@@ -130,7 +130,7 @@ func (handler *PostAlbumContentHandler) Upload(writer http.ResponseWriter, reque
 	}
 	defer file.Close()
 
-	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"),  "*" + hand.Filename)
+	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"), "*"+hand.Filename)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -224,17 +224,17 @@ func (handler *PostAlbumContentHandler) FindAllContentsForPostAlbum(w http.Respo
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func convertPostAlbumContentToPostAlbumContentDTO(postAlbumContent model.PostAlbumContent) dto.PostAlbumContentFullDTO{
-	postAlbumContentType :=""
-	if postAlbumContent.Type==model.PICTURE{
-		postAlbumContentType="PICTURE"
-	}else if postAlbumContent.Type==model.VIDEO{
-		postAlbumContentType="VIDEO"
+func convertPostAlbumContentToPostAlbumContentDTO(postAlbumContent model.PostAlbumContent) dto.PostAlbumContentFullDTO {
+	postAlbumContentType := ""
+	if postAlbumContent.Type == model.PICTURE {
+		postAlbumContentType = "PICTURE"
+	} else if postAlbumContent.Type == model.VIDEO {
+		postAlbumContentType = "VIDEO"
 	}
 	var postAlbumContentDTO = dto.PostAlbumContentFullDTO{
-		ID:           postAlbumContent.ID,
-		Path:         postAlbumContent.Path,
-		Type:         postAlbumContentType,
+		ID:          postAlbumContent.ID,
+		Path:        postAlbumContent.Path,
+		Type:        postAlbumContentType,
 		PostAlbumId: postAlbumContent.PostAlbumId,
 	}
 	return postAlbumContentDTO
