@@ -2,12 +2,13 @@ package handler
 
 import (
 	"encoding/json"
-	"gopkg.in/go-playground/validator.v9"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
+	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"os"
 	"time"

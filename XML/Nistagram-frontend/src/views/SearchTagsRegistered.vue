@@ -88,9 +88,11 @@ export default {
         )
         .then((resp) => {
           console.log("User is authentificated!");
+          console.log(resp.data);
         })
         .catch((er) => {
           window.location.href = "https://localhost:8081/unauthorizedPage";
+          console.log(er);
         });
 
       this.$http
@@ -103,9 +105,11 @@ export default {
         )
         .then((resp) => {
           console.log("User is authorized!");
+          console.log(resp.data);
         })
         .catch((er) => {
           window.location.href = "https://localhost:8081/forbiddenPage";
+          console.log(er);
         });
 
       this.$http

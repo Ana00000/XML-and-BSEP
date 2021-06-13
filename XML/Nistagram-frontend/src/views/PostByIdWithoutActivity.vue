@@ -180,9 +180,11 @@ export default {
           }
         )
         .then((resp) => {
+          console.log(resp.data);
           console.log("User is authentificated!");
         })
         .catch((er) => {
+          console.log(er);
           window.location.href = "https://localhost:8081/unauthorizedPage";
         });
 
@@ -196,8 +198,10 @@ export default {
         )
         .then((resp) => {
           console.log("User is authorized!");
+          console.log(resp.data);
         })
         .catch((er) => {
+          console.log(er);
           window.location.href = "https://localhost:8081/forbiddenPage";
         });
 

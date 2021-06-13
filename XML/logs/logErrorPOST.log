@@ -1,2 +1,6 @@
 {"action":"FAAPL581","level":"error","location":"PostAlbumHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-12T14:25:36Z","timestamp":"2021-06-12 14:25:36.4156383 +0000 UTC m=+218.620281901"}
 {"action":"FAPLU678","level":"error","location":"SinglePostHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-12T14:25:36Z","timestamp":"2021-06-12 14:25:36.4191965 +0000 UTC m=+218.623840001"}
+{"action":"FAAPL581","level":"error","location":"PostAlbumHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-13T05:32:10Z","timestamp":"2021-06-13 05:32:10.0605404 +0000 UTC m=+1074.500498201"}
+{"action":"FAPLU678","level":"error","location":"SinglePostHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-13T05:32:10Z","timestamp":"2021-06-13 05:32:10.0639803 +0000 UTC m=+1074.503938101"}
+{"action":"FAPLU678","level":"error","location":"SinglePostHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-13T05:34:34Z","timestamp":"2021-06-13 05:34:34.3327357 +0000 UTC m=+1218.772693501"}
+{"action":"FAAPL581","level":"error","location":"PostAlbumHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-13T05:34:34Z","timestamp":"2021-06-13 05:34:34.344054 +0000 UTC m=+1218.784011801"}

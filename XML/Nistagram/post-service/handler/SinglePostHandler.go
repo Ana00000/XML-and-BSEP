@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
@@ -30,33 +29,6 @@ func ExtractToken(r *http.Request) string {
 		return strArr[1]
 	}
 	return ""
-}
-
-func VerifyToken(r *http.Request) (*jwt.Token, error) {
-	tokenString := ExtractToken(r)
-
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		//Make sure that the token method conform to "SigningMethodHMAC"
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(os.Getenv("ACCESS_SECRET")), nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return token, nil
-}
-
-func TokenValid(r *http.Request) error {
-	token, err := VerifyToken(r)
-	if err != nil {
-		return err
-	}
-	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
-		return err
-	}
-	return nil
 }
 
 func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *http.Request) {
@@ -2992,7 +2964,6 @@ func (handler *SinglePostHandler) FindAllPostsForTagRegUser(w http.ResponseWrite
 
 	id := r.URL.Query().Get("id") //logged in reg user id
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
-	id := r.URL.Query().Get("id")           //logged in reg user id
 	tagName := r.URL.Query().Get("tagName") //tag id
 
 	//var tag = handler.TagService.FindTagByName(tagName)
