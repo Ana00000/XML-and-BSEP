@@ -232,6 +232,37 @@ export default {
 
       this.$http
         .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+        });
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/auth/check-find-all-story-highlights-for-user-permission/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authorized!");
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/forbiddenPage";
+        });
+
+
+      this.$http
+        .get(
           "https://localhost:8080/api/story/find_all_story_highlights_for_user?id=" +
             localStorage.getItem("userId"),{
             headers: {

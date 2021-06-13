@@ -73,6 +73,37 @@ export default {
   },
   methods: {
     init() {
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+        });
+
+      this.$http
+        .get(
+          "https://localhost:8080/api/user/auth/check-find-request-by-id-permission/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authorized!");
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/forbiddenPage";
+        });
+
       this.getRequest();
     },
     getRequest() {

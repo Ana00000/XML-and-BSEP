@@ -95,6 +95,24 @@ export default {
       this.id = localStorage.getItem("userId");
       this.$http
         .get(
+          "https://localhost:8080/api/user/check_if_authentificated/",{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((resp) => {
+          console.log("User is authentificated!");
+        })
+        .catch((er) => {
+          window.location.href = "https://localhost:8081/unauthorizedPage";
+        });
+
+      
+
+
+      this.$http
+        .get(
           "https://localhost:8080/api/user/find_all_mutual_followers_for_user?id=" +
             this.id,
           {

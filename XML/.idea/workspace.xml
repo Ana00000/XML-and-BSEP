@@ -3,12 +3,33 @@
   <component name="ChangeListManager">
     <list default="true" id="f8eefa96-012d-45ef-8f7b-c7ca424d1265" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/ClassicUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/ClassicUserDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/LogInUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/LogInUserDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/RegisteredUserDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/model/User.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/model/User.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/AddCloseFriends.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/AddCloseFriends.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePost.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePostAlbum.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreatePostAlbum.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStory.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStoryAlbum.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateStoryAlbum.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/FollowRequests.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/FollowRequests.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/FriendsPosts.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/FriendsPosts.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/FriendsStories.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/FriendsStories.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/MyCollections.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/MyCollections.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/MyMedia.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/MyMedia.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostAlbumByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostAlbumByIdWithoutActivity.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostByIdWithoutActivity.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostsForSelectedLocationRegistered.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostsForSelectedLocationRegistered.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostsForSelectedTagRegistered.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostsForSelectedTagRegistered.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicPostsAll.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicPostsAll.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicStoriesAll.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PublicStoriesAll.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchLocationsRegistered.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchLocationsRegistered.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchTagsRegistered.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchTagsRegistered.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchUsers.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SearchUsers.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedFollowRequest.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedFollowRequest.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoriesOfStoryHighlight.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoriesOfStoryHighlight.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryAlbumByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryAlbumByIdWithoutActivity.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryByIdWithoutActivity.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateProfile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateProfile.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
