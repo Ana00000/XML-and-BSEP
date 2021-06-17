@@ -47,3 +47,11 @@ func (service *ProfileSettingsService) FindAllPublicUsers(allValidUsers []dto.Cl
 	}
 	return nil
 }
+
+func (service *ProfileSettingsService) UpdateProfileSettings(profileSettings *dto.ProfileSettingsDTO) error {
+	err := service.Repo.UpdateProfileSettings(profileSettings)
+	if err != nil {
+		return err
+	}
+	return nil
+}
