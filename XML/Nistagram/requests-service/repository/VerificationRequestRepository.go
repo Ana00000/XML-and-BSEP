@@ -31,3 +31,16 @@ func (repo *VerificationRequestRepository) FindAllPendingVerificationRequests() 
 	repo.Database.Select("*").Where("verification_request_status = ?", 0).Find(&requests)
 	return requests
 }
+
+
+func (repo *VerificationRequestRepository) UpdateVerificationRequestAccepted(verificationRequestId uuid.UUID) error {
+	result := repo.Database.Model(&model.VerificationRequest{}).Where("id = ?", verificationRequestId).Update("verification_request_status", model.ACCEPTED)
+	fmt.Println(result.RowsAffected)
+	return nil
+}
+
+func (repo *VerificationRequestRepository) UpdateVerificationRequestRejected(verificationRequestId uuid.UUID) error {
+	result := repo.Database.Model(&model.VerificationRequest{}).Where("id = ?", verificationRequestId).Update("verification_request_status", model.REJECT)
+	fmt.Println(result.RowsAffected)
+	return nil
+}

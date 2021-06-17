@@ -35,36 +35,19 @@ func (service *VerificationRequestService) FindAllPendingVerificationRequests() 
 	return nil
 }
 
-/*
-func (service *VerificationRequestService) FindFollowRequest(classicUserId uuid.UUID, followerUserId uuid.UUID) *model.FollowRequest {
-	request := service.Repo.FindFollowRequest(classicUserId, followerUserId)
-	if request != nil {
-		return request
-	}
-	return nil
-}
 
-func (service *VerificationRequestService) UpdateFollowRequestPending(followRequestId uuid.UUID) error {
-	err := service.Repo.UpdateFollowRequestPending(followRequestId)
+func (service *VerificationRequestService) UpdateVerificationRequestAccepted(verificationRequestId uuid.UUID) error {
+	err := service.Repo.UpdateVerificationRequestAccepted(verificationRequestId)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (service *VerificationRequestService) UpdateFollowRequestAccepted(followRequestId uuid.UUID) error {
-	err := service.Repo.UpdateFollowRequestAccepted(followRequestId)
+func (service *VerificationRequestService) UpdateFollowRequestRejected(verificationRequestId uuid.UUID) error {
+	err := service.Repo.UpdateVerificationRequestRejected(verificationRequestId)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-
-func (service *VerificationRequestService) UpdateFollowRequestRejected(followRequestId uuid.UUID) error {
-	err := service.Repo.UpdateFollowRequestRejected(followRequestId)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-*/
