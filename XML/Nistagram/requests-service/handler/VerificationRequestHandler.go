@@ -9,7 +9,9 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
 	"gopkg.in/go-playground/validator.v9"
+	"io/ioutil"
 	"net/http"
+	"os"
 	_ "strconv"
 	"time"
 )
@@ -20,6 +22,7 @@ type VerificationRequestHandler struct {
 	LogError  *logrus.Logger
 	Validator *validator.Validate
 }
+var pathPostGlobal = ""
 
 func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
@@ -50,7 +53,7 @@ func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.Resp
 		ID:                     uuid.UUID{},
 		FirstName:              verificationRequestDTO.FirstName,
 		LastName:               verificationRequestDTO.LastName,
-		OfficialDocumentPath:   verificationRequestDTO.OfficialDocumentPath,
+		OfficialDocumentPath:   pathPostGlobal,
 		RegisteredUserCategory: verificationRequestDTO.RegisteredUserCategory,
 	}
 
@@ -65,6 +68,9 @@ func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.Resp
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
+
+	pathPostGlobal = ""
+
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status":    "success",
 		"location":  "VerificationRequestHandler",
@@ -73,4 +79,56 @@ func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.Resp
 	}).Info("Successfully created verification request!")
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *VerificationRequestHandler) Upload(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("X-XSS-Protection", "1; mode=block")
+	request.ParseMultipartForm(10 << 20)
+
+	file, hand, err := request.FormFile("myPostFile")
+	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "UPK523",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find the file!")
+		return
+	}
+	defer file.Close()
+
+	tempFile, err := ioutil.TempFile(os.Getenv("BASE_URL"), "*"+hand.Filename)
+	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "UPK523",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to create temporary file!")
+		return
+	}
+	defer tempFile.Close()
+
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostContentHandler",
+			"action":   "UPK523",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to read from file!")
+		return
+	}
+	tempFile.Write(fileBytes)
+
+	pathPostGlobal = tempFile.Name()[20:len(tempFile.Name())]
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostContentHandler",
+		"action":   "UPK523",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully uploaded the media!")
+	pathJson, _ := json.Marshal(tempFile.Name())
+	writer.Write(pathJson)
 }
