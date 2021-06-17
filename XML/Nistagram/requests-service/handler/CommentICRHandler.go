@@ -74,7 +74,7 @@ func (handler *CommentICRHandler) CreateCommentICR(w http.ResponseWriter, r *htt
 			"location":  "CommentICRHandler",
 			"action":    "CRCOMICR9998",
 			"timestamp": time.Now().String(),
-		}).Error("Failed creating comment inappropriate content request!")
+		}).Error("Failed creating inappropriate content request!")
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
 		return

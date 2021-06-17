@@ -16,6 +16,7 @@ import (
 
 type PostICRHandler struct {
 	Service   *service.PostICRService
+	InappropriateContentRequestService   *service.InappropriateContentRequestService
 	LogInfo   *logrus.Logger
 	LogError  *logrus.Logger
 	Validator *validator.Validate
@@ -66,6 +67,19 @@ func (handler *PostICRHandler) CreatePostICR(w http.ResponseWriter, r *http.Requ
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
+
+	if err := handler.InappropriateContentRequestService.CreateICR(&postICR.InappropriateContentRequest); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "PostICRHandler",
+			"action":    "CREPOSTICR2544",
+			"timestamp": time.Now().String(),
+		}).Error("Failed creating inappropriate content request!")
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status":    "success",
 		"location":  "PostICRHandler",

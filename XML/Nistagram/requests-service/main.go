@@ -118,18 +118,20 @@ func initInappropriateContentRequestHandler(service *service.InappropriateConten
 	}
 }
 
-func initPostICRHandler(service *service.PostICRService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.PostICRHandler {
+func initPostICRHandler(service *service.PostICRService, inappropriateContentRequestService *service.InappropriateContentRequestService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.PostICRHandler {
 	return &handler.PostICRHandler{
 		Service:   service,
+		InappropriateContentRequestService: inappropriateContentRequestService,
 		LogInfo:   LogInfo,
 		LogError:  LogError,
 		Validator: validator,
 	}
 }
 
-func initStoryICRHandler(service *service.StoryICRService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.StoryICRHandler {
+func initStoryICRHandler(service *service.StoryICRService, inappropriateContentRequestService *service.InappropriateContentRequestService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.StoryICRHandler {
 	return &handler.StoryICRHandler{
 		Service:   service,
+		InappropriateContentRequestService: inappropriateContentRequestService,
 		LogInfo:   LogInfo,
 		LogError:  LogError,
 		Validator: validator,
@@ -240,8 +242,8 @@ func main() {
 	followRequestService := initFollowRequestServices(followRequestRepo)
 
 	inappropriateContentRequestHandler := initInappropriateContentRequestHandler(inappropriateContentRequestService, logInfo, logError, validator)
-	postICRHandler := initPostICRHandler(postICRService, logInfo, logError, validator)
-	storyICRHandler := initStoryICRHandler(storyICRService, logInfo, logError, validator)
+	postICRHandler := initPostICRHandler(postICRService, inappropriateContentRequestService, logInfo, logError, validator)
+	storyICRHandler := initStoryICRHandler(storyICRService, inappropriateContentRequestService, logInfo, logError, validator)
 	commentICRHandler := initCommentICRHandler(commentICRService, inappropriateContentRequestService, logInfo, logError, validator)
 	verificationRequestRHandler := initVerificationRequestHandler(verificationRequestService, logInfo, logError, validator)
 	agentRegistrationRequestHandler := initAgentRegistrationRequestHandler(agentRegistrationRequestService, logInfo, logError, validator)
