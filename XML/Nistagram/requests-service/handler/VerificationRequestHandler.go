@@ -55,6 +55,7 @@ func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.Resp
 		LastName:               verificationRequestDTO.LastName,
 		OfficialDocumentPath:   pathPostGlobal,
 		RegisteredUserCategory: verificationRequestDTO.RegisteredUserCategory,
+		VerificationRequestStatus: model.PENDING,
 	}
 
 	if err := handler.Service.CreateVerificationRequest(&verificationRequest); err != nil {

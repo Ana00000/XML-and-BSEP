@@ -24,3 +24,10 @@ func (repo *VerificationRequestRepository) FindById(id uuid.UUID) *model.Verific
 	}
 	return request
 }
+
+func (repo *VerificationRequestRepository) FindAllPendingVerificationRequests() []model.VerificationRequest {
+	var requests []model.VerificationRequest
+
+	repo.Database.Select("*").Where("verification_request_status = ?", 0).Find(&requests)
+	return requests
+}

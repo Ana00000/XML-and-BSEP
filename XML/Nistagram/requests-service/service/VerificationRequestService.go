@@ -26,15 +26,16 @@ func (service *VerificationRequestService) FindById(id uuid.UUID) *model.Verific
 	return nil
 }
 
-/*
-func (service *VerificationRequestService) FindAllPendingFollowerRequestsForUser(userId uuid.UUID) []model.FollowRequest {
-	requests := service.Repo.FindAllPendingFollowRequestsForUser(userId)
+
+func (service *VerificationRequestService) FindAllPendingVerificationRequests() []model.VerificationRequest {
+	requests := service.Repo.FindAllPendingVerificationRequests()
 	if requests != nil {
 		return requests
 	}
 	return nil
 }
 
+/*
 func (service *VerificationRequestService) FindFollowRequest(classicUserId uuid.UUID, followerUserId uuid.UUID) *model.FollowRequest {
 	request := service.Repo.FindFollowRequest(classicUserId, followerUserId)
 	if request != nil {

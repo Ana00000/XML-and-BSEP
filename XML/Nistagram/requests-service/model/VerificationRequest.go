@@ -11,6 +11,7 @@ type VerificationRequest struct {
 	LastName               string                 `json:"last_name" gorm:"not null"`
 	OfficialDocumentPath   string                 `json:"official_document_path" gorm:"not null"`
 	RegisteredUserCategory RegisteredUserCategory `json:"registered_user_category" gorm:"not null"`
+	VerificationRequestStatus RequestStatus `json:"verification_request_status" gorm:"not null"`
 }
 
 func (verificationRequest *VerificationRequest) BeforeCreate(scope *gorm.DB) error {
