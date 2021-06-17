@@ -254,7 +254,7 @@ func (handler *ActivityHandler) FindAllActivitiesForPost(w http.ResponseWriter, 
 	w.WriteHeader(http.StatusBadRequest)
 }
 
-func (handler *ActivityHandler) FindAllPostLikedByUserId(w http.ResponseWriter, r *http.Request) {
+func (handler *ActivityHandler) FindAllLikedPostsByUserId(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	userId := r.URL.Query().Get("user_id")
@@ -283,7 +283,7 @@ func (handler *ActivityHandler) FindAllPostLikedByUserId(w http.ResponseWriter, 
 	w.WriteHeader(http.StatusBadRequest)
 }
 
-func (handler *ActivityHandler) FindAllDislikedPostByUserId(w http.ResponseWriter, r *http.Request) {
+func (handler *ActivityHandler) FindAllDislikedPostsByUserId(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	userId := r.URL.Query().Get("user_id")

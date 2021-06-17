@@ -158,6 +158,8 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/find_all_dislikes_for_post", handlerActivity.FindAllDislikesForPost).Methods("GET")
 	router.HandleFunc("/find_all_favorites_for_post", handlerActivity.FindAllFavoritesForPost).Methods("GET")
 	router.HandleFunc("/find_all_activities_for_post", handlerActivity.FindAllActivitiesForPost).Methods("GET")
+	router.HandleFunc("/find_all_liked_posts_by_user_id", handlerActivity.FindAllLikedPostsByUserId).Methods("GET")
+	router.HandleFunc("/find_all_disliked_posts_by_user_id", handlerActivity.FindAllDislikedPostsByUserId).Methods("GET")
 
 	router.HandleFunc("/comment/", handlerComment.CreateComment).Methods("POST")
 	router.HandleFunc("/find_all_comments_for_post", handlerComment.FindAllCommentsForPost).Methods("GET")
