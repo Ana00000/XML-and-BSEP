@@ -47,7 +47,7 @@ func (handler *RequestsAuthorizationHandler) CheckCreateFollowRequestPermission(
 	w.WriteHeader(http.StatusOK)
 }
 
-func (handler *RequestsAuthorizationHandler) CheckRejectFollowRequestPermission(w http.ResponseWriter, r *http.Request) {
+func (handler *RequestsAuthorizationHandler) CheckUpdateStatusFollowRequestPermission(w http.ResponseWriter, r *http.Request) {
 	userName, err := getUserNameFromJWT(r)
 	if err!=nil	{
 		handler.LogError.WithFields(logrus.Fields{

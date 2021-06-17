@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
@@ -187,4 +188,81 @@ func (handler *VerificationRequestHandler) FindRequestById(w http.ResponseWriter
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
+}
+
+func (handler *VerificationRequestHandler) RejectVerificationRequest(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "REJFOLLOWREQ4939",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-reject-follow-request-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "REJFOLLOWREQ4939",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	id := r.URL.Query().Get("id")
+	var request = handler.Service.FindById(uuid.MustParse(id))
+	if request == nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "FollowRequestHandler",
+			"action":    "REJFOLLOWREQ4939",
+			"timestamp": time.Now().String(),
+		}).Error("Reject follow request not found!")
+		fmt.Println("Reject follow request not found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	handler.Service.UpdateFollowRequestRejected(uuid.MustParse(id))
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status":    "success",
+		"location":  "FollowRequestHandler",
+		"action":    "REJFOLLOWREQ4939",
+		"timestamp": time.Now().String(),
+	}).Info("Successfully created reject follow request!")
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *FollowRequestHandler) AcceptVerificationRequest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	requestId := vars["requestID"]
+	if err := handler.Service.UpdateFollowRequestAccepted(uuid.MustParse(requestId)); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "FollowRequestHandler",
+			"action":    "UPDFOLLOWREQTOACCEP7710",
+			"timestamp": time.Now().String(),
+		}).Error("Fail to update follow request to accept!")
+		fmt.Println("Fail to update follow request to accept")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status":    "success",
+		"location":  "FollowRequestHandler",
+		"action":    "UPDFOLLOWREQTOACCEP7710",
+		"timestamp": time.Now().String(),
+	}).Info("Successfully updated follow request to accepted!")
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 }

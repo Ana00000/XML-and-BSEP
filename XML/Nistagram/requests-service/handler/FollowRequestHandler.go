@@ -89,16 +89,6 @@ func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, 
 		return
 	}
 
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "FollowRequestHandler",
-			"action":   "CREFOLLOWREQ6319",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var followRequestDTO dto.FollowRequestDTO
@@ -186,7 +176,7 @@ func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, 
 		return
 	}
 
-	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-reject-follow-request-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-update-status-follow-request-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	res := Request(reqUrlAutorization,ExtractToken(r))
 	if res.StatusCode==403{
 		handler.LogError.WithFields(logrus.Fields{
@@ -199,16 +189,6 @@ func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, 
 		return
 	}
 
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "FollowRequestHandler",
-			"action":   "REJFOLLOWREQ4939",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
@@ -232,6 +212,57 @@ func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, 
 		"timestamp": time.Now().String(),
 	}).Info("Successfully created reject follow request!")
 	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *FollowRequestHandler) AcceptFollowRequest(w http.ResponseWriter, r *http.Request) {
+
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "UPDFOLLOWREQTOACCEP7710",
+			"timestamp":   time.Now().String(),
+		}).Error("User is not logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-update-status-follow-request-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "UPDFOLLOWREQTOACCEP7710",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	requestId := vars["requestID"]
+	if err := handler.Service.UpdateFollowRequestAccepted(uuid.MustParse(requestId)); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "FollowRequestHandler",
+			"action":    "UPDFOLLOWREQTOACCEP7710",
+			"timestamp": time.Now().String(),
+		}).Error("Fail to update follow request to accept!")
+		fmt.Println("Fail to update follow request to accept")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status":    "success",
+		"location":  "FollowRequestHandler",
+		"action":    "UPDFOLLOWREQTOACCEP7710",
+		"timestamp": time.Now().String(),
+	}).Info("Successfully updated follow request to accepted!")
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
 
@@ -265,31 +296,6 @@ func (handler *FollowRequestHandler) FindFollowRequestByIDsClassicUserAndHisFoll
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func (handler *FollowRequestHandler) UpdateFollowRequestToAccepted(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("X-XSS-Protection", "1; mode=block")
-	vars := mux.Vars(r)
-	requestId := vars["requestID"]
-	if err := handler.Service.UpdateFollowRequestAccepted(uuid.MustParse(requestId)); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status":    "failure",
-			"location":  "FollowRequestHandler",
-			"action":    "UPDFOLLOWREQTOACCEP7710",
-			"timestamp": time.Now().String(),
-		}).Error("Fail to update follow request to accept!")
-		fmt.Println("Fail to update follow request to accept")
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	handler.LogInfo.WithFields(logrus.Fields{
-		"status":    "success",
-		"location":  "FollowRequestHandler",
-		"action":    "UPDFOLLOWREQTOACCEP7710",
-		"timestamp": time.Now().String(),
-	}).Info("Successfully updated follow request to accepted!")
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-}
-
 func (handler *FollowRequestHandler) FindAllPendingFollowerRequestsForUser(w http.ResponseWriter, r *http.Request) {
 	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	response:=Request(reqUrlAuth,ExtractToken(r))
@@ -317,16 +323,6 @@ func (handler *FollowRequestHandler) FindAllPendingFollowerRequestsForUser(w htt
 		return
 	}
 
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "FollowRequestHandler",
-			"action":   "FIDALLPENFOLLOWERREQFORUS6700",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
@@ -383,17 +379,6 @@ func (handler *FollowRequestHandler) FindRequestById(w http.ResponseWriter, r *h
 		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "FollowRequestHandler",
-			"action":   "FIDREQBYID2431",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")

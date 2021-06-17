@@ -197,7 +197,7 @@ func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContent
 	router.HandleFunc("/find_all_requests_by_user_id/{userID}", followRequestHandler.FindAllFollowerRequestsForUser).Methods("GET")
 	router.HandleFunc("/reject_follow_request", followRequestHandler.RejectFollowRequest).Methods("POST")
 	router.HandleFunc("/find_request_by_classic_user_and_follower_user_ids/{classicUserID}/{followerUserID}", followRequestHandler.FindFollowRequestByIDsClassicUserAndHisFollower).Methods("GET")
-	router.HandleFunc("/accept_follow_request/{requestID}", followRequestHandler.UpdateFollowRequestToAccepted).Methods("POST")
+	router.HandleFunc("/accept_follow_request/{requestID}", followRequestHandler.AcceptFollowRequest).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }

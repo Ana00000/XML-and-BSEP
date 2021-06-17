@@ -532,7 +532,7 @@ func handleFunc(storyAuthorizationHandler *handler.StoryAuthorizationHandler, po
 	
 	//REQUESTS MICROSERVICE AUTHORIZATION
 	router.HandleFunc("/auth/check-create-follow-request-permission/", requestAuthorizationHandler.CheckCreateFollowRequestPermission).Methods("GET")
-	router.HandleFunc("/auth/check-reject-follow-request-permission/", requestAuthorizationHandler.CheckRejectFollowRequestPermission).Methods("GET")
+	router.HandleFunc("/auth/check-update-status-follow-request-permission/", requestAuthorizationHandler.CheckUpdateStatusFollowRequestPermission).Methods("GET")
 	router.HandleFunc("/auth/check-find-request-by-id-permission/", requestAuthorizationHandler.CheckFindRequestByIdPermission).Methods("GET")
 	router.HandleFunc("/auth/check-find-all-pending-follower-requests-for-user-permission/", requestAuthorizationHandler.CheckFindAllPendingFollowerRequestsForUserPermission).Methods("GET")
 
@@ -615,7 +615,7 @@ func main() {
 	permissionCreateStoryAlbumContent := gorbac.NewStdPermission("permission-create-story-album-content")
 	
 	permissionCreateFollowRequest := gorbac.NewStdPermission("permission-create-follow-request")
-	permissionRejectFollowRequest := gorbac.NewStdPermission("permission-reject-follow-request")
+	permissionUpdateStatusFollowRequest := gorbac.NewStdPermission("permission-update-status-follow-request")
 	permissionFindRequestById := gorbac.NewStdPermission("permission-find-request-by-id")
 	permissionFindAllPendingFollowerRequestsForUser := gorbac.NewStdPermission("permission-find-all-pending-follower-requests-for-user")
 	
@@ -688,7 +688,7 @@ func main() {
 	roleAgent.Assign(permissionCreateSingleStoryContent)
 	roleAgent.Assign(permissionCreateStoryAlbumContent)
 	roleAgent.Assign(permissionCreateFollowRequest)
-	roleAgent.Assign(permissionRejectFollowRequest)
+	roleAgent.Assign(permissionUpdateStatusFollowRequest)
 	roleAgent.Assign(permissionFindRequestById)
 	roleAgent.Assign(permissionFindAllPendingFollowerRequestsForUser)
 	roleAgent.Assign(permissionCreateLocation)
@@ -755,7 +755,7 @@ func main() {
 	roleRegisteredUser.Assign(permissionCreateSingleStoryContent)
 	roleRegisteredUser.Assign(permissionCreateStoryAlbumContent)
 	roleRegisteredUser.Assign(permissionCreateFollowRequest)
-	roleRegisteredUser.Assign(permissionRejectFollowRequest)
+	roleRegisteredUser.Assign(permissionUpdateStatusFollowRequest)
 	roleRegisteredUser.Assign(permissionFindRequestById)
 	roleRegisteredUser.Assign(permissionFindAllPendingFollowerRequestsForUser)
 	roleRegisteredUser.Assign(permissionCreateLocation)
@@ -828,7 +828,7 @@ func main() {
 		&permissionFindSelectedPostAlbumByIdForLoggedUser,&permissionFindAllPostsForTagRegUser,&permissionFindAllPublicPostsRegisteredUser,
 		&permissionFindAllPostsForUserRegisteredUser,&permissionFindAllTagsForPublicAndFollowingPosts,&permissionFindAllLocationsForPublicAndFollowingPosts)
 	
-	requestsAuthorizationHandler := initRequestsAuthorizationHandler(rbac, &permissionCreateFollowRequest, &permissionRejectFollowRequest, 
+	requestsAuthorizationHandler := initRequestsAuthorizationHandler(rbac, &permissionCreateFollowRequest, &permissionUpdateStatusFollowRequest,
 		&permissionFindRequestById, &permissionFindAllPendingFollowerRequestsForUser, logInfo,logError,userService)
 	
 	contentAuthorizationHandler := initContentAuthorizationHandler(rbac, &permissionCreateSinglePostContent,&permissionCreatePostAlbumContent,
