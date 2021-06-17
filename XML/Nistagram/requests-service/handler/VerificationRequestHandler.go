@@ -89,7 +89,7 @@ func (handler *VerificationRequestHandler) Upload(writer http.ResponseWriter, re
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
-			"location":   "SinglePostContentHandler",
+			"location":   "VerificationRequestHandler",
 			"action":   "UPK523",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to find the file!")
@@ -101,7 +101,7 @@ func (handler *VerificationRequestHandler) Upload(writer http.ResponseWriter, re
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
-			"location":   "SinglePostContentHandler",
+			"location":   "VerificationRequestHandler",
 			"action":   "UPK523",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to create temporary file!")
@@ -113,7 +113,7 @@ func (handler *VerificationRequestHandler) Upload(writer http.ResponseWriter, re
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
-			"location":   "SinglePostContentHandler",
+			"location":   "VerificationRequestHandler",
 			"action":   "UPK523",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to read from file!")
@@ -125,10 +125,65 @@ func (handler *VerificationRequestHandler) Upload(writer http.ResponseWriter, re
 
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status": "success",
-		"location":   "SinglePostContentHandler",
+		"location":   "VerificationRequestHandler",
 		"action":   "UPK523",
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully uploaded the media!")
 	pathJson, _ := json.Marshal(tempFile.Name())
 	writer.Write(pathJson)
+}
+
+func (handler *VerificationRequestHandler) FindRequestById(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "VerificationRequestHandler",
+			"action":   "FIDREQBYID2431",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-request-by-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "VerificationRequestHandler",
+			"action":   "FIDREQBYID2431",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	id := r.URL.Query().Get("id")
+
+	var request = handler.Service.FindById(uuid.MustParse(id))
+	if request == nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "VerificationRequestHandler",
+			"action":    "FIDREQBYID2431",
+			"timestamp": time.Now().String(),
+		}).Error("Request by id not found!")
+		fmt.Println("Request by id not found")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	requestJson, _ := json.Marshal(request)
+	w.Write(requestJson)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status":    "success",
+		"location":  "VerificationRequestHandler",
+		"action":    "FIDREQBYID2431",
+		"timestamp": time.Now().String(),
+	}).Info("Successfully found request by id!")
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
 }
