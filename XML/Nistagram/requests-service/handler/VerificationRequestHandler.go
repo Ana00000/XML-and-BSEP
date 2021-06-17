@@ -92,7 +92,7 @@ func (handler *VerificationRequestHandler) Upload(writer http.ResponseWriter, re
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "VerificationRequestHandler",
-			"action":   "UPK523",
+			"action":   "UPK522",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to find the file!")
 		return
@@ -104,7 +104,7 @@ func (handler *VerificationRequestHandler) Upload(writer http.ResponseWriter, re
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "VerificationRequestHandler",
-			"action":   "UPK523",
+			"action":   "UPK522",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to create temporary file!")
 		return
@@ -116,7 +116,7 @@ func (handler *VerificationRequestHandler) Upload(writer http.ResponseWriter, re
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "VerificationRequestHandler",
-			"action":   "UPK523",
+			"action":   "UPK522",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to read from file!")
 		return
@@ -128,34 +128,34 @@ func (handler *VerificationRequestHandler) Upload(writer http.ResponseWriter, re
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status": "success",
 		"location":   "VerificationRequestHandler",
-		"action":   "UPK523",
+		"action":   "UPK522",
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully uploaded the media!")
 	pathJson, _ := json.Marshal(tempFile.Name())
 	writer.Write(pathJson)
 }
 
-func (handler *VerificationRequestHandler) FindRequestById(w http.ResponseWriter, r *http.Request) {
+func (handler *VerificationRequestHandler) FindVerificationRequestById(w http.ResponseWriter, r *http.Request) {
 	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	response:=Request(reqUrlAuth,ExtractToken(r))
 	if response.StatusCode==401{
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "VerificationRequestHandler",
-			"action":   "FIDREQBYID2431",
+			"action":   "FindVerificationRequestById",
 			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
+		}).Error("User is not logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
 
-	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-request-by-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-verification-request-by-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	res := Request(reqUrlAutorization,ExtractToken(r))
 	if res.StatusCode==403{
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "VerificationRequestHandler",
-			"action":   "FIDREQBYID2431",
+			"action":   "FindVerificationRequestById",
 			"timestamp":   time.Now().String(),
 		}).Error("Forbidden method for logged in user!")
 		w.WriteHeader(http.StatusForbidden) // 403
@@ -170,7 +170,7 @@ func (handler *VerificationRequestHandler) FindRequestById(w http.ResponseWriter
 		handler.LogError.WithFields(logrus.Fields{
 			"status":    "failure",
 			"location":  "VerificationRequestHandler",
-			"action":    "FIDREQBYID2431",
+			"action":    "FindVerificationRequestById",
 			"timestamp": time.Now().String(),
 		}).Error("Request by id not found!")
 		fmt.Println("Request by id not found")
@@ -182,7 +182,7 @@ func (handler *VerificationRequestHandler) FindRequestById(w http.ResponseWriter
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status":    "success",
 		"location":  "VerificationRequestHandler",
-		"action":    "FIDREQBYID2431",
+		"action":    "FindVerificationRequestById",
 		"timestamp": time.Now().String(),
 	}).Info("Successfully found request by id!")
 	w.WriteHeader(http.StatusOK)
@@ -196,21 +196,21 @@ func (handler *VerificationRequestHandler) RejectVerificationRequest(w http.Resp
 	if response.StatusCode==401{
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
-			"location":   "FollowRequestHandler",
-			"action":   "REJFOLLOWREQ4939",
+			"location":   "VerificationRequestHandler",
+			"action":   "RejectVerificationRequest",
 			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
+		}).Error("User is not logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
 
-	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-reject-follow-request-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-update-status-verification-request-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	res := Request(reqUrlAutorization,ExtractToken(r))
 	if res.StatusCode==403{
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
-			"location":   "FollowRequestHandler",
-			"action":   "REJFOLLOWREQ4939",
+			"location":   "VerificationRequestHandler",
+			"action":   "RejectVerificationRequest",
 			"timestamp":   time.Now().String(),
 		}).Error("Forbidden method for logged in user!")
 		w.WriteHeader(http.StatusForbidden) // 403
@@ -223,46 +223,46 @@ func (handler *VerificationRequestHandler) RejectVerificationRequest(w http.Resp
 	if request == nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status":    "failure",
-			"location":  "FollowRequestHandler",
-			"action":    "REJFOLLOWREQ4939",
+			"location":  "VerificationRequestHandler",
+			"action":    "RejectVerificationRequest",
 			"timestamp": time.Now().String(),
-		}).Error("Reject follow request not found!")
-		fmt.Println("Reject follow request not found")
+		}).Error("Reject verification request not found!")
+		fmt.Println("Reject verification request not found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}
 
-	handler.Service.UpdateFollowRequestRejected(uuid.MustParse(id))
+	handler.Service.UpdateVerificationRequestRejected(uuid.MustParse(id))
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status":    "success",
-		"location":  "FollowRequestHandler",
-		"action":    "REJFOLLOWREQ4939",
+		"location":  "VerificationRequestHandler",
+		"action":    "RejectVerificationRequest",
 		"timestamp": time.Now().String(),
-	}).Info("Successfully created reject follow request!")
+	}).Info("Successfully created reject verification request!")
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func (handler *FollowRequestHandler) AcceptVerificationRequest(w http.ResponseWriter, r *http.Request) {
+func (handler *VerificationRequestHandler) AcceptVerificationRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	requestId := vars["requestID"]
-	if err := handler.Service.UpdateFollowRequestAccepted(uuid.MustParse(requestId)); err != nil {
+	if err := handler.Service.UpdateVerificationRequestAccepted(uuid.MustParse(requestId)); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status":    "failure",
-			"location":  "FollowRequestHandler",
-			"action":    "UPDFOLLOWREQTOACCEP7710",
+			"location":  "VerificationRequestHandler",
+			"action":    "AcceptVerificationRequest",
 			"timestamp": time.Now().String(),
-		}).Error("Fail to update follow request to accept!")
-		fmt.Println("Fail to update follow request to accept")
+		}).Error("Fail to update verification request to accept!")
+		fmt.Println("Fail to update verification request to accept")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status":    "success",
-		"location":  "FollowRequestHandler",
-		"action":    "UPDFOLLOWREQTOACCEP7710",
+		"location":  "VerificationRequestHandler",
+		"action":    "AcceptVerificationRequest",
 		"timestamp": time.Now().String(),
-	}).Info("Successfully updated follow request to accepted!")
+	}).Info("Successfully updated verification request to accepted!")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }

@@ -44,7 +44,7 @@ func (service *VerificationRequestService) UpdateVerificationRequestAccepted(ver
 	return nil
 }
 
-func (service *VerificationRequestService) UpdateFollowRequestRejected(verificationRequestId uuid.UUID) error {
+func (service *VerificationRequestService) UpdateVerificationRequestRejected(verificationRequestId uuid.UUID) error {
 	err := service.Repo.UpdateVerificationRequestRejected(verificationRequestId)
 	if err != nil {
 		return err
