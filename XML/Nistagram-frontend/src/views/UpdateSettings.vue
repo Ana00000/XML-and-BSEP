@@ -29,6 +29,15 @@
         </v-col>
       </v-row>
 
+      <input type="checkbox" id="checkbox" v-model="isPostTaggable" />
+      <label for="checkbox">{{ isPostTaggable }}</label>
+
+      <input type="checkbox" id="checkbox" v-model="isStoryTaggable" />
+      <label for="checkbox">{{ isStoryTaggable }}</label>
+
+      <input type="checkbox" id="checkbox" v-model="isCommentTaggable" />
+      <label for="checkbox">{{ isCommentTaggable }}</label>
+
       <div class="changeButton">
         <v-btn
           v-if="!isHiddenChange"
