@@ -262,6 +262,18 @@
                 <v-list-item-content>
                   <v-list-item-title>{{ item.userName }}</v-list-item-title>
                 </v-list-item-content>
+
+                <v-list-item-content>
+                  <v-text-field
+                    label="Note"
+                    v-model="commentNote"
+                    prepend-icon="mdi-address-circle"
+                    class="note"
+                  />
+                  <v-btn color="info mb-5" v-on:click="reportComment(item.id)">
+                    Report Comment
+                  </v-btn>
+                </v-list-item-content>
               </v-list-item>
             </v-card-actions>
           </v-card>
@@ -335,6 +347,7 @@ export default {
     note: "",
     isHiddenReportPost: false,
     isHiddenReportPostFinal: true,
+    commentNote: "",
   }),
   mounted() {
     this.init();
@@ -493,13 +506,60 @@ export default {
     },
     validReportNote() {
       if (this.note.length < 2) {
-        alert("Your note should contain at least 2 characters!");
+        alert("Your post report note should contain at least 2 characters!");
         return false;
       } else if (this.note.length > 30) {
-        alert("Your note shouldn't contain more than 30 characters!");
+        alert(
+          "Your post report note shouldn't contain more than 30 characters!"
+        );
         return false;
       } else if (this.note.match(/[&<>/\\"]/g)) {
-        alert("Your note shouldn't contain those special characters.");
+        alert(
+          "Your post report note shouldn't contain those special characters."
+        );
+        return false;
+      }
+      return true;
+    },
+    reportComment(reportCommentId) {
+      if (!this.validReportCommentNote()) return;
+
+      this.$http
+        .post(
+          "https://localhost:8080/api/requests/commentICR/",
+          {
+            note: this.commentNote,
+            userId: localStorage.get("userId"),
+            commentId: reportCommentId,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          alert("Post was reported.");
+          window.location.href = "https://localhost:8081/";
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    validReportCommentNote() {
+      if (this.commentNote.length < 2) {
+        alert("Your comment report note should contain at least 2 characters!");
+        return false;
+      } else if (this.commentNote.length > 30) {
+        alert(
+          "Your comment report note shouldn't contain more than 30 characters!"
+        );
+        return false;
+      } else if (this.commentNote.match(/[&<>/\\"]/g)) {
+        alert(
+          "Your comment report note shouldn't contain those special characters."
+        );
         return false;
       }
       return true;
