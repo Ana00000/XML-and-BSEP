@@ -204,3 +204,53 @@ func convertListUUIDToListData(uuids []uuid.UUID) []Data {
 	}
 	return datas
 }
+
+func (handler *ProfileSettingsHandler) UpdateProfileSettings(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	var profileSettingsDTO dto.ProfileSettingsDTO
+
+	if err := json.NewDecoder(r.Body).Decode(&profileSettingsDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ProfileSettingsHandler",
+			"action":   "UPPRSEO777",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ProfileSettingsDTO!")
+		w.WriteHeader(http.StatusBadRequest) // 400
+		return
+	}
+
+	if err := handler.Validator.Struct(&profileSettingsDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ProfileSettingsHandler",
+			"action":   "UPPRSEO777",
+			"timestamp":   time.Now().String(),
+		}).Error("ProfileSettingsDTO fields aren't entered in valid format!")
+		w.WriteHeader(http.StatusBadRequest) // 400
+		return
+	}
+
+	err := handler.Service.UpdateProfileSettings(&profileSettingsDTO)
+	if err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ProfileSettingsHandler",
+			"action":   "UPPRSEO777",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed updating profile settings!")
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "ProfileSettingsHandler",
+		"action":   "UPPRSEO777",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully updated profile settings!")
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+

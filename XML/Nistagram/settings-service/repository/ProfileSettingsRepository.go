@@ -65,3 +65,22 @@ func (repo *ProfileSettingsRepository) FindAllPublicUsers(allValidUsers []dto.Cl
 
 	return listOfPublicUsers
 }
+
+func (repo *ProfileSettingsRepository) UpdateProfileSettings(profileSettings *dto.ProfileSettingsDTO) error {
+
+	result := repo.Database.Model(&model.ProfileSettings{}).Where("user_id = ?", profileSettings.UserId)
+
+	result.Update("user_visibility", profileSettings.UserVisibility)
+	fmt.Println(result.RowsAffected)
+	result.Update("message_approval_type", profileSettings.MessageApprovalType)
+	fmt.Println(result.RowsAffected)
+	result.Update("is_post_taggable", profileSettings.IsPostTaggable)
+	fmt.Println(result.RowsAffected)
+	result.Update("is_story_taggable", profileSettings.IsStoryTaggable)
+	fmt.Println(result.RowsAffected)
+	result.Update("is_comment_taggable", profileSettings.IsCommentTaggable)
+	fmt.Println(result.RowsAffected)
+
+	fmt.Println("updating profile settings")
+	return nil
+}
