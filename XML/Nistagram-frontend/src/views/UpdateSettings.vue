@@ -11,6 +11,7 @@
             item-text="state"
             return-object
             single-line
+            v-bind:readonly="isReadOnly"
           />
         </v-col>
       </v-row>
@@ -25,18 +26,22 @@
             item-text="state"
             return-object
             single-line
+            v-bind:readonly="isReadOnly"
           />
         </v-col>
       </v-row>
 
-      <input type="checkbox" id="checkbox" v-model="isPostTaggable" />
-      <label for="checkbox">{{ isPostTaggable }}</label>
+      <input type="checkbox" id="checkboxPostTaggable" v-model="isPostTaggable" v-bind:readonly="isReadOnly"/>
+      <label for="checkboxPostTaggable" v-if="isPostTaggable == false"> Post can't be tagged</label>
+      <label for="checkboxPostTaggable" v-if="isPostTaggable == true"> Post can be tagged</label>
 
-      <input type="checkbox" id="checkbox" v-model="isStoryTaggable" />
-      <label for="checkbox">{{ isStoryTaggable }}</label>
+      <input type="checkbox" id="checkboxStoryTaggable" v-model="isStoryTaggable" v-bind:readonly="isReadOnly"/>
+      <label for="checkboxStoryTaggable" v-if="isStoryTaggable == false" > Story can't be tagged</label>
+      <label for="checkboxStoryTaggable" v-if="isStoryTaggable == true"> Story can be tagged</label>
 
-      <input type="checkbox" id="checkbox" v-model="isCommentTaggable" />
-      <label for="checkbox">{{ isCommentTaggable }}</label>
+      <input type="checkbox" id="checkboxCommentTaggable" v-model="isCommentTaggable" v-bind:readonly="isReadOnly"/>
+      <label for="checkboxCommentTaggable" v-if="isCommentTaggable == false"> Comment can't be tagged</label>
+      <label for="checkboxCommentTaggable" v-if="isCommentTaggable == true"> Comment can be tagged</label>
 
       <div class="changeButton">
         <v-btn
@@ -80,6 +85,7 @@
 export default {
   name: "UpdateSettings",
   data: () => ({
+    isReadOnly: true,
     id: "",
     token: null,
     settings: [],
@@ -119,10 +125,7 @@ export default {
 
       this.$http
         .get(
-          "https://localhost:8080/api/settings/find_profile_settings_by_user_id/",
-          {
-            userId: this.id,
-          },
+          "https://localhost:8080/api/settings/find_profile_settings_by_user_id/"+this.id,
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -136,16 +139,14 @@ export default {
         .catch(console.log);
     },
     setSettings(item) {
-      if (item.user_visibility == 0) {
-        this.selectedUserVisibility = "PRIVATE_VISIBILITY";
-      } else if (item.user_visibility == 1) {
-        this.selectedUserVisibility = "PUBLIC_VISIBILITY";
+      console.log(item);
+      this.selectedUserVisibility = item.user_visibility;
+      if (this.selectedUserVisibility=="PUBLIC_VISIBILITY"){
+        localStorage.setItem("userPrivacy", "PUBLIC");
+      } else {
+        localStorage.setItem("userPrivacy", "PRIVATE");
       }
-      if (item.message_approval_type == 0) {
-        this.selectedMessageApprovalType = "PUBLIC";
-      } else if (item.message_approval_type == 1) {
-        this.selectedMessageApprovalType = "FRIENDS_ONLY";
-      }
+      this.selectedMessageApprovalType = item.message_approval_type;
       this.isPostTaggable = item.is_post_taggable;
       this.isStoryTaggable = item.is_story_taggable;
       this.isCommentTaggable = item.is_comment_taggable;

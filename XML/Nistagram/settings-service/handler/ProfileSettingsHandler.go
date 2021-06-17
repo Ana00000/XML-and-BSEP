@@ -220,7 +220,7 @@ func (handler *ProfileSettingsHandler) UpdateProfileSettings(w http.ResponseWrit
 		w.WriteHeader(http.StatusBadRequest) // 400
 		return
 	}
-
+	/*
 	if err := handler.Validator.Struct(&profileSettingsDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -231,7 +231,7 @@ func (handler *ProfileSettingsHandler) UpdateProfileSettings(w http.ResponseWrit
 		w.WriteHeader(http.StatusBadRequest) // 400
 		return
 	}
-
+*/
 	err := handler.Service.UpdateProfileSettings(&profileSettingsDTO)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
