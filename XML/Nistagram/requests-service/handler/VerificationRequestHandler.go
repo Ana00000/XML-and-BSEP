@@ -266,3 +266,48 @@ func (handler *VerificationRequestHandler) AcceptVerificationRequest(w http.Resp
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+func (handler *VerificationRequestHandler) FindAllPendingVerificationRequests(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "VerificationRequestHandler",
+			"action":   "FindAllPendingVerificationRequests",
+			"timestamp":   time.Now().String(),
+		}).Error("User is not logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-pending-verification-requests-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "VerificationRequestHandler",
+			"action":   "FindAllPendingVerificationRequests",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
+
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+
+	var requests = handler.Service.FindAllPendingVerificationRequests()
+
+	requestsJson, _ := json.Marshal(requests)
+	w.Write(requestsJson)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status":    "success",
+		"location":  "VerificationRequestHandler",
+		"action":    "FindAllPendingVerificationRequests",
+		"timestamp": time.Now().String(),
+	}).Info("Successfully found all pending verification requests!")
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+}
