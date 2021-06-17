@@ -9,10 +9,10 @@ import (
 )
 
 type ActivityService struct {
-	Repo * repository.ActivityRepository
+	Repo *repository.ActivityRepository
 }
 
-func (service * ActivityService) CreateActivity(activity *model.Activity) error {
+func (service *ActivityService) CreateActivity(activity *model.Activity) error {
 	err := service.Repo.CreateActivity(activity)
 	if err != nil {
 		return err
@@ -20,7 +20,7 @@ func (service * ActivityService) CreateActivity(activity *model.Activity) error 
 	return nil
 }
 
-func (service * ActivityService) FindAllLikesForPost(postId uuid.UUID) []model.Activity{
+func (service *ActivityService) FindAllLikesForPost(postId uuid.UUID) []model.Activity {
 	activities := service.Repo.FindAllLikesForPost(postId)
 	if activities != nil {
 		return activities
@@ -28,8 +28,7 @@ func (service * ActivityService) FindAllLikesForPost(postId uuid.UUID) []model.A
 	return nil
 }
 
-
-func (service * ActivityService) FindAllDislikesForPost(postId uuid.UUID) []model.Activity{
+func (service *ActivityService) FindAllDislikesForPost(postId uuid.UUID) []model.Activity {
 	activities := service.Repo.FindAllDislikesForPost(postId)
 	if activities != nil {
 		return activities
@@ -37,7 +36,7 @@ func (service * ActivityService) FindAllDislikesForPost(postId uuid.UUID) []mode
 	return nil
 }
 
-func (service * ActivityService) FindAllFavoritesForPost(postId uuid.UUID) []model.Activity{
+func (service *ActivityService) FindAllFavoritesForPost(postId uuid.UUID) []model.Activity {
 	activities := service.Repo.FindAllFavoritesForPost(postId)
 	if activities != nil {
 		return activities
@@ -45,7 +44,7 @@ func (service * ActivityService) FindAllFavoritesForPost(postId uuid.UUID) []mod
 	return nil
 }
 
-func (service * ActivityService) FindAllActivitiesForPost(postId uuid.UUID) []model.Activity{
+func (service *ActivityService) FindAllActivitiesForPost(postId uuid.UUID) []model.Activity {
 	activities := service.Repo.FindAllActivitiesForPost(postId)
 	if activities != nil {
 		return activities
@@ -53,9 +52,24 @@ func (service * ActivityService) FindAllActivitiesForPost(postId uuid.UUID) []mo
 	return nil
 }
 
-func (service * ActivityService) UpdateActivity(activity *dto.ActivityDTO) error {
+func (service *ActivityService) FindAllLikedPostsByUserId(userId uuid.UUID) []model.Activity {
+	allLikedPostActivities := service.Repo.FindAllDislikedPostsByUserId(userId)
+	if allLikedPostActivities != nil {
+		return allLikedPostActivities
+	}
+	return nil
+}
+
+func (service *ActivityService) FindAllDislikedPostsByUserId(userId uuid.UUID) []model.Activity {
+	allDislikedPostActivities := service.Repo.FindAllDislikedPostsByUserId(userId)
+	if allDislikedPostActivities != nil {
+		return allDislikedPostActivities
+	}
+	return nil
+}
+
+func (service *ActivityService) UpdateActivity(activity *dto.ActivityDTO) error {
 	result := service.Repo.UpdateActivity(activity)
 	fmt.Print(result)
 	return nil
 }
-

@@ -9,43 +9,55 @@ import (
 )
 
 type ActivityRepository struct {
-	Database * gorm.DB
+	Database *gorm.DB
 }
 
-func (repo * ActivityRepository) CreateActivity(activity *model.Activity) error {
+func (repo *ActivityRepository) CreateActivity(activity *model.Activity) error {
 	result := repo.Database.Create(activity)
 	fmt.Print(result)
 	return nil
 }
 
-func (repo * ActivityRepository) FindAllLikesForPost(postId uuid.UUID) []model.Activity{
+func (repo *ActivityRepository) FindAllLikesForPost(postId uuid.UUID) []model.Activity {
 	var likes []model.Activity
 
 	repo.Database.Select("*").Where("post_id = ? and liked_status = ?", postId, 0).Find(&likes)
 	return likes
 }
 
-func (repo * ActivityRepository) FindAllDislikesForPost(postId uuid.UUID) []model.Activity{
+func (repo *ActivityRepository) FindAllDislikesForPost(postId uuid.UUID) []model.Activity {
 	var dislikes []model.Activity
 
 	repo.Database.Select("*").Where("post_id = ? and liked_status = ?", postId, 1).Find(&dislikes)
 	return dislikes
 }
 
-func (repo * ActivityRepository) FindAllFavoritesForPost(postId uuid.UUID) []model.Activity{
+func (repo *ActivityRepository) FindAllFavoritesForPost(postId uuid.UUID) []model.Activity {
 	var favorites []model.Activity
 
 	repo.Database.Select("*").Where("post_id = ? and is_favorite = ?", postId, true).Find(&favorites)
 	return favorites
 }
 
-func (repo * ActivityRepository) FindAllActivitiesForPost(postId uuid.UUID) []model.Activity{
+func (repo *ActivityRepository) FindAllActivitiesForPost(postId uuid.UUID) []model.Activity {
 	var allReactions []model.Activity
 	repo.Database.Select("*").Where("post_id = ?", postId).Find(&allReactions)
 	return allReactions
 }
 
-func (repo * ActivityRepository) UpdateActivity(activity *dto.ActivityDTO) error {
+func (repo *ActivityRepository) FindAllLikedPostsByUserId(userId uuid.UUID) []model.Activity {
+	var allLikedPostActivities []model.Activity
+	repo.Database.Select("*").Where("user_id = ? and liked_status = ?", userId, 0).Find(&allLikedPostActivities)
+	return allLikedPostActivities
+}
+
+func (repo *ActivityRepository) FindAllDislikedPostsByUserId(userId uuid.UUID) []model.Activity {
+	var allDislikedPostActivities []model.Activity
+	repo.Database.Select("*").Where("user_id = ? and liked_status = ?", userId, 1).Find(&allDislikedPostActivities)
+	return allDislikedPostActivities
+}
+
+func (repo *ActivityRepository) UpdateActivity(activity *dto.ActivityDTO) error {
 	result := repo.Database.Model(&model.Activity{}).Where("id = ?", activity.ID).Update("liked_status", activity.LikedStatus).Update("is_favorite", activity.IsFavorite)
 	fmt.Print(result)
 	return nil
