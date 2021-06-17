@@ -219,6 +219,11 @@ const routes = [
     path: '/forbiddenPage',
     name: '/ForbiddenPage',
     component: () => import('../views/ForbiddenPage.vue')
+  },
+  {
+    path: '/updateSettings',
+    name: '/UpdateSettings',
+    component: () => import('../views/UpdateSettings.vue')
   }
 ]
 
