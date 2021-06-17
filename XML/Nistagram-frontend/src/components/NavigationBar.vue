@@ -72,7 +72,6 @@ export default {
                 { title: 'Update Profile', path: '/updateProfile' }
             ]
         } else if (this.userType == 1) {   // REGISTERED_USER
-            console.log("NESTO")
             if (this.userPrivacy == "PRIVATE"){
                 this.items = [
                 { title: 'Home', path: '/' },
