@@ -136,9 +136,10 @@ func initStoryICRHandler(service *service.StoryICRService, LogInfo *logrus.Logge
 	}
 }
 
-func initCommentICRHandler(service *service.CommentICRService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.CommentICRHandler {
+func initCommentICRHandler(service *service.CommentICRService, inappropriateContentRequestService *service.InappropriateContentRequestService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.CommentICRHandler {
 	return &handler.CommentICRHandler{
 		Service:   service,
+		InappropriateContentRequestService: inappropriateContentRequestService,
 		LogInfo:   LogInfo,
 		LogError:  LogError,
 		Validator: validator,
@@ -241,7 +242,7 @@ func main() {
 	inappropriateContentRequestHandler := initInappropriateContentRequestHandler(inappropriateContentRequestService, logInfo, logError, validator)
 	postICRHandler := initPostICRHandler(postICRService, logInfo, logError, validator)
 	storyICRHandler := initStoryICRHandler(storyICRService, logInfo, logError, validator)
-	commentICRHandler := initCommentICRHandler(commentICRService, logInfo, logError, validator)
+	commentICRHandler := initCommentICRHandler(commentICRService, inappropriateContentRequestService, logInfo, logError, validator)
 	verificationRequestRHandler := initVerificationRequestHandler(verificationRequestService, logInfo, logError, validator)
 	agentRegistrationRequestHandler := initAgentRegistrationRequestHandler(agentRegistrationRequestService, logInfo, logError, validator)
 	followRequestHandler := initFollowRequestHandler(followRequestService, logInfo, logError, validator)

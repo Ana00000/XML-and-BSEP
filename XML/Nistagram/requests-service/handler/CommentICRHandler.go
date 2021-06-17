@@ -16,6 +16,7 @@ import (
 
 type CommentICRHandler struct {
 	Service   *service.CommentICRService
+	InappropriateContentRequestService   *service.InappropriateContentRequestService
 	LogInfo   *logrus.Logger
 	LogError  *logrus.Logger
 	Validator *validator.Validate
@@ -66,6 +67,19 @@ func (handler *CommentICRHandler) CreateCommentICR(w http.ResponseWriter, r *htt
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
+
+	if err := handler.InappropriateContentRequestService.CreateICR(&commentICR.InappropriateContentRequest); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "CommentICRHandler",
+			"action":    "CRCOMICR9998",
+			"timestamp": time.Now().String(),
+		}).Error("Failed creating comment inappropriate content request!")
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status":    "success",
 		"location":  "CommentICRHandler",
