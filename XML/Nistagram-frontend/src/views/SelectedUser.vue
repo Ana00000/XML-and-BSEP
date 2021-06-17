@@ -81,7 +81,26 @@
         >Follow Request Sent</v-btn
       >
     </div>
-
+    <div class="BlockUserButton">
+      <v-btn
+        v-on:click="blockUser"
+        color="info mb-5"
+        elevation="24"
+        x-large
+        raised
+        >Block</v-btn
+      >
+    </div>
+    <div class="MuteUserButton">
+      <v-btn
+        v-on:click="muteUser"
+        color="info mb-5"
+        elevation="24"
+        x-large
+        raised
+        >Mute</v-btn
+      >
+    </div>
     <v-container grid-list-lg >
       <div class="spacingOne" />
       <div class="title">
@@ -334,6 +353,43 @@ export default {
       this.username = item.username;
       this.firstName = item.firstName;
       this.lastName = item.lastName;
+    },
+    //
+    muteUser(){
+      this.$http
+        .post("https://localhost:8080/api/settings/mute_user/", {
+          logged_in_user: this.logId,
+          muted_user: this.selectedUser,
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
+        .then((resp) => {
+          console.log(resp.data);
+          alert("Successfully blocked user!");
+           window.location.href = "https://localhost:8081/";
+        })
+        .catch((err) => console.log(err));
+      
+    },
+    blockUser(){
+      this.$http
+        .post("https://localhost:8080/api/settings/block_user/", {
+          logged_in_user: this.logId,
+          blocked_user: this.selectedUser,
+        },{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+        })
+        .then((resp) => {
+          console.log(resp.data);
+          alert("Successfully blocked user!");
+           window.location.href = "https://localhost:8081/";
+        })
+        .catch((err) => console.log(err));
+      
     },
     followProfile() {
       this.isHiddenFollow = true;

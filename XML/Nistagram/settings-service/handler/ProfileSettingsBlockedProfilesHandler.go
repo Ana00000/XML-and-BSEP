@@ -16,6 +16,7 @@ import (
 
 type ProfileSettingsBlockedProfilesHandler struct {
 	Service   *service.ProfileSettingsBlockedProfilesService
+	ProfileSettingsService *service.ProfileSettingsService
 	LogInfo   *logrus.Logger
 	LogError  *logrus.Logger
 	Validator *validator.Validate
@@ -71,4 +72,48 @@ func (handler *ProfileSettingsBlockedProfilesHandler) CreateProfileSettingsBlock
 	}).Info("Successfully created profile settings blocked profiles!")
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *ProfileSettingsBlockedProfilesHandler) BlockUser(w http.ResponseWriter, r *http.Request) {
+	var blockUserDTO dto.BlockUserDTO
+	if err := json.NewDecoder(r.Body).Decode(&blockUserDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsBlockedProfilesHandler",
+			"action":    "BlockUser",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast jason to BlockUserDTO!")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var profileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(blockUserDTO.LoggedInUser)
+
+	var profileSettingsBlockedProfiles = model.ProfileSettingsBlockedProfiles{
+		ID:                uuid.UUID{},
+		ProfileSettingsId: profileSettings.ID,
+		BlockedProfileId:  blockUserDTO.BlockedUser,
+	}
+
+	if err := handler.Service.CreateProfileSettingsBlockedProfiles(&profileSettingsBlockedProfiles); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsBlockedProfilesHandler",
+			"action":    "BlockUser",
+			"timestamp": time.Now().String(),
+		}).Error("Failed creating profile settings blocked profiles!")
+		//fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status":    "success",
+		"location":  "ProfileSettingsBlockedProfilesHandler",
+		"action":    "BlockUser",
+		"timestamp": time.Now().String(),
+	}).Info("Successfully created profile settings blocked profiles!")
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+
 }
