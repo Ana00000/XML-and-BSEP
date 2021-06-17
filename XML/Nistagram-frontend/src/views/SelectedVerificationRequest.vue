@@ -114,7 +114,7 @@ export default {
     lastName: null,
     status: null,
     path: null,
-   
+   userRequestId: null,
   }),
   mounted() {
     this.selectedRequestId = localStorage.getItem("selectedVerificationRequestId");
@@ -182,6 +182,7 @@ export default {
       this.firstName = item.first_name;
       this.lastName =  item.last_name;
       this.path = item.official_document_path;
+      this.userRequestId = item.user_id;
       if(item.registered_user_category == 0){
           this.status = "INFLUENCER";
       }else if(item.registered_user_category == 1){
@@ -202,8 +203,9 @@ export default {
     acceptRequest() {
     
      this.$http
-        .post("https://localhost:8080/api/user/accept_verification_request/", {
+        .post("https://localhost:8080/api/user/accept_verification_request", {
           id: this.selectedVerificationRequest,
+          userId: this.userRequestId;
         },{
             headers: {
               Authorization: "Bearer " + this.token,

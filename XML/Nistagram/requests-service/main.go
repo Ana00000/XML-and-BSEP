@@ -199,10 +199,11 @@ func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContent
 	router.HandleFunc("/accept_follow_request/{requestID}", followRequestHandler.AcceptFollowRequest).Methods("POST")
 
 	router.HandleFunc("/verificationRequest", verificationRequestHandler.CreateVerificationRequest).Methods("POST")
-	router.HandleFunc("/accept_verification_request/{requestID}", verificationRequestHandler.AcceptVerificationRequest).Methods("POST")
+	router.HandleFunc("/accept_verification_request", verificationRequestHandler.AcceptVerificationRequest).Methods("POST")
 	router.HandleFunc("/reject_verification_request/{requestID}", verificationRequestHandler.RejectVerificationRequest).Methods("POST")
 	router.HandleFunc("/find_verification_request_by_id", verificationRequestHandler.FindVerificationRequestById).Methods("GET")
 	router.HandleFunc("/find_all_pending_verification_requests", verificationRequestHandler.FindAllPendingVerificationRequests).Methods("POST")
+	router.HandleFunc("/uploadOfficialDocument/", verificationRequestHandler.Upload).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }

@@ -42,3 +42,11 @@ func (service *RegisteredUserService) UpdateRegisteredUserPassword(userId uuid.U
 	}
 	return nil
 }
+
+func (service *RegisteredUserService) UpdateUserCategory(userId uuid.UUID, category int) error {
+	err := service.Repo.UpdateUserCategory(userId, category)
+	if err != nil {
+		return err
+	}
+	return nil
+}

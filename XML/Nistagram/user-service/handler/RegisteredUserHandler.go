@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/mikespook/gorbac"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
@@ -25,6 +26,8 @@ type RegisteredUserHandler struct {
 	ConfirmationTokenService *service.ConfirmationTokenService
 	Validator                *validator.Validate
 	PasswordUtil             *util.PasswordUtil
+	Rbac * gorbac.RBAC
+	PermissionUpdateUserCategory * gorbac.Permission
 	LogInfo *logrus.Logger
 	LogError *logrus.Logger
 }
@@ -290,5 +293,78 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	}).Info("Successfully created registered user!")
 
 	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *RegisteredUserHandler) UpdateUserCategory(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	id := r.URL.Query().Get("id")
+
+
+	if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "UpdateUserCategory",
+			"timestamp":   time.Now().String(),
+		}).Error("User is not logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	var loginUser = handler.UserService.FindByID(uuid.MustParse(id))
+	userRole := ""
+	if loginUser.UserType == model.ADMIN {
+		userRole = "role-admin"
+	} else if loginUser.UserType == model.AGENT {
+		userRole = "role-agent"
+	} else {
+		userRole = "role-registered-user"
+	}
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserCategory, nil) {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "UpdateUserCategory",
+			"timestamp":   time.Now().String(),
+		}).Error("User is not authorized to update user information!")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+
+
+
+	var category string
+	if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "UpdateUserCategory",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to category string!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	var categoryType = 0
+
+	if category == "INFLUENCER" {
+		categoryType = 0
+	}else if category == "SPORTS" {
+		categoryType = 1
+	}else if category == "NEW_MEDIA" {
+		categoryType = 2
+	}else if category == "BUSINESS" {
+		categoryType = 3
+	}else if category == "BRAND" {
+		categoryType = 4
+	}else if category == "ORGANIZATION" {
+		categoryType = 5
+	}
+
+	handler.RegisteredUserService.UpdateUserCategory(uuid.MustParse(id), categoryType)
+
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }

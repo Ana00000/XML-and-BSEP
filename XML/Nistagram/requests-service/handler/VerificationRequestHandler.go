@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
@@ -50,13 +50,29 @@ func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.Resp
 		return
 	}
 
+	cetegory := model.INFLUENCER;
+	if verificationRequestDTO.RegisteredUserCategory == "INFLUENCER" {
+		cetegory = model.INFLUENCER;
+	}else if verificationRequestDTO.RegisteredUserCategory == "SPORTS" {
+		cetegory = model.SPORTS;
+	}else if verificationRequestDTO.RegisteredUserCategory == "NEW_MEDIA" {
+		cetegory = model.NEW_MEDIA;
+	}else if verificationRequestDTO.RegisteredUserCategory == "BUSINESS" {
+		cetegory = model.BUSINESS;
+	}else if verificationRequestDTO.RegisteredUserCategory == "BRAND" {
+		cetegory = model.BRAND;
+	}else if verificationRequestDTO.RegisteredUserCategory == "ORGANIZATION" {
+		cetegory = model.ORGANIZATION;
+	}
+
 	verificationRequest := model.VerificationRequest{
 		ID:                     uuid.UUID{},
 		FirstName:              verificationRequestDTO.FirstName,
 		LastName:               verificationRequestDTO.LastName,
 		OfficialDocumentPath:   pathPostGlobal,
-		RegisteredUserCategory: verificationRequestDTO.RegisteredUserCategory,
+		RegisteredUserCategory: cetegory,
 		VerificationRequestStatus: model.PENDING,
+		UserId: verificationRequestDTO.UserId,
 	}
 
 	if err := handler.Service.CreateVerificationRequest(&verificationRequest); err != nil {
@@ -244,9 +260,20 @@ func (handler *VerificationRequestHandler) RejectVerificationRequest(w http.Resp
 
 func (handler *VerificationRequestHandler) AcceptVerificationRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
-	vars := mux.Vars(r)
-	requestId := vars["requestID"]
-	if err := handler.Service.UpdateVerificationRequestAccepted(uuid.MustParse(requestId)); err != nil {
+
+	var verificationRequestAcceptDTO dto.VerificationRequestAcceptDTO;
+	if err := json.NewDecoder(r.Body).Decode(&verificationRequestAcceptDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "VerificationRequestHandler",
+			"action":    "AcceptVerificationRequest",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast jason to VerificationRequestAcceptDTO!")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := handler.Service.UpdateVerificationRequestAccepted(verificationRequestAcceptDTO.ID); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status":    "failure",
 			"location":  "VerificationRequestHandler",
@@ -263,6 +290,22 @@ func (handler *VerificationRequestHandler) AcceptVerificationRequest(w http.Resp
 		"action":    "AcceptVerificationRequest",
 		"timestamp": time.Now().String(),
 	}).Info("Successfully updated verification request to accepted!")
+
+
+	reqUrl := fmt.Sprintf("http://%s:%s/update_user_category?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), verificationRequestAcceptDTO.UserId)
+	jsonClassicUsersDTO, _ := json.Marshal(verificationRequestAcceptDTO.RegisteredUserCategory)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "VerificationRequestHandler",
+			"action":   "AcceptVerificationRequest",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to update user category!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -310,4 +353,14 @@ func (handler *VerificationRequestHandler) FindAllPendingVerificationRequests(w 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
+}
+
+func getJson(url string, target interface{}) error {
+	r, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	return json.NewDecoder(r.Body).Decode(target)
 }

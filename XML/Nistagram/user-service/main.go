@@ -143,7 +143,7 @@ func initRegisteredUserService(repo *repository.RegisteredUserRepository) *servi
 	return &service.RegisteredUserService { Repo: repo }
 }
 
-func initRegisteredUserHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService, validator *validator.Validate, passwordUtil *util.PasswordUtil) *handler.RegisteredUserHandler{
+func initRegisteredUserHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,registeredUserService *service.RegisteredUserService, userService *service.UserService, classicUserService *service.ClassicUserService,  confirmationTokenService *service.ConfirmationTokenService, validator *validator.Validate, passwordUtil *util.PasswordUtil, rbac *gorbac.RBAC, permissionUpdateUserCategory *gorbac.Permission) *handler.RegisteredUserHandler{
 	return &handler.RegisteredUserHandler{
 		registeredUserService,
 		userService,
@@ -151,8 +151,11 @@ func initRegisteredUserHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,re
 		confirmationTokenService,
 		validator,
 		passwordUtil,
+		rbac,
+		permissionUpdateUserCategory,
 		LogInfo,
 		LogError,
+
 	}
 
 }
@@ -471,6 +474,7 @@ func handleFunc(storyAuthorizationHandler *handler.StoryAuthorizationHandler, po
 	router.HandleFunc("/find_all_users_by_following_ids/", classicUserHandler.FindAllUsersByFollowingIds).Methods("POST")
 	router.HandleFunc("/check_if_authentificated/", userHandler.CheckIfAuthentificated).Methods("GET")
 	router.HandleFunc("/get_user_id_by_jwt/", userHandler.GetUserIDFromJWTToken).Methods("GET")
+	router.HandleFunc("/update_user_category", registeredUserHandler.UpdateUserCategory).Methods("POST")
 
 	//LOCATION MICROSERVICE AUTHORIZATION
 	router.HandleFunc("/auth/check-create-location-permission/", locationAuthorizationHandler.CheckCreateLocationPermission).Methods("POST")
@@ -653,6 +657,7 @@ func main() {
 	permissionFindAllFollowingStoryAlbums := gorbac.NewStdPermission("permission-find-all-following-story-albums")
 	permissionCreateStoryHighlight := gorbac.NewStdPermission("permission-create-story-highlight")
 	permissionFindAllStoryHighlightsForUser := gorbac.NewStdPermission("permission-find-all-story-highlights-for-user")
+	permissionUpdateUserCategory := gorbac.NewStdPermission("permission-update-user-category")
 
 	roleAdmin.Assign(permissionFindAllUsers)
 	roleAdmin.Assign(permissionUpdateUserInfo)
@@ -661,6 +666,7 @@ func main() {
 	roleAdmin.Assign(permissionUpdateStatusVerificationRequest)
 	roleAdmin.Assign(permissionFindVerificationRequestById)
 	roleAdmin.Assign(permissionFindAllPendingVerificationRequests)
+	roleAdmin.Assign(permissionUpdateUserCategory)
 
 	roleAgent.Assign(permissionUpdateUserInfo)
 	roleAgent.Assign(permissionCreateClassicUserCloseFriend)
@@ -862,7 +868,7 @@ func main() {
 	passwordUtil := initPasswordUtil()
 	userHandler := initUserHandler(&permissionFindUserByID,logInfo,logError,recoveryPasswordTokenService,userService,adminService,classicUserService,registeredUserService,agentService, rbac, &permissionFindAllUsers, &permissionUpdateUserInfo, validator, passwordUtil)
 	adminHandler := initAdminHandler(logInfo,logError,adminService, userService, validator, passwordUtil)
-	registeredUserHandler := initRegisteredUserHandler(logInfo,logError,registeredUserService, userService, classicUserService,confirmationTokenService,validator, passwordUtil)
+	registeredUserHandler := initRegisteredUserHandler(logInfo,logError,registeredUserService, userService, classicUserService,confirmationTokenService,validator, passwordUtil, rbac, &permissionUpdateUserCategory)
 	agentHandler := initAgentHandler(logInfo,logError,agentService, userService, classicUserService, validator, passwordUtil)
 	confirmationTokenHandler := initConfirmationTokenHandler(logInfo,logError,confirmationTokenService,userService,registeredUserService,classicUserService)
 	classicUserCampaignsHandler := initClassicUserCampaignsHandler(logInfo,logError,classicUserCampaignsService)
