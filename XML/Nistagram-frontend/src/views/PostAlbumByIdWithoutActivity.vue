@@ -185,7 +185,7 @@ export default {
         )
         .then((response) => {
           console.log(response.data);
-          alert("Post was reported.");
+          alert("Post album was reported.");
           window.location.href = "https://localhost:8081/";
         })
         .catch((er) => {
@@ -194,7 +194,9 @@ export default {
     },
     validReportNote() {
       if (this.note.length < 2) {
-        alert("Your post album report note should contain at least 2 characters!");
+        alert(
+          "Your post album report note should contain at least 2 characters!"
+        );
         return false;
       } else if (this.note.length > 30) {
         alert(

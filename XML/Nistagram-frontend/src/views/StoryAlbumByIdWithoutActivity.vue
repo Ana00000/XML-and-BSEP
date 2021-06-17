@@ -71,6 +71,21 @@
         </v-flex>
       </v-layout>
     </v-container>
+
+    <v-text-field
+      label="Note"
+      v-model="note"
+      prepend-icon="mdi-address-circle"
+      v-if="!isHiddenReportStoryAlbum"
+    />
+
+    <v-btn
+      color="info mb-5"
+      v-on:click="reportStoryAlbum"
+      v-if="!isHiddenReportStoryAlbum"
+    >
+      Report story album
+    </v-btn>
   </div>
 </template>
 
@@ -81,27 +96,25 @@ export default {
     storyAlbum: null,
     token: null,
     storyAlbumContents: [],
+    isHiddenReportStoryAlbum: true,
+    note: "",
   }),
   mounted() {
     this.init();
   },
   methods: {
-    
     init() {
       this.token = localStorage.getItem("token");
 
       this.$http
-        .get(
-          "https://localhost:8080/api/user/check_if_authentificated/",{
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-          }
-        )
+        .get("https://localhost:8080/api/user/check_if_authentificated/", {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
         .then((resp) => {
           console.log("User is authentificated!");
           console.log(resp.data);
-          
         })
         .catch((er) => {
           window.location.href = "https://localhost:8081/unauthorizedPage";
@@ -110,7 +123,8 @@ export default {
 
       this.$http
         .get(
-          "https://localhost:8080/api/user/auth/check-find-selected-story-album-by-id-for-logged-user-permission/",{
+          "https://localhost:8080/api/user/auth/check-find-selected-story-album-by-id-for-logged-user-permission/",
+          {
             headers: {
               Authorization: "Bearer " + this.token,
             },
@@ -130,14 +144,16 @@ export default {
           "https://localhost:8080/api/story/find_selected_story_album_for_logged_user?id=" +
             localStorage.getItem("mySelectedStoryAlbumId") +
             "&logId=" +
-            localStorage.getItem("mySelectedUserId"),{
-          headers: {
-            Authorization: "Bearer " + this.token,
-          },
-        })
+            localStorage.getItem("mySelectedUserId"),
+          {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
         .then((response) => {
           this.storyAlbum = response.data;
-          console.log(response.data)
+          console.log(response.data);
           for (var i = 0; i < response.data.types.length; i++) {
             this.storyAlbumContents.push({
               type: response.data.types[i],
@@ -146,6 +162,55 @@ export default {
           }
         })
         .catch(console.log);
+
+      if (localStorage.getItem("userPrivacy") != null) {
+        this.isHiddenReportStoryAlbum = false;
+      }
+    },
+    reportStoryAlbum() {
+      if (!this.validReportNote()) return;
+
+      this.$http
+        .post(
+          "https://localhost:8080/api/requests/storyICR/",
+          {
+            note: this.note,
+            userId: localStorage.get("userId"),
+            storyId: localStorage.getItem("mySelectedStoryAlbumId"),
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          alert("Story album was reported.");
+          window.location.href = "https://localhost:8081/";
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    validReportNote() {
+      if (this.note.length < 2) {
+        alert(
+          "Your story album report note should contain at least 2 characters!"
+        );
+        return false;
+      } else if (this.note.length > 30) {
+        alert(
+          "Your story album report note shouldn't contain more than 30 characters!"
+        );
+        return false;
+      } else if (this.note.match(/[&<>/\\"]/g)) {
+        alert(
+          "Your story album report note shouldn't contain those special characters."
+        );
+        return false;
+      }
+      return true;
     },
   },
 };
