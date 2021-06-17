@@ -193,7 +193,7 @@ func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContent
 	router.HandleFunc("/agentRegistrationRequestHandler", agentRegistrationRequestHandler.CreateAgentRegistrationRequest).Methods("POST")
 	router.HandleFunc("/create_follow_request/", followRequestHandler.CreateFollowRequest).Methods("POST")
 	router.HandleFunc("/find_all_pending_requests_for_user", followRequestHandler.FindAllPendingFollowerRequestsForUser).Methods("GET")
-	router.HandleFunc("/find_request_by_id", followRequestHandler.FindRequestById).Methods("GET")
+	router.HandleFunc("/find_request_by_id", followRequestHandler.FindFollowerRequestById).Methods("GET")
 	router.HandleFunc("/find_all_requests_by_user_id/{userID}", followRequestHandler.FindAllFollowerRequestsForUser).Methods("GET")
 	router.HandleFunc("/reject_follow_request", followRequestHandler.RejectFollowRequest).Methods("POST")
 	router.HandleFunc("/find_request_by_classic_user_and_follower_user_ids/{classicUserID}/{followerUserID}", followRequestHandler.FindFollowRequestByIDsClassicUserAndHisFollower).Methods("GET")

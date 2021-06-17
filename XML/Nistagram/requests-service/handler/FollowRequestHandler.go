@@ -353,7 +353,7 @@ func Request(url string, token string) *http.Response {
 	return resp
 }
 
-func (handler *FollowRequestHandler) FindRequestById(w http.ResponseWriter, r *http.Request) {
+func (handler *FollowRequestHandler) FindFollowerRequestById(w http.ResponseWriter, r *http.Request) {
 	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	response:=Request(reqUrlAuth,ExtractToken(r))
 	if response.StatusCode==401{
@@ -367,7 +367,7 @@ func (handler *FollowRequestHandler) FindRequestById(w http.ResponseWriter, r *h
 		return
 	}
 
-	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-request-by-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-follower-request-by-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	res := Request(reqUrlAutorization,ExtractToken(r))
 	if res.StatusCode==403{
 		handler.LogError.WithFields(logrus.Fields{
