@@ -176,7 +176,7 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter
 		fmt.Println("No user found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}*/
-
+	//iz usera izbaciti sve usere koji su blokirani, i koji su usera blokirali
 	userJson, _ := json.Marshal(user)
 
 	handler.LogInfo.WithFields(logrus.Fields{
@@ -203,7 +203,7 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedInDTOs(w http.ResponseWr
 		fmt.Println("No user found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}*/
-
+	//iz usera izbaciti sve usere koji su blokirani, i koji su usera blokirali
 	userJson, _ := json.Marshal(user)
 
 	handler.LogInfo.WithFields(logrus.Fields{

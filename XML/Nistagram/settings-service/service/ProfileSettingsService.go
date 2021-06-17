@@ -47,3 +47,7 @@ func (service *ProfileSettingsService) FindAllPublicUsers(allValidUsers []dto.Cl
 	}
 	return nil
 }
+
+func (service *ProfileSettingsService) FindUserIdForProfileSettingsId(profileSettingsId uuid.UUID) uuid.UUID {
+	return service.Repo.FindUserIdForProfileSettingsId(profileSettingsId)
+}

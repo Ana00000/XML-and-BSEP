@@ -65,3 +65,11 @@ func (repo *ProfileSettingsRepository) FindAllPublicUsers(allValidUsers []dto.Cl
 
 	return listOfPublicUsers
 }
+
+func (repo *ProfileSettingsRepository) FindUserIdForProfileSettingsId(id uuid.UUID) uuid.UUID {
+	profileSettings := &model.ProfileSettings{}
+	if repo.Database.First(&profileSettings, "id = ?", id).RowsAffected == 0 {
+		panic(nil)
+	}
+	return profileSettings.UserId
+}
