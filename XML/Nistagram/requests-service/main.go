@@ -188,10 +188,10 @@ func handleFunc(inappropriateContentRequestHandler *handler.InappropriateContent
 		handlers.AllowCredentials(),
 	)
 
-	router.HandleFunc("/inappropriateContentRequest", inappropriateContentRequestHandler.CreateInappropriateContentRequest).Methods("POST")
-	router.HandleFunc("/postICR", postICRHandler.CreatePostICR).Methods("POST")
-	router.HandleFunc("/storyICR", storyICRHandler.CreateStoryICR).Methods("POST")
-	router.HandleFunc("/commentICR", commentICRHandler.CreateCommentICR).Methods("POST")
+	router.HandleFunc("/inappropriateContentRequest/", inappropriateContentRequestHandler.CreateInappropriateContentRequest).Methods("POST")
+	router.HandleFunc("/postICR/", postICRHandler.CreatePostICR).Methods("POST")
+	router.HandleFunc("/storyICR/", storyICRHandler.CreateStoryICR).Methods("POST")
+	router.HandleFunc("/commentICR/", commentICRHandler.CreateCommentICR).Methods("POST")
 	router.HandleFunc("/verificationRequest", verificationRequestHandler.CreateVerificationRequest).Methods("POST")
 	router.HandleFunc("/agentRegistrationRequestHandler", agentRegistrationRequestHandler.CreateAgentRegistrationRequest).Methods("POST")
 	router.HandleFunc("/create_follow_request/", followRequestHandler.CreateFollowRequest).Methods("POST")
