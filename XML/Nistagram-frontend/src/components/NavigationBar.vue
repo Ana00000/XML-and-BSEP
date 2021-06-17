@@ -70,6 +70,7 @@ export default {
             this.items = [
                 { title: 'Home', path: '/' },
                 { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Verification Requests', path: '/verificationRequests' }
             ]
         } else if (this.userType == 1) {   // REGISTERED_USER
             console.log("NESTO")

@@ -219,7 +219,17 @@ const routes = [
     path: '/forbiddenPage',
     name: '/ForbiddenPage',
     component: () => import('../views/ForbiddenPage.vue')
-  }
+  },
+  {
+    path: '/verificationRequests',
+    name: 'VerificationRequests',
+    component: () => import('../views/VerificationRequests.vue')
+  },
+  {
+    path: '/selectedVerificationRequest',
+    name: 'SelectedVerificationRequest',
+    component: () => import('../views/SelectedVerificationRequest.vue')
+  },
 ]
 
 const router = new VueRouter({

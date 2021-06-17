@@ -2,7 +2,7 @@
         <div class="searchDiv">
             <br/>
             <div>
-                <h1 class="display-2">You can find follow requests here!</h1>
+                <h1 class="display-2">You can find verification requests here!</h1>
             </div>
             <br/>
 
@@ -19,8 +19,9 @@
                         <v-list-item :key="request.id" :value="request" v-on:click="redirectToSelectedRequest" >
                             <template >  
                             <v-list-item-content>
-                              <v-list-item-subtitle v-text="'FOLLOWER: ' + request.follower_user_id" class="containerDiv"></v-list-item-subtitle>
-                              <v-list-item-subtitle v-text="'REQUEST ID: ' + request.id" class="containerDiv"></v-list-item-subtitle>
+                              <v-list-item-subtitle v-text="'ID: ' + request.id" class="containerDiv"></v-list-item-subtitle>
+                              <v-list-item-subtitle v-text="'FIRST NAME: ' + request.first_name" class="containerDiv"></v-list-item-subtitle>
+                              <v-list-item-subtitle v-text="'FIRST NAME: ' + request.last_name" class="containerDiv"></v-list-item-subtitle>
                               <v-list-item-subtitle v-text="' '" class="emptyContentClass"></v-list-item-subtitle>
                             </v-list-item-content>
                             </template>
@@ -47,7 +48,7 @@
 <script>
 
 export default {
-    name: 'FollowRequests',   
+    name: 'VerificationRequests',   
     data: () => ({
       requests: [],
       token: null,
@@ -59,7 +60,6 @@ export default {
     methods: {
      
       init() {
-      this.id = localStorage.getItem("userId");
       this.token = localStorage.getItem("token");
 
       this.$http
@@ -81,7 +81,7 @@ export default {
 
       this.$http
         .get(
-          "https://localhost:8080/api/user/auth/check-find-all-pending-follower-requests-for-user-permission/",{
+          "https://localhost:8080/api/user/auth/check-find-all-pending-verification-requests-permission/",{
             headers: {
               Authorization: "Bearer " + this.token,
             },
@@ -96,10 +96,9 @@ export default {
           console.log(er);
         });
 
-      console.log(this.id)
       console.log(this.token)
       this.$http
-        .get("https://localhost:8080/api/requests/find_all_pending_requests_for_user?id=" + this.id,{
+        .get("https://localhost:8080/api/requests/find_all_pending_verification_requests",{
             headers: {
               Authorization: "Bearer " + this.token,
             },
@@ -115,8 +114,8 @@ export default {
     redirectToSelectedRequest() {
     console.log("OK");
      console.log("usao ovde i id je: "+ this.selectedRequest.id);
-        localStorage.setItem("selectedRequestId",this.selectedRequest.id);
-        window.location.href = "https://localhost:8081/selectedFollowRequest";
+        localStorage.setItem("selectedVerificationRequestId",this.selectedRequest.id);
+        window.location.href = "https://localhost:8081/selectedVerificationRequest";
       
     }
     }
