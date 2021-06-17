@@ -111,8 +111,32 @@
       Remove Favorite
     </v-btn>
 
-    <v-btn color="info mb-5" v-on:click="reportPost" class="reportPostButton">
+    <v-btn
+      color="info mb-5"
+      v-on:click="
+        (isHiddenReportPostFinal = false), (isHiddenReportPost = true)
+      "
+      v-if="!isHiddenReportPost"
+      class="reportPostButton"
+    >
       Report Post
+    </v-btn>
+
+    <v-text-field
+      label="Note"
+      v-model="note"
+      prepend-icon="mdi-address-circle"
+      v-if="!isHiddenReportPostFinal"
+      class="note"
+    />
+
+    <v-btn
+      color="info mb-5"
+      v-on:click="reportPost"
+      v-if="!isHiddenReportPostFinal"
+      class="reportPostFinalButton"
+    >
+      Report
     </v-btn>
 
     <v-container grid-list-lg v-if="!isHiddenTagComment">
@@ -309,6 +333,8 @@ export default {
     token: null,
     isHiddenTagComment: true,
     note: "",
+    isHiddenReportPost: false,
+    isHiddenReportPostFinal: true,
   }),
   mounted() {
     this.init();
@@ -439,7 +465,9 @@ export default {
         })
         .catch(console.log);
     },
-    reportPostButton() {
+    reportPost() {
+      if (!this.validReportNote()) return;
+
       this.$http
         .post(
           "https://localhost:8080/api/requests/postICR/",
@@ -462,6 +490,19 @@ export default {
         .catch((er) => {
           console.log(er.response.data);
         });
+    },
+    validReportNote() {
+      if (this.note.length < 2) {
+        alert("Your note should contain at least 2 characters!");
+        return false;
+      } else if (this.note.length > 30) {
+        alert("Your note shouldn't contain more than 30 characters!");
+        return false;
+      } else if (this.note.match(/[&<>/\\"]/g)) {
+        alert("Your note shouldn't contain those special characters.");
+        return false;
+      }
+      return true;
     },
     onOpen(key) {
       this.items = key === "@" ? this.itemsUsertag : this.itemsHashtag;
@@ -1179,6 +1220,16 @@ export default {
 }
 
 .reportPostButton {
+  width: 120px;
+  margin-left: 3%;
+}
+
+.note {
+  width: 120px;
+  margin-left: 7%;
+}
+
+.reportPostFinalButton {
   width: 120px;
   margin-left: 3%;
 }
