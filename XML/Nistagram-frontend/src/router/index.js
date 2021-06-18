@@ -235,6 +235,12 @@ const routes = [
     name: 'CreateVerificationRequest',
     component: () => import('../views/CreateVerificationRequest.vue')
   },
+  {
+    path: '/updateSettings',
+    name: '/UpdateSettings',
+    component: () => import('../views/UpdateSettings.vue')
+  },
+
 ]
 
 const router = new VueRouter({

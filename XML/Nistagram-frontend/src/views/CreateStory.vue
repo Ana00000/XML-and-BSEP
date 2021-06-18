@@ -8,18 +8,6 @@
       <v-card-text>
         <v-form class="mx-auto ml-5 mr-5">
           <v-text-field
-            label="Longitude"
-            v-model="longitude"
-            prepend-icon="mdi-address-circle"
-            v-if="!isHiddenLocation"
-          />
-          <v-text-field
-            label="Latitude"
-            v-model="latitude"
-            prepend-icon="mdi-address-circle"
-            v-if="!isHiddenLocation"
-          />
-          <v-text-field
             label="Country"
             v-model="country"
             prepend-icon="mdi-address-circle"
@@ -306,8 +294,6 @@ export default {
     },
     addLocation() {
       if (
-        !this.validLongitude() ||
-        !this.validLatitude() ||
         !this.validCountry() ||
         !this.validCity() ||
         !this.validStreetName() ||
@@ -538,32 +524,6 @@ export default {
     },
     getTag(item) {
       this.userTag = item;
-    },
-    validLongitude() {
-      if (this.longitude.length < 2) {
-        alert("Your longitude should contain at least 2 characters!");
-        return false;
-      } else if (this.longitude.length > 30) {
-        alert("Your longitude shouldn't contain more than 30 characters!");
-        return false;
-      } else if (this.longitude.match(/[!@#$%^&*:'<>+-/\\"]/g)) {
-        alert("Your longitude shouldn't contain those special characters.");
-        return false;
-      }
-      return true;
-    },
-    validLatitude() {
-      if (this.latitude.length < 2) {
-        alert("Your latitude should contain at least 2 characters!");
-        return false;
-      } else if (this.latitude.length > 30) {
-        alert("Your latitude shouldn't contain more than 30 characters!");
-        return false;
-      } else if (this.latitude.match(/[!@#$%^&*:'<>+-/\\"]/g)) {
-        alert("Your latitude shouldn't contain those special characters.");
-        return false;
-      }
-      return true;
     },
     validCountry() {
       if (this.country.length < 2) {
