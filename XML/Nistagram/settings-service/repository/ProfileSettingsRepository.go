@@ -113,7 +113,7 @@ func (repo *ProfileSettingsRepository) UpdateProfileSettings(profileSettings *dt
 	case "NONE":
 		messagesNotifications = model.NONE
 	}
-	
+
 
 	result := repo.Database.Model(&model.ProfileSettings{}).Where("user_id = ?", profileSettings.UserId)
 
@@ -129,4 +129,18 @@ func (repo *ProfileSettingsRepository) UpdateProfileSettings(profileSettings *dt
 
 	fmt.Println("updating profile settings")
 	return nil
+}
+
+func (repo *ProfileSettingsRepository) FindAllUserIdsFromProfileSettings(profileSettingsList []model.ProfileSettingsPostNotificationsProfiles) []uuid.UUID {
+
+	var allProfileSetting = repo.FindAllProfileSettings()
+	var userIdsList []uuid.UUID
+	for i := 0; i < len(allProfileSetting); i++ {
+		for j:=0; j<len(profileSettingsList); j++{
+			if allProfileSetting[i].ID == profileSettingsList[j].ProfileSettingsId{
+				userIdsList = append(userIdsList, allProfileSetting[i].UserId)
+			}
+		}
+	}
+	return userIdsList
 }

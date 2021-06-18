@@ -264,3 +264,27 @@ func (handler *ProfileSettingsHandler) UpdateProfileSettings(w http.ResponseWrit
 	w.Header().Set("Content-Type", "application/json")
 }
 
+/*
+//FIND ALL USERS WITH POST NOTIFICATIONS SET FOR USER
+func (handler *ProfileSettingsHandler) FindAllUsersForPostNotifications(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	userId := vars["userID"]
+
+	var classicUsers = handler.Service.FindAllUsersForPostNotifications(userId)
+	dataJson, _ := json.Marshal(classicUsers)
+	if dataJson != nil {
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status":    "success",
+			"location":  "ProfileSettingsHandler",
+			"action":    "FindAllUsersForPostNotifications",
+			"timestamp": time.Now().String(),
+		}).Info("Successfully found all users for post notifications!")
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(dataJson)
+		return
+	}
+	w.WriteHeader(http.StatusNotFound)
+}
+*/

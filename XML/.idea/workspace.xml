@@ -3,7 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="d09c2dcf-763b-4e85-9087-41b1e7136b80" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsPostNotificationsProfilesHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsPostNotificationsProfilesHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsPostNotificationsProfilesRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsPostNotificationsProfilesRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsService.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

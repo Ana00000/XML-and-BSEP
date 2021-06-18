@@ -21,6 +21,8 @@ type ProfileSettingsPostNotificationsProfilesHandler struct {
 	Validator *validator.Validate
 }
 
+
+
 func (handler *ProfileSettingsPostNotificationsProfilesHandler) CreateProfileSettingsPostNotificationsProfiles(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var profileSettingsPostNotificationsProfilesDTO dto.ProfileSettingsPostNotificationsProfilesDTO
@@ -72,4 +74,7 @@ func (handler *ProfileSettingsPostNotificationsProfilesHandler) CreateProfileSet
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+
+
 

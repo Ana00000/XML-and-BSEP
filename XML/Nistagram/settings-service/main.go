@@ -200,6 +200,8 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 	router.HandleFunc("/add_post_notifications_for_user/", handlerProfileSettingsPostNotificationsProfiles.CreateProfileSettingsPostNotificationsProfiles).Methods("POST")
 	router.HandleFunc("/add_story_notifications_for_user/", handlerProfileSettingsStoryNotificationsProfiles.CreateProfileSettingsStoryNotificationsProfiles).Methods("POST")
 
+	router.HandleFunc("/find_all_users_for_post_notifications/{userID}", handlerProfileSettings.FindAllUsersForPostNotifications).Methods("GET")
+
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
 
