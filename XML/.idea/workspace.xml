@@ -3,12 +3,17 @@
   <component name="ChangeListManager">
     <list default="true" id="d09c2dcf-763b-4e85-9087-41b1e7136b80" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsPostNotificationsProfilesRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsPostNotificationsProfilesRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateNotifications.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateNotifications.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateSettings.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/UpdateSettings.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoCONTENT.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoCONTENT.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoLOCATION.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoLOCATION.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoPOST.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoPOST.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoREQUESTS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoREQUESTS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoSTORY.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSTORY.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoTAG.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoTAG.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoUSER.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,27 +91,27 @@
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Agent/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Agent/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <method v="2" />
     </configuration>
     <recent_temporary>

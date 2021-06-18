@@ -23,7 +23,6 @@
                 <v-list-item
                   :key="user.id"
                   :value="user"
-                  v-on:click="redirectToSelectedUser"
                 >
                   <template>
                     <v-list-item-content>
@@ -110,17 +109,11 @@ export default {
         })
         .catch(console.log);
     },
-    redirectToSelectedUser() {
-      console.log("usao ovde i id je: " + this.selectedUser.id);
-      localStorage.setItem("selectedUserUsername", this.selectedUser.username);
-      localStorage.setItem("selectedUserId", this.selectedUser.id);
-      window.location.href = "https://localhost:8081/selectedUser";
-    },
     addPostNotificationForUser() {
       this.$http
         .get(
           "https://localhost:8080/api/settings/find_profile_settings_by_user_id/" +
-            localStorage.get("userId"),
+            localStorage.getItem("userId"),
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -138,7 +131,7 @@ export default {
           "https://localhost:8080/api/settings/add_post_notifications_for_user/",
           {
             profile_settings_id: userSettingsId,
-            post_notifications_profile_id: localStorage.get("selectedUserId"),
+            post_notifications_profile_id: localStorage.getItem("selectedUserId"),
           },
           {
             headers: {
@@ -159,7 +152,7 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/settings/find_profile_settings_by_user_id/" +
-            localStorage.get("userId"),
+            localStorage.getItem("userId"),
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -177,7 +170,7 @@ export default {
           "https://localhost:8080/api/settings/add_story_notifications_for_user/",
           {
             profile_settings_id: userSettingsId,
-            story_notifications_profile_id: localStorage.get("selectedUserId"),
+            story_notifications_profile_id: localStorage.getItem("selectedUserId"),
           },
           {
             headers: {

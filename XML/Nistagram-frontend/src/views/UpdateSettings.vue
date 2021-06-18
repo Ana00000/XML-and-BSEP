@@ -2,7 +2,9 @@
   <div>
     <v-container fluid class="container mt-1">
       <v-row>
-        <v-col cols="5" />
+        <v-col cols="5">
+           <label>Selected User Visibility</label>
+        </v-col>
         <v-col cols="3">
           <v-select
             v-model="selectedUserVisibility"
@@ -17,7 +19,9 @@
       </v-row>
 
       <v-row>
-        <v-col cols="5" />
+        <v-col cols="5">
+           <label>Selected Message Approval Type</label>
+        </v-col>
         <v-col cols="3">
           <v-select
             v-model="selectedMessageApprovalType"
@@ -32,7 +36,9 @@
       </v-row>
 
        <v-row>
-        <v-col cols="5" />
+        <v-col cols="5">
+           <label>Selected Likes Notifications</label>
+        </v-col>
         <v-col cols="3">
           <v-select
             v-model="selectedLikesNotifications"
@@ -47,7 +53,9 @@
       </v-row>
 
        <v-row>
-        <v-col cols="5" />
+        <v-col cols="5">
+           <label>Selected Comments Notifications</label>
+        </v-col>
         <v-col cols="3">
           <v-select
             v-model="selectedCommentsNotifications"
@@ -62,7 +70,9 @@
       </v-row>
 
       <v-row>
-        <v-col cols="5" />
+        <v-col cols="5">
+           <label>Selected Messages Notifications</label>
+        </v-col>
         <v-col cols="3">
           <v-select
             v-model="selectedMessagesNotifications"

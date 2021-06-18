@@ -78,7 +78,7 @@ func (repo *ProfileSettingsRepository) UpdateProfileSettings(profileSettings *dt
 	}
 
 	messageApprovalType := model.PUBLIC
-	switch profileSettings.UserVisibility {
+	switch profileSettings.MessageApprovalType {
 	case "PUBLIC":
 		messageApprovalType = model.PUBLIC
 	case "FRIENDS_ONLY":
