@@ -382,15 +382,14 @@ func initPostAuthorizationHandler(rbac *gorbac.RBAC, LogInfo *logrus.Logger,LogE
 	}
 }
 
-func initSettingsAuthorizationHandler(rbac *gorbac.RBAC, LogInfo *logrus.Logger,LogError *logrus.Logger,userService *service.UserService,permissionBlockUser *gorbac.Permission,
-	permissionMuteUser *gorbac.Permission) *handler.SettingsAuthorizationHandler{
+func initSettingsAuthorizationHandler(rbac *gorbac.RBAC, LogInfo *logrus.Logger,LogError *logrus.Logger,userService *service.UserService,permissionBlockUser *gorbac.Permission, permissionMuteUser *gorbac.Permission) *handler.SettingsAuthorizationHandler{
 	return &handler.SettingsAuthorizationHandler{
-		UserService:                          userService,
-		Rbac:                                 rbac,
-		PermissionBlockUser:           permissionBlockUser,
-		PermissionMuteUser:            permissionMuteUser,
-		LogInfo:  LogInfo,
-		LogError: LogError,
+		UserService:         userService,
+		Rbac:                rbac,
+		PermissionMuteUser:  permissionMuteUser,
+		PermissionBlockUser: permissionBlockUser,
+		LogInfo:             LogInfo,
+		LogError:            LogError,
 	}
 }
 

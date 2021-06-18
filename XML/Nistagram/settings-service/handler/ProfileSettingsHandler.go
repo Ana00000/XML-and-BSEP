@@ -12,16 +12,17 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	_ "strconv"
+	"strings"
 	"time"
 )
 
 type ProfileSettingsHandler struct {
-	Service   *service.ProfileSettingsService
-	ProfileSettingsMutedProfilesHandler * service.ProfileSettingsMutedProfilesService
-	ProfileSettingsBlockedProfilesHandler * service.ProfileSettingsBlockedProfilesService
-	LogInfo   *logrus.Logger
-	LogError  *logrus.Logger
-	Validator *validator.Validate
+	Service                               *service.ProfileSettingsService
+	ProfileSettingsMutedProfilesService   *service.ProfileSettingsMutedProfilesService
+	ProfileSettingsBlockedProfilesService *service.ProfileSettingsBlockedProfilesService
+	LogInfo                               *logrus.Logger
+	LogError                              *logrus.Logger
+	Validator                             *validator.Validate
 }
 
 func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWriter, r *http.Request) {
@@ -195,6 +196,26 @@ func (handler *ProfileSettingsHandler) FindAllPublicUsers(w http.ResponseWriter,
 	w.WriteHeader(http.StatusNotFound)
 }
 
+func ExtractToken(r *http.Request) string {
+	bearToken := r.Header.Get("Authorization")
+	strArr := strings.Split(bearToken, " ")
+	if len(strArr) == 2 {
+		return strArr[1]
+	}
+	return ""
+}
+
+func Request(url string, token string) *http.Response {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		panic(err)
+	}
+	tokenString := "Bearer "+token
+	req.Header.Set("Authorization", tokenString)
+	resp, err := http.DefaultClient.Do(req)
+	return resp
+}
+
 func (handler *ProfileSettingsHandler) FindAllNotBlockedAndMutedUsersForLoggedUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	loggedUserId := vars["id"]
@@ -223,10 +244,10 @@ func (handler *ProfileSettingsHandler) FindAllNotBlockedAndMutedUsersForLoggedUs
 		return
 	}
 
-	var usersThatLoggedUserBlocked, profilesSettingsForUsersWhoBlockedLoggedUser = handler.ProfileSettingsBlockedProfilesHandler.FindAllBlockedAndBlockingUsersForLoggedUser(profileSettingsForLoggedUser.ID, profileSettingsForLoggedUser.UserId)
+	var usersThatLoggedUserBlocked, profilesSettingsForUsersWhoBlockedLoggedUser = handler.ProfileSettingsBlockedProfilesService.FindAllBlockedAndBlockingUsersForLoggedUser(profileSettingsForLoggedUser.ID, profileSettingsForLoggedUser.UserId)
 	var usersForUsersWhoBlockedLoggedUser = handler.getListUserIdForListIdsOfProfilesSettings(profilesSettingsForUsersWhoBlockedLoggedUser)
 
-	var usersThatLoggedUserMuted = handler.ProfileSettingsMutedProfilesHandler.FindAllMutedUserForLoggedUser(profileSettingsForLoggedUser.ID)
+	var usersThatLoggedUserMuted = handler.ProfileSettingsMutedProfilesService.FindAllMutedUserForLoggedUser(profileSettingsForLoggedUser.ID)
 	var usersWithoutUsersThatLoggedUserBlocked = removeFromListIfExsist(classicUsersDTO, usersThatLoggedUserBlocked)
 	var usersWithoutUsersThatLoggedUserBlockedAndUsersWhoBlockedLoggedUser = removeFromListIfExsist(usersWithoutUsersThatLoggedUserBlocked, usersForUsersWhoBlockedLoggedUser)
 

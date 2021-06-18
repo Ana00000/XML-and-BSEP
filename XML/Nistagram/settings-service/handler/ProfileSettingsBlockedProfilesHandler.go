@@ -10,6 +10,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
+	"os"
 	_ "strconv"
 	"time"
 )
@@ -75,6 +76,33 @@ func (handler *ProfileSettingsBlockedProfilesHandler) CreateProfileSettingsBlock
 }
 
 func (handler *ProfileSettingsBlockedProfilesHandler) BlockUser(w http.ResponseWriter, r *http.Request) {
+
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response:=Request(reqUrlAuth,ExtractToken(r))
+	if response.StatusCode==401{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ProfileSettingsBlockedProfilesHandler",
+			"action":   "BlockUser",
+			"timestamp":   time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-block-user-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization,ExtractToken(r))
+	if res.StatusCode==403{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ProfileSettingsBlockedProfilesHandler",
+			"action":   "BlockUser",
+			"timestamp":   time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 401
+		return
+	}
+
 	var blockUserDTO dto.BlockUserDTO
 	if err := json.NewDecoder(r.Body).Decode(&blockUserDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{

@@ -367,11 +367,10 @@ export default {
         })
         .then((resp) => {
           console.log(resp.data);
-          alert("Successfully blocked user!");
+          alert("Successfully muted user!");
            window.location.href = "https://localhost:8081/";
         })
         .catch((err) => console.log(err));
-      
     },
     blockUser(){
       this.$http
