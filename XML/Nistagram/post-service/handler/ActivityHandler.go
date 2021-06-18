@@ -205,8 +205,8 @@ func (handler *ActivityHandler) FindAllActivitiesForPost(w http.ResponseWriter, 
 		return
 	}
 
-	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-activities-for-post-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
-	res := Request(reqUrlAutorization, ExtractToken(r))
+	reqUrlAuthorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-activities-for-post-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAuthorization, ExtractToken(r))
 	if res.StatusCode == 403 {
 		handler.LogError.WithFields(logrus.Fields{
 			"status":    "failure",
@@ -255,8 +255,33 @@ func (handler *ActivityHandler) FindAllActivitiesForPost(w http.ResponseWriter, 
 }
 
 func (handler *ActivityHandler) FindAllLikedPostsByUserId(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response := Request(reqUrlAuth, ExtractToken(r))
+	if response.StatusCode == 401 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location": "ActivityHandler",
+			"action": "FindAllLikedPostsByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
 
+	reqUrlAutorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-liked-post-by-user-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAutorization, ExtractToken(r))
+	if res.StatusCode == 403 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location": "ActivityHandler",
+			"action": "FindAllLikedPostsByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	userId := r.URL.Query().Get("user_id")
 
 	allLikedPostActivities := handler.Service.FindAllLikedPostsByUserId(uuid.MustParse(userId))
@@ -284,6 +309,32 @@ func (handler *ActivityHandler) FindAllLikedPostsByUserId(w http.ResponseWriter,
 }
 
 func (handler *ActivityHandler) FindAllDislikedPostsByUserId(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response := Request(reqUrlAuth, ExtractToken(r))
+	if response.StatusCode == 401 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location": "ActivityHandler",
+			"action": "FindAllDislikedPostsByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAuthorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-disliked-post-by-user-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAuthorization, ExtractToken(r))
+	if res.StatusCode == 403 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location": "ActivityHandler",
+			"action": "FindAllDislikedPostsByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
 	userId := r.URL.Query().Get("user_id")
