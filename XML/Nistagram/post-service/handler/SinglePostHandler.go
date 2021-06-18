@@ -147,6 +147,59 @@ func getJson(url string, target interface{}) error {
 	return json.NewDecoder(r.Body).Decode(target)
 }
 
+func (handler *SinglePostHandler) FindPostById(w http.ResponseWriter, r *http.Request) {
+	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	response := Request(reqUrlAuth, ExtractToken(r))
+	if response.StatusCode == 401 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location": "SinglePostHandler",
+			"action": "FindPostById",
+			"timestamp": time.Now().String(),
+		}).Error("User doesn't logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	reqUrlAuthorization := fmt.Sprintf("http://%s:%s/auth/check-find-post-by-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
+	res := Request(reqUrlAuthorization, ExtractToken(r))
+	if res.StatusCode == 403 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location": "SinglePostHandler",
+			"action": "FindPostById",
+			"timestamp": time.Now().String(),
+		}).Error("Forbidden method for logged in user!")
+		w.WriteHeader(http.StatusForbidden) // 403
+		return
+	}
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	postId := r.URL.Query().Get("post_id")
+
+	post := handler.SinglePostService.FindByID(uuid.MustParse(postId))
+	postJson, _ := json.Marshal(post)
+	if postJson != nil {
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status": "success",
+			"location": "SinglePostHandler",
+			"action": "FindPostById",
+			"timestamp": time.Now().String(),
+		}).Info("Successfully found post by id!")
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(postJson)
+		return
+	}
+
+	handler.LogError.WithFields(logrus.Fields{
+		"status": "failure",
+		"location": "SinglePostHandler",
+		"action": "FindPostById",
+		"timestamp": time.Now().String(),
+	}).Error("No post were found by id!")
+	w.WriteHeader(http.StatusBadRequest)
+}
+
 // for selected user (you can only select VALID users)
 func (handler *SinglePostHandler) FindAllPostsForUserNotRegisteredUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")

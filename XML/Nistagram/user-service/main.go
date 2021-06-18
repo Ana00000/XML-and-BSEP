@@ -531,6 +531,7 @@ func handleFunc(storyAuthorizationHandler *handler.StoryAuthorizationHandler, po
 	router.HandleFunc("/auth/check-find-all-posts-for-tag-reg-user-permission/", postAuthorizationHandler.CheckFindAllPostsForTagRegUserPermission).Methods("GET")
 	router.HandleFunc("/auth/check-find-all-posts-for-location-reg-user-permission/", postAuthorizationHandler.CheckFindAllPostsForLocationRegUserPermission).Methods("GET")
 	router.HandleFunc("/auth/check-find-all-posts-for-logged-user-permission/", postAuthorizationHandler.CheckFindAllPostsForLoggedUserPermission).Methods("GET")
+	router.HandleFunc("/auth/check-find-post-by-id-permission/", postAuthorizationHandler.CheckFindPostByIdPermission).Methods("GET")
 
 	//REQUESTS MICROSERVICE AUTHORIZATION
 	router.HandleFunc("/auth/check-create-follow-request-permission/", requestAuthorizationHandler.CheckCreateFollowRequestPermission).Methods("GET")
@@ -614,6 +615,7 @@ func main() {
 	permissionFindAllPostsForUserRegisteredUser := gorbac.NewStdPermission("permission-find-all-posts-for-user-registered-user")
 	permissionFindAllTagsForPublicAndFollowingPosts := gorbac.NewStdPermission("permission-find-all-tags-for-public-and-following-posts")
 	permissionFindAllLocationsForPublicAndFollowingPosts := gorbac.NewStdPermission("permission-find-all-locations-for-public-and-following-posts")
+	permissionFindPostById := gorbac.NewStdPermission("permission-find-post-by-id")
 
 	permissionCreateSinglePostContent := gorbac.NewStdPermission("permission-create-single-post-content")
 	permissionCreatePostAlbumContent := gorbac.NewStdPermission("permission-create-post-album-content")
@@ -701,6 +703,7 @@ func main() {
 	roleAgent.Assign(permissionFindRequestById)
 	roleAgent.Assign(permissionFindAllPendingFollowerRequestsForUser)
 	roleAgent.Assign(permissionCreateLocation)
+	roleAgent.Assign(permissionFindPostById)
 
 	roleAgent.Assign(permissionCreateSingleStory)
 	roleAgent.Assign(permissionFindAllPublicStoriesRegisteredUser)
@@ -771,6 +774,7 @@ func main() {
 	roleRegisteredUser.Assign(permissionFindRequestById)
 	roleRegisteredUser.Assign(permissionFindAllPendingFollowerRequestsForUser)
 	roleRegisteredUser.Assign(permissionCreateLocation)
+	roleRegisteredUser.Assign(permissionFindPostById)
 
 	roleRegisteredUser.Assign(permissionCreateSingleStory)
 	roleRegisteredUser.Assign(permissionFindAllPublicStoriesRegisteredUser)
