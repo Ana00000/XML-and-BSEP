@@ -11,6 +11,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/settings-service/service"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
+	"os"
 	_ "strconv"
 	"time"
 )
@@ -264,14 +265,31 @@ func (handler *ProfileSettingsHandler) UpdateProfileSettings(w http.ResponseWrit
 	w.Header().Set("Content-Type", "application/json")
 }
 
-/*
+
 //FIND ALL USERS WITH POST NOTIFICATIONS SET FOR USER
 func (handler *ProfileSettingsHandler) FindAllUsersForPostNotifications(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
 	userId := vars["userID"]
 
-	var classicUsers = handler.Service.FindAllUsersForPostNotifications(userId)
+	var classicUsersIds = handler.Service.FindAllUsersForPostNotifications(uuid.MustParse(userId))
+	var classicUsers []dto.ClassicUserDTO
+	var user dto.ClassicUserDTO
+	for i := 0; i < len(classicUsersIds); i++ {
+		reqUrl := fmt.Sprintf("http://%s:%s/find_user_by_id?id=%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), classicUsersIds[i])
+		err := getJson(reqUrl, &user)
+		if err!=nil{
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "ProfileSettingsHandler",
+				"action":   "FIALUSFOPONO455",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find user!")
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
+		classicUsers = append(classicUsers, user)
+	}
 	dataJson, _ := json.Marshal(classicUsers)
 	if dataJson != nil {
 		handler.LogInfo.WithFields(logrus.Fields{
@@ -287,4 +305,12 @@ func (handler *ProfileSettingsHandler) FindAllUsersForPostNotifications(w http.R
 	}
 	w.WriteHeader(http.StatusNotFound)
 }
-*/
+
+func getJson(url string, target interface{}) error {
+	r, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+	return json.NewDecoder(r.Body).Decode(target)
+}

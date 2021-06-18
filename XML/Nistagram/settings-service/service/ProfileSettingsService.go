@@ -56,4 +56,11 @@ func (service *ProfileSettingsService) UpdateProfileSettings(profileSettings *dt
 	return nil
 }
 
+func (service *ProfileSettingsService) FindAllUsersForPostNotifications(id uuid.UUID)[]uuid.UUID {
+	users := service.Repo.FindAllUsersForPostNotifications(id)
+	if users != nil {
+		return users
+	}
+	return nil
+}
 

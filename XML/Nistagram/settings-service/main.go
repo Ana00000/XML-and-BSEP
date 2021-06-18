@@ -52,8 +52,8 @@ func initDSN() string {
 	return dsn
 }
 
-func initProfileSettingsRepo(database *gorm.DB) *repository.ProfileSettingsRepository {
-	return &repository.ProfileSettingsRepository{Database: database}
+func initProfileSettingsRepo(database *gorm.DB,  profileSettingsPostNotificationsProfilesRepository *repository.ProfileSettingsPostNotificationsProfilesRepository) *repository.ProfileSettingsRepository {
+	return &repository.ProfileSettingsRepository{Database: database, ProfileSettingsPostNotificationsProfilesRepository: profileSettingsPostNotificationsProfilesRepository}
 }
 
 func initProfileSettingsServices(repo *repository.ProfileSettingsRepository) *service.ProfileSettingsService {
@@ -87,7 +87,7 @@ func initProfileSettingsRejectedMessageProfilesHandler(service *service.ProfileS
 }
 
 func initProfileSettingsApprovedMessageProfilesRepo(database *gorm.DB) *repository.ProfileSettingsApprovedMessageProfilesRepository {
-	return &repository.ProfileSettingsApprovedMessageProfilesRepository{Database: database}
+	return &repository.ProfileSettingsApprovedMessageProfilesRepository{Database: database }
 }
 
 func initProfileSettingsApprovedMessageProfilesServices(repo *repository.ProfileSettingsApprovedMessageProfilesRepository) *service.ProfileSettingsApprovedMessageProfilesService {
@@ -225,13 +225,7 @@ func main() {
 	logError.Formatter = &logrus.JSONFormatter{}
 
 	database := initDB()
-	repoProfileSettings := initProfileSettingsRepo(database)
-	serviceProfileSettings := initProfileSettingsServices(repoProfileSettings)
-	handlerProfileSettings := initProfileSettingsHandler(serviceProfileSettings, logInfo, logError, validator)
 
-	repoProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesRepo(database)
-	serviceProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesServices(repoProfileSettingsApprovedMessageProfiles)
-	handlerProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesHandler(serviceProfileSettingsApprovedMessageProfiles, logInfo, logError, validator)
 
 	repoProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesRepo(database)
 	serviceProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesServices(repoProfileSettingsBlockedProfiles)
@@ -245,9 +239,19 @@ func main() {
 	serviceProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesServices(repoProfileSettingsPostNotificationsProfiles)
 	handlerProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesHandler(serviceProfileSettingsPostNotificationsProfiles, logInfo, logError, validator)
 
+
+	repoProfileSettings := initProfileSettingsRepo(database, repoProfileSettingsPostNotificationsProfiles)
+	serviceProfileSettings := initProfileSettingsServices(repoProfileSettings)
+	handlerProfileSettings := initProfileSettingsHandler(serviceProfileSettings, logInfo, logError, validator)
+
 	repoProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesRepo(database)
 	serviceProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesServices(repoProfileSettingsStoryNotificationsProfiles)
 	handlerProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesHandler(serviceProfileSettingsStoryNotificationsProfiles, logInfo, logError, validator)
+
+
+	repoProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesRepo(database)
+	serviceProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesServices(repoProfileSettingsApprovedMessageProfiles)
+	handlerProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesHandler(serviceProfileSettingsApprovedMessageProfiles, logInfo, logError, validator)
 
 	repoProfileSettingsRejectedMessageProfiles := initProfileSettingsRejectedMessageProfilesRepo(database)
 	serviceProfileSettingsRejectedMessageProfiles := initProfileSettingsRejectedMessageProfilesServices(repoProfileSettingsRejectedMessageProfiles)

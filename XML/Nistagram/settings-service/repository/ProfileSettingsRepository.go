@@ -10,6 +10,7 @@ import (
 
 type ProfileSettingsRepository struct {
 	Database *gorm.DB
+	ProfileSettingsPostNotificationsProfilesRepository *ProfileSettingsPostNotificationsProfilesRepository
 }
 
 func (repo *ProfileSettingsRepository) CreateProfileSettings(profileSettings *model.ProfileSettings) error {
@@ -143,4 +144,10 @@ func (repo *ProfileSettingsRepository) FindAllUserIdsFromProfileSettings(profile
 		}
 	}
 	return userIdsList
+}
+
+func (repo *ProfileSettingsRepository) FindAllUsersForPostNotifications(id uuid.UUID) []uuid.UUID {
+	var profileSettings []model.ProfileSettingsPostNotificationsProfiles
+	profileSettings = repo.ProfileSettingsPostNotificationsProfilesRepository.FindAllProfileSettingsForPostNotifications(id)
+	return repo.FindAllUserIdsFromProfileSettings(profileSettings)
 }
