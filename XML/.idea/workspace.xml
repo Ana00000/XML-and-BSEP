@@ -2,23 +2,51 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d09c2dcf-763b-4e85-9087-41b1e7136b80" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateVerificationRequest.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Nistagram/requests-service/dto/VerificationRequestAcceptDTO.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/153350264BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/53465632038_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/components/NavigationBar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/components/NavigationBar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateVerificationRequest.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/CreateVerificationRequest.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedVerificationRequest.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedVerificationRequest.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/dto/VerificationRequestDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/dto/VerificationRequestDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/handler/VerificationRequestHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/handler/VerificationRequestHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/model/VerificationRequest.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/model/VerificationRequest.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/UserHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserRepository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/XWS Specifikacija Projekta.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/XWS Specifikacija Projekta.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/148490044BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/157547740BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/30301872738_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/352519872BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/367581040BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/420771916BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/433308600BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/437524830preuzmi.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/519794828BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/524181208BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/581990400BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/64912198038_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/706491648BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/77545810738_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/821880232BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/82680783638_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/919153572BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/987802551preuzmi.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/994524804BrckoGrad.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content-images/998448880preuzmi.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorREQUESTS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorREQUESTS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorUSER.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoCONTENT.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoCONTENT.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoLOCATION.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoLOCATION.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoPOST.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoPOST.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoREQUESTS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoREQUESTS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoSTORY.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSTORY.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoTAG.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoTAG.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoUSER.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

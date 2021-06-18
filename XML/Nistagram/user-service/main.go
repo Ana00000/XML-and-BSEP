@@ -662,7 +662,7 @@ func main() {
 	roleAdmin.Assign(permissionFindAllUsers)
 	roleAdmin.Assign(permissionUpdateUserInfo)
 	roleAdmin.Assign(permissionFindUserByID)
-	roleAdmin.Assign(permissionCreateVerificationRequest)
+
 	roleAdmin.Assign(permissionUpdateStatusVerificationRequest)
 	roleAdmin.Assign(permissionFindVerificationRequestById)
 	roleAdmin.Assign(permissionFindAllPendingVerificationRequests)
@@ -718,6 +718,7 @@ func main() {
 	roleAgent.Assign(permissionFindFollowerRequestById)
 	roleAgent.Assign(permissionFindAllPendingFollowerRequestsForUser)
 	roleAgent.Assign(permissionCreateLocation)
+	roleAgent.Assign(permissionCreateVerificationRequest)
 
 	roleAgent.Assign(permissionCreateSingleStory)
 	roleAgent.Assign(permissionFindAllPublicStoriesRegisteredUser)
@@ -801,7 +802,7 @@ func main() {
 	roleRegisteredUser.Assign(permissionFindAllFollowingStoryAlbums)
 	roleRegisteredUser.Assign(permissionCreateStoryHighlight)
 	roleRegisteredUser.Assign(permissionFindAllStoryHighlightsForUser)
-
+	roleRegisteredUser.Assign(permissionCreateVerificationRequest)
 
 	rbac.Add(roleAdmin)
 	rbac.Add(roleAgent)

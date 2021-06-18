@@ -347,20 +347,20 @@ func (handler *RegisteredUserHandler) UpdateUserCategory(w http.ResponseWriter, 
 		return
 	}
 
-	var categoryType = 0
+	var categoryType = model.NONE
 
 	if category == "INFLUENCER" {
-		categoryType = 0
+		categoryType = model.INFLUENCER
 	}else if category == "SPORTS" {
-		categoryType = 1
+		categoryType = model.SPORTS
 	}else if category == "NEW_MEDIA" {
-		categoryType = 2
+		categoryType =  model.NEW_MEDIA
 	}else if category == "BUSINESS" {
-		categoryType = 3
+		categoryType = model.BUSINESS
 	}else if category == "BRAND" {
-		categoryType = 4
+		categoryType = model.BRAND
 	}else if category == "ORGANIZATION" {
-		categoryType = 5
+		categoryType = model.ORGANIZATION
 	}
 
 	handler.RegisteredUserService.UpdateUserCategory(uuid.MustParse(id), categoryType)

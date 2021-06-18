@@ -64,7 +64,7 @@ func (repo *RegisteredUserRepository) UpdateRegisteredUserPassword(userId uuid.U
 	return nil
 }
 
-func (repo *RegisteredUserRepository) UpdateUserCategory(userId uuid.UUID, category int) error {
+func (repo *RegisteredUserRepository) UpdateUserCategory(userId uuid.UUID, category model.RegisteredUserCategory) error {
 	result := repo.Database.Model(&model.RegisteredUser{}).Where("id = ?", userId).Update("registered_user_category", category)
 	fmt.Println(result.RowsAffected)
 	fmt.Println("updating")

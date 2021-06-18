@@ -50,10 +50,9 @@
           </form>
         </v-form>
       </v-card-text>
-        <v-btn color="info mb-5" v-on:click="createRequest" v-if="isVisibleFinishButton">
-          Create
-        </v-btn>
-      </v-card-actions>
+      <v-btn color="info mb-5" v-on:click="createRequest" v-if="isVisibleFinishButton">
+        Create
+      </v-btn>
     </v-card>
     <div class="spacing" />
   </div>
@@ -72,7 +71,7 @@ export default {
     allUserTags: [],
     userId: null,
     token: null,
-    path: null,
+    path: "",
     isVisibleFinishButton: false
   }),
   mounted() {
@@ -146,31 +145,30 @@ export default {
         .catch((er) => {
           console.log(er.response.data);
         });
-    },,
+    },
     ValidteType() {
       let pathFile = "";
-      if (this.selectedType === "PICTURE") {
-        pathFile = document.getElementById("pic").value;
-        this.GetExtension(pathFile);
-        console.log(this.extension);
-        if (
-          this.extension === "PNG" ||
-          this.extension === "png" ||
-          this.extension === "JPG" ||
-          this.extension === "jpg" ||
-          this.extension === "jpeg" ||
-          this.extension === "JPEG"
-        ) {
-          this.isVisibleFinishButton = true;
-        } else {
-          this.isVisibleFinishButton = false;
-          alert(
-            "Please, choose a picture in a correct format e.g. png, jpg or jpeg."
-          );
-        }
+      pathFile = document.getElementById("pic").value;
+      this.GetExtension(pathFile);
+      console.log(this.extension);
+      if (
+        this.extension === "PNG" ||
+        this.extension === "png" ||
+        this.extension === "JPG" ||
+        this.extension === "jpg" ||
+        this.extension === "jpeg" ||
+        this.extension === "JPEG"
+      ) {
+        this.isVisibleFinishButton = true;
+      } else {
+        this.isVisibleFinishButton = false;
+        alert(
+          "Please, choose a picture in a correct format e.g. png, jpg or jpeg."
+        );
       } 
     }
-};
+}
+}
 </script>
 
 <style scoped>

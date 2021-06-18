@@ -162,9 +162,9 @@ export default {
       this.getRequest();
     },
     getRequest() {
-      console.log(this.selectedVerificationRequestId);
+      console.log(this.selectedRequestId);
       this.$http
-        .get("https://localhost:8080/api/requests/find_verification_request_by_id?id=" + this.selectedVerificationRequestId,{
+        .get("https://localhost:8080/api/requests/find_verification_request_by_id?id=" + this.selectedRequestId,{
             headers: {
               Authorization: "Bearer " + this.token,
             },
@@ -203,9 +203,10 @@ export default {
     acceptRequest() {
     
      this.$http
-        .post("https://localhost:8080/api/user/accept_verification_request", {
-          id: this.selectedVerificationRequest,
-          userId: this.userRequestId;
+        .post("https://localhost:8080/api/requests/accept_verification_request", {
+          id: this.selectedRequestId,
+          user_id: this.userRequestId,
+          registered_user_category: this.status,
         },{
             headers: {
               Authorization: "Bearer " + this.token,
@@ -221,7 +222,7 @@ export default {
     },
     rejectRequest(){
        this.$http
-        .post("https://localhost:8080/api/requests/reject_verification_request?id="+this.selectedVerificationRequest, {},{
+        .post("https://localhost:8080/api/requests/reject_verification_request?id="+this.selectedRequestId, {},{
             headers: {
               Authorization: "Bearer " + this.token,
             },

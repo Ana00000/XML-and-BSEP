@@ -63,13 +63,13 @@ export default {
     methods:{
     init(){
         this.userType =localStorage.getItem('userType');
-        this.userPrivacy = localStorage.getItem('userPrivacy')
+        this.userPrivacy = localStorage.getItem('userPrivacy');
         
         console.log(this.userPrivacy)
         if (this.userType == 0){   // ADMIN
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Update Profile', path: '/updateProfile' },
                 { title: 'Verification Requests', path: '/verificationRequests' }
             ]
         } else if (this.userType == 1) {   // REGISTERED_USER
@@ -118,6 +118,7 @@ export default {
                 { title: 'Search Users', path: '/searchUsers' },
                 { title: 'Search Locations', path: '/searchLocationsRegistered' },
                 { title: 'Search Tags', path: '/searchTagsRegistered' },
+                { title: 'Create verification request', path: '/createVerificationRequest' },
             ]
             }
         } else if (this.userType == 2) {   // AGENT

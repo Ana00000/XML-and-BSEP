@@ -261,7 +261,7 @@ func (handler *VerificationRequestHandler) RejectVerificationRequest(w http.Resp
 func (handler *VerificationRequestHandler) AcceptVerificationRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 
-	var verificationRequestAcceptDTO dto.VerificationRequestAcceptDTO;
+	var verificationRequestAcceptDTO dto.VerificationRequestAcceptDTO
 	if err := json.NewDecoder(r.Body).Decode(&verificationRequestAcceptDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status":    "failure",

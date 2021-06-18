@@ -43,7 +43,7 @@ func (service *RegisteredUserService) UpdateRegisteredUserPassword(userId uuid.U
 	return nil
 }
 
-func (service *RegisteredUserService) UpdateUserCategory(userId uuid.UUID, category int) error {
+func (service *RegisteredUserService) UpdateUserCategory(userId uuid.UUID, category model.RegisteredUserCategory) error {
 	err := service.Repo.UpdateUserCategory(userId, category)
 	if err != nil {
 		return err
