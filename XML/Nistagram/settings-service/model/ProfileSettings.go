@@ -13,6 +13,9 @@ type ProfileSettings struct {
 	IsPostTaggable      bool                `json:"is_post_taggable" gorm:"not null"`
 	IsStoryTaggable     bool                `json:"is_story_taggable" gorm:"not null"`
 	IsCommentTaggable   bool                `json:"is_comment_taggable" gorm:"not null"`
+	LikesNotifications NotificationType `json:"likes_notifications" gorm:"not null"`
+	CommentsNotifications NotificationType `json:"comments_notifications" gorm:"not null"`
+	MessagesNotifications NotificationType `json:"messages_notifications" gorm:"not null"`
 }
 
 func (profileSettings *ProfileSettings) BeforeCreate(scope *gorm.DB) error {
