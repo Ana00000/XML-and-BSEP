@@ -35,6 +35,9 @@ func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWrit
 		IsPostTaggable:      true,
 		IsStoryTaggable:     true,
 		IsCommentTaggable:   true,
+		LikesNotifications: model.ALL_NOTIFICATIONS,
+		CommentsNotifications: model.ALL_NOTIFICATIONS,
+		MessagesNotifications: model.ALL_NOTIFICATIONS,
 	}
 
 	if err := handler.Service.CreateProfileSettings(&profileSettings); err != nil {
@@ -91,6 +94,35 @@ func (handler *ProfileSettingsHandler) FindProfileSettingByUserId(w http.Respons
 		messageApprovalType = "FRIENDS_ONLY"
 	}
 
+	likesNotifications :=""
+	if  profileSettings.LikesNotifications == model.ALL_NOTIFICATIONS{
+		likesNotifications = "ALL_NOTIFICATIONS"
+	}else if  profileSettings.LikesNotifications == model.FRIENDS_NOTIFICATIONS{
+			likesNotifications = "FRIENDS_NOTIFICATIONS"
+	}else if profileSettings.LikesNotifications == model.NONE {
+		likesNotifications = "NONE"
+	}
+
+	commentsNotifications :=""
+	if  profileSettings.CommentsNotifications == model.ALL_NOTIFICATIONS{
+		commentsNotifications = "ALL_NOTIFICATIONS"
+	}else if  profileSettings.CommentsNotifications == model.FRIENDS_NOTIFICATIONS{
+		commentsNotifications = "FRIENDS_NOTIFICATIONS"
+	}else if profileSettings.CommentsNotifications == model.NONE {
+		commentsNotifications = "NONE"
+	}
+
+	messagesNotifications :=""
+	if  profileSettings.MessagesNotifications == model.ALL_NOTIFICATIONS{
+		messagesNotifications = "ALL_NOTIFICATIONS"
+	}else if  profileSettings.MessagesNotifications == model.FRIENDS_NOTIFICATIONS{
+		messagesNotifications = "FRIENDS_NOTIFICATIONS"
+	}else if profileSettings.MessagesNotifications == model.NONE {
+		messagesNotifications = "NONE"
+	}
+
+
+
 	var profileSettingsDTO = dto.ProfileSettingsDTO{
 		UserId:              profileSettings.UserId,
 		UserVisibility:      userVisibility,
@@ -98,6 +130,10 @@ func (handler *ProfileSettingsHandler) FindProfileSettingByUserId(w http.Respons
 		IsPostTaggable:      profileSettings.IsPostTaggable,
 		IsStoryTaggable:     profileSettings.IsStoryTaggable,
 		IsCommentTaggable:   profileSettings.IsCommentTaggable,
+		LikesNotifications: likesNotifications,
+		CommentsNotifications: commentsNotifications,
+		MessagesNotifications: messagesNotifications,
+
 	}
 
 	profileSettingsDTOJson, _ := json.Marshal(profileSettingsDTO)
@@ -159,24 +195,9 @@ func (handler *ProfileSettingsHandler) FindAllPublicUsers(w http.ResponseWriter,
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
-	/*if err := handler.Validator.Struct(&classicUsersDTO); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status":    "failure",
-			"location":  "ProfileSettingsHandler",
-			"action":    "FIDALLPUBUS3110",
-			"timestamp": time.Now().String(),
-		}).Error("ClassicUsersDTO fields aren't in valid format!")
-		w.WriteHeader(http.StatusBadRequest) //400
-		return
-	}*/
+
 
 	var classicUsers = handler.Service.FindAllPublicUsers(classicUsersDTO)
-	/*if classicUsers == nil {
-		fmt.Println("Ne postoji!")
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}*/
-
 	dataJson, _ := json.Marshal(classicUsers)
 	if dataJson != nil {
 		handler.LogInfo.WithFields(logrus.Fields{
@@ -220,18 +241,7 @@ func (handler *ProfileSettingsHandler) UpdateProfileSettings(w http.ResponseWrit
 		w.WriteHeader(http.StatusBadRequest) // 400
 		return
 	}
-	/*
-	if err := handler.Validator.Struct(&profileSettingsDTO); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "ProfileSettingsHandler",
-			"action":   "UPPRSEO777",
-			"timestamp":   time.Now().String(),
-		}).Error("ProfileSettingsDTO fields aren't entered in valid format!")
-		w.WriteHeader(http.StatusBadRequest) // 400
-		return
-	}
-*/
+
 	err := handler.Service.UpdateProfileSettings(&profileSettingsDTO)
 	if err != nil {
 		handler.LogError.WithFields(logrus.Fields{
