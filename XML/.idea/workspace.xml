@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d09c2dcf-763b-4e85-9087-41b1e7136b80" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsPostNotificationsProfilesRepository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsStoryNotificationsProfilesRepository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsPostNotificationsProfilesService.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsStoryNotificationsProfilesService.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsPostNotificationsProfilesHandler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsStoryNotificationsProfilesHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
