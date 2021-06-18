@@ -224,6 +224,11 @@ const routes = [
     path: '/updateSettings',
     name: '/UpdateSettings',
     component: () => import('../views/UpdateSettings.vue')
+  },
+  {
+    path: '/updateNotifications',
+    name: '/UpdateNotifications',
+    component: () => import('../views/UpdateNotifications.vue')
   }
 ]
 
