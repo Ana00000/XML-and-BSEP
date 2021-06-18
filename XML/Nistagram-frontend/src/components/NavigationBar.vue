@@ -94,6 +94,7 @@ export default {
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'My Collections', path: '/myCollections' },
+                { title: 'Create verification request', path: '/createVerificationRequest' },
             ]
 
             }else{

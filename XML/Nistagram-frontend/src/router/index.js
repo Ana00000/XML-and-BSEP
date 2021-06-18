@@ -230,6 +230,11 @@ const routes = [
     name: 'SelectedVerificationRequest',
     component: () => import('../views/SelectedVerificationRequest.vue')
   },
+  {
+    path: '/createVerificationRequest',
+    name: 'CreateVerificationRequest',
+    component: () => import('../views/CreateVerificationRequest.vue')
+  },
 ]
 
 const router = new VueRouter({
