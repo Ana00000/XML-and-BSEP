@@ -31,6 +31,51 @@
         </v-col>
       </v-row>
 
+       <v-row>
+        <v-col cols="5" />
+        <v-col cols="3">
+          <v-select
+            v-model="selectedLikesNotifications"
+            hint="Choose likes notifications option."
+            :items="notificationTypes"
+            item-text="state"
+            return-object
+            single-line
+            v-bind:readonly="isReadOnly"
+          />
+        </v-col>
+      </v-row>
+
+       <v-row>
+        <v-col cols="5" />
+        <v-col cols="3">
+          <v-select
+            v-model="selectedCommentsNotifications"
+            hint="Choose comments notifications option."
+            :items="notificationTypes"
+            item-text="state"
+            return-object
+            single-line
+            v-bind:readonly="isReadOnly"
+          />
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="5" />
+        <v-col cols="3">
+          <v-select
+            v-model="selectedMessagesNotifications"
+            hint="Choose messages notifications option."
+            :items="notificationTypes"
+            item-text="state"
+            return-object
+            single-line
+            v-bind:readonly="isReadOnly"
+          />
+        </v-col>
+      </v-row>
+
       <input type="checkbox" id="checkboxPostTaggable" v-model="isPostTaggable" v-bind:readonly="isReadOnly"/>
       <label for="checkboxPostTaggable" v-if="isPostTaggable == false"> Post can't be tagged</label>
       <label for="checkboxPostTaggable" v-if="isPostTaggable == true"> Post can be tagged</label>
@@ -96,6 +141,10 @@ export default {
     selectedUserVisibility: "",
     messageApprovalTypes: ["PUBLIC", "FRIENDS_ONLY"],
     selectedMessageApprovalType: "",
+    notificationTypes: ["ALL_NOTIFICATIONS", "FRIENDS_NOTIFICATIONS", "NONE"],
+    selectedLikesNotifications: "",
+    selectedCommentsNotifications: "",
+    selectedMessagesNotifications: "",
     isPostTaggable: null,
     isStoryTaggable: null,
     isCommentTaggable: null,
@@ -147,6 +196,9 @@ export default {
         localStorage.setItem("userPrivacy", "PRIVATE");
       }
       this.selectedMessageApprovalType = item.message_approval_type;
+      this.selectedLikesNotifications = item.likes_notifications;
+      this.selectedCommentsNotifications = item.comments_notifications;
+      this.selectedMessagesNotifications = item.messages_notifications;
       this.isPostTaggable = item.is_post_taggable;
       this.isStoryTaggable = item.is_story_taggable;
       this.isCommentTaggable = item.is_comment_taggable;
@@ -162,6 +214,9 @@ export default {
             user_id: this.id,
             user_visibility: this.selectedUserVisibility,
             message_approval_type: this.selectedMessageApprovalType,
+            likes_notifications: this.selectedLikesNotifications,
+            comments_notifications: this.selectedCommentsNotifications,
+            messages_notifications: this.selectedMessagesNotifications,
             is_post_taggable: this.isPostTaggable,
             is_story_taggable: this.isStoryTaggable,
             is_comment_taggable: this.isCommentTaggable,
