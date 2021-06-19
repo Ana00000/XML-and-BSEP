@@ -2,7 +2,45 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d09c2dcf-763b-4e85-9087-41b1e7136b80" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/content-images/058719377BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/074733390BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/085223256BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/123319560preuzmi.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/211500320BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/237773531BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/271282576BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/341070023BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/369305708BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/40209045238_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/426424416BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/47209992538_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/503661803189519451_389206172405456_4406174551825109659_n.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/52268460438_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/766351738preuzmi.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/796588975preuzmi.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/807300734preuzmi.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/929332677189519451_389206172405456_4406174551825109659_n.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostAlbumByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostAlbumByIdWithoutActivity.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/PostById.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryAlbumByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryAlbumByIdWithoutActivity.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryByIdWithoutActivity.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/StoryByIdWithoutActivity.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/handler/PostICRHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/handler/PostICRHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/story-service/handler/StoryAlbumHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/story-service/handler/StoryAlbumHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorCONTENT.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorCONTENT.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorLOCATION.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorLOCATION.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorREQUESTS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorREQUESTS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorSTORY.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorSTORY.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorTAG.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorTAG.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorUSER.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoCONTENT.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoCONTENT.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoLOCATION.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoLOCATION.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoPOST.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoPOST.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoREQUESTS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoREQUESTS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoSTORY.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSTORY.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoTAG.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoTAG.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoUSER.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,27 +118,27 @@
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Agent/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Agent/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Nistagram/settings-service/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="XML" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <package value="github.com/xml/XML-and-BSEP/XML" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Nistagram/user-service/main.go" />
       <method v="2" />
     </configuration>
     <recent_temporary>

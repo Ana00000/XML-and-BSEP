@@ -35,7 +35,7 @@ func (handler *PostICRHandler) CreatePostICR(w http.ResponseWriter, r *http.Requ
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
-
+	/*
 	if err := handler.Validator.Struct(&postICRDTO); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status":    "failure",
@@ -46,7 +46,7 @@ func (handler *PostICRHandler) CreatePostICR(w http.ResponseWriter, r *http.Requ
 		w.WriteHeader(http.StatusBadRequest) //400
 		return
 	}
-
+	*/
 	postICR := model.PostICR{
 		InappropriateContentRequest: model.InappropriateContentRequest{
 			ID:     uuid.UUID{},

@@ -239,6 +239,17 @@
               {{ item.tags }}
             </v-card-text>
 
+            <v-list-item-content>
+              <v-text-field
+                label="Note"
+                v-model="commentNote"
+                prepend-icon="mdi-address-circle"
+                class="note"
+              />
+              <v-btn color="info mb-5" v-on:click="reportComment(item.id)">
+                Report Comment
+              </v-btn>
+            </v-list-item-content>
             <v-card-actions>
               <v-list-item class="grow" v-if="!isHiddenUserName">
                 <v-list-item-avatar
@@ -263,17 +274,7 @@
                   <v-list-item-title>{{ item.userName }}</v-list-item-title>
                 </v-list-item-content>
 
-                <v-list-item-content>
-                  <v-text-field
-                    label="Note"
-                    v-model="commentNote"
-                    prepend-icon="mdi-address-circle"
-                    class="note"
-                  />
-                  <v-btn color="info mb-5" v-on:click="reportComment(item.id)">
-                    Report Comment
-                  </v-btn>
-                </v-list-item-content>
+                
               </v-list-item>
             </v-card-actions>
           </v-card>
@@ -348,6 +349,7 @@ export default {
     isHiddenReportPost: false,
     isHiddenReportPostFinal: true,
     commentNote: "",
+    postID: "",
   }),
   mounted() {
     this.init();
@@ -418,6 +420,7 @@ export default {
         )
         .then((response) => {
           this.post = response.data;
+          this.postID = response.data.post_id;
         })
         .catch(console.log);
 
@@ -486,8 +489,8 @@ export default {
           "https://localhost:8080/api/requests/postICR/",
           {
             note: this.note,
-            userId: localStorage.get("userId"),
-            postId: this.post.id,
+            postId:  this.postID,
+            userId: localStorage.getItem("userId"),
           },
           {
             headers: {
@@ -529,7 +532,7 @@ export default {
           "https://localhost:8080/api/requests/commentICR/",
           {
             note: this.commentNote,
-            userId: localStorage.get("userId"),
+            userId: localStorage.getItem("userId"),
             commentId: reportCommentId,
           },
           {
@@ -540,7 +543,7 @@ export default {
         )
         .then((response) => {
           console.log(response.data);
-          alert("Post was reported.");
+          alert("Comment was reported.");
           window.location.href = "https://localhost:8081/";
         })
         .catch((er) => {
@@ -611,7 +614,7 @@ export default {
             .then((resp) => {
               console.log(resp.data);
               this.allData.push({
-                id: r.data.id,
+                id: item.id,
                 text: item.text,
                 gender: this.gender,
                 userName: this.userName,

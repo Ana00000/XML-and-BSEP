@@ -174,7 +174,7 @@ export default {
           "https://localhost:8080/api/requests/postICR/",
           {
             note: this.note,
-            userId: localStorage.get("userId"),
+            userId: localStorage.getItem("userId"),
             postId: localStorage.getItem("mySelectedPostAlbumId"),
           },
           {

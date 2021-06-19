@@ -221,7 +221,7 @@ export default {
           "https://localhost:8080/api/requests/storyICR/",
           {
             note: this.note,
-            userId: localStorage.get("userId"),
+            userId: localStorage.getItem("userId"),
             storyId: localStorage.getItem("mySelectedStoryId"),
           },
           {
