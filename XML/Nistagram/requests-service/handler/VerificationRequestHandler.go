@@ -50,29 +50,29 @@ func (handler *VerificationRequestHandler) CreateVerificationRequest(w http.Resp
 		return
 	}
 
-	cetegory := model.INFLUENCER;
+	category := model.INFLUENCER
 	if verificationRequestDTO.RegisteredUserCategory == "INFLUENCER" {
-		cetegory = model.INFLUENCER;
+		category = model.INFLUENCER
 	}else if verificationRequestDTO.RegisteredUserCategory == "SPORTS" {
-		cetegory = model.SPORTS;
+		category = model.SPORTS
 	}else if verificationRequestDTO.RegisteredUserCategory == "NEW_MEDIA" {
-		cetegory = model.NEW_MEDIA;
+		category = model.NEW_MEDIA
 	}else if verificationRequestDTO.RegisteredUserCategory == "BUSINESS" {
-		cetegory = model.BUSINESS;
+		category = model.BUSINESS
 	}else if verificationRequestDTO.RegisteredUserCategory == "BRAND" {
-		cetegory = model.BRAND;
+		category = model.BRAND
 	}else if verificationRequestDTO.RegisteredUserCategory == "ORGANIZATION" {
-		cetegory = model.ORGANIZATION;
+		category = model.ORGANIZATION
 	}
 
 	verificationRequest := model.VerificationRequest{
-		ID:                     uuid.UUID{},
-		FirstName:              verificationRequestDTO.FirstName,
-		LastName:               verificationRequestDTO.LastName,
-		OfficialDocumentPath:   pathPostGlobal,
-		RegisteredUserCategory: cetegory,
+		ID:                        uuid.UUID{},
+		FirstName:                 verificationRequestDTO.FirstName,
+		LastName:                  verificationRequestDTO.LastName,
+		OfficialDocumentPath:      pathPostGlobal,
+		RegisteredUserCategory:    category,
 		VerificationRequestStatus: model.PENDING,
-		UserId: verificationRequestDTO.UserId,
+		UserId:                    verificationRequestDTO.UserId,
 	}
 
 	if err := handler.Service.CreateVerificationRequest(&verificationRequest); err != nil {
@@ -302,6 +302,20 @@ func (handler *VerificationRequestHandler) AcceptVerificationRequest(w http.Resp
 			"action":   "AcceptVerificationRequest",
 			"timestamp":   time.Now().String(),
 		}).Error("Failed to update user category!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+
+	reqUrl = fmt.Sprintf("http://%s:%s/update_official_document_path/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), verificationRequestAcceptDTO.UserId)
+	jsonODP, _ := json.Marshal(verificationRequestAcceptDTO.OfficialDocumentPath)
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonODP))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "VerificationRequestHandler",
+			"action":   "AcceptVerificationRequest",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to update official document path for user!")
 		w.WriteHeader(http.StatusFailedDependency)
 		return
 	}

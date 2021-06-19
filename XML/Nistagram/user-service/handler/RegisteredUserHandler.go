@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/mikespook/gorbac"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
@@ -301,7 +302,7 @@ func (handler *RegisteredUserHandler) UpdateUserCategory(w http.ResponseWriter, 
 	id := r.URL.Query().Get("id")
 
 
-	if err := TokenValid(r); err != nil {
+	/*if err := TokenValid(r); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
 			"location":   "RegisteredUserHandler",
@@ -330,7 +331,7 @@ func (handler *RegisteredUserHandler) UpdateUserCategory(w http.ResponseWriter, 
 		}).Error("User is not authorized to update user information!")
 		w.WriteHeader(http.StatusForbidden)
 		return
-	}
+	}*/
 
 
 
@@ -364,6 +365,39 @@ func (handler *RegisteredUserHandler) UpdateUserCategory(w http.ResponseWriter, 
 	}
 
 	handler.RegisteredUserService.UpdateUserCategory(uuid.MustParse(id), categoryType)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *RegisteredUserHandler) UpdateOfficialDocumentPath(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var officalDocumentPath string
+	if err := json.NewDecoder(r.Body).Decode(&officalDocumentPath); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "UpdateOfficialDocumentPath",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to string!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	err := handler.RegisteredUserService.UpdateOfficialDocumentPath(uuid.MustParse(id), officalDocumentPath)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "UpdateOfficialDocumentPath",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed updating official document path for user!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")

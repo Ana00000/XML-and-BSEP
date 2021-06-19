@@ -50,3 +50,11 @@ func (service *RegisteredUserService) UpdateUserCategory(userId uuid.UUID, categ
 	}
 	return nil
 }
+
+func (service *RegisteredUserService) UpdateOfficialDocumentPath(id uuid.UUID, path string) error{
+	err := service.Repo.UpdateOfficialDocumentPath(id, path)
+	if err != nil {
+		return err
+	}
+	return nil
+}

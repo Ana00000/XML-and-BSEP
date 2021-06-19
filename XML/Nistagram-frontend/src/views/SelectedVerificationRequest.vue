@@ -183,19 +183,19 @@ export default {
       this.lastName =  item.last_name;
       this.path = item.official_document_path;
       this.userRequestId = item.user_id;
-      if(item.registered_user_category == 0){
+      if(item.registered_user_category == 1){
           this.status = "INFLUENCER";
-      }else if(item.registered_user_category == 1){
-          this.status = "SPORTS";
       }else if(item.registered_user_category == 2){
-          this.status = "NEW_MEDIA";
+          this.status = "SPORTS";
       }else if(item.registered_user_category == 3){
-          this.status = "BUSINESS";
+          this.status = "NEW_MEDIA";
       }else if(item.registered_user_category == 4){
-          this.status = "BRAND";
+          this.status = "BUSINESS";
       }else if(item.registered_user_category == 5){
-          this.status = "ORGANIZATION";
+          this.status = "BRAND";
       }else if(item.registered_user_category == 6){
+          this.status = "ORGANIZATION";
+      }else if(item.registered_user_category == 0){
           this.status = "NONE";
       }
       
@@ -206,6 +206,7 @@ export default {
         .post("https://localhost:8080/api/requests/accept_verification_request", {
           id: this.selectedRequestId,
           user_id: this.userRequestId,
+          official_document_path: this.path,
           registered_user_category: this.status,
         },{
             headers: {

@@ -475,7 +475,7 @@ func handleFunc(storyAuthorizationHandler *handler.StoryAuthorizationHandler, po
 	router.HandleFunc("/check_if_authentificated/", userHandler.CheckIfAuthentificated).Methods("GET")
 	router.HandleFunc("/get_user_id_by_jwt/", userHandler.GetUserIDFromJWTToken).Methods("GET")
 	router.HandleFunc("/update_user_category", registeredUserHandler.UpdateUserCategory).Methods("POST")
-
+	router.HandleFunc("/update_official_document_path/{id}", registeredUserHandler.UpdateOfficialDocumentPath).Methods("POST")
 	//LOCATION MICROSERVICE AUTHORIZATION
 	router.HandleFunc("/auth/check-create-location-permission/", locationAuthorizationHandler.CheckCreateLocationPermission).Methods("POST")
 

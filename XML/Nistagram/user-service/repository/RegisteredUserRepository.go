@@ -70,3 +70,10 @@ func (repo *RegisteredUserRepository) UpdateUserCategory(userId uuid.UUID, categ
 	fmt.Println("updating")
 	return nil
 }
+
+func (repo *RegisteredUserRepository) UpdateOfficialDocumentPath(id uuid.UUID, path string) error {
+	result := repo.Database.Model(&model.RegisteredUser{}).Where("id = ?", id).Update("official_document_path", path)
+	fmt.Println(result.RowsAffected)
+	fmt.Println("updating")
+	return nil
+}
