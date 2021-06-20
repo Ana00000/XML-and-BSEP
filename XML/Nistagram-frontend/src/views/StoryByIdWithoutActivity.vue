@@ -95,6 +95,31 @@
         </v-layout>
       </v-container>
     </v-container>
+
+    <v-btn
+      color="info mb-5"
+      v-on:click="
+        (isHiddenReportStoryFinal = false), (isHiddenReportStory = true)
+      "
+      v-if="!isHiddenReportStory"
+    >
+      Report Story
+    </v-btn>
+
+    <v-text-field
+      label="Note"
+      v-model="note"
+      prepend-icon="mdi-address-circle"
+      v-if="!isHiddenReportStoryFinal"
+    />
+
+    <v-btn
+      color="info mb-5"
+      v-on:click="reportStory"
+      v-if="!isHiddenReportStoryFinal"
+    >
+      Report
+    </v-btn>
   </div>
 </template>
 
@@ -106,6 +131,9 @@ export default {
     token: null,
     highlightedStoryId: null,
     highlightedStories: [],
+    isHiddenReportStory: true,
+    isHiddenReportStoryFinal: true,
+    note: "",
   }),
   mounted() {
     this.init();
@@ -115,13 +143,11 @@ export default {
       this.token = localStorage.getItem("token");
 
       this.$http
-        .get(
-          "https://localhost:8080/api/user/check_if_authentificated/",{
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-          }
-        )
+        .get("https://localhost:8080/api/user/check_if_authentificated/", {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
         .then((resp) => {
           console.log("User is authentificated!");
           console.log(resp.data);
@@ -133,7 +159,8 @@ export default {
 
       this.$http
         .get(
-          "https://localhost:8080/api/user/auth/check-find-selected-story-by-id-for-registered-users-permission/",{
+          "https://localhost:8080/api/user/auth/check-find-selected-story-by-id-for-registered-users-permission/",
+          {
             headers: {
               Authorization: "Bearer " + this.token,
             },
@@ -155,11 +182,13 @@ export default {
           "https://localhost:8080/api/story/find_selected_story_reg?id=" +
             localStorage.getItem("mySelectedStoryId") +
             "&logId=" +
-            localStorage.getItem("mySelectedUserId"),{
+            localStorage.getItem("mySelectedUserId"),
+          {
             headers: {
               Authorization: "Bearer " + this.token,
             },
-        })
+          }
+        )
         .then((response) => {
           this.story = response.data;
         })
@@ -168,16 +197,64 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_story_highlights_for_user?id=" +
-            localStorage.getItem("userId"),{
+            localStorage.getItem("userId"),
+          {
             headers: {
               Authorization: "Bearer " + this.token,
             },
-            }
+          }
         )
         .then((response) => {
           this.highlightedStories = response.data;
         })
         .catch(console.log);
+
+      if (localStorage.getItem("userPrivacy") != null) {
+        this.isHiddenReportStory = false;
+      }
+    },
+    reportStory() {
+      if (!this.validReportNote()) return;
+
+      this.$http
+        .post(
+          "https://localhost:8080/api/requests/storyICR/",
+          {
+            note: this.note,
+            userId: localStorage.getItem("userId"),
+            storyId: localStorage.getItem("mySelectedStoryId"),
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          alert("Story was reported.");
+          window.location.href = "https://localhost:8081/";
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    validReportNote() {
+      if (this.note.length < 2) {
+        alert("Your story report note should contain at least 2 characters!");
+        return false;
+      } else if (this.note.length > 30) {
+        alert(
+          "Your story report note shouldn't contain more than 30 characters!"
+        );
+        return false;
+      } else if (this.note.match(/[&<>/\\"]/g)) {
+        alert(
+          "Your story report note shouldn't contain those special characters."
+        );
+        return false;
+      }
+      return true;
     },
     getStoryHighlight(item) {
       this.highlightedStoryId = item.id;
@@ -191,11 +268,12 @@ export default {
       this.$http
         .get(
           "https://localhost:8080/api/story/find_all_single_story_story_highlights_for_story?id=" +
-            localStorage.getItem("mySelectedStoryId"),{
+            localStorage.getItem("mySelectedStoryId"),
+          {
             headers: {
               Authorization: "Bearer " + this.token,
             },
-            }
+          }
         )
         .then((response) => {
           for (var i = 0; i < response.data.length; i++) {
@@ -209,14 +287,18 @@ export default {
             }
           }
           this.$http
-            .post("https://localhost:8080/api/story/single_story_story_highlights/", {
-              story_highlight_id: this.highlightedStoryId,
-              single_story_id: localStorage.getItem("mySelectedStoryId"),
-            },{
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-            })
+            .post(
+              "https://localhost:8080/api/story/single_story_story_highlights/",
+              {
+                story_highlight_id: this.highlightedStoryId,
+                single_story_id: localStorage.getItem("mySelectedStoryId"),
+              },
+              {
+                headers: {
+                  Authorization: "Bearer " + this.token,
+                },
+              }
+            )
             .then((response) => {
               console.log(response.data);
               alert("You have added this story to selected story highlight.");
