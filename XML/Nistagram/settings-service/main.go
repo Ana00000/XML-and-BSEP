@@ -52,8 +52,12 @@ func initDSN() string {
 	return dsn
 }
 
-func initProfileSettingsRepo(database *gorm.DB,  profileSettingsPostNotificationsProfilesRepository *repository.ProfileSettingsPostNotificationsProfilesRepository) *repository.ProfileSettingsRepository {
-	return &repository.ProfileSettingsRepository{Database: database, ProfileSettingsPostNotificationsProfilesRepository: profileSettingsPostNotificationsProfilesRepository}
+func initProfileSettingsRepo(database *gorm.DB,
+	profileSettingsPostNotificationsProfilesRepository *repository.ProfileSettingsPostNotificationsProfilesRepository,
+	profileSettingsStoryNotificationsProfilesRepository *repository.ProfileSettingsStoryNotificationsProfilesRepository)*repository.ProfileSettingsRepository {
+	return &repository.ProfileSettingsRepository{Database: database,
+		ProfileSettingsPostNotificationsProfilesRepository: profileSettingsPostNotificationsProfilesRepository,
+		ProfileSettingsStoryNotificationsProfilesRepository: profileSettingsStoryNotificationsProfilesRepository}
 }
 
 func initProfileSettingsServices(repo *repository.ProfileSettingsRepository) *service.ProfileSettingsService {
@@ -202,6 +206,7 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 
 	router.HandleFunc("/find_all_users_for_post_notifications/{userID}", handlerProfileSettings.FindAllUsersForPostNotifications).Methods("GET")
 	router.HandleFunc("/find_all_users_for_post_album_notifications/{userID}", handlerProfileSettings.FindAllUsersForPostAlbumNotifications).Methods("GET")
+	router.HandleFunc("/find_all_users_for_story_notifications/{userID}", handlerProfileSettings.FindAllUsersForStoryNotifications).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
@@ -241,13 +246,14 @@ func main() {
 	handlerProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesHandler(serviceProfileSettingsPostNotificationsProfiles, logInfo, logError, validator)
 
 
-	repoProfileSettings := initProfileSettingsRepo(database, repoProfileSettingsPostNotificationsProfiles)
-	serviceProfileSettings := initProfileSettingsServices(repoProfileSettings)
-	handlerProfileSettings := initProfileSettingsHandler(serviceProfileSettings, logInfo, logError, validator)
-
 	repoProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesRepo(database)
 	serviceProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesServices(repoProfileSettingsStoryNotificationsProfiles)
 	handlerProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesHandler(serviceProfileSettingsStoryNotificationsProfiles, logInfo, logError, validator)
+
+
+	repoProfileSettings := initProfileSettingsRepo(database, repoProfileSettingsPostNotificationsProfiles, repoProfileSettingsStoryNotificationsProfiles)
+	serviceProfileSettings := initProfileSettingsServices(repoProfileSettings)
+	handlerProfileSettings := initProfileSettingsHandler(serviceProfileSettings, logInfo, logError, validator)
 
 
 	repoProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesRepo(database)

@@ -72,3 +72,12 @@ func (service *ProfileSettingsService) FindAllUsersForPostAlbumNotifications(id 
 	return nil
 }
 
+
+func (service *ProfileSettingsService) FindAllUsersForStoryNotifications(id uuid.UUID)[]uuid.UUID {
+	users := service.Repo.FindAllUsersForStoryNotifications(id)
+	if users != nil {
+		return users
+	}
+	return nil
+}
+

@@ -14,6 +14,7 @@ import (
 	"os"
 	_ "strconv"
 	"time"
+	gomail "gopkg.in/mail.v2"
 )
 
 type SingleStoryHandler struct {
@@ -132,8 +133,71 @@ func (handler *SingleStoryHandler) CreateSingleStory(w http.ResponseWriter, r *h
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully created single story!")
 
+	//GET ALL USERS THAT HAVE THIS USER AS STORYNOTIFICATIONUSERID
+	var usersList []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/find_all_users_for_story_notifications/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), singleStoryDTO.UserId)
+	err = getJson(reqUrl, &usersList)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "CRSINGLSTRY9023",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	//SEND EMAIL NOTIFICATION
+	for j:=0; j<len(usersList);j++{
+		handler.SendNotificationMail(usersList[j].Email, id)
+	}
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *SingleStoryHandler) SendNotificationMail(email string, storyId uuid.UUID) {
+	m := gomail.NewMessage()
+
+	// Set E-Mail sender
+	m.SetHeader("From", "xml.ftn.uns@gmail.com")
+
+	// Set E-Mail receivers
+	m.SetHeader("To", email)
+
+	// Set E-Mail subject
+	m.SetHeader("Subject", "Confirmation mail")
+
+	// Set E-Mail body. You can set plain text or html with text/html
+	text := "New story!\n\n\nBest regards,\nTim25"
+	m.SetBody("text/plain", text)
+
+	// Settings for SMTP server
+	d := gomail.NewDialer("smtp.gmail.com", 587, "xml.ftn.uns@gmail.com", "XMLFTNUNS1")
+
+	// This is only needed when SSL/TLS certificate is not valid on server.
+	// In production this should be set to false.
+	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// Now send E-Mail
+	if err := d.DialAndSend(m); err != nil {
+		//fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SingleStoryHandler",
+			"action":   "SEDCONFMAIL311",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed sending email with confirmation token!")
+		panic(err)
+	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SingleStoryHandler",
+		"action":   "SEDCONFMAIL311",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully sended email with confirmation token!")
 }
 
 func getJson(url string, target interface{}) error {

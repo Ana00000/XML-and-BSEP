@@ -11,6 +11,7 @@ import (
 type ProfileSettingsRepository struct {
 	Database *gorm.DB
 	ProfileSettingsPostNotificationsProfilesRepository *ProfileSettingsPostNotificationsProfilesRepository
+	ProfileSettingsStoryNotificationsProfilesRepository *ProfileSettingsStoryNotificationsProfilesRepository
 }
 
 func (repo *ProfileSettingsRepository) CreateProfileSettings(profileSettings *model.ProfileSettings) error {
@@ -146,6 +147,20 @@ func (repo *ProfileSettingsRepository) FindAllUserIdsFromProfileSettings(profile
 	return userIdsList
 }
 
+func (repo *ProfileSettingsRepository) FindAllUserIdsFromStoryProfileSettings(profileSettingsList []model.ProfileSettingsStoryNotificationsProfiles) []uuid.UUID {
+
+	var allProfileSetting = repo.FindAllProfileSettings()
+	var userIdsList []uuid.UUID
+	for i := 0; i < len(allProfileSetting); i++ {
+		for j:=0; j<len(profileSettingsList); j++{
+			if allProfileSetting[i].ID == profileSettingsList[j].ProfileSettingsId{
+				userIdsList = append(userIdsList, allProfileSetting[i].UserId)
+			}
+		}
+	}
+	return userIdsList
+}
+
 func (repo *ProfileSettingsRepository) FindAllUsersForPostNotifications(id uuid.UUID) []uuid.UUID {
 	var profileSettings []model.ProfileSettingsPostNotificationsProfiles
 	profileSettings = repo.ProfileSettingsPostNotificationsProfilesRepository.FindAllProfileSettingsForPostNotifications(id)
@@ -156,4 +171,10 @@ func (repo *ProfileSettingsRepository) FindAllUsersForPostAlbumNotifications(id 
 	var profileSettings []model.ProfileSettingsPostNotificationsProfiles
 	profileSettings = repo.ProfileSettingsPostNotificationsProfilesRepository.FindAllProfileSettingsForPostNotifications(id)
 	return repo.FindAllUserIdsFromProfileSettings(profileSettings)
+}
+
+func (repo *ProfileSettingsRepository) FindAllUsersForStoryNotifications(id uuid.UUID) []uuid.UUID {
+	var profileSettings []model.ProfileSettingsStoryNotificationsProfiles
+	profileSettings = repo.ProfileSettingsStoryNotificationsProfilesRepository.FindAllProfileSettingsForStoryNotifications(id)
+	return repo.FindAllUserIdsFromStoryProfileSettings(profileSettings)
 }
