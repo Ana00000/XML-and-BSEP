@@ -16,3 +16,11 @@ func (service *InappropriateContentRequestService) CreateInappropriateContentReq
 	}
 	return nil
 }
+
+func (service * InappropriateContentRequestService) CreateICR(icr *model.InappropriateContentRequest) error {
+	err := service.Repo.CreateICR(icr)
+	if err != nil {
+		return err
+	}
+	return nil
+}

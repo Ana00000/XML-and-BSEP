@@ -1,0 +1,2 @@
+{"action":"FIDALTGSFORSTRYALBTGSTRYALBMS6765","level":"error","location":"StoryAlbumTagStoryAlbumsHandler","msg":"Wrong cast json to list StoryAlbumFullDTO!","status":"failure","time":"2021-06-19T21:10:15Z","timestamp":"2021-06-19 21:10:15.2926975 +0000 UTC m=+290.790602001"}
+{"action":"FIDALTGSFORSTRYALBTGSTRYALBMS6765","level":"error","location":"StoryAlbumTagStoryAlbumsHandler","msg":"Wrong cast json to list StoryAlbumFullDTO!","status":"failure","time":"2021-06-19T21:14:06Z","timestamp":"2021-06-19 21:14:06.2600771 +0000 UTC m=+521.757981301"}
