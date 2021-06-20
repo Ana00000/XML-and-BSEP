@@ -15,3 +15,9 @@ func (repo *InappropriateContentRequestRepository) CreateInappropriateContentReq
 	fmt.Print(result)
 	return nil
 }
+
+func (repo * InappropriateContentRequestRepository) CreateICR(icr *model.InappropriateContentRequest) error {
+	result := repo.Database.Create(icr)
+	fmt.Print(result)
+	return nil
+}

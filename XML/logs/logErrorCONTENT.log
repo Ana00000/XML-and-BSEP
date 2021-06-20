@@ -1,0 +1,2 @@
+{"action":"FIALCOFOSTALJ710","level":"error","location":"StoryAlbumContentHandler","msg":"Wrong cast json to StoryAlbumFullDTO!","status":"failure","time":"2021-06-19T18:49:41Z","timestamp":"2021-06-19 18:49:41.6575782 +0000 UTC m=+624.509296401"}
+{"action":"FIALCOFOSTALJ710","level":"error","location":"StoryAlbumContentHandler","msg":"Wrong cast json to StoryAlbumFullDTO!","status":"failure","time":"2021-06-19T18:55:39Z","timestamp":"2021-06-19 18:55:39.7993978 +0000 UTC m=+982.651116001"}

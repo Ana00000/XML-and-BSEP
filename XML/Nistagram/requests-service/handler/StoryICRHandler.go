@@ -16,6 +16,7 @@ import (
 
 type StoryICRHandler struct {
 	Service   *service.StoryICRService
+	InappropriateContentRequestService   *service.InappropriateContentRequestService
 	LogInfo   *logrus.Logger
 	LogError  *logrus.Logger
 	Validator *validator.Validate
@@ -56,7 +57,6 @@ func (handler *StoryICRHandler) CreateStoryICR(w http.ResponseWriter, r *http.Re
 		StoryId: storyICRDTO.StoryId,
 	}
 
-
 	if err := handler.Service.CreateStoryICR(&storyICR); err != nil {
 		handler.LogError.WithFields(logrus.Fields{
 			"status":    "failure",
@@ -68,6 +68,19 @@ func (handler *StoryICRHandler) CreateStoryICR(w http.ResponseWriter, r *http.Re
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
+
+	if err := handler.InappropriateContentRequestService.CreateICR(&storyICR.InappropriateContentRequest); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "StoryICRHandler",
+			"action":    "CRESTORYICR3443",
+			"timestamp": time.Now().String(),
+		}).Error("Failed creating inappropriate content request!")
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status":    "success",
 		"location":  "StoryICRHandler",

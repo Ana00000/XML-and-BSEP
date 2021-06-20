@@ -63,3 +63,17 @@ func (repo *RegisteredUserRepository) UpdateRegisteredUserPassword(userId uuid.U
 	fmt.Println("updating")
 	return nil
 }
+
+func (repo *RegisteredUserRepository) UpdateUserCategory(userId uuid.UUID, category model.RegisteredUserCategory) error {
+	result := repo.Database.Model(&model.RegisteredUser{}).Where("id = ?", userId).Update("registered_user_category", category)
+	fmt.Println(result.RowsAffected)
+	fmt.Println("updating")
+	return nil
+}
+
+func (repo *RegisteredUserRepository) UpdateOfficialDocumentPath(id uuid.UUID, path string) error {
+	result := repo.Database.Model(&model.RegisteredUser{}).Where("id = ?", id).Update("official_document_path", path)
+	fmt.Println(result.RowsAffected)
+	fmt.Println("updating")
+	return nil
+}
