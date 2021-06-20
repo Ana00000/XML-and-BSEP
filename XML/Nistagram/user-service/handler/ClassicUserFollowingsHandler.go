@@ -20,6 +20,7 @@ import (
 type ClassicUserFollowingsHandler struct {
 	ClassicUserFollowingsService * service.ClassicUserFollowingsService
 	ClassicUserFollowersService * service.ClassicUserFollowersService
+	ClassicUserService * service.ClassicUserService
 	UserService *service.UserService
 	Rbac * gorbac.RBAC
 	PermissionCreateClassicUserFollowing *gorbac.Permission
@@ -169,6 +170,32 @@ func (handler *ClassicUserFollowingsHandler) FindAllValidFollowingsForUser(w htt
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func  (handler *ClassicUserFollowingsHandler) FindAllValidUsersWhoFollowUserId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var users = listWithoutLoggedInUser(uuid.MustParse(id),handler.ClassicUserService.FinAllValidUsers())
+	var followings = handler.ClassicUserFollowingsService.FindAllUsersWhoFollowUserId(uuid.MustParse(id),users)
+
+	returnValueJson,_ := json.Marshal(followings)
+
+	w.Write(returnValueJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func listWithoutLoggedInUser(id uuid.UUID, users []model.ClassicUser) []model.ClassicUser{
+	var retVal []model.ClassicUser
+	for i := 0; i < len(users); i++ {
+		if users[i].ID!=id{
+			retVal = append(retVal, users[i])
+		}
+	}
+	return retVal
 }
 
 //FIDALUSFOLWUSID2672

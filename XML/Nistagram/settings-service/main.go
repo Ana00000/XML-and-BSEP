@@ -196,7 +196,7 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 	router.HandleFunc("/find_all_for_public_users/", handlerProfileSettings.FindProfileSettingsForPublicUsers).Methods("GET")
 	router.HandleFunc("/find_all_public_users/", handlerProfileSettings.FindAllPublicUsers).Methods("POST")
 	router.HandleFunc("/update_profile_settings/", handlerProfileSettings.UpdateProfileSettings).Methods("POST")
-
+	router.HandleFunc("/find_profile_settings_with_id_by_user_id/{userID}", handlerProfileSettings.FindProfileSettingWithIDByUserId).Methods("GET")
 	router.HandleFunc("/add_post_notifications_for_user/", handlerProfileSettingsPostNotificationsProfiles.CreateProfileSettingsPostNotificationsProfiles).Methods("POST")
 	router.HandleFunc("/add_story_notifications_for_user/", handlerProfileSettingsStoryNotificationsProfiles.CreateProfileSettingsStoryNotificationsProfiles).Methods("POST")
 

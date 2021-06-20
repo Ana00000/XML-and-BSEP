@@ -52,3 +52,4 @@
 {"action":"CHCKIFAUTH9342","level":"error","location":"UserHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-13T06:12:21Z","timestamp":"2021-06-13 06:12:21.6129042 +0000 UTC m=+362.313016101"}
 {"action":"CheckFindAllPublicPostsRegisteredUserPermission","level":"error","location":"PostAuthorizationHandler","msg":"Failed finding user from jwt token!","status":"failure","time":"2021-06-13T06:12:21Z","timestamp":"2021-06-13 06:12:21.6156901 +0000 UTC m=+362.315802001"}
 {"action":"CHCKIFAUTH9342","level":"error","location":"UserHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-13T06:12:21Z","timestamp":"2021-06-13 06:12:21.6168599 +0000 UTC m=+362.316971801"}
+{"action":"FIDBYID0329","level":"error","location":"UserHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-20T13:38:10Z","timestamp":"2021-06-20 13:38:10.3296167 +0000 UTC m=+217.298975601"}

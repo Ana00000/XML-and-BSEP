@@ -131,6 +131,22 @@ func (repo * ClassicUserFollowingsRepository) FindAllUserWhoFollowUserId(userId 
 
 }
 
+func (repo * ClassicUserFollowingsRepository) FindAllUsersWhoFollowUserId(userId uuid.UUID, allValidUsers []model.ClassicUser) []model.ClassicUser{
+	var followings  = repo.FindAllUserWhoFollow(userId)
+	var validFollowingsClassicUsers []model.ClassicUser
+
+	for i := 0; i < len(allValidUsers); i++{
+		_, exist := ExsistInList(allValidUsers[i], followings)
+		if exist {
+			fmt.Println("Dodaje u listu")
+			validFollowingsClassicUsers = append(validFollowingsClassicUsers,allValidUsers[i])
+		}
+	}
+
+	return validFollowingsClassicUsers
+
+}
+
 func ExsistInList(user model.ClassicUser,followings []model.ClassicUserFollowings) (model.ClassicUserFollowings, bool){
 	var classicUserFollowings model.ClassicUserFollowings
 	for i := 0; i < len(followings); i++ {

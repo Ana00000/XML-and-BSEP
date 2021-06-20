@@ -95,16 +95,9 @@ export default {
           console.log(er);
         });
       this.$http
-        .get(
-          "https://localhost:8080/api/user/find_all_classic_users_but_logged_in?id=" +
-            this.id,
-          {
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-          }
-        )
+        .get("https://localhost:8080/api/user/find_all_valid_followings_users_for_user/"+this.id)
         .then((resp) => {
+          console.log(resp.data)
           this.users = resp.data;
         })
         .catch(console.log);
@@ -112,13 +105,8 @@ export default {
     addPostNotificationForUser() {
       this.$http
         .get(
-          "https://localhost:8080/api/settings/find_profile_settings_by_user_id/" +
-            localStorage.getItem("userId"),
-          {
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-          }
+          "https://localhost:8080/api/settings/find_profile_settings_with_id_by_user_id/" +
+            localStorage.getItem("userId")
         )
         .then((response) => {
           this.addPostNot(response.data.id);
@@ -151,13 +139,8 @@ export default {
     addStoryNotificationForUser() {
       this.$http
         .get(
-          "https://localhost:8080/api/settings/find_profile_settings_by_user_id/" +
-            localStorage.getItem("userId"),
-          {
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-          }
+          "https://localhost:8080/api/settings/find_profile_settings_with_id_by_user_id/" +
+            localStorage.getItem("userId")
         )
         .then((response) => {
           this.addStoryNot(response.data.id);

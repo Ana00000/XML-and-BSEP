@@ -736,6 +736,38 @@ func (handler *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+//GetByID
+func (handler *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	id := r.URL.Query().Get("id")
+
+	var user = handler.UserService.FindByID(uuid.MustParse(id))
+	if user == nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "UserHandler",
+			"action":   "GetByID",
+			"timestamp":   time.Now().String(),
+		}).Error("User not found!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+	var classicUser = convertClassicUserToClassicUserDTO(*handler.ClassicUserService.FindById(user.ID))
+	userJson, _ := json.Marshal(classicUser)
+	w.Write(userJson)
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "RegisteredUserHandler",
+		"action":   "GetByID",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully founded user by id!")
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
 //FIDALUSRSBUTLOGGIN212
 func (handler *UserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter, r *http.Request) {
 

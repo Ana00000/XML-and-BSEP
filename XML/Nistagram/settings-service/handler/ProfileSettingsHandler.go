@@ -63,6 +63,96 @@ func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWrit
 	w.Header().Set("Content-Type", "application/json")
 }
 
+func (handler *ProfileSettingsHandler) FindProfileSettingWithIDByUserId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	userId := vars["userID"]
+
+	var profileSettings = handler.Service.FindProfileSettingByUserId(uuid.MustParse(userId))
+	if profileSettings == nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsHandler",
+			"action":    "FindProfileSettingWithIDByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Profile setting not found!")
+		fmt.Println("Profile setting not found")
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	userVisibility := ""
+	if profileSettings.UserVisibility == model.PRIVATE_VISIBILITY {
+		userVisibility = "PRIVATE_VISIBILITY"
+	} else if profileSettings.UserVisibility == model.PUBLIC_VISIBILITY {
+		userVisibility = "PUBLIC_VISIBILITY"
+	}
+
+	messageApprovalType := ""
+	if profileSettings.MessageApprovalType == model.PUBLIC {
+		messageApprovalType = "PUBLIC"
+	} else if profileSettings.MessageApprovalType == model.FRIENDS_ONLY {
+		messageApprovalType = "FRIENDS_ONLY"
+	}
+
+	likesNotifications :=""
+	if  profileSettings.LikesNotifications == model.ALL_NOTIFICATIONS{
+		likesNotifications = "ALL_NOTIFICATIONS"
+	}else if  profileSettings.LikesNotifications == model.FRIENDS_NOTIFICATIONS{
+		likesNotifications = "FRIENDS_NOTIFICATIONS"
+	}else if profileSettings.LikesNotifications == model.NONE {
+		likesNotifications = "NONE"
+	}
+
+	commentsNotifications :=""
+	if  profileSettings.CommentsNotifications == model.ALL_NOTIFICATIONS{
+		commentsNotifications = "ALL_NOTIFICATIONS"
+	}else if  profileSettings.CommentsNotifications == model.FRIENDS_NOTIFICATIONS{
+		commentsNotifications = "FRIENDS_NOTIFICATIONS"
+	}else if profileSettings.CommentsNotifications == model.NONE {
+		commentsNotifications = "NONE"
+	}
+
+	messagesNotifications :=""
+	if  profileSettings.MessagesNotifications == model.ALL_NOTIFICATIONS{
+		messagesNotifications = "ALL_NOTIFICATIONS"
+	}else if  profileSettings.MessagesNotifications == model.FRIENDS_NOTIFICATIONS{
+		messagesNotifications = "FRIENDS_NOTIFICATIONS"
+	}else if profileSettings.MessagesNotifications == model.NONE {
+		messagesNotifications = "NONE"
+	}
+
+
+
+	var profileSettingsDTO = dto.ProfileSettingsFullDTO{
+		Id:                    profileSettings.ID,
+		UserId:                profileSettings.UserId,
+		UserVisibility:        userVisibility,
+		MessageApprovalType:   messageApprovalType,
+		IsPostTaggable:        profileSettings.IsPostTaggable,
+		IsStoryTaggable:       profileSettings.IsStoryTaggable,
+		IsCommentTaggable:     profileSettings.IsCommentTaggable,
+		LikesNotifications:    likesNotifications,
+		CommentsNotifications: commentsNotifications,
+		MessagesNotifications: messagesNotifications,
+	}
+
+	profileSettingsDTOJson, _ := json.Marshal(profileSettingsDTO)
+	if profileSettingsDTOJson != nil {
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status":    "success",
+			"location":  "ProfileSettingsHandler",
+			"action":    "FindProfileSettingWithIDByUserId",
+			"timestamp": time.Now().String(),
+		}).Info("Successfully found profile setting by user id!")
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(profileSettingsDTOJson)
+		return
+	}
+	w.WriteHeader(http.StatusNotFound)
+}
+
 func (handler *ProfileSettingsHandler) FindProfileSettingByUserId(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	vars := mux.Vars(r)
@@ -276,7 +366,7 @@ func (handler *ProfileSettingsHandler) FindAllUsersForPostNotifications(w http.R
 	var classicUsers []dto.ClassicUserDTO
 	var user dto.ClassicUserDTO
 	for i := 0; i < len(classicUsersIds); i++ {
-		reqUrl := fmt.Sprintf("http://%s:%s/find_user_by_id?id=%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), classicUsersIds[i])
+		reqUrl := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), classicUsersIds[i])
 		err := getJson(reqUrl, &user)
 		if err!=nil{
 			handler.LogError.WithFields(logrus.Fields{
