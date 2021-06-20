@@ -88,4 +88,3 @@ func (service *ProfileSettingsService) FindAllUsersForStoryAlbumNotifications(id
 	}
 	return nil
 }
-

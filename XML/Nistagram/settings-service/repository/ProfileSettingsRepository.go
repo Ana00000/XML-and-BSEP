@@ -184,3 +184,9 @@ func (repo *ProfileSettingsRepository) FindAllUsersForStoryAlbumNotifications(id
 	profileSettings = repo.ProfileSettingsStoryNotificationsProfilesRepository.FindAllProfileSettingsForStoryNotifications(id)
 	return repo.FindAllUserIdsFromStoryProfileSettings(profileSettings)
 }
+
+func (repo *ProfileSettingsRepository) FindAllUsersForCommentNotifications(id uuid.UUID) []uuid.UUID {
+	var profileSettings []model.ProfileSettingsStoryNotificationsProfiles
+	profileSettings = repo.ProfileSettingsStoryNotificationsProfilesRepository.FindAllProfileSettingsForStoryNotifications(id)
+	return repo.FindAllUserIdsFromStoryProfileSettings(profileSettings)
+}

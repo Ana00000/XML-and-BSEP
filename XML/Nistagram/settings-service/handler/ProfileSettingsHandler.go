@@ -516,6 +516,7 @@ func (handler *ProfileSettingsHandler) FindAllUsersForStoryAlbumNotifications(w 
 	w.WriteHeader(http.StatusNotFound)
 }
 
+
 func getJson(url string, target interface{}) error {
 	r, err := http.Get(url)
 	if err != nil {

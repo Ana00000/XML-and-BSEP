@@ -87,3 +87,8 @@ func (service *SinglePostService) FindAllPostsForUsers(users []dto.ClassicUserDT
 	}
 	return nil
 }
+
+func (service *SinglePostService) FindOwnerOfPost(ID uuid.UUID) string {
+	tag := service.Repo.FindOwnerOfPost(ID)
+	return tag
+}

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
@@ -3322,4 +3323,25 @@ func (handler *SinglePostHandler) SendNotificationMail(email string, postId uuid
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully sended email with confirmation token!")
 
+}
+
+func (handler *SinglePostHandler) FindOwnerOfPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var userId = handler.SinglePostService.FindOwnerOfPost(uuid.MustParse(id))
+	returnValue := ReturnValueString{ReturnValue: userId}
+
+	returnValueJson, _ := json.Marshal(returnValue)
+	w.Write(returnValueJson)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FIOWOFPOL454",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found owner of the post!")
+
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
 }

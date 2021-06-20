@@ -203,6 +203,7 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/find_all_posts_for_tag_reg_user", handlerSinglePost.FindAllPostsForTagRegUser).Methods("GET")
 	router.HandleFunc("/find_all_posts_for_location_reg_user", handlerSinglePost.FindAllPostsForLocationRegUser).Methods("GET")
 
+	router.HandleFunc("/find_owner_of_post/{id}", handlerSinglePost.FindOwnerOfPost).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }

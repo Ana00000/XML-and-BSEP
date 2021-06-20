@@ -153,6 +153,14 @@ func (repo *SinglePostRepository) FindAllPostsForUsers(users []dto.ClassicUserDT
 	return allFollowingPosts
 }
 
+func (repo *SinglePostRepository) FindOwnerOfPost(ID uuid.UUID) string{
+	post := &model.SinglePost{}
+	if repo.Database.First(&post, "id = ?", ID).RowsAffected == 0 {
+		return ""
+	}
+	return post.UserID.String()
+}
+
 func NotDeletedPostBelongUsers(post model.SinglePost,users []dto.ClassicUserDTO) bool{
 	for i := 0; i < len(users); i++{
 		if (post.UserID == users[i].ID) && (!post.IsDeleted){
