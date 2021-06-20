@@ -207,6 +207,7 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 	router.HandleFunc("/find_all_users_for_post_notifications/{userID}", handlerProfileSettings.FindAllUsersForPostNotifications).Methods("GET")
 	router.HandleFunc("/find_all_users_for_post_album_notifications/{userID}", handlerProfileSettings.FindAllUsersForPostAlbumNotifications).Methods("GET")
 	router.HandleFunc("/find_all_users_for_story_notifications/{userID}", handlerProfileSettings.FindAllUsersForStoryNotifications).Methods("GET")
+	router.HandleFunc("/find_all_users_for_story_album_notifications/{userID}", handlerProfileSettings.FindAllUsersForStoryAlbumNotifications).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
