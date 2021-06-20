@@ -151,3 +151,9 @@ func (repo *ProfileSettingsRepository) FindAllUsersForPostNotifications(id uuid.
 	profileSettings = repo.ProfileSettingsPostNotificationsProfilesRepository.FindAllProfileSettingsForPostNotifications(id)
 	return repo.FindAllUserIdsFromProfileSettings(profileSettings)
 }
+
+func (repo *ProfileSettingsRepository) FindAllUsersForPostAlbumNotifications(id uuid.UUID) []uuid.UUID {
+	var profileSettings []model.ProfileSettingsPostNotificationsProfiles
+	profileSettings = repo.ProfileSettingsPostNotificationsProfilesRepository.FindAllProfileSettingsForPostNotifications(id)
+	return repo.FindAllUserIdsFromProfileSettings(profileSettings)
+}

@@ -396,6 +396,46 @@ func (handler *ProfileSettingsHandler) FindAllUsersForPostNotifications(w http.R
 	w.WriteHeader(http.StatusNotFound)
 }
 
+//FIND ALL USERS WITH POST ALBUM NOTIFICATIONS SET FOR USER
+func (handler *ProfileSettingsHandler) FindAllUsersForPostAlbumNotifications(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	userId := vars["userID"]
+
+	var classicUsersIds = handler.Service.FindAllUsersForPostAlbumNotifications(uuid.MustParse(userId))
+	var classicUsers []dto.ClassicUserDTO
+	var user dto.ClassicUserDTO
+	for i := 0; i < len(classicUsersIds); i++ {
+		reqUrl := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), classicUsersIds[i])
+		err := getJson(reqUrl, &user)
+		if err!=nil{
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "ProfileSettingsHandler",
+				"action":   "FIALUSFOPOALNO674",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find user!")
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
+		classicUsers = append(classicUsers, user)
+	}
+	dataJson, _ := json.Marshal(classicUsers)
+	if dataJson != nil {
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status":    "success",
+			"location":  "ProfileSettingsHandler",
+			"action":    "FIALUSFOPOALNO674",
+			"timestamp": time.Now().String(),
+		}).Info("Successfully found all users for post album notifications!")
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(dataJson)
+		return
+	}
+	w.WriteHeader(http.StatusNotFound)
+}
+
 func getJson(url string, target interface{}) error {
 	r, err := http.Get(url)
 	if err != nil {
