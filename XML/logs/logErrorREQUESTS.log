@@ -4,3 +4,4 @@
 {"action":"CREPOSTICR2544","level":"error","location":"PostICRHandler","msg":"PostICRDTO fields aren't in valid format!","status":"failure","time":"2021-06-18T16:44:32Z","timestamp":"2021-06-18 16:44:32.370744 +0000 UTC m=+973.621041901"}
 {"action":"CREPOSTICR2544","level":"error","location":"PostICRHandler","msg":"PostICRDTO fields aren't in valid format!","status":"failure","time":"2021-06-18T16:45:46Z","timestamp":"2021-06-18 16:45:46.9661862 +0000 UTC m=+1048.216484001"}
 {"action":"CREPOSTICR2544","level":"error","location":"PostICRHandler","msg":"PostICRDTO fields aren't in valid format!","status":"failure","time":"2021-06-18T16:47:02Z","timestamp":"2021-06-18 16:47:02.9303565 +0000 UTC m=+1124.180654301"}
+{"action":"CRESTORYICR3443","level":"error","location":"StoryICRHandler","msg":"StoryICRDTO fields aren't in valid format!","status":"failure","time":"2021-06-20T14:19:11Z","timestamp":"2021-06-20 14:19:11.4103094 +0000 UTC m=+282.733508501"}

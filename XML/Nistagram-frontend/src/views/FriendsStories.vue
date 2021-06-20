@@ -65,7 +65,7 @@
                     prepend-icon="mdi-address-circle"
                     class="note"
                   />
-                  <v-btn color="info mb-5" v-on:click="reportStory(item.id)">
+                  <v-btn color="info mb-5" v-on:click="reportStory(item.story_id)">
                     Report Story
                   </v-btn>
                 </v-list-item-content>
