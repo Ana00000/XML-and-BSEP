@@ -141,21 +141,6 @@ export default {
   methods: {
     init() {
       this.$http
-        .get("https//localhost:8080/api/user/check_if_authentificated/", {
-          headers: {
-            Authorization: "Bearer " + this.token,
-          },
-        })
-        .then((resp) => {
-          console.log("User is authentificated");
-          console.log(resp.data);
-        })
-        .catch((er) => {
-          window.location.href = "https://localhost:8081/unauthorizedPage";
-          console.log(er);
-        });
-
-      this.$http
         .get(
           "https://localhost:8080/api/user/auth/check-find-all-liked-post-by-user-id-permission/",
           {
@@ -267,11 +252,14 @@ export default {
             },
           }
         )
-        .then((response) => {
-          this.post = response.data;
+        .then((resp) => {
+          console.log(resp);
+          this.post = resp.data;
         })
         .catch(console.log);
 
+      console.log(item.liked_status);
+      
       if (item.liked_status == 0) {
         this.text = "I like this post: " + item.post_id;
         this.allDataForLikedPosts.push({

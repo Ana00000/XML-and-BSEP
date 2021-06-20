@@ -2,18 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d09c2dcf-763b-4e85-9087-41b1e7136b80" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/content-images/620120716BrckoGrad.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/458844648IMG_26022020.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/538919323IMG_26022020.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/711504428profile_photo.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content-images/921271847profile_photo.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedVerificationRequest.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedVerificationRequest.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/dto/VerificationRequestAcceptDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/dto/VerificationRequestAcceptDTO.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/requests-service/handler/VerificationRequestHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/requests-service/handler/VerificationRequestHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/RegisteredUserHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/RegisteredUserRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/RegisteredUserService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/ReactedPosts.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/ReactedPosts.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logErrorSTORY.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorSTORY.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/logErrorUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorUSER.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logInfoREQUESTS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoREQUESTS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoCONTENT.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoCONTENT.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoLOCATION.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoLOCATION.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoPOST.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoPOST.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/logInfoSTORY.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSTORY.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/logInfoTAG.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoTAG.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/logInfoUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoUSER.log" afterDir="false" />
     </list>
@@ -29,7 +30,7 @@
       </list>
     </option>
   </component>
-  <component name="GOROOT" url="file://$PROJECT_DIR$/../../../../../../../../Program Files/Go" />
+  <component name="GOROOT" url="file://$PROJECT_DIR$/../../../../../../go1.16.3" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
@@ -83,7 +84,6 @@
       <recent name="C:\Users\KORISNIK\go\src\github.com\xml\XML-and-BSEP\XML\Nistagram\story-service\dto" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Velickovic\go\src\github.com\xml\XML-and-BSEP\XML\Nistagram\requests-service\dto" />
       <recent name="C:\Users\KORISNIK\go\src\github.com\xml\XML-and-BSEP\XML\Nistagram\tag-service" />
       <recent name="C:\Users\KORISNIK\go\src\github.com\xml\XML-and-BSEP\XML\Nistagram\settings-service" />
       <recent name="C:\Users\KORISNIK\go\src\github.com\xml\XML-and-BSEP\XML\Nistagram\post-service\dto" />
