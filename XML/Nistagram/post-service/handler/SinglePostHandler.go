@@ -148,19 +148,6 @@ func getJson(url string, target interface{}) error {
 }
 
 func (handler *SinglePostHandler) FindPostById(w http.ResponseWriter, r *http.Request) {
-	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
-	response := Request(reqUrlAuth, ExtractToken(r))
-	if response.StatusCode == 401 {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location": "SinglePostHandler",
-			"action": "FindPostById",
-			"timestamp": time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}
-
 	reqUrlAuthorization := fmt.Sprintf("http://%s:%s/auth/check-find-post-by-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	res := Request(reqUrlAuthorization, ExtractToken(r))
 	if res.StatusCode == 403 {
