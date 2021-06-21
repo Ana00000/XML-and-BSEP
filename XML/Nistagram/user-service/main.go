@@ -475,6 +475,7 @@ func handleFunc(settingsAuthorizationHandler *handler.SettingsAuthorizationHandl
 	router.HandleFunc("/find_all_users_by_following_ids/", classicUserHandler.FindAllUsersByFollowingIds).Methods("POST")
 	router.HandleFunc("/check_if_authentificated/", userHandler.CheckIfAuthentificated).Methods("GET")
 	router.HandleFunc("/get_user_id_by_jwt/", userHandler.GetUserIDFromJWTToken).Methods("GET")
+	router.HandleFunc("/remove_followings_between_users/", classicUserFollowingsHandler.RemoveFollowingsBetweenUsers).Methods("POST")
 
 	//LOCATION MICROSERVICE AUTHORIZATION
 	router.HandleFunc("/auth/check-create-location-permission/", locationAuthorizationHandler.CheckCreateLocationPermission).Methods("POST")

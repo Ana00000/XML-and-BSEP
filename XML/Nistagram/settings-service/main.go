@@ -164,9 +164,15 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 	router.HandleFunc("/find_all_public_users/", handlerProfileSettings.FindAllPublicUsers).Methods("POST")
 	router.HandleFunc("/find_all_not_blocked_and_muted_users_for_logged_user/{id}", handlerProfileSettings.FindAllNotBlockedAndMutedUsersForLoggedUser).Methods("POST")
 
+	router.HandleFunc("/find_all_not_blocked_users_for_logged_user/{id}", handlerProfileSettings.FindAllNotBlockedUsersForLoggedUser).Methods("POST")
+
+	///check_if_mute/
+	router.HandleFunc("/check_if_mute/{userID}/{logUserID}", handlerProfileSettings.CheckIfMuted).Methods("GET")
+	router.HandleFunc("/check_if_block/{userID}/{logUserID}", handlerProfileSettings.CheckIfBlocked).Methods("GET")
 	router.HandleFunc("/block_user/", handlerProfileSettingsBlockedProfiles.BlockUser).Methods("POST")
 	router.HandleFunc("/mute_user/", handlerProfileSettingsMutedProfiles.MuteUser).Methods("POST")
-
+	router.HandleFunc("/unblock_user/", handlerProfileSettingsBlockedProfiles.UnlockUser).Methods("POST")
+	router.HandleFunc("/unmute_user/", handlerProfileSettingsMutedProfiles.UnmuteUser).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }

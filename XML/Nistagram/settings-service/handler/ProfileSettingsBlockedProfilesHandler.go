@@ -145,3 +145,39 @@ func (handler *ProfileSettingsBlockedProfilesHandler) BlockUser(w http.ResponseW
 	w.Header().Set("Content-Type", "application/json")
 
 }
+
+func (handler *ProfileSettingsBlockedProfilesHandler) UnlockUser(w http.ResponseWriter, r *http.Request) {
+
+	var blockUserDTO dto.BlockUserDTO
+	if err := json.NewDecoder(r.Body).Decode(&blockUserDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsBlockedProfilesHandler",
+			"action":    "UnlockUser",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast jason to BlockUserDTO!")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var profileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(blockUserDTO.LoggedInUser)
+
+	var profileSettingsMutedProfiles = handler.Service.FindProfileSettingsBlockedProfiles(profileSettings.ID,blockUserDTO.BlockedUser)
+
+	if profileSettingsMutedProfiles==nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsBlockedProfilesHandler",
+			"action":    "UnlockUser",
+			"timestamp": time.Now().String(),
+		}).Error("User isn't muted")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	handler.Service.UnblockUser(profileSettingsMutedProfiles.ID)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+

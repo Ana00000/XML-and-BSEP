@@ -21,3 +21,15 @@ func (service *ProfileSettingsBlockedProfilesService) CreateProfileSettingsBlock
 func (service *ProfileSettingsBlockedProfilesService) FindAllBlockedAndBlockingUsersForLoggedUser(id uuid.UUID, userId uuid.UUID) ([]uuid.UUID,[]uuid.UUID) {
 	return service.Repo.FindAllBlockedAndBlockingUsersForLoggedUser(id,userId)
 }
+
+func (service *ProfileSettingsBlockedProfilesService) CheckIfBlocked(profileSettingsID uuid.UUID, blockedUserID uuid.UUID) bool {
+	return service.Repo.CheckIfBlocked(profileSettingsID,blockedUserID)
+}
+
+func (service *ProfileSettingsBlockedProfilesService) FindProfileSettingsBlockedProfiles(profileSettingsID uuid.UUID, blockedUserID uuid.UUID) *model.ProfileSettingsBlockedProfiles {
+	return service.Repo.FindProfileSettingsBlockedProfiles(profileSettingsID,blockedUserID)
+}
+
+func (service *ProfileSettingsBlockedProfilesService) UnblockUser(id uuid.UUID) {
+	service.Repo.UnblockUser(id)
+}

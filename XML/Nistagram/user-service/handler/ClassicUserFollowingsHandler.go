@@ -20,6 +20,7 @@ import (
 type ClassicUserFollowingsHandler struct {
 	ClassicUserFollowingsService * service.ClassicUserFollowingsService
 	ClassicUserFollowersService * service.ClassicUserFollowersService
+	ClassicUserCloseFriendsService * service.ClassicUserCloseFriendsService
 	UserService *service.UserService
 	Rbac * gorbac.RBAC
 	PermissionCreateClassicUserFollowing *gorbac.Permission
@@ -363,6 +364,55 @@ func (handler *ClassicUserFollowingsHandler) AcceptFollowerRequest(w http.Respon
 	}).Info("Successfully accepted follower request!")
 
 	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *ClassicUserFollowingsHandler) RemoveFollowingsBetweenUsers(w http.ResponseWriter, r *http.Request) {
+	var blockUserDTO dto.BlockUserDTO
+	if err := json.NewDecoder(r.Body).Decode(&blockUserDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ClassicUserFollowingsHandler",
+			"action":    "RemoveFollowingsBetweenUsers",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast json to BlockUserDTO!")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var classicUserFollowing = handler.ClassicUserFollowingsService.FindFollowingByUsersIDs(blockUserDTO.BlockedUser,blockUserDTO.LoggedInUser)
+	if classicUserFollowing!=nil{
+		handler.ClassicUserFollowingsService.RemoveClassicUserFollowing(classicUserFollowing.ID)
+	}
+
+	var classicUserFollowingRevert = handler.ClassicUserFollowingsService.FindFollowingByUsersIDs(blockUserDTO.LoggedInUser,blockUserDTO.BlockedUser)
+	if classicUserFollowingRevert!=nil{
+		handler.ClassicUserFollowingsService.RemoveClassicUserFollowing(classicUserFollowingRevert.ID)
+	}
+
+	var classicUserFollower = handler.ClassicUserFollowersService.FindFollowerByUsersIDs(blockUserDTO.BlockedUser,blockUserDTO.LoggedInUser)
+	if classicUserFollower!=nil{
+		handler.ClassicUserFollowersService.RemoveClassicUserFollower(classicUserFollower.ID)
+	}
+
+	var classicUserFollowerRevert = handler.ClassicUserFollowersService.FindFollowerByUsersIDs(blockUserDTO.LoggedInUser,blockUserDTO.BlockedUser)
+	if classicUserFollowerRevert!=nil{
+		handler.ClassicUserFollowersService.RemoveClassicUserFollower(classicUserFollowingRevert.ID)
+	}
+
+	if classicUserFollowing!=nil && classicUserFollowingRevert!=nil {
+		var classicUserCloseFriends = handler.ClassicUserCloseFriendsService.FindCloseFriendByUsersIDs(blockUserDTO.LoggedInUser,blockUserDTO.BlockedUser)
+		if classicUserCloseFriends!=nil{
+			handler.ClassicUserCloseFriendsService.RemoveClassicUserCloseFriend(classicUserCloseFriends.ID)
+		}
+
+		var classicUserCloseFriendsRevert = handler.ClassicUserCloseFriendsService.FindCloseFriendByUsersIDs(blockUserDTO.BlockedUser,blockUserDTO.LoggedInUser)
+		if classicUserCloseFriendsRevert!=nil{
+			handler.ClassicUserCloseFriendsService.RemoveClassicUserCloseFriend(classicUserCloseFriendsRevert.ID)
+		}
+	}
+
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }
 

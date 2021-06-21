@@ -29,3 +29,23 @@ func (repo *ProfileSettingsMutedProfilesRepository) FindAllMutedUserForLoggedUse
 	}
 	return listRetValuesUserIds
 }
+
+func (repo *ProfileSettingsMutedProfilesRepository) CheckIfMuted(profileSettingsID uuid.UUID, mutedUserID uuid.UUID) bool {
+	profileSettingsMutedProfiles := &model.ProfileSettingsMutedProfiles{}
+	if repo.Database.First(&profileSettingsMutedProfiles, "profile_settings_id = ? and muted_profile_id = ?", profileSettingsID,mutedUserID).RowsAffected == 0 {
+		return false
+	}
+	return true
+}
+
+func (repo *ProfileSettingsMutedProfilesRepository) FindProfileSettingsMutedProfiles(profileSettingsID uuid.UUID, mutedUserID uuid.UUID) *model.ProfileSettingsMutedProfiles {
+	profileSettingsMutedProfiles := &model.ProfileSettingsMutedProfiles{}
+	if repo.Database.First(&profileSettingsMutedProfiles, "profile_settings_id = ? and muted_profile_id = ?",profileSettingsID,mutedUserID).RowsAffected == 0 {
+		return nil
+	}
+	return profileSettingsMutedProfiles
+}
+
+func (repo *ProfileSettingsMutedProfilesRepository) UnmuteUser(id uuid.UUID) {
+	repo.Database.Delete(&model.ProfileSettingsMutedProfiles{}, id)
+}

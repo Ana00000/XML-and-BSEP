@@ -33,3 +33,23 @@ func (repo *ProfileSettingsBlockedProfilesRepository) FindAllBlockedAndBlockingU
 	}
 	return listRetValuesUserIds, listRetValuesProfileSettingsIds
 }
+
+func (repo *ProfileSettingsBlockedProfilesRepository) CheckIfBlocked(profileSettingsID uuid.UUID, blockedUserID uuid.UUID) bool {
+	profileSettingsBlockedProfiles := &model.ProfileSettingsBlockedProfiles{}
+	if repo.Database.First(&profileSettingsBlockedProfiles, "profile_settings_id = ? and blocked_profile_id = ?", profileSettingsID,blockedUserID).RowsAffected == 0 {
+		return false
+	}
+	return true
+}
+
+func (repo *ProfileSettingsBlockedProfilesRepository) FindProfileSettingsBlockedProfiles(profileSettingsID uuid.UUID, blockedUserID uuid.UUID) *model.ProfileSettingsBlockedProfiles {
+	profileSettingsBlockedProfiles := &model.ProfileSettingsBlockedProfiles{}
+	if repo.Database.First(&profileSettingsBlockedProfiles, "profile_settings_id = ? and blocked_profile_id = ?",profileSettingsID,blockedUserID).RowsAffected == 0 {
+		return nil
+	}
+	return profileSettingsBlockedProfiles
+}
+
+func (repo *ProfileSettingsBlockedProfilesRepository) UnblockUser(id uuid.UUID) {
+	repo.Database.Delete(&model.ProfileSettingsBlockedProfiles{}, id)
+}

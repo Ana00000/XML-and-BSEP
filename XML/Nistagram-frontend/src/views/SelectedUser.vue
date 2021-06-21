@@ -84,6 +84,7 @@
     <div class="BlockUserButton">
       <v-btn
         v-on:click="blockUser"
+        v-if="!isHiddenBlockUserButton"
         color="info mb-5"
         elevation="24"
         x-large
@@ -91,14 +92,37 @@
         >Block</v-btn
       >
     </div>
+    <div class="UnblockUserButton">
+      <v-btn
+        v-on:click="unblockUser"
+        v-if="!isHiddenUnblockUserButton"
+        color="info mb-5"
+        elevation="24"
+        x-large
+        raised
+        >Unblock</v-btn
+      >
+    </div>
     <div class="MuteUserButton">
       <v-btn
         v-on:click="muteUser"
+        v-if="!isHiddenMuteUserButton"
         color="info mb-5"
         elevation="24"
         x-large
         raised
         >Mute</v-btn
+      >
+    </div>
+    <div class="UnmuteUserButton">
+      <v-btn
+        v-on:click="unmuteUser"
+        v-if="!isHiddenUnmuteUserButton"
+        color="info mb-5"
+        elevation="24"
+        x-large
+        raised
+        >Unmute</v-btn
       >
     </div>
     <v-container grid-list-lg >
@@ -227,6 +251,10 @@ export default {
     isHiddenFollowing: true,
     isHiddenSendFollowRequest: true,
     isHiddenFollowRequestSent: true,
+    isHiddenBlockUserButton: false,
+    isHiddenUnblockUserButton: true,
+    isHiddenMuteUserButton: false,
+    isHiddenUnmuteUserButton: true,
     posts: [],
     stories: [],
   }),
@@ -235,6 +263,8 @@ export default {
     this.token = localStorage.getItem("token");
     this.logId = localStorage.getItem("userId");
     console.log(this.selectedUser);
+    this.checkIfBlock();
+    
     this.init();
   },
   methods: {
@@ -273,8 +303,51 @@ export default {
           window.location.href = "https://localhost:8081/forbiddenPage";
           console.log(er);
         });
-
+      
       this.getUser();
+    },
+    checkIfBlock(){
+       this.$http
+        .get(
+          "https://localhost:8080/api/settings/check_if_block/"+this.selectedUser+"/"+this.logId
+        )
+        .then((r) => {
+          console.log(r.data);
+          if (r.data==true){
+            this.isHiddenBlockUserButton=true;
+            this.isHiddenMuteUserButton=true;
+            this.isHiddenUnmuteUserButton=true;
+            this.isHiddenUnblockUserButton=false;
+          } else {
+            this.isHiddenBlockUserButton=false;
+            this.isHiddenUnblockUserButton=true;
+          }
+          this.checkIfMute();
+        })
+        .catch((er) => {
+          console.log(er);
+      });
+    },
+    checkIfMute(){
+      if (this.isHiddenBlockUserButton==false){
+        this.$http
+        .get(
+          "https://localhost:8080/api/settings/check_if_mute/"+this.selectedUser+"/"+this.logId
+        )
+        .then((r) => {
+          console.log(r.data);
+          if (r.data==true){
+            this.isHiddenMuteUserButton=true;
+            this.isHiddenUnmuteUserButton=false;
+          } else {
+            this.isHiddenMuteUserButton=false;
+            this.isHiddenUnmuteUserButton=true;
+          }
+        })
+        .catch((er) => {
+          console.log(er);
+        });
+      }
     },
     getUser() {
       console.log(this.selectedUser);
@@ -285,74 +358,88 @@ export default {
           console.log(resp.data);
           console.log(resp.data.profileVisibility);
           console.log(resp.data.followingStatus);
-
+          
           if(resp.data.profileVisibility == "PUBLIC_VISIBILITY")
             console.log("PUBLIC JE");
           else if(resp.data.profileVisibility == "PRIVATE")
             console.log("PRIVATE JE");
           else console.log("NISTA JE");
 
-          if (resp.data.followingStatus == "FOLLOWING") {
-            this.isHiddenFollowing = false;
+          if (this.isHiddenBlockUserButton==false){
+            if (resp.data.followingStatus == "FOLLOWING") {
+              this.isHiddenFollowing = false;
+              this.isHiddenFollow = true;
+              this.isHiddenSendFollowRequest = true;
+              this.isHiddenFollowRequestSent = true;
+              console.log("TRUE JE");
+            } else if (
+              resp.data.followingStatus == "NOT FOLLOWING" &&
+              resp.data.profileVisibility == "PRIVATE"
+            ) {
+              this.isHiddenFollowing = true;
+              this.isHiddenFollow = true;
+              this.isHiddenSendFollowRequest = false;
+              this.isHiddenFollowRequestSent = true;
+              console.log("FALSE JE I PRIVATE JE");
+            }else if(resp.data.followingStatus == "NOT FOLLOWING" && resp.data.profileVisibility == "PUBLIC_VISIBILITY"){
+              this.isHiddenFollowing  = true
+              this.isHiddenFollow = false
+              this.isHiddenSendFollowRequest = true
+              this.isHiddenFollowRequestSent = true;
+              console.log("FALSE JE I PUBLIC");
+            } else if (
+              resp.data.followingStatus == "PENDING" &&
+              resp.data.profileVisibility == "PRIVATE"
+            ) {
+              this.isHiddenFollowing = true;
+              this.isHiddenFollow = true;
+              this.isHiddenSendFollowRequest = true;
+              this.isHiddenFollowRequestSent = false;
+              console.log("PENDING JE I PRIVATE");
+            } else console.log("OPET NISTA JE");
+        } else {
+            this.isHiddenFollowing = true;
             this.isHiddenFollow = true;
             this.isHiddenSendFollowRequest = true;
             this.isHiddenFollowRequestSent = true;
-            console.log("TRUE JE");
-          } else if (
-            resp.data.followingStatus == "NOT FOLLOWING" &&
-            resp.data.profileVisibility == "PRIVATE"
-          ) {
-            this.isHiddenFollowing = true;
-            this.isHiddenFollow = true;
-            this.isHiddenSendFollowRequest = false;
-            this.isHiddenFollowRequestSent = true;
-            console.log("FALSE JE I PRIVATE JE");
-          }else if(resp.data.followingStatus == "NOT FOLLOWING" && resp.data.profileVisibility == "PUBLIC_VISIBILITY"){
-            this.isHiddenFollowing  = true
-            this.isHiddenFollow = false
-            this.isHiddenSendFollowRequest = true
-            this.isHiddenFollowRequestSent = true;
-            console.log("FALSE JE I PUBLIC");
-          } else if (
-            resp.data.followingStatus == "PENDING" &&
-            resp.data.profileVisibility == "PRIVATE"
-          ) {
-            this.isHiddenFollowing = true;
-            this.isHiddenFollow = true;
-            this.isHiddenSendFollowRequest = true;
-            this.isHiddenFollowRequestSent = false;
-            console.log("PENDING JE I PRIVATE");
-          } else console.log("OPET NISTA JE");
+        }
+        console.log("Blokiran : "+this.isHiddenBlockUserButton);
+        this.getContents();
+
         })
         .catch(console.log("Didn't set user info!"));
-
-        this.$http
-        .get("https://localhost:8080/api/post/find_all_posts_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"),{
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-        }
-        )
-        .then((response) => {
-          this.posts = response.data;
-        })
-        .catch(console.log);
-
-        this.$http
-        .get("https://localhost:8080/api/story/find_all_stories_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"),{
-          headers: {
-            Authorization: "Bearer " + this.token,
-          },
-        })
-        .then((response) => {
-          this.stories = response.data;
-        })
-        .catch(console.log);
+        
     },
     setUserInfo(item) {
       this.username = item.username;
       this.firstName = item.firstName;
       this.lastName = item.lastName;
+    },
+    getContents(){
+      if (this.isHiddenBlockUserButton==false){
+          this.$http
+          .get("https://localhost:8080/api/post/find_all_posts_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"),{
+              headers: {
+                Authorization: "Bearer " + this.token,
+              },
+          }
+          )
+          .then((response) => {
+            this.posts = response.data;
+          })
+          .catch(console.log);
+
+          this.$http
+          .get("https://localhost:8080/api/story/find_all_stories_for_reg?id=" + this.selectedUser + "&logId=" + localStorage.getItem("userId"),{
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
+          .then((response) => {
+            this.stories = response.data;
+          })
+          .catch(console.log);
+        }
     },
     //
     muteUser(){
@@ -372,6 +459,19 @@ export default {
         })
         .catch((err) => console.log(err));
     },
+    unmuteUser(){
+      this.$http
+        .post("https://localhost:8080/api/settings/unmute_user/", {
+          logged_in_user: this.logId,
+          muted_user: this.selectedUser,
+        })
+        .then((resp) => {
+          console.log(resp.data);
+          alert("Successfully unmuted user!");
+           window.location.href = "https://localhost:8081/";
+        })
+        .catch((err) => console.log(err));
+    },
     blockUser(){
       this.$http
         .post("https://localhost:8080/api/settings/block_user/", {
@@ -385,6 +485,32 @@ export default {
         .then((resp) => {
           console.log(resp.data);
           alert("Successfully blocked user!");
+           window.location.href = "https://localhost:8081/";
+        })
+        .catch((err) => console.log(err));
+      
+      this.$http
+        .post("https://localhost:8080/api/user/remove_followings_between_users/", {
+          logged_in_user: this.logId,
+          blocked_user: this.selectedUser,
+        })
+        .then((resp) => {
+          console.log(resp.data);
+          alert("Successfully remove followings between users!");
+           window.location.href = "https://localhost:8081/";
+        })
+        .catch((err) => console.log(err));
+      
+    },
+    unblockUser(){
+      this.$http
+        .post("https://localhost:8080/api/settings/unblock_user/", {
+          logged_in_user: this.logId,
+          blocked_user: this.selectedUser,
+        })
+        .then((resp) => {
+          console.log(resp.data);
+          alert("Successfully unblocked user!");
            window.location.href = "https://localhost:8081/";
         })
         .catch((err) => console.log(err));

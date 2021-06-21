@@ -145,3 +145,37 @@ func (handler *ProfileSettingsMutedProfilesHandler) MuteUser(w http.ResponseWrit
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
+
+func (handler *ProfileSettingsMutedProfilesHandler) UnmuteUser(w http.ResponseWriter, r *http.Request) {
+	var muteUserDTO dto.MuteUserDTO
+	if err := json.NewDecoder(r.Body).Decode(&muteUserDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsMutedProfilesHandler",
+			"action":    "UnmuteUser",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast jason to MuteUserDTO!")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var profileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(muteUserDTO.LoggedInUser)
+
+	var profileSettingsMutedProfiles = handler.Service.FindProfileSettingsMutedProfiles(profileSettings.ID,muteUserDTO.MutedUser)
+
+	if profileSettingsMutedProfiles==nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsMutedProfilesHandler",
+			"action":    "UnmuteUser",
+			"timestamp": time.Now().String(),
+		}).Error("User isn't muted")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	handler.Service.UnmuteUser(profileSettingsMutedProfiles.ID)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}

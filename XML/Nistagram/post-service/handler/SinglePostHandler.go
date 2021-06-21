@@ -2677,14 +2677,38 @@ func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []d
 		//return
 	}
 
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_not_blocked_and_muted_users_for_logged_user/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFU635",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all not blocked and muted users for logged user!")
+		panic(err)
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var notBlockedAndMutedUsers []dto.ClassicUserDTO
+	if err := json.NewDecoder(resp.Body).Decode(&notBlockedAndMutedUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFU635",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
+		panic(err)
+	}
 
-	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(id, allValidUsers)
+
+	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(id, notBlockedAndMutedUsers)
 
 
 	//var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsersButLoggedIn)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
-	jsonClassicUsersDTO, _ := json.Marshal(allValidUsersButLoggedIn)
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	jsonClassicUsersDTO, _ = json.Marshal(allValidUsersButLoggedIn)
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",

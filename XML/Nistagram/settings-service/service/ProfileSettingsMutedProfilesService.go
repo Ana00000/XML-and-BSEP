@@ -21,3 +21,15 @@ func (service *ProfileSettingsMutedProfilesService) CreateProfileSettingsMutedPr
 func (service *ProfileSettingsMutedProfilesService) FindAllMutedUserForLoggedUser(id uuid.UUID) []uuid.UUID {
 	return service.Repo.FindAllMutedUserForLoggedUser(id)
 }
+
+func (service *ProfileSettingsMutedProfilesService) CheckIfMuted(profileSettingsID uuid.UUID, mutedUserID uuid.UUID) bool {
+	return service.Repo.CheckIfMuted(profileSettingsID,mutedUserID)
+}
+
+func (service *ProfileSettingsMutedProfilesService) FindProfileSettingsMutedProfiles(profileSettingsID uuid.UUID, mutedUserID uuid.UUID) *model.ProfileSettingsMutedProfiles {
+	return service.Repo.FindProfileSettingsMutedProfiles(profileSettingsID,mutedUserID)
+}
+
+func (service *ProfileSettingsMutedProfilesService) UnmuteUser(id uuid.UUID) {
+	service.Repo.UnmuteUser(id)
+}

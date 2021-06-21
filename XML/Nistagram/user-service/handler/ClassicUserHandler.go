@@ -171,13 +171,39 @@ func (handler *ClassicUserHandler) FindAllUsersButLoggedIn(w http.ResponseWriter
 	id := r.URL.Query().Get("id")
 
 	var user = handler.ClassicUserService.FindAllUsersButLoggedIn(uuid.MustParse(id))
+	var userDTO = convertListClassicUserToListClassicUserDTO(user)
+	reqUrl := fmt.Sprintf("http://%s:%s/find_all_not_blocked_users_for_logged_user/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	jsonClassicUsersDTO, _ := json.Marshal(userDTO)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "FIDALUSRSBUTLOGEDIN3231",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all not blocked  users for logged user!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var notBlockedAndMutedUsers []dto.ClassicUserDTO
+	if err := json.NewDecoder(resp.Body).Decode(&notBlockedAndMutedUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "FIDALUSRSBUTLOGEDIN3231",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
 	//CHECK IF THIS SHOULD RETURN ERROR OR JUST EMPTY LIST
 	/*if  user == nil {
 		fmt.Println("No user found")
 		w.WriteHeader(http.StatusExpectationFailed)
 	}*/
 	//iz usera izbaciti sve usere koji su blokirani, i koji su usera blokirali
-	userJson, _ := json.Marshal(user)
+	userJson, _ := json.Marshal(notBlockedAndMutedUsers)
 
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status": "success",
