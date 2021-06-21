@@ -247,7 +247,19 @@ func main() {
 	logError.Formatter = &logrus.JSONFormatter{}
 
 	database := initDB()
-	repoProfileSettings := initProfileSettingsRepo(database)
+
+	repoProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesRepo(database)
+	serviceProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesServices(repoProfileSettingsPostNotificationsProfiles)
+	handlerProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesHandler(serviceProfileSettingsPostNotificationsProfiles, logInfo, logError, validator)
+
+
+	repoProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesRepo(database)
+	serviceProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesServices(repoProfileSettingsStoryNotificationsProfiles)
+	handlerProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesHandler(serviceProfileSettingsStoryNotificationsProfiles, logInfo, logError, validator)
+
+
+
+	repoProfileSettings := initProfileSettingsRepo(database,repoProfileSettingsPostNotificationsProfiles,repoProfileSettingsStoryNotificationsProfiles)
 	serviceProfileSettings := initProfileSettingsServices(repoProfileSettings)
 	//handlerProfileSettings := initProfileSettingsHandler(handlerProfileSettingsMutedProfiles,serviceProfileSettingsBlockedProfiles,serviceProfileSettings, logInfo, logError, validator)
 
@@ -261,14 +273,6 @@ func main() {
 	handlerProfileSettingsMutedProfiles := initProfileSettingsMutedProfilesHandler(serviceProfileSettings,serviceProfileSettingsMutedProfiles, logInfo, logError, validator)
 	handlerProfileSettings := initProfileSettingsHandler(serviceProfileSettingsMutedProfiles,serviceProfileSettingsBlockedProfiles,serviceProfileSettings, logInfo, logError, validator)
 
-	repoProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesRepo(database)
-	serviceProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesServices(repoProfileSettingsPostNotificationsProfiles)
-	handlerProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesHandler(serviceProfileSettingsPostNotificationsProfiles, logInfo, logError, validator)
-
-
-	repoProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesRepo(database)
-	serviceProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesServices(repoProfileSettingsStoryNotificationsProfiles)
-	handlerProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesHandler(serviceProfileSettingsStoryNotificationsProfiles, logInfo, logError, validator)
 
 
 	repoProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesRepo(database)

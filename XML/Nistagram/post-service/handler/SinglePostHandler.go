@@ -162,18 +162,6 @@ func getJson(url string, target interface{}) error {
 }
 
 func (handler *SinglePostHandler) FindPostById(w http.ResponseWriter, r *http.Request) {
-	reqUrlAuthorization := fmt.Sprintf("http://%s:%s/auth/check-find-post-by-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
-	res := Request(reqUrlAuthorization, ExtractToken(r))
-	if res.StatusCode == 403 {
-		handler.LogError.WithFields(logrus.Fields{
-			"status":    "failure",
-			"location":  "SinglePostHandler",
-			"action":    "FindPostById",
-			"timestamp": time.Now().String(),
-		}).Error("Forbidden method for logged in user!")
-		w.WriteHeader(http.StatusForbidden) // 403
-		return
-	}
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	postId := r.URL.Query().Get("post_id")
 

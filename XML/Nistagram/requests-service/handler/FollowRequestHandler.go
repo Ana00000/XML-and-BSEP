@@ -11,12 +11,12 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/requests-service/service"
 	"gopkg.in/go-playground/validator.v9"
+	gomail "gopkg.in/mail.v2"
 	"net/http"
 	"os"
 	_ "strconv"
 	"strings"
 	"time"
-	gomail "gopkg.in/mail.v2"
 )
 
 type FollowRequestHandler struct {
@@ -234,15 +234,6 @@ func (handler *FollowRequestHandler) SendNotificationMail(email string, username
 	}).Info("Successfully sent email!")
 }
 
-func getJson(url string, target interface{}) error {
-	r, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer r.Body.Close()
-	return json.NewDecoder(r.Body).Decode(target)
-}
-
 func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, r *http.Request) {
 	reqUrlAuth := fmt.Sprintf("http://%s:%s/check_if_authentificated/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	response:=Request(reqUrlAuth,ExtractToken(r))
@@ -373,9 +364,9 @@ func (handler *FollowRequestHandler) FindFollowRequestByIDsClassicUserAndHisFoll
 		"timestamp": time.Now().String(),
 		}).Info("Successfully updated follow request to accepted!")
 
-	followRequest := handler.Service.FindById(uuid.MustParse(requestId))
+	//followRequest := handler.Service.FindById(request.ID))
 	var user dto.ClassicUserDTO
-	reqUrlUser := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), followRequest.FollowerUserId)
+	reqUrlUser := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), request.FollowerUserId)
 	err := getJson(reqUrlUser, &user)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
@@ -389,7 +380,7 @@ func (handler *FollowRequestHandler) FindFollowRequestByIDsClassicUserAndHisFoll
 	}
 
 	var userSender dto.ClassicUserDTO
-	reqUrlUser = fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), followRequest.ClassicUserId)
+	reqUrlUser = fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), request.ClassicUserId)
 	err = getJson(reqUrlUser, &userSender)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
