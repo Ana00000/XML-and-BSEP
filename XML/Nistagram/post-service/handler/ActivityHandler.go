@@ -346,8 +346,46 @@ func (handler *ActivityHandler) UpdateActivity(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	//SEND EMAIL NOTIFICATION
-	handler.SendNotificationMail(user.Email, activityDTO)
+	var profileSettings dto.ProfileSettingsDTO
+	reqUrl = fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), user.ID)
+	err = getJson(reqUrl, &profileSettings)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ActivityHandler",
+			"action":   "UPACT472",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if profileSettings.LikesNotifications == "ALL_NOTIFICATIONS"{
+		//SEND EMAIL NOTIFICATION
+		handler.SendNotificationMail(user.Email, activityDTO)
+	}else if profileSettings.LikesNotifications == "FRIENDS_NOTIFICATION"{
+		//check if senderUser is friend
+		var followings []dto.ClassicUserFollowingsFullDTO
+		reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_followings_for_user/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), user.ID)
+		err = getJson(reqUrl, &followings)
+		if err!=nil{
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "ActivityHandler",
+				"action":   "UPACT472",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find followings for user!")
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
+
+		for  i:=0; i < len(followings); i++{
+			if followings[i].FollowingUserId == activityDTO.UserID {
+				//SEND EMAIL NOTIFICATION
+				handler.SendNotificationMail(user.Email, activityDTO)
+			}
+		}
+	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
