@@ -16,6 +16,7 @@ import (
 	_ "strconv"
 	"strings"
 	"time"
+	gomail "gopkg.in/mail.v2"
 )
 
 type FollowRequestHandler struct {
@@ -89,17 +90,6 @@ func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, 
 		return
 	}
 
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "FollowRequestHandler",
-			"action":   "CREFOLLOWREQ6319",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
-
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var followRequestDTO dto.FollowRequestDTO
 	if err := json.NewDecoder(r.Body).Decode(&followRequestDTO); err != nil {
@@ -145,9 +135,7 @@ func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, 
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
-
 	} else {
-
 		if err := handler.Service.UpdateFollowRequestPending(checkIfExists.ID); err != nil {
 			handler.LogError.WithFields(logrus.Fields{
 				"status":    "failure",
@@ -159,17 +147,100 @@ func (handler *FollowRequestHandler) CreateFollowRequest(w http.ResponseWriter, 
 			w.WriteHeader(http.StatusExpectationFailed)
 			return
 		}
-
 	}
+
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status":    "success",
 		"location":  "FollowRequestHandler",
 		"action":    "CREFOLLOWREQ6319",
 		"timestamp": time.Now().String(),
 	}).Info("Successfully create follow request!")
+
+	var user dto.ClassicUserDTO
+	reqUrlUser := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), followRequestDTO.ClassicUserId)
+	err := getJson(reqUrlUser, &user)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "CREFOLLOWREQ6319",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find user by id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	var userSender dto.ClassicUserDTO
+	reqUrlUserSender := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), followRequestDTO.FollowerUserId)
+	err = getJson(reqUrlUserSender, &userSender)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "CREFOLLOWREQ6319",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find user by id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+	//SEND EMAIL NOTIFICATION
+	handler.SendNotificationMail(user.Email, userSender.Username)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
 
+func (handler *FollowRequestHandler) SendNotificationMail(email string, username string) {
+	m := gomail.NewMessage()
+
+	// Set E-Mail sender
+	m.SetHeader("From", "xml.ftn.uns@gmail.com")
+
+	// Set E-Mail receivers
+	m.SetHeader("To", email)
+
+	// Set E-Mail subject
+	m.SetHeader("Subject", "Confirmation mail")
+
+	// Set E-Mail body. You can set plain text or html with text/html
+	text := username + "\n\n\n sent you following request!\n\nhttps://localhost:8081/followRequests\n\n\nBest regards,\nTim25"
+
+	m.SetBody("text/plain", text)
+
+	// Settings for SMTP server
+	d := gomail.NewDialer("smtp.gmail.com", 587, "xml.ftn.uns@gmail.com", "XMLFTNUNS1")
+
+	// This is only needed when SSL/TLS certificate is not valid on server.
+	// In production this should be set to false.
+	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// Now send E-Mail
+	if err := d.DialAndSend(m); err != nil {
+		//fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "SEDCONFMAIL010",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed sending email!")
+		panic(err)
+	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "FollowRequestHandler",
+		"action":   "SEDCONFMAIL010",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully sent email!")
+}
+
+func getJson(url string, target interface{}) error {
+	r, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+	return json.NewDecoder(r.Body).Decode(target)
 }
 
 func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, r *http.Request) {
@@ -198,17 +269,6 @@ func (handler *FollowRequestHandler) RejectFollowRequest(w http.ResponseWriter, 
 		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "FollowRequestHandler",
-			"action":   "REJFOLLOWREQ4939",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
@@ -286,8 +346,85 @@ func (handler *FollowRequestHandler) UpdateFollowRequestToAccepted(w http.Respon
 		"action":    "UPDFOLLOWREQTOACCEP7710",
 		"timestamp": time.Now().String(),
 	}).Info("Successfully updated follow request to accepted!")
+
+	followRequest := handler.Service.FindById(uuid.MustParse(requestId))
+	var user dto.ClassicUserDTO
+	reqUrlUser := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), followRequest.FollowerUserId)
+	err := getJson(reqUrlUser, &user)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "UPDFOLLOWREQTOACCEP7710",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find user by id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	var userSender dto.ClassicUserDTO
+	reqUrlUser = fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), followRequest.ClassicUserId)
+	err = getJson(reqUrlUser, &userSender)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "UPDFOLLOWREQTOACCEP7710",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find user by id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	//SEND EMAIL NOTIFICATION
+	handler.SendNotificationEmail(user.Email, userSender.Username)
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *FollowRequestHandler) SendNotificationEmail(email string, username string) {
+	m := gomail.NewMessage()
+
+	// Set E-Mail sender
+	m.SetHeader("From", "xml.ftn.uns@gmail.com")
+
+	// Set E-Mail receivers
+	m.SetHeader("To", email)
+
+	// Set E-Mail subject
+	m.SetHeader("Subject", "Confirmation mail")
+
+	// Set E-Mail body. You can set plain text or html with text/html
+	text := username + "\n\n\n accepted your follow request!\n\n\nBest regards,\nTim25"
+
+	m.SetBody("text/plain", text)
+
+	// Settings for SMTP server
+	d := gomail.NewDialer("smtp.gmail.com", 587, "xml.ftn.uns@gmail.com", "XMLFTNUNS1")
+
+	// This is only needed when SSL/TLS certificate is not valid on server.
+	// In production this should be set to false.
+	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// Now send E-Mail
+	if err := d.DialAndSend(m); err != nil {
+		//fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "FollowRequestHandler",
+			"action":   "SEDCONFMAIL010",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed sending email!")
+		panic(err)
+	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "FollowRequestHandler",
+		"action":   "SEDCONFMAIL010",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully sent email!")
 }
 
 func (handler *FollowRequestHandler) FindAllPendingFollowerRequestsForUser(w http.ResponseWriter, r *http.Request) {
@@ -383,17 +520,6 @@ func (handler *FollowRequestHandler) FindRequestById(w http.ResponseWriter, r *h
 		w.WriteHeader(http.StatusForbidden) // 403
 		return
 	}
-
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "FollowRequestHandler",
-			"action":   "FIDREQBYID2431",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
