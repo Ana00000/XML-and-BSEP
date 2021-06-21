@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d09c2dcf-763b-4e85-9087-41b1e7136b80" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Nistagram/message-service/dto/ClassicUserDTO.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram/message-service/dto/ClassicUserFollowingsDTO.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nistagram/message-service/dto/ProfileSettingsDTO.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/message-service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/message-service/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/message-service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/message-service/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/message-service/handler/MessageHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/message-service/handler/MessageHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/dto/ProfileSettingsDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/dto/ProfileSettingsDTO.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

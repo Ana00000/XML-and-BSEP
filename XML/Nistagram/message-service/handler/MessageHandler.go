@@ -62,6 +62,7 @@ func (handler *MessageHandler) CreateMessage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+
 	//send email to receiverUserId
 	var receiverUser dto.ClassicUserDTO
 	reqUrlUser := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), messageDTO.ReceiverUserID)
@@ -91,15 +92,59 @@ func (handler *MessageHandler) CreateMessage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	//SEND EMAIL NOTIFICATION
-	handler.SendNotificationMail(receiverUser.Email, id, senderUser.Username)
 
+	var profileSettings dto.ProfileSettingsDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), receiverUser.ID)
+	err = getJson(reqUrl, &profileSettings)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "MessageHandler",
+			"action":   "CRMEE454",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if profileSettings.MessagesNotifications == "ALL_NOTIFICATIONS"{
+		//SEND EMAIL NOTIFICATION
+		handler.SendNotificationMail(receiverUser.Email, id, senderUser.Username)
+
+	}else if profileSettings.MessagesNotifications == "FRIENDS_NOTIFICATION"{
+		//check if senderUser is friend
+
+		var followings []dto.ClassicUserFollowingsDTO
+		reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_followings_for_user/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), receiverUser.ID)
+		err = getJson(reqUrl, &followings)
+		if err!=nil{
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "MessageHandler",
+				"action":   "CRMEE454",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find profile settings by user id!")
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
+
+		for  i:=0; i < len(followings); i++{
+			if followings[i].FollowingUserId == senderUser.ID{
+				//SEND EMAIL NOTIFICATION
+				handler.SendNotificationMail(receiverUser.Email, id, senderUser.Username)
+			}
+		}
+
+	}
+
+	//else= NONE = no notification
 	handler.LogInfo.WithFields(logrus.Fields{
 		"status": "success",
 		"location":   "MessageHandler",
 		"action":   "CRMEE454",
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully created message!")
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
