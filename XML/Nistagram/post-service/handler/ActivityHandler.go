@@ -282,7 +282,7 @@ func (handler *ActivityHandler) FindAllLikedPostsByUserId(w http.ResponseWriter,
 	}
 
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
-	userId := r.URL.Query().Get("user_id")
+	userId := r.URL.Query().Get("id")
 
 	allLikedPostActivities := handler.Service.FindAllLikedPostsByUserId(uuid.MustParse(userId))
 	activitiesJson, _ := json.Marshal(allLikedPostActivities)
@@ -293,9 +293,9 @@ func (handler *ActivityHandler) FindAllLikedPostsByUserId(w http.ResponseWriter,
 			"action":    "FindAllLikedPostByUserId",
 			"timestamp": time.Now().String(),
 		}).Info("Successfully found all posts this user liked!")
-		w.WriteHeader(http.StatusCreated)
-		w.Header().Set("Content-Type", "application/json")
 		w.Write(activitiesJson)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
 		return
 	}
 
@@ -321,7 +321,6 @@ func (handler *ActivityHandler) FindAllDislikedPostsByUserId(w http.ResponseWrit
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
-
 	reqUrlAuthorization := fmt.Sprintf("http://%s:%s/auth/check-find-all-disliked-post-by-user-id-permission/", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"))
 	res := Request(reqUrlAuthorization, ExtractToken(r))
 	if res.StatusCode == 403 {
@@ -336,8 +335,7 @@ func (handler *ActivityHandler) FindAllDislikedPostsByUserId(w http.ResponseWrit
 	}
 
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
-
-	userId := r.URL.Query().Get("user_id")
+	userId := r.URL.Query().Get("id")
 
 	allDislikedPostActivities := handler.Service.FindAllDislikedPostsByUserId(uuid.MustParse(userId))
 	activitiesJson, _ := json.Marshal(allDislikedPostActivities)
@@ -348,9 +346,9 @@ func (handler *ActivityHandler) FindAllDislikedPostsByUserId(w http.ResponseWrit
 			"action":    "FindAllDislikedPostByUserId",
 			"timestamp": time.Now().String(),
 		}).Info("Successfully found all posts this user disliked!")
-		w.WriteHeader(http.StatusCreated)
-		w.Header().Set("Content-Type", "application/json")
 		w.Write(activitiesJson)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
 		return
 	}
 

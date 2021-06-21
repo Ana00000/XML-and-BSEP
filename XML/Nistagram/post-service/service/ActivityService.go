@@ -54,18 +54,12 @@ func (service *ActivityService) FindAllActivitiesForPost(postId uuid.UUID) []mod
 
 func (service *ActivityService) FindAllLikedPostsByUserId(userId uuid.UUID) []model.Activity {
 	allLikedPostActivities := service.Repo.FindAllDislikedPostsByUserId(userId)
-	if allLikedPostActivities != nil {
-		return allLikedPostActivities
-	}
-	return nil
+	return allLikedPostActivities
 }
 
 func (service *ActivityService) FindAllDislikedPostsByUserId(userId uuid.UUID) []model.Activity {
 	allDislikedPostActivities := service.Repo.FindAllDislikedPostsByUserId(userId)
-	if allDislikedPostActivities != nil {
-		return allDislikedPostActivities
-	}
-	return nil
+	return allDislikedPostActivities
 }
 
 func (service *ActivityService) UpdateActivity(activity *dto.ActivityDTO) error {

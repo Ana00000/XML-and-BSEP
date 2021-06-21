@@ -47,13 +47,13 @@ func (repo *ActivityRepository) FindAllActivitiesForPost(postId uuid.UUID) []mod
 
 func (repo *ActivityRepository) FindAllLikedPostsByUserId(userId uuid.UUID) []model.Activity {
 	var allLikedPostActivities []model.Activity
-	repo.Database.Select("*").Where("user_id = ? and liked_status = ?", userId, 0).Find(&allLikedPostActivities)
+	repo.Database.Select("*").Where("user_id = ? and liked_status = ?", userId, model.LIKED).Find(&allLikedPostActivities)
 	return allLikedPostActivities
 }
 
 func (repo *ActivityRepository) FindAllDislikedPostsByUserId(userId uuid.UUID) []model.Activity {
 	var allDislikedPostActivities []model.Activity
-	repo.Database.Select("*").Where("user_id = ? and liked_status = ?", userId, 1).Find(&allDislikedPostActivities)
+	repo.Database.Select("*").Where("user_id = ? and liked_status = ?", userId, model.DISLIKED).Find(&allDislikedPostActivities)
 	return allDislikedPostActivities
 }
 

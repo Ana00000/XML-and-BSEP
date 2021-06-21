@@ -182,8 +182,7 @@ export default {
     getLikedPostsByUser() {
       this.$http
         .get(
-          "https://localhost:8080/api/post/find_all_liked_posts_by_user_id?user_id=" +
-            this.userId,
+          "https://localhost:8080/api/post/find_all_liked_posts_by_user_id?id=" + localStorage.getItem("userId"),
           {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -200,8 +199,7 @@ export default {
     getDislikedPostsByUser() {
       this.$http
         .get(
-          "https://localhost:8080/api/post/find_all_disliked_posts_by_user_id?user_id=" +
-            this.userId,
+          "https://localhost:8080/api/post/find_all_disliked_posts_by_user_id?id=" + localStorage.getItem("userId"),
           {
             headers: {
               Authorization: "Bearer " + this.token,
