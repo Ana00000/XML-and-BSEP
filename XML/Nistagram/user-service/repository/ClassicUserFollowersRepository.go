@@ -62,5 +62,15 @@ fmt.Println(allFollowersForSecondUser)
 	return mutualFollowers
 }
 
+func (repo *ClassicUserFollowersRepository) FindFollowerByUsersIDs(followerUserID uuid.UUID,classicUserID uuid.UUID) *model.ClassicUserFollowers {
+	classicUserFollowers := &model.ClassicUserFollowers{}
+	if repo.Database.First(&classicUserFollowers, "follower_user_id = ? and classic_user_id = ?", followerUserID, classicUserID).RowsAffected == 0{
+		return nil
+	}
+	return classicUserFollowers
+}
 
+func (repo *ClassicUserFollowersRepository) RemoveClassicUserFollower(id uuid.UUID) {
+	repo.Database.Delete(&model.ClassicUserFollowers{}, id)
+}
 

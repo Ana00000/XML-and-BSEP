@@ -131,6 +131,18 @@ func (repo * ClassicUserFollowingsRepository) FindAllUserWhoFollowUserId(userId 
 
 }
 
+func (repo *ClassicUserFollowingsRepository) FindFollowingByUsersIDs(followingUserID uuid.UUID,classicUserID uuid.UUID) *model.ClassicUserFollowings {
+	classicUserFollowings := &model.ClassicUserFollowings{}
+	if repo.Database.First(&classicUserFollowings, "following_user_id = ? and classic_user_id = ?", followingUserID, classicUserID).RowsAffected == 0{
+		return nil
+	}
+	return classicUserFollowings
+}
+
+func (repo *ClassicUserFollowingsRepository) RemoveClassicUserFollowing(id uuid.UUID) {
+	repo.Database.Delete(&model.ClassicUserFollowings{}, id)
+}
+
 func ExsistInList(user model.ClassicUser,followings []model.ClassicUserFollowings) (model.ClassicUserFollowings, bool){
 	var classicUserFollowings model.ClassicUserFollowings
 	for i := 0; i < len(followings); i++ {

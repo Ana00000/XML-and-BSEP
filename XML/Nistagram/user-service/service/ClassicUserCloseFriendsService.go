@@ -30,4 +30,10 @@ func (service * ClassicUserCloseFriendsService) FindAllCloseFriendsForUser(userI
 	return nil
 }
 
+func (service ClassicUserCloseFriendsService) FindCloseFriendByUsersIDs(closeFriendID uuid.UUID,classicUserID uuid.UUID) *model.ClassicUserCloseFriends {
+	return service.Repo.FindCloseFriendByUsersIDs(closeFriendID,classicUserID)
+}
 
+func (service *ClassicUserCloseFriendsService) RemoveClassicUserCloseFriend(id uuid.UUID) {
+	service.Repo.RemoveClassicUserCloseFriend(id)
+}

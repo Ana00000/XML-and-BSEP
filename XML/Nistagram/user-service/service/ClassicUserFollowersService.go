@@ -37,3 +37,11 @@ func (service * ClassicUserFollowersService) FindAllMutualFollowerForUser(userId
 	}
 	return nil
 }
+
+func (service ClassicUserFollowersService) FindFollowerByUsersIDs(followingUserID uuid.UUID,classicUserID uuid.UUID) *model.ClassicUserFollowers {
+	return service.Repo.FindFollowerByUsersIDs(followingUserID,classicUserID)
+}
+
+func (service *ClassicUserFollowersService) RemoveClassicUserFollower(id uuid.UUID) {
+	service.Repo.RemoveClassicUserFollower(id)
+}

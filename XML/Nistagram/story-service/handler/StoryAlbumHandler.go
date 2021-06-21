@@ -618,12 +618,41 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
+
+
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_not_blocked_and_muted_users_for_logged_user/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALPUBALBSTORISREGUS9012",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all not blocked and muted users for logged user!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var notBlockedAndMutedUsers []dto.ClassicUserDTO
+	if err := json.NewDecoder(resp.Body).Decode(&notBlockedAndMutedUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALPUBALBSTORISREGUS9012",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+
 	//var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
-	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	jsonClassicNotBlockedAndMutedUsersDTO, _ := json.Marshal(notBlockedAndMutedUsers)
 	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonClassicUsersDTO))
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicNotBlockedAndMutedUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -960,12 +989,38 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 		return
 	}
 
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_not_blocked_and_muted_users_for_logged_user/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALFOLLINGSTRYALBMS0910",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all not blocked and muted users for logged user!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var notBlockedAndMutedUsers []dto.ClassicUserDTO
+	if err := json.NewDecoder(resp.Body).Decode(&notBlockedAndMutedUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALFOLLINGSTRYALBMS0910",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
 	//var followings = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_followings_for_user/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
-	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	jsonClassicNotBlockedAndMutedUsersDTO, _ := json.Marshal(notBlockedAndMutedUsers)
 	//fmt.Println("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonClassicUsersDTO))
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicNotBlockedAndMutedUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",

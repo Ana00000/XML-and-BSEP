@@ -237,10 +237,11 @@ func initClassicUserFollowersHandler(LogInfo *logrus.Logger, LogError *logrus.Lo
 	}
 }
 
-func initClassicUserFollowingsHandler(LogInfo *logrus.Logger, LogError *logrus.Logger, rbac *gorbac.RBAC, permissionAcceptFollowerRequest *gorbac.Permission, permissionCreateClassicUserFollowing *gorbac.Permission, userService *service.UserService, classicUserFollowings *service.ClassicUserFollowingsService, classicUserFollowersService *service.ClassicUserFollowersService) *handler.ClassicUserFollowingsHandler {
+func initClassicUserFollowingsHandler(classicUserCloseFriendsService *service.ClassicUserCloseFriendsService,LogInfo *logrus.Logger,LogError *logrus.Logger,rbac *gorbac.RBAC,permissionAcceptFollowerRequest *gorbac.Permission, permissionCreateClassicUserFollowing *gorbac.Permission, userService *service.UserService,classicUserFollowings *service.ClassicUserFollowingsService, classicUserFollowersService *service.ClassicUserFollowersService) *handler.ClassicUserFollowingsHandler{
 	return &handler.ClassicUserFollowingsHandler{
 		ClassicUserFollowingsService:         classicUserFollowings,
 		ClassicUserFollowersService:          classicUserFollowersService,
+		ClassicUserCloseFriendsService:       classicUserCloseFriendsService,
 		UserService:                          userService,
 		Rbac:                                 rbac,
 		PermissionCreateClassicUserFollowing: permissionCreateClassicUserFollowing,
@@ -380,6 +381,16 @@ func initPostAuthorizationHandler(rbac *gorbac.RBAC, LogInfo *logrus.Logger, Log
 	}
 }
 
+func initSettingsAuthorizationHandler(rbac *gorbac.RBAC, LogInfo *logrus.Logger,LogError *logrus.Logger,userService *service.UserService,permissionBlockUser *gorbac.Permission, permissionMuteUser *gorbac.Permission) *handler.SettingsAuthorizationHandler{
+	return &handler.SettingsAuthorizationHandler{
+		UserService:         userService,
+		Rbac:                rbac,
+		PermissionMuteUser:  permissionMuteUser,
+		PermissionBlockUser: permissionBlockUser,
+		LogInfo:             LogInfo,
+		LogError:            LogError,
+	}
+}
 
 func initRequestsAuthorizationHandler(rbac *gorbac.RBAC, permissionCreateFollowRequest *gorbac.Permission, permissionUpdateStatusFollowRequest *gorbac.Permission,  permissionFindFollowRequestById *gorbac.Permission,  permissionFindAllPendingFollowerRequestsForUser *gorbac.Permission,
 	permissionCreateVerificationRequest *gorbac.Permission, permissionUpdateStatusVerificationRequest *gorbac.Permission,  permissionFindVerificationRequestById *gorbac.Permission,  permissionFindAllPendingVerificationRequests *gorbac.Permission,
@@ -436,7 +447,7 @@ func initActivityAuthorizationHandler(userService *service.UserService, rbac *go
 	}
 }
 
-func handleFunc(storyAuthorizationHandler *handler.StoryAuthorizationHandler, postAuthorizationHandler *handler.PostAuthorizationHandler, locationAuthorizationHandler *handler.LocationAuthorizationHandler, requestAuthorizationHandler *handler.RequestsAuthorizationHandler, contentAuthorizationHandler *handler.ContentAuthorizationHandler, tagAuthorizationHandler *handler.TagAuthorizationHandler, userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, classicUserHandler *handler.ClassicUserHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler, classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler, classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler, classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler, classicUserCloseFriendsHandler *handler.ClassicUserCloseFriendsHandler, activityAuthorizationHandler *handler.ActivityAuthorizationHandler) {
+func handleFunc(settingsAuthorizationHandler *handler.SettingsAuthorizationHandler,storyAuthorizationHandler *handler.StoryAuthorizationHandler, postAuthorizationHandler *handler.PostAuthorizationHandler, locationAuthorizationHandler *handler.LocationAuthorizationHandler, requestAuthorizationHandler *handler.RequestsAuthorizationHandler, contentAuthorizationHandler *handler.ContentAuthorizationHandler, tagAuthorizationHandler *handler.TagAuthorizationHandler, userHandler *handler.UserHandler, confirmationTokenHandler *handler.ConfirmationTokenHandler, adminHandler *handler.AdminHandler, classicUserHandler *handler.ClassicUserHandler, agentHandler *handler.AgentHandler, registeredUserHandler *handler.RegisteredUserHandler, classicUserCampaignsHandler *handler.ClassicUserCampaignsHandler, classicUserFollowingsHandler *handler.ClassicUserFollowingsHandler, classicUserFollowersHandler *handler.ClassicUserFollowersHandler, recoveryPasswordTokenHandler *handler.RecoveryPasswordTokenHandler, classicUserCloseFriendsHandler *handler.ClassicUserCloseFriendsHandler, activityAuthorizationHandler *handler.ActivityAuthorizationHandler) {
 
 	router := mux.NewRouter().StrictSlash(true)
 
@@ -477,6 +488,8 @@ func handleFunc(storyAuthorizationHandler *handler.StoryAuthorizationHandler, po
 	router.HandleFunc("/find_all_users_by_following_ids/", classicUserHandler.FindAllUsersByFollowingIds).Methods("POST")
 	router.HandleFunc("/check_if_authentificated/", userHandler.CheckIfAuthentificated).Methods("GET")
 	router.HandleFunc("/get_user_id_by_jwt/", userHandler.GetUserIDFromJWTToken).Methods("GET")
+	router.HandleFunc("/remove_followings_between_users/", classicUserFollowingsHandler.RemoveFollowingsBetweenUsers).Methods("POST")
+
 	router.HandleFunc("/update_user_category", registeredUserHandler.UpdateUserCategory).Methods("POST")
 	router.HandleFunc("/update_official_document_path/{id}", registeredUserHandler.UpdateOfficialDocumentPath).Methods("POST")
 	//LOCATION MICROSERVICE AUTHORIZATION
@@ -550,6 +563,8 @@ func handleFunc(storyAuthorizationHandler *handler.StoryAuthorizationHandler, po
 	router.HandleFunc("/auth/check-find-follower-request-by-id-permission/", requestAuthorizationHandler.CheckFindFollowerRequestByIdPermission).Methods("GET")
 	router.HandleFunc("/auth/check-find-all-pending-follower-requests-for-user-permission/", requestAuthorizationHandler.CheckFindAllPendingFollowerRequestsForUserPermission).Methods("GET")
 
+	router.HandleFunc("/auth/check-mute-user-permission/", settingsAuthorizationHandler.CheckMuteUserPermission).Methods("GET")
+	router.HandleFunc("/auth/check-block-user-permission/", settingsAuthorizationHandler.CheckBlockUserPermission).Methods("GET")
 	router.HandleFunc("/auth/check-create-verification-request-permission/", requestAuthorizationHandler.CheckCreateVerificationRequestPermission).Methods("GET")
 	router.HandleFunc("/auth/check-update-status-verification-request-permission/", requestAuthorizationHandler.CheckUpdateStatusVerificationRequestPermission).Methods("GET")
 	router.HandleFunc("/auth/check-find-verification-request-by-id-permission/", requestAuthorizationHandler.CheckFindVerificationRequestByIdPermission).Methods("GET")
@@ -671,6 +686,8 @@ func main() {
 
 	permissionFindAllLikedPostByUserId := gorbac.NewStdPermission("permission-find-all-liked-posts-by-user-id")
 	permissionFindAllDislikedPostByUserId := gorbac.NewStdPermission("permission-find-all-disliked-posts-by-user-id")
+	permissionMuteUser := gorbac.NewStdPermission("permission-mute-user")
+	permissionBlockUser := gorbac.NewStdPermission("permission-block-user")
 
 	roleAdmin.Assign(permissionFindAllUsers)
 	roleAdmin.Assign(permissionUpdateUserInfo)
@@ -732,6 +749,8 @@ func main() {
 	roleAgent.Assign(permissionFindAllPendingFollowerRequestsForUser)
 	roleAgent.Assign(permissionCreateLocation)
 	roleAgent.Assign(permissionFindPostById)
+	roleAgent.Assign(permissionBlockUser)
+	roleAgent.Assign(permissionMuteUser)
 	roleAgent.Assign(permissionCreateVerificationRequest)
 
 	roleAgent.Assign(permissionCreateSingleStory)
@@ -823,6 +842,8 @@ func main() {
 
 	roleRegisteredUser.Assign(permissionFindAllLikedPostByUserId)
 	roleRegisteredUser.Assign(permissionFindAllDislikedPostByUserId)
+	roleRegisteredUser.Assign(permissionBlockUser)
+	roleRegisteredUser.Assign(permissionMuteUser)
 	roleRegisteredUser.Assign(permissionCreateVerificationRequest)
 
 	rbac.Add(roleAdmin)
@@ -866,6 +887,8 @@ func main() {
 		&permissionFindSelectedStoryAlbumByIdForLoggedUser, &permissionFindAllPublicAlbumStoriesRegisteredUser, &permissionFindAllFollowingStoryAlbums,
 		&permissionCreateStoryHighlight, &permissionFindAllStoryHighlightsForUser, logInfo, logError)
 
+	settingsAuthorizationHandler := initSettingsAuthorizationHandler(rbac, logInfo,logError,userService, &permissionBlockUser, &permissionMuteUser)
+
 	postAuthorizationHandler := initPostAuthorizationHandler(rbac, logInfo,logError,userService,&permissionCreateSinglePost,
 		&permissionCreatePostAlbum,&permissionFindAllFollowingPostAlbums,&permissionFindAllFollowingPosts,&permissionCreatePostCollection,
 		&permissionFindAllPostCollectionsForUserRegisteredUser,&permissionFindAllPostsForLoggedUser,
@@ -896,11 +919,11 @@ func main() {
 	confirmationTokenHandler := initConfirmationTokenHandler(logInfo,logError,confirmationTokenService,userService,registeredUserService,classicUserService)
 	classicUserCampaignsHandler := initClassicUserCampaignsHandler(logInfo,logError,classicUserCampaignsService)
 	classicUserFollowersHandler := initClassicUserFollowersHandler(logInfo,logError,rbac,&permissionFindAllMutualFollowerForUser,userService,classicUserFollowersService)
-	classicUserFollowingsHandler := initClassicUserFollowingsHandler(logInfo,logError,rbac,&permissionAcceptFollowerRequest,&permissionCreateClassicUserFollowing,userService,classicUserFollowingsService,classicUserFollowersService)
+	classicUserFollowingsHandler := initClassicUserFollowingsHandler(classicUserCloseFriendsService,logInfo,logError,rbac,&permissionAcceptFollowerRequest,&permissionCreateClassicUserFollowing,userService,classicUserFollowingsService,classicUserFollowersService)
 	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(logInfo,logError,recoveryPasswordTokenService,userService, validator)
 	classicUserHandler := initClassicUserHandler(userService,&permissionFindAllUsersButLoggedIn,rbac,logInfo,logError,classicUserService, classicUserFollowingsService)
 	classicUserCloseFriendsHandler := initClassicUserCloseFriendsHandler( userService, rbac, &permissionCreateClassicUserCloseFriend, logInfo,logError,classicUserCloseFriendsService, classicUserFollowersService)
 
-	handleFunc(storyAuthorizationHandler, postAuthorizationHandler,locationAuthorizationHandler, requestsAuthorizationHandler, contentAuthorizationHandler,tagAuthorizationHandler,userHandler, confirmationTokenHandler, adminHandler,classicUserHandler, agentHandler,registeredUserHandler,classicUserCampaignsHandler,classicUserFollowingsHandler,classicUserFollowersHandler,recoveryPasswordTokenHandler, classicUserCloseFriendsHandler, activityAuthorizationHandler)
+	handleFunc(settingsAuthorizationHandler,storyAuthorizationHandler, postAuthorizationHandler,locationAuthorizationHandler, requestsAuthorizationHandler, contentAuthorizationHandler,tagAuthorizationHandler,userHandler, confirmationTokenHandler, adminHandler,classicUserHandler, agentHandler,registeredUserHandler,classicUserCampaignsHandler,classicUserFollowingsHandler,classicUserFollowersHandler,recoveryPasswordTokenHandler, classicUserCloseFriendsHandler, activityAuthorizationHandler)
 
 }
