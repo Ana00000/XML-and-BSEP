@@ -51,3 +51,11 @@ func (service *ProfileSettingsService) FindAllPublicUsers(allValidUsers []dto.Cl
 func (service *ProfileSettingsService) FindUserIdForProfileSettingsId(profileSettingsId uuid.UUID) uuid.UUID {
 	return service.Repo.FindUserIdForProfileSettingsId(profileSettingsId)
 }
+
+func (service *ProfileSettingsService) UpdateProfileSettings(profileSettings *dto.ProfileSettingsDTO) error {
+	err := service.Repo.UpdateProfileSettings(profileSettings)
+	if err != nil {
+		return err
+	}
+	return nil
+}

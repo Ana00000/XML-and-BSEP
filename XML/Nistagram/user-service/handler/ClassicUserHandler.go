@@ -58,13 +58,7 @@ func (handler *ClassicUserHandler) FindSelectedUserById(w http.ResponseWriter, r
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
-	/*
-		var profileSettings = handler.ProfileSettingsService.FindProfileSettingByUserId(uuid.MustParse(id))
-		if profileSettings == nil {
-			fmt.Println("Profile settings not found")
-			w.WriteHeader(http.StatusExpectationFailed)
-		}
-	*/
+
 	if profileSettings.UserVisibility == "PRIVATE_VISIBILITY" {
 		user.ProfileVisibility = "PRIVATE"
 		//fmt.Println("PRIVATE")

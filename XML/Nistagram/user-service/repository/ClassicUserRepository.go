@@ -28,7 +28,6 @@ func (repo *ClassicUserRepository) FindById(id uuid.UUID) *model.ClassicUser {
 	return user
 }
 
-
 func (repo *ClassicUserRepository) UpdateClassicUserConfirmed(userId uuid.UUID, isConfirmed bool) error {
 	result := repo.Database.Model(&model.ClassicUser{}).Where("id = ? and is_deleted = ?", userId, false).Update("is_confirmed", isConfirmed)
 	fmt.Println(result.RowsAffected)

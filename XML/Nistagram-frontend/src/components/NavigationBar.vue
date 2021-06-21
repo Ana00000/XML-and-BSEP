@@ -63,13 +63,14 @@ export default {
     methods:{
     init(){
         this.userType =localStorage.getItem('userType');
-        this.userPrivacy = localStorage.getItem('userPrivacy')
+        this.userPrivacy = localStorage.getItem('userPrivacy');
         
         console.log(this.userPrivacy)
         if (this.userType == 0){   // ADMIN
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Verification Requests', path: '/verificationRequests' }
             ]
         } else if (this.userType == 1) {   // REGISTERED_USER
             console.log("NESTO")
@@ -84,6 +85,7 @@ export default {
                 { title: 'Create Post', path: '/createPost' },
                 { title: 'Create Story', path: '/createStory' },
                 { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Update Settings', path: '/updateSettings' },
                 { title: 'My Media', path: '/myMedia' },
                 { title: 'Follow Requests', path: '/followRequests' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' },
@@ -93,6 +95,7 @@ export default {
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'My Collections', path: '/myCollections' },
+                { title: 'Create verification request', path: '/createVerificationRequest' },
             ]
 
             }else{
@@ -109,11 +112,13 @@ export default {
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'My Collections', path: '/myCollections' },
                 { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Update Settings', path: '/updateSettings' },
                 { title: 'My Media', path: '/myMedia' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' },
                 { title: 'Search Users', path: '/searchUsers' },
                 { title: 'Search Locations', path: '/searchLocationsRegistered' },
                 { title: 'Search Tags', path: '/searchTagsRegistered' },
+                { title: 'Create verification request', path: '/createVerificationRequest' },
             ]
             }
         } else if (this.userType == 2) {   // AGENT
@@ -130,6 +135,7 @@ export default {
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'My Collections', path: '/myCollections' },
                 { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Update Settings', path: '/updateSettings' },
                 { title: 'My Media', path: '/myMedia' },
                 { title: 'Add Close Friends', path: '/addCloseFriends' },
                 { title: 'Search users', path: '/searchUsers' },
@@ -152,6 +158,7 @@ export default {
       logOff() {
         localStorage.setItem("token", "");
         localStorage.setItem("userType", null);
+        localStorage.setItem("userPrivacy", null);
         window.location.href = "https://localhost:8081/";
       }
     }

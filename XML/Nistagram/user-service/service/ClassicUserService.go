@@ -89,3 +89,4 @@ func (service *ClassicUserService) FindById(userId uuid.UUID) *model.ClassicUser
 	return user
 }
 
+

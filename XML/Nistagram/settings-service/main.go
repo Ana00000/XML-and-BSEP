@@ -173,6 +173,7 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 	router.HandleFunc("/mute_user/", handlerProfileSettingsMutedProfiles.MuteUser).Methods("POST")
 	router.HandleFunc("/unblock_user/", handlerProfileSettingsBlockedProfiles.UnlockUser).Methods("POST")
 	router.HandleFunc("/unmute_user/", handlerProfileSettingsMutedProfiles.UnmuteUser).Methods("POST")
+	router.HandleFunc("/update_profile_settings/", handlerProfileSettings.UpdateProfileSettings).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }

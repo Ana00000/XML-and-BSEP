@@ -219,7 +219,28 @@ const routes = [
     path: '/forbiddenPage',
     name: '/ForbiddenPage',
     component: () => import('../views/ForbiddenPage.vue')
-  }
+  },
+  {
+    path: '/verificationRequests',
+    name: 'VerificationRequests',
+    component: () => import('../views/VerificationRequests.vue')
+  },
+  {
+    path: '/selectedVerificationRequest',
+    name: 'SelectedVerificationRequest',
+    component: () => import('../views/SelectedVerificationRequest.vue')
+  },
+  {
+    path: '/createVerificationRequest',
+    name: 'CreateVerificationRequest',
+    component: () => import('../views/CreateVerificationRequest.vue')
+  },
+  {
+    path: '/updateSettings',
+    name: '/UpdateSettings',
+    component: () => import('../views/UpdateSettings.vue')
+  },
+
 ]
 
 const router = new VueRouter({
