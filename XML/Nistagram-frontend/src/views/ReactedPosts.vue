@@ -222,28 +222,19 @@ export default {
       console.log(item);
       this.$http
         .get(
-          "https://localhost:8080/api/post/find_post_by_id?post_id=" +
-            item.post_id,
-          {
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-          }
+          "https://localhost:8080/api/post/find_post_by_id?post_id=" + item.post_id
         )
         .then((r) => {
           this.post = r.data;
           console.log(r.data);
-          this.addPost(item);
+          this.addPost(item, r.data.userID);
         })
         .catch(console.log);
     },
-    addPost(item) {
+    addPost(item, id) {
       this.$http
         .get(
-          "https://localhost:8080/api/post/find_selected_post_for_logged_user?id=" +
-            item.post_id +
-            "&logId=" +
-            this.post.user_id,
+          "https://localhost:8080/api/post/find_selected_post_for_logged_user?id=" + item.post_id + "&logId=" +id,
           {
             headers: {
               Authorization: "Bearer " + this.token,

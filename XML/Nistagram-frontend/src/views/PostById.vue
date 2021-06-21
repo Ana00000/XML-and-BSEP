@@ -663,7 +663,7 @@ export default {
                   likedStatus: 0,
                   isFavorite: false,
                   postID: localStorage.getItem("selectedPostId"),
-                  userID: localStorage.getItem("selectedUserId"),
+                  userID: localStorage.getItem("userId"),
                   },
                   {
                     headers: {
@@ -689,7 +689,7 @@ export default {
               "https://localhost:8080/api/post/activity/",
               {
                 postID: localStorage.getItem("selectedPostId"),
-                userID: localStorage.getItem("selectedUserId"),
+                userID: localStorage.getItem("userId"),
                 likedStatus: 0,
                 IsFavorite: false,
               },
@@ -747,7 +747,7 @@ export default {
                   likedStatus: 1,
                   isFavorite: false,
                   postID: localStorage.getItem("selectedPostId"),
-                  userID: localStorage.getItem("selectedUserId"),
+                  userID: localStorage.getItem("userId"),
                   },
                   {
                     headers: {
@@ -773,7 +773,7 @@ export default {
               "https://localhost:8080/api/post/activity/",
               {
                 postID: localStorage.getItem("selectedPostId"),
-                userID: localStorage.getItem("selectedUserId"),
+                userID: localStorage.getItem("userId"),
                 likedStatus: 1,
                 IsFavorite: false,
               },
@@ -835,7 +835,7 @@ export default {
                   likedStatus: this.likeabilityStatus,
                   isFavorite: true,
                   postID: localStorage.getItem("selectedPostId"),
-                  userID: localStorage.getItem("selectedUserId"),
+                  userID: localStorage.getItem("userId"),
                   },
                   {
                     headers: {
@@ -864,7 +864,7 @@ export default {
               "https://localhost:8080/api/post/activity/",
               {
                 postID: localStorage.getItem("selectedPostId"),
-                userID: localStorage.getItem("selectedUserId"),
+                userID: localStorage.getItem("userId"),
                 likedStatus: this.likeabilityStatus,
                 IsFavorite: true,
               },
@@ -928,7 +928,7 @@ export default {
           likedStatus: this.likeabilityStatus,
           isFavorite: false,
           postID: localStorage.getItem("selectedPostId"),
-          userID: localStorage.getItem("selectedUserId"),
+          userID: localStorage.getItem("userId"),
           },
           {
             headers: {
@@ -991,7 +991,7 @@ export default {
           likedStatus: 2,
           isFavorite: false,
           postID: localStorage.getItem("selectedPostId"),
-          userID: localStorage.getItem("selectedUserId"),
+          userID: localStorage.getItem("userId"),
           },
           {
             headers: {
@@ -1053,7 +1053,7 @@ export default {
           likedStatus: 2,
           isFavorite: false,
           postID: localStorage.getItem("selectedPostId"),
-          userID: localStorage.getItem("selectedUserId"),
+          userID: localStorage.getItem("userId"),
           },
           {
             headers: {
