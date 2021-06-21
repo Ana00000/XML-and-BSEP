@@ -14,3 +14,6 @@
 {"action":"FAPPN676","level":"error","location":"SinglePostHandler","msg":"Failed to find all public users!","status":"failure","time":"2021-06-13T05:57:10Z","timestamp":"2021-06-13 05:57:10.8362848 +0000 UTC m=+361.874018301"}
 {"action":"FAPPR677","level":"error","location":"SinglePostHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-13T06:12:21Z","timestamp":"2021-06-13 06:12:21.6177192 +0000 UTC m=+360.819097701"}
 {"action":"FACFP572","level":"error","location":"CommentHandler","msg":"User doesn't logged in!","status":"failure","time":"2021-06-20T22:23:58Z","timestamp":"2021-06-20 22:23:58.5326394 +0000 UTC m=+858.296244601"}
+{"action":"FSPLU679","level":"error","location":"SinglePostHandler","msg":"Post does not belong to user!","status":"failure","time":"2021-06-21T22:43:50Z","timestamp":"2021-06-21 22:43:50.1194603 +0000 UTC m=+229.144209201"}
+{"action":"FSPLU679","level":"error","location":"SinglePostHandler","msg":"Post does not belong to user!","status":"failure","time":"2021-06-21T22:44:00Z","timestamp":"2021-06-21 22:44:00.385626 +0000 UTC m=+239.410374801"}
+{"action":"FSPLU679","level":"error","location":"SinglePostHandler","msg":"Post does not belong to user!","status":"failure","time":"2021-06-21T22:46:22Z","timestamp":"2021-06-21 22:46:22.9343334 +0000 UTC m=+381.959082201"}
