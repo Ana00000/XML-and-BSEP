@@ -238,10 +238,11 @@ func initClassicUserFollowersHandler(LogInfo *logrus.Logger,LogError *logrus.Log
 	}
 }
 
-func initClassicUserFollowingsHandler(LogInfo *logrus.Logger,LogError *logrus.Logger,rbac *gorbac.RBAC,permissionAcceptFollowerRequest *gorbac.Permission, permissionCreateClassicUserFollowing *gorbac.Permission, userService *service.UserService,classicUserFollowings *service.ClassicUserFollowingsService, classicUserFollowersService *service.ClassicUserFollowersService) *handler.ClassicUserFollowingsHandler{
+func initClassicUserFollowingsHandler(classicUserCloseFriendsService *service.ClassicUserCloseFriendsService,LogInfo *logrus.Logger,LogError *logrus.Logger,rbac *gorbac.RBAC,permissionAcceptFollowerRequest *gorbac.Permission, permissionCreateClassicUserFollowing *gorbac.Permission, userService *service.UserService,classicUserFollowings *service.ClassicUserFollowingsService, classicUserFollowersService *service.ClassicUserFollowersService) *handler.ClassicUserFollowingsHandler{
 	return &handler.ClassicUserFollowingsHandler{
 		ClassicUserFollowingsService:         classicUserFollowings,
 		ClassicUserFollowersService:          classicUserFollowersService,
+		ClassicUserCloseFriendsService:       classicUserCloseFriendsService,
 		UserService:                          userService,
 		Rbac:                                 rbac,
 		PermissionCreateClassicUserFollowing: permissionCreateClassicUserFollowing,
@@ -867,7 +868,7 @@ func main() {
 	confirmationTokenHandler := initConfirmationTokenHandler(logInfo,logError,confirmationTokenService,userService,registeredUserService,classicUserService)
 	classicUserCampaignsHandler := initClassicUserCampaignsHandler(logInfo,logError,classicUserCampaignsService)
 	classicUserFollowersHandler := initClassicUserFollowersHandler(logInfo,logError,rbac,&permissionFindAllMutualFollowerForUser,userService,classicUserFollowersService)
-	classicUserFollowingsHandler := initClassicUserFollowingsHandler(logInfo,logError,rbac,&permissionAcceptFollowerRequest,&permissionCreateClassicUserFollowing,userService,classicUserFollowingsService,classicUserFollowersService)
+	classicUserFollowingsHandler := initClassicUserFollowingsHandler(classicUserCloseFriendsService,logInfo,logError,rbac,&permissionAcceptFollowerRequest,&permissionCreateClassicUserFollowing,userService,classicUserFollowingsService,classicUserFollowersService)
 	recoveryPasswordTokenHandler := initRecoveryPasswordTokenHandler(logInfo,logError,recoveryPasswordTokenService,userService, validator)
 	classicUserHandler := initClassicUserHandler(userService,&permissionFindAllUsersButLoggedIn,rbac,logInfo,logError,classicUserService, classicUserFollowingsService)
 	classicUserCloseFriendsHandler := initClassicUserCloseFriendsHandler( userService, rbac, &permissionCreateClassicUserCloseFriend, logInfo,logError,classicUserCloseFriendsService, classicUserFollowersService)

@@ -2,50 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d09c2dcf-763b-4e85-9087-41b1e7136b80" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Nistagram/user-service/dto/BlockUserDTO.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/077945091BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/277532190BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/334726004BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/344205144BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/369129740BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/481771444BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/55791385138_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/564074725preuzmi.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/777718564BrckoGrad.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/848160518preuzmi.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/874811188189519451_389206172405456_4406174551825109659_n.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/880129197user-microservice.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/content-images/98792486738_GoList_NorthAmerica_Hawaii_shutterstock_339637010.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram-frontend/src/views/SelectedUser.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/SinglePostHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsBlockedProfilesHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsBlockedProfilesHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsMutedProfilesHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/handler/ProfileSettingsMutedProfilesHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsBlockedProfilesRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsBlockedProfilesRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsMutedProfilesRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/repository/ProfileSettingsMutedProfilesRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsBlockedProfilesService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsBlockedProfilesService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsMutedProfilesService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/settings-service/service/ProfileSettingsMutedProfilesService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserFollowingsHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserFollowingsHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/handler/ClassicUserHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nistagram/user-service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserCloseFriendsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserCloseFriendsRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowersRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowersRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowingsRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/repository/ClassicUserFollowingsRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserCloseFriendsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserCloseFriendsService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserFollowersService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserFollowersService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserFollowingsService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/user-service/service/ClassicUserFollowingsService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logErrorSETTINGS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorSETTINGS.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logErrorUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logErrorUSER.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logInfoCONTENT.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoCONTENT.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logInfoLOCATION.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoLOCATION.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logInfoPOST.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoPOST.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logInfoREQUESTS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoREQUESTS.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSETTINGS.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logInfoSTORY.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoSTORY.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logInfoTAG.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoTAG.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/logInfoUSER.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/logInfoUSER.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
