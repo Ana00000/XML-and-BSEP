@@ -48,16 +48,6 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 		w.WriteHeader(http.StatusForbidden) // 401
 		return
 	}
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "CommentHandler",
-			"action":   "CRCOM571",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var commentDTO dto.CommentDTO
@@ -140,14 +130,52 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	//SEND EMAIL NOTIFICATION
-	handler.SendNotificationMail(user.Email, commentDTO.PostID)
+	var profileSettings dto.ProfileSettingsDTO
+	reqUrl = fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), user.ID)
+	err = getJson(reqUrl, &profileSettings)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "CommentHandler",
+			"action":   "CRCOM571",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if profileSettings.CommentsNotifications == "ALL_NOTIFICATIONS"{
+		//SEND EMAIL NOTIFICATION
+		handler.SendNotificationMail(user.Email, commentDTO)
+	}else if profileSettings.CommentsNotifications == "FRIENDS_NOTIFICATION"{
+		//check if senderUser is friend
+		var followings []dto.ClassicUserFollowingsFullDTO
+		reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_followings_for_user/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), user.ID)
+		err = getJson(reqUrl, &followings)
+		if err!=nil{
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "CommentHandler",
+				"action":   "CRCOM571",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find followings for user!")
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
+
+		for  i:=0; i < len(followings); i++{
+			if followings[i].FollowingUserId == commentDTO.UserID {
+				//SEND EMAIL NOTIFICATION
+				handler.SendNotificationMail(user.Email, commentDTO)
+			}
+		}
+	}
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func (handler *CommentHandler) SendNotificationMail(email string, commentsPostId uuid.UUID) {
+func (handler *CommentHandler) SendNotificationMail(email string, comment dto.CommentDTO) {
 	m := gomail.NewMessage()
 
 	// Set E-Mail sender
@@ -159,10 +187,22 @@ func (handler *CommentHandler) SendNotificationMail(email string, commentsPostId
 	// Set E-Mail subject
 	m.SetHeader("Subject", "Confirmation mail")
 
-	// Set E-Mail body. You can set plain text or html with text/html
-	text := "New comment on your post!\n\nhttps://localhost:8081/postById/" + commentsPostId.String() + "\n\n\nBest regards,\nTim25"
-	m.SetBody("text/plain", text)
+	var user dto.ClassicUserDTO
+	reqUrlUser := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), comment.UserID)
+	err := getJson(reqUrlUser, &user)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "CommentHandler",
+			"action":   "SEDCONFMAIL100",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find user by id!")
+		panic(err)
+	}
 
+	// Set E-Mail body. You can set plain text or html with text/html
+	text := user.FirstName + " " + user.LastName + " made a new comment on your post!\n\nhttps://localhost:8081/postById/" + comment.PostID.String() + "\n\n\nBest regards,\nTim25"
+	m.SetBody("text/plain", text)
 
 	// Settings for SMTP server
 	d := gomail.NewDialer("smtp.gmail.com", 587, "xml.ftn.uns@gmail.com", "XMLFTNUNS1")

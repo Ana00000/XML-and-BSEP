@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d09c2dcf-763b-4e85-9087-41b1e7136b80" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/ActivityHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/ActivityHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nistagram/post-service/handler/CommentHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/Nistagram/post-service/handler/CommentHandler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
