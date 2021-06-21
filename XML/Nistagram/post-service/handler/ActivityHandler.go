@@ -16,6 +16,7 @@ import (
 
 type ActivityHandler struct {
 	Service * service.ActivityService
+	SinglePostService * service.SinglePostService
 	LogInfo *logrus.Logger
 	LogError *logrus.Logger
 }
@@ -72,6 +73,7 @@ func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+
 	activity := model.Activity{
 		ID:          uuid.UUID{},
 		PostID:      activityDTO.PostID,
@@ -102,6 +104,65 @@ func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Re
 		"action":   "CRACT467",
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully created activity!")
+
+
+	var userId = handler.SinglePostService.FindOwnerOfPost(activityDTO.PostID)
+	var user dto.ClassicUserDTO
+	reqUrlUser := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), userId)
+	err = getJson(reqUrlUser, &user)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ActivityHandler",
+			"action":   "UPACT472",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find user by id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	var profileSettings dto.ProfileSettingsDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), user.ID)
+	err = getJson(reqUrl, &profileSettings)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ActivityHandler",
+			"action":   "UPACT472",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	if profileSettings.LikesNotifications == "ALL_NOTIFICATIONS"{
+		//SEND EMAIL NOTIFICATION
+		handler.SendNotificationMail(user.Email, activityDTO)
+	}else if profileSettings.LikesNotifications == "FRIENDS_NOTIFICATION"{
+		//check if senderUser is friend
+		var followings []dto.ClassicUserFollowingsFullDTO
+		reqUrl := fmt.Sprintf("http://%s:%s/find_all_valid_followings_for_user/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), user.ID)
+		err = getJson(reqUrl, &followings)
+		if err!=nil{
+			handler.LogError.WithFields(logrus.Fields{
+				"status": "failure",
+				"location":   "ActivityHandler",
+				"action":   "UPACT472",
+				"timestamp":   time.Now().String(),
+			}).Error("Failed to find followings for user!")
+			w.WriteHeader(http.StatusExpectationFailed)
+			return
+		}
+
+		for  i:=0; i < len(followings); i++{
+			if followings[i].FollowingUserId == activityDTO.UserID {
+				//SEND EMAIL NOTIFICATION
+				handler.SendNotificationMail(user.Email, activityDTO)
+			}
+		}
+	}
+
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }
@@ -318,7 +379,7 @@ func (handler *ActivityHandler) UpdateActivity(w http.ResponseWriter, r *http.Re
 	}).Info("Successfully updated activity!")
 
 	//GET USERID FROM POSTID FOR ACTIVITYNOTIFICATION
-	var userId uuid.UUID
+	/*var userId uuid.UUID
 	reqUrl := fmt.Sprintf("http://%s:%s/find_owner_of_post/%s", os.Getenv("POST_SERVICE_DOMAIN"), os.Getenv("POST_SERVICE_DOMAIN"), activityDTO.PostID)
 	err = getJson(reqUrl, &userId)
 	if err!=nil{
@@ -330,8 +391,8 @@ func (handler *ActivityHandler) UpdateActivity(w http.ResponseWriter, r *http.Re
 		}).Error("Failed to find owner of the post!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
-	}
-
+	}*/
+	var userId = handler.SinglePostService.FindOwnerOfPost(activityDTO.PostID)
 	var user dto.ClassicUserDTO
 	reqUrlUser := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), userId)
 	err = getJson(reqUrlUser, &user)
@@ -347,7 +408,7 @@ func (handler *ActivityHandler) UpdateActivity(w http.ResponseWriter, r *http.Re
 	}
 
 	var profileSettings dto.ProfileSettingsDTO
-	reqUrl = fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), user.ID)
+	reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), user.ID)
 	err = getJson(reqUrl, &profileSettings)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{

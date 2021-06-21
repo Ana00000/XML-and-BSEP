@@ -17,6 +17,7 @@ import (
 
 type CommentHandler struct {
 	Service   *service.CommentService
+	SinglePostService *service.SinglePostService
 	Validator *validator.Validate
 	LogInfo *logrus.Logger
 	LogError *logrus.Logger
@@ -102,7 +103,7 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 	w.Write(commentIDJson)
 
 	//GET USERID FROM POSTID FOR COMMENTNOTIFICATION
-	var userId uuid.UUID
+	/*var userId uuid.UUID
 	reqUrl := fmt.Sprintf("http://%s:%s/find_owner_of_post/%s", os.Getenv("POST_SERVICE_DOMAIN"), os.Getenv("POST_SERVICE_DOMAIN"), commentDTO.PostID)
 	err := getJson(reqUrl, &userId)
 	if err!=nil{
@@ -114,11 +115,11 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 		}).Error("Failed to find owner of the post!")
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
-	}
-
+	}*/
+	var ownerId = handler.SinglePostService.FindOwnerOfPost(commentDTO.PostID)
 	var user dto.ClassicUserDTO
-	reqUrlUser := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), userId)
-	err = getJson(reqUrlUser, &user)
+	reqUrlUser := fmt.Sprintf("http://%s:%s/get_user_by_id?id=%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), ownerId)
+	err := getJson(reqUrlUser, &user)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -131,7 +132,7 @@ func (handler *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Requ
 	}
 
 	var profileSettings dto.ProfileSettingsDTO
-	reqUrl = fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), user.ID)
+	reqUrl := fmt.Sprintf("http://%s:%s/find_profile_settings_by_user_id/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), user.ID)
 	err = getJson(reqUrl, &profileSettings)
 	if err!=nil{
 		handler.LogError.WithFields(logrus.Fields{

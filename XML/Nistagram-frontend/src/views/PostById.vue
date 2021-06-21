@@ -516,7 +516,9 @@ export default {
                 .post("https://localhost:8080/api/post/update_activity/", {
                   id: this.likeActivityId,
                   likedStatus: 0,
-                  IsFavorite: false,
+                  isFavorite: false,
+                  postID: localStorage.getItem("selectedPostId"),
+                  userID: localStorage.getItem("selectedUserId"),
                 },{
                   headers: {
                     Authorization: "Bearer " + this.token,
@@ -591,7 +593,9 @@ export default {
                 .post("https://localhost:8080/api/post/update_activity/", {
                   id: this.dislikeActivityId,
                   likedStatus: 1,
-                  IsFavorite: false,
+                  isFavorite: false,
+                  postID: localStorage.getItem("selectedPostId"),
+                  userID: localStorage.getItem("selectedUserId"),
                 },{
                   headers: {
                     Authorization: "Bearer " + this.token,
@@ -670,7 +674,9 @@ export default {
                 .post("https://localhost:8080/api/post/update_activity/", {
                   id: this.favoriteActivityId,
                   likedStatus: this.likeabilityStatus,
-                  IsFavorite: true,
+                  isFavorite: true,
+                  postID: localStorage.getItem("selectedPostId"),
+                  userID: localStorage.getItem("selectedUserId"),
                 },{
                   headers: {
                     Authorization: "Bearer " + this.token,
@@ -754,7 +760,9 @@ export default {
         .post("https://localhost:8080/api/post/update_activity/", {
           id: this.favoriteActivityId,
           likedStatus: this.likeabilityStatus,
-          IsFavorite: false,
+          isFavorite: false,
+          postID: localStorage.getItem("selectedPostId"),
+          userID: localStorage.getItem("selectedUserId"),
         },{
           headers: {
             Authorization: "Bearer " + this.token,
@@ -812,7 +820,9 @@ export default {
         .post("https://localhost:8080/api/post/update_activity/", {
           id: this.likeActivityId,
           likedStatus: 2,
-          IsFavorite: false,
+          isFavorite: false,
+          postID: localStorage.getItem("selectedPostId"),
+          userID: localStorage.getItem("selectedUserId"),
         },{
           headers: {
             Authorization: "Bearer " + this.token,
@@ -869,7 +879,9 @@ export default {
         .post("https://localhost:8080/api/post/update_activity/", {
           id: this.dislikeActivityId,
           likedStatus: 2,
-          IsFavorite: false,
+          isFavorite: false,
+          postID: localStorage.getItem("selectedPostId"),
+          userID: localStorage.getItem("selectedUserId"),
         },{
           headers: {
             Authorization: "Bearer " + this.token,
