@@ -29,7 +29,7 @@ func initDB() *gorm.DB {
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.ProfileSettings{}, &model.ProfileSettingsRejectedMessageProfiles{}, &model.ProfileSettingsApprovedMessageProfiles{}, &model.ProfileSettingsMutedProfiles{}, &model.ProfileSettingsBlockedProfiles{})
+	db.AutoMigrate(&model.ProfileSettings{}, &model.ProfileSettingsRejectedMessageProfiles{}, &model.ProfileSettingsApprovedMessageProfiles{}, &model.ProfileSettingsMutedProfiles{}, &model.ProfileSettingsBlockedProfiles{},  &model.ProfileSettingsPostNotificationsProfiles{},  &model.ProfileSettingsStoryNotificationsProfiles{})
 	return db
 }
 
@@ -52,8 +52,12 @@ func initDSN() string {
 	return dsn
 }
 
-func initProfileSettingsRepo(database *gorm.DB) *repository.ProfileSettingsRepository {
-	return &repository.ProfileSettingsRepository{Database: database}
+func initProfileSettingsRepo(database *gorm.DB,
+	profileSettingsPostNotificationsProfilesRepository *repository.ProfileSettingsPostNotificationsProfilesRepository,
+	profileSettingsStoryNotificationsProfilesRepository *repository.ProfileSettingsStoryNotificationsProfilesRepository)*repository.ProfileSettingsRepository {
+	return &repository.ProfileSettingsRepository{Database: database,
+		ProfileSettingsPostNotificationsProfilesRepository: profileSettingsPostNotificationsProfilesRepository,
+		ProfileSettingsStoryNotificationsProfilesRepository: profileSettingsStoryNotificationsProfilesRepository}
 }
 
 func initProfileSettingsServices(repo *repository.ProfileSettingsRepository) *service.ProfileSettingsService {
@@ -89,7 +93,7 @@ func initProfileSettingsRejectedMessageProfilesHandler(service *service.ProfileS
 }
 
 func initProfileSettingsApprovedMessageProfilesRepo(database *gorm.DB) *repository.ProfileSettingsApprovedMessageProfilesRepository {
-	return &repository.ProfileSettingsApprovedMessageProfilesRepository{Database: database}
+	return &repository.ProfileSettingsApprovedMessageProfilesRepository{Database: database }
 }
 
 func initProfileSettingsApprovedMessageProfilesServices(repo *repository.ProfileSettingsApprovedMessageProfilesRepository) *service.ProfileSettingsApprovedMessageProfilesService {
@@ -141,9 +145,46 @@ func initProfileSettingsBlockedProfilesHandler(profileSettingsService *service.P
 	}
 }
 
+
+func initProfileSettingsPostNotificationsProfilesRepo(database *gorm.DB) *repository.ProfileSettingsPostNotificationsProfilesRepository {
+	return &repository.ProfileSettingsPostNotificationsProfilesRepository{Database: database}
+}
+
+func initProfileSettingsPostNotificationsProfilesServices(repo *repository.ProfileSettingsPostNotificationsProfilesRepository) *service.ProfileSettingsPostNotificationsProfilesService {
+	return &service.ProfileSettingsPostNotificationsProfilesService{Repo: repo}
+}
+
+func initProfileSettingsPostNotificationsProfilesHandler(service *service.ProfileSettingsPostNotificationsProfilesService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.ProfileSettingsPostNotificationsProfilesHandler {
+	return &handler.ProfileSettingsPostNotificationsProfilesHandler{
+		Service:   service,
+		LogInfo:   LogInfo,
+		LogError:  LogError,
+		Validator: validator,
+	}
+}
+
+func initProfileSettingsStoryNotificationsProfilesRepo(database *gorm.DB) *repository.ProfileSettingsStoryNotificationsProfilesRepository {
+	return &repository.ProfileSettingsStoryNotificationsProfilesRepository{Database: database}
+}
+
+func initProfileSettingsStoryNotificationsProfilesServices(repo *repository.ProfileSettingsStoryNotificationsProfilesRepository) *service.ProfileSettingsStoryNotificationsProfilesService {
+	return &service.ProfileSettingsStoryNotificationsProfilesService{Repo: repo}
+}
+
+func initProfileSettingsStoryNotificationsProfilesHandler(service *service.ProfileSettingsStoryNotificationsProfilesService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.ProfileSettingsStoryNotificationsProfilesHandler {
+	return &handler.ProfileSettingsStoryNotificationsProfilesHandler{
+		Service:   service,
+		LogInfo:   LogInfo,
+		LogError:  LogError,
+		Validator: validator,
+	}
+}
+
 func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerProfileSettingsApprovedMessageProfiles *handler.ProfileSettingsApprovedMessageProfilesHandler,
 	handlerProfileSettingsBlockedProfiles *handler.ProfileSettingsBlockedProfilesHandler, handlerProfileSettingsMutedProfiles *handler.ProfileSettingsMutedProfilesHandler,
-	handlerProfileSettingsRejectedMessageProfiles *handler.ProfileSettingsRejectedMessageProfilesHandler) {
+	handlerProfileSettingsRejectedMessageProfiles *handler.ProfileSettingsRejectedMessageProfilesHandler,
+	handlerProfileSettingsPostNotificationsProfiles *handler.ProfileSettingsPostNotificationsProfilesHandler,
+	handlerProfileSettingsStoryNotificationsProfiles *handler.ProfileSettingsStoryNotificationsProfilesHandler) {
 
 	router := mux.NewRouter().StrictSlash(true)
 
@@ -174,6 +215,14 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 	router.HandleFunc("/unblock_user/", handlerProfileSettingsBlockedProfiles.UnlockUser).Methods("POST")
 	router.HandleFunc("/unmute_user/", handlerProfileSettingsMutedProfiles.UnmuteUser).Methods("POST")
 	router.HandleFunc("/update_profile_settings/", handlerProfileSettings.UpdateProfileSettings).Methods("POST")
+	router.HandleFunc("/find_profile_settings_with_id_by_user_id/{userID}", handlerProfileSettings.FindProfileSettingWithIDByUserId).Methods("GET")
+	router.HandleFunc("/add_post_notifications_for_user/", handlerProfileSettingsPostNotificationsProfiles.CreateProfileSettingsPostNotificationsProfiles).Methods("POST")
+	router.HandleFunc("/add_story_notifications_for_user/", handlerProfileSettingsStoryNotificationsProfiles.CreateProfileSettingsStoryNotificationsProfiles).Methods("POST")
+
+	router.HandleFunc("/find_all_users_for_post_notifications/{userID}", handlerProfileSettings.FindAllUsersForPostNotifications).Methods("GET")
+	router.HandleFunc("/find_all_users_for_post_album_notifications/{userID}", handlerProfileSettings.FindAllUsersForPostAlbumNotifications).Methods("GET")
+	router.HandleFunc("/find_all_users_for_story_notifications/{userID}", handlerProfileSettings.FindAllUsersForStoryNotifications).Methods("GET")
+	router.HandleFunc("/find_all_users_for_story_album_notifications/{userID}", handlerProfileSettings.FindAllUsersForStoryAlbumNotifications).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
@@ -202,9 +251,6 @@ func main() {
 	serviceProfileSettings := initProfileSettingsServices(repoProfileSettings)
 	//handlerProfileSettings := initProfileSettingsHandler(handlerProfileSettingsMutedProfiles,serviceProfileSettingsBlockedProfiles,serviceProfileSettings, logInfo, logError, validator)
 
-	repoProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesRepo(database)
-	serviceProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesServices(repoProfileSettingsApprovedMessageProfiles)
-	handlerProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesHandler(serviceProfileSettingsApprovedMessageProfiles, logInfo, logError, validator)
 
 	repoProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesRepo(database)
 	serviceProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesServices(repoProfileSettingsBlockedProfiles)
@@ -215,8 +261,22 @@ func main() {
 	handlerProfileSettingsMutedProfiles := initProfileSettingsMutedProfilesHandler(serviceProfileSettings,serviceProfileSettingsMutedProfiles, logInfo, logError, validator)
 	handlerProfileSettings := initProfileSettingsHandler(serviceProfileSettingsMutedProfiles,serviceProfileSettingsBlockedProfiles,serviceProfileSettings, logInfo, logError, validator)
 
+	repoProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesRepo(database)
+	serviceProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesServices(repoProfileSettingsPostNotificationsProfiles)
+	handlerProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesHandler(serviceProfileSettingsPostNotificationsProfiles, logInfo, logError, validator)
+
+
+	repoProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesRepo(database)
+	serviceProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesServices(repoProfileSettingsStoryNotificationsProfiles)
+	handlerProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesHandler(serviceProfileSettingsStoryNotificationsProfiles, logInfo, logError, validator)
+
+
+	repoProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesRepo(database)
+	serviceProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesServices(repoProfileSettingsApprovedMessageProfiles)
+	handlerProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesHandler(serviceProfileSettingsApprovedMessageProfiles, logInfo, logError, validator)
+
 	repoProfileSettingsRejectedMessageProfiles := initProfileSettingsRejectedMessageProfilesRepo(database)
 	serviceProfileSettingsRejectedMessageProfiles := initProfileSettingsRejectedMessageProfilesServices(repoProfileSettingsRejectedMessageProfiles)
 	handlerProfileSettingsRejectedMessageProfiles := initProfileSettingsRejectedMessageProfilesHandler(serviceProfileSettingsRejectedMessageProfiles, logInfo, logError, validator)
-	handleFunc(handlerProfileSettings, handlerProfileSettingsApprovedMessageProfiles, handlerProfileSettingsBlockedProfiles, handlerProfileSettingsMutedProfiles, handlerProfileSettingsRejectedMessageProfiles)
+	handleFunc(handlerProfileSettings, handlerProfileSettingsApprovedMessageProfiles, handlerProfileSettingsBlockedProfiles, handlerProfileSettingsMutedProfiles, handlerProfileSettingsRejectedMessageProfiles, handlerProfileSettingsPostNotificationsProfiles, handlerProfileSettingsStoryNotificationsProfiles)
 }

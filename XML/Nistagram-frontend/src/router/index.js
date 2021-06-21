@@ -240,7 +240,11 @@ const routes = [
     name: '/UpdateSettings',
     component: () => import('../views/UpdateSettings.vue')
   },
-
+  {
+    path: '/updateNotifications',
+    name: '/UpdateNotifications',
+    component: () => import('../views/UpdateNotifications.vue')
+  }
 ]
 
 const router = new VueRouter({

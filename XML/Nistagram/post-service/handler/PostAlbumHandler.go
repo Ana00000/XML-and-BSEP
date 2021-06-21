@@ -9,6 +9,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
+	gomail "gopkg.in/mail.v2"
 	"net/http"
 	"os"
 	"time"
@@ -121,8 +122,73 @@ func (handler *PostAlbumHandler) CreatePostAlbum(w http.ResponseWriter, r *http.
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully created post album!")
 
+	//GET ALL USERS THAT HAVE THIS USER AS POSTALBUMNOTIFICATIONUSERID
+	var usersList []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/find_all_users_for_post_album_notifications/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), postAlbumDTO.UserID)
+	err = getJson(reqUrl, &usersList)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "CRPAL580",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	//SEND EMAIL NOTIFICATION
+	for j:=0; j<len(usersList);j++{
+		handler.SendNotificationMail(usersList[j].Email, id)
+	}
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *PostAlbumHandler) SendNotificationMail(email string, postAlbumId uuid.UUID) {
+	m := gomail.NewMessage()
+
+	// Set E-Mail sender
+	m.SetHeader("From", "xml.ftn.uns@gmail.com")
+
+	// Set E-Mail receivers
+	m.SetHeader("To", email)
+
+	// Set E-Mail subject
+	m.SetHeader("Subject", "Confirmation mail")
+
+	// Set E-Mail body. You can set plain text or html with text/html
+	text := "New post album!\n\nhttps://localhost:8081/postAlbumByIdWithoutActivity/" + postAlbumId.String() + "\n\n\nBest regards,\nTim25"
+	m.SetBody("text/plain", text)
+
+
+	// Settings for SMTP server
+	d := gomail.NewDialer("smtp.gmail.com", 587, "xml.ftn.uns@gmail.com", "XMLFTNUNS1")
+
+	// This is only needed when SSL/TLS certificate is not valid on server.
+	// In production this should be set to false.
+	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// Now send E-Mail
+	if err := d.DialAndSend(m); err != nil {
+		//fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "PostAlbumHandler",
+			"action":   "SEDCONFMAIL789",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed sending email with confirmation token!")
+		panic(err)
+	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "PostAlbumHandler",
+		"action":   "SEDCONFMAIL789",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully sended email with confirmation token!")
+
 }
 
 func (handler *PostAlbumHandler) FindAllAlbumPostsForLoggedUser(w http.ResponseWriter, r *http.Request) {

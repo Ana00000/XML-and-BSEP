@@ -10,6 +10,8 @@ import (
 
 type ProfileSettingsRepository struct {
 	Database *gorm.DB
+	ProfileSettingsPostNotificationsProfilesRepository *ProfileSettingsPostNotificationsProfilesRepository
+	ProfileSettingsStoryNotificationsProfilesRepository *ProfileSettingsStoryNotificationsProfilesRepository
 }
 
 func (repo *ProfileSettingsRepository) CreateProfileSettings(profileSettings *model.ProfileSettings) error {
@@ -85,26 +87,114 @@ func (repo *ProfileSettingsRepository) UpdateProfileSettings(profileSettings *dt
 	}
 
 	messageApprovalType := model.PUBLIC
-	switch profileSettings.UserVisibility {
+	switch profileSettings.MessageApprovalType {
 	case "PUBLIC":
 		messageApprovalType = model.PUBLIC
 	case "FRIENDS_ONLY":
 		messageApprovalType = model.FRIENDS_ONLY
 	}
 
+	likesNotifications := model.ALL_NOTIFICATIONS
+	switch profileSettings.LikesNotifications {
+	case "ALL_NOTIFICATIONS":
+		likesNotifications = model.ALL_NOTIFICATIONS
+	case "FRIENDS_NOTIFICATIONS":
+		likesNotifications = model.FRIENDS_NOTIFICATIONS
+	case "NONE":
+		likesNotifications = model.NONE
+	}
+
+	commentsNotifications := model.ALL_NOTIFICATIONS
+	switch profileSettings.CommentsNotifications {
+	case "ALL_NOTIFICATIONS":
+		commentsNotifications = model.ALL_NOTIFICATIONS
+	case "FRIENDS_NOTIFICATIONS":
+		commentsNotifications = model.FRIENDS_NOTIFICATIONS
+	case "NONE":
+		commentsNotifications = model.NONE
+	}
+
+	messagesNotifications := model.ALL_NOTIFICATIONS
+	switch profileSettings.MessagesNotifications {
+	case "ALL_NOTIFICATIONS":
+		messagesNotifications = model.ALL_NOTIFICATIONS
+	case "FRIENDS_NOTIFICATIONS":
+		messagesNotifications = model.FRIENDS_NOTIFICATIONS
+	case "NONE":
+		messagesNotifications = model.NONE
+	}
+
+
 	result := repo.Database.Model(&model.ProfileSettings{}).Where("user_id = ?", profileSettings.UserId)
 
 	result.Update("user_visibility", userVisibility)
-	fmt.Println(result.RowsAffected)
 	result.Update("message_approval_type", messageApprovalType)
-	fmt.Println(result.RowsAffected)
 	result.Update("is_post_taggable", profileSettings.IsPostTaggable)
-	fmt.Println(result.RowsAffected)
 	result.Update("is_story_taggable", profileSettings.IsStoryTaggable)
-	fmt.Println(result.RowsAffected)
 	result.Update("is_comment_taggable", profileSettings.IsCommentTaggable)
+	result.Update("likes_notifications", likesNotifications)
+	result.Update("comments_notifications", commentsNotifications)
+	result.Update("messages_notifications", messagesNotifications)
 	fmt.Println(result.RowsAffected)
 
 	fmt.Println("updating profile settings")
 	return nil
+}
+
+func (repo *ProfileSettingsRepository) FindAllUserIdsFromProfileSettings(profileSettingsList []model.ProfileSettingsPostNotificationsProfiles) []uuid.UUID {
+
+	var allProfileSetting = repo.FindAllProfileSettings()
+	var userIdsList []uuid.UUID
+	for i := 0; i < len(allProfileSetting); i++ {
+		for j:=0; j<len(profileSettingsList); j++{
+			if allProfileSetting[i].ID == profileSettingsList[j].ProfileSettingsId{
+				userIdsList = append(userIdsList, allProfileSetting[i].UserId)
+			}
+		}
+	}
+	return userIdsList
+}
+
+func (repo *ProfileSettingsRepository) FindAllUserIdsFromStoryProfileSettings(profileSettingsList []model.ProfileSettingsStoryNotificationsProfiles) []uuid.UUID {
+
+	var allProfileSetting = repo.FindAllProfileSettings()
+	var userIdsList []uuid.UUID
+	for i := 0; i < len(allProfileSetting); i++ {
+		for j:=0; j<len(profileSettingsList); j++{
+			if allProfileSetting[i].ID == profileSettingsList[j].ProfileSettingsId{
+				userIdsList = append(userIdsList, allProfileSetting[i].UserId)
+			}
+		}
+	}
+	return userIdsList
+}
+
+func (repo *ProfileSettingsRepository) FindAllUsersForPostNotifications(id uuid.UUID) []uuid.UUID {
+	var profileSettings []model.ProfileSettingsPostNotificationsProfiles
+	profileSettings = repo.ProfileSettingsPostNotificationsProfilesRepository.FindAllProfileSettingsForPostNotifications(id)
+	return repo.FindAllUserIdsFromProfileSettings(profileSettings)
+}
+
+func (repo *ProfileSettingsRepository) FindAllUsersForPostAlbumNotifications(id uuid.UUID) []uuid.UUID {
+	var profileSettings []model.ProfileSettingsPostNotificationsProfiles
+	profileSettings = repo.ProfileSettingsPostNotificationsProfilesRepository.FindAllProfileSettingsForPostNotifications(id)
+	return repo.FindAllUserIdsFromProfileSettings(profileSettings)
+}
+
+func (repo *ProfileSettingsRepository) FindAllUsersForStoryNotifications(id uuid.UUID) []uuid.UUID {
+	var profileSettings []model.ProfileSettingsStoryNotificationsProfiles
+	profileSettings = repo.ProfileSettingsStoryNotificationsProfilesRepository.FindAllProfileSettingsForStoryNotifications(id)
+	return repo.FindAllUserIdsFromStoryProfileSettings(profileSettings)
+}
+
+func (repo *ProfileSettingsRepository) FindAllUsersForStoryAlbumNotifications(id uuid.UUID) []uuid.UUID {
+	var profileSettings []model.ProfileSettingsStoryNotificationsProfiles
+	profileSettings = repo.ProfileSettingsStoryNotificationsProfilesRepository.FindAllProfileSettingsForStoryNotifications(id)
+	return repo.FindAllUserIdsFromStoryProfileSettings(profileSettings)
+}
+
+func (repo *ProfileSettingsRepository) FindAllUsersForCommentNotifications(id uuid.UUID) []uuid.UUID {
+	var profileSettings []model.ProfileSettingsStoryNotificationsProfiles
+	profileSettings = repo.ProfileSettingsStoryNotificationsProfilesRepository.FindAllProfileSettingsForStoryNotifications(id)
+	return repo.FindAllUserIdsFromStoryProfileSettings(profileSettings)
 }

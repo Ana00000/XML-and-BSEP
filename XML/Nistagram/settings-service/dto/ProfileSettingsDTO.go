@@ -11,4 +11,7 @@ type ProfileSettingsDTO struct {
 	IsPostTaggable      bool      `json:"is_post_taggable" validate:"required"`
 	IsStoryTaggable     bool      `json:"is_story_taggable" validate:"required"`
 	IsCommentTaggable   bool      `json:"is_comment_taggable" validate:"required"`
+	LikesNotifications string `json:"likes_notifications" validate:"required"`
+	CommentsNotifications string `json:"comments_notifications" validate:"required"`
+	MessagesNotifications string `json:"messages_notifications" validate:"required"`
 }

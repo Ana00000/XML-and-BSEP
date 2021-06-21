@@ -59,3 +59,36 @@ func (service *ProfileSettingsService) UpdateProfileSettings(profileSettings *dt
 	}
 	return nil
 }
+
+func (service *ProfileSettingsService) FindAllUsersForPostNotifications(id uuid.UUID)[]uuid.UUID {
+	users := service.Repo.FindAllUsersForPostNotifications(id)
+	if users != nil {
+		return users
+	}
+	return nil
+}
+
+func (service *ProfileSettingsService) FindAllUsersForPostAlbumNotifications(id uuid.UUID)[]uuid.UUID {
+	users := service.Repo.FindAllUsersForPostAlbumNotifications(id)
+	if users != nil {
+		return users
+	}
+	return nil
+}
+
+
+func (service *ProfileSettingsService) FindAllUsersForStoryNotifications(id uuid.UUID)[]uuid.UUID {
+	users := service.Repo.FindAllUsersForStoryNotifications(id)
+	if users != nil {
+		return users
+	}
+	return nil
+}
+
+func (service *ProfileSettingsService) FindAllUsersForStoryAlbumNotifications(id uuid.UUID)[]uuid.UUID {
+	users := service.Repo.FindAllUsersForStoryAlbumNotifications(id)
+	if users != nil {
+		return users
+	}
+	return nil
+}

@@ -106,12 +106,23 @@ func initPostCollectionPostsServices(repo *repository.PostCollectionPostsReposit
 	return &service.PostCollectionPostsService { Repo: repo }
 }
 
-func initActivityHandler(logInfo *logrus.Logger, logError *logrus.Logger,service *service.ActivityService) *handler.ActivityHandler{
-	return &handler.ActivityHandler{ LogInfo: logInfo, LogError: logError, Service: service }
+func initActivityHandler(SinglePostService *service.SinglePostService,logInfo *logrus.Logger, logError *logrus.Logger,service *service.ActivityService) *handler.ActivityHandler{
+	return &handler.ActivityHandler{
+		Service:           service,
+		SinglePostService: SinglePostService,
+		LogInfo:           logInfo,
+		LogError:          logError,
+	}
 }
 
-func initCommentHandler(logInfo *logrus.Logger, logError *logrus.Logger,service *service.CommentService, validate *validator.Validate) *handler.CommentHandler{
-	return &handler.CommentHandler{ LogInfo: logInfo, LogError: logError, Service: service, Validator: validate}
+func initCommentHandler(SinglePostService *service.SinglePostService,logInfo *logrus.Logger, logError *logrus.Logger,service *service.CommentService, validate *validator.Validate) *handler.CommentHandler{
+	return &handler.CommentHandler{
+		Service:           service,
+		SinglePostService: SinglePostService,
+		Validator:         validate,
+		LogInfo:           logInfo,
+		LogError:          logError,
+	}
 }
 
 func initPostHandler(logInfo *logrus.Logger, logError *logrus.Logger,postService *service.PostService) *handler.PostHandler{
@@ -206,6 +217,7 @@ func handleFunc(handlerActivity *handler.ActivityHandler, handlerComment *handle
 	router.HandleFunc("/find_all_posts_for_tag_reg_user", handlerSinglePost.FindAllPostsForTagRegUser).Methods("GET")
 	router.HandleFunc("/find_all_posts_for_location_reg_user", handlerSinglePost.FindAllPostsForLocationRegUser).Methods("GET")
 
+	router.HandleFunc("/find_owner_of_post/{id}", handlerSinglePost.FindOwnerOfPost).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), cors(router)))
 }
@@ -247,8 +259,8 @@ func main() {
 	serviceSinglePost := initSinglePostService(repoSinglePost)
 	servicePostCollectionPosts := initPostCollectionPostsServices(repoPostCollectionPosts)
 
-	handlerActivity := initActivityHandler(logInfo, logError, serviceActivity)
-	handlerComment := initCommentHandler(logInfo, logError, serviceComment, validator)
+	handlerActivity := initActivityHandler(serviceSinglePost,logInfo, logError, serviceActivity)
+	handlerComment := initCommentHandler(serviceSinglePost,logInfo, logError, serviceComment, validator)
 	handlerPost := initPostHandler(logInfo, logError, servicePost)
 	handlerPostAlbum := initPostAlbumHandler(logInfo, logError, servicePostAlbum, servicePost)
 	handlerPostCollection := initPostCollectionHandler(logInfo, logError, servicePostCollection)

@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/post-service/service"
+	gomail "gopkg.in/mail.v2"
 	"net/http"
 	"os"
 	"strings"
@@ -59,17 +61,6 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 		return
 	}
 
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "SinglePostHandler",
-			"action":   "CRESP670",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
-
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	var singlePostDTO dto.SinglePostDTO
 	err := json.NewDecoder(r.Body).Decode(&singlePostDTO)
@@ -85,9 +76,11 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 		return
 	}
 
+	id :=  uuid.New()
+	userId := singlePostDTO.UserID
 	singlePost := model.SinglePost{
 		Post: model.Post{
-			ID:           uuid.New(),
+			ID:          id,
 			Description:  singlePostDTO.Description,
 			CreationDate: time.Now(),
 			UserID:       singlePostDTO.UserID,
@@ -129,6 +122,27 @@ func (handler *SinglePostHandler) CreateSinglePost(w http.ResponseWriter, r *htt
 		"action":    "CRESP670",
 		"timestamp": time.Now().String(),
 	}).Info("Successfully created single post!")
+
+
+	//GET ALL USERS THAT HAVE THIS USER AS POSTNOTIFICATIONUSERID
+	var usersList []dto.ClassicUserDTO
+	reqUrl := fmt.Sprintf("http://%s:%s/find_all_users_for_post_notifications/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), userId)
+	err = getJson(reqUrl, &usersList)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FPFNR671",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find profile settings by user id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	//SEND EMAIL NOTIFICATION
+	for j:=0; j<len(usersList);j++{
+		handler.SendNotificationMail(usersList[j].Email, id)
+	}
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
@@ -3367,5 +3381,71 @@ func (handler *SinglePostHandler) FindAllPostsForLocationRegUser(w http.Response
 	}).Info("Successfully found all posts for location registered user!")
 
 	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *SinglePostHandler) SendNotificationMail(email string, postId uuid.UUID) {
+	m := gomail.NewMessage()
+
+	// Set E-Mail sender
+	m.SetHeader("From", "xml.ftn.uns@gmail.com")
+
+	// Set E-Mail receivers
+	m.SetHeader("To", email)
+
+	// Set E-Mail subject
+	m.SetHeader("Subject", "Confirmation mail")
+
+	// Set E-Mail body. You can set plain text or html with text/html
+	text := "New post!\n\nhttps://localhost:8081/postById/" + postId.String() + "\n\n\nBest regards,\nTim25"
+	m.SetBody("text/plain", text)
+
+
+	// Settings for SMTP server
+	d := gomail.NewDialer("smtp.gmail.com", 587, "xml.ftn.uns@gmail.com", "XMLFTNUNS1")
+
+	// This is only needed when SSL/TLS certificate is not valid on server.
+	// In production this should be set to false.
+	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// Now send E-Mail
+	if err := d.DialAndSend(m); err != nil {
+		//fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "SEDCONFMAIL227",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed sending email with confirmation token!")
+		panic(err)
+	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "RegisteredUserHandler",
+		"action":   "SEDCONFMAIL227",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully sended email with confirmation token!")
+
+}
+
+func (handler *SinglePostHandler) FindOwnerOfPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var userId = handler.SinglePostService.FindOwnerOfPost(uuid.MustParse(id))
+	returnValue := ReturnValueString{ReturnValue: userId}
+
+	returnValueJson, _ := json.Marshal(returnValue)
+	w.Write(returnValueJson)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "SinglePostHandler",
+		"action":   "FIOWOFPOL454",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully found owner of the post!")
+
+	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 }

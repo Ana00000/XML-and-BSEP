@@ -11,4 +11,7 @@ type ProfileSettingsDTO struct {
 	IsPostTaggable bool `json:"is_post_taggable"`
 	IsStoryTaggable bool `json:"is_story_taggable"`
 	IsCommentTaggable bool `json:"is_comment_taggable"`
+	LikesNotifications string `json:"likes_notifications"`
+	CommentsNotifications string `json:"comments_notifications"`
+	MessagesNotifications string `json:"messages_notifications"`
 }

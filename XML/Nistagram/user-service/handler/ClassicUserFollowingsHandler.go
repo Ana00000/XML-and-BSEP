@@ -11,6 +11,7 @@ import (
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/service"
+	gomail "gopkg.in/mail.v2"
 	"net/http"
 	"os"
 	_ "strconv"
@@ -20,6 +21,7 @@ import (
 type ClassicUserFollowingsHandler struct {
 	ClassicUserFollowingsService * service.ClassicUserFollowingsService
 	ClassicUserFollowersService * service.ClassicUserFollowersService
+	ClassicUserService * service.ClassicUserService
 	ClassicUserCloseFriendsService * service.ClassicUserCloseFriendsService
 	UserService *service.UserService
 	Rbac * gorbac.RBAC
@@ -125,8 +127,79 @@ func (handler *ClassicUserFollowingsHandler) CreateClassicUserFollowing(w http.R
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully created followings and followers for classic user!")
 
+	userReceiver := handler.UserService.FindByID(classicUserFollowingDTO.FollowingUserId)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "CRCLASUSFOLLING712",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find user by id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	userSender := handler.UserService.FindByID(classicUserFollowingDTO.ClassicUserId)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "CRCLASUSFOLLING712",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find user by id!")
+		w.WriteHeader(http.StatusExpectationFailed)
+		return
+	}
+
+	//SEND EMAIL NOTIFICATION
+	handler.SendNotificationMail(userReceiver.Email, userSender.Username)
+
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *ClassicUserFollowingsHandler) SendNotificationMail(email string, username string) {
+	m := gomail.NewMessage()
+
+	// Set E-Mail sender
+	m.SetHeader("From", "xml.ftn.uns@gmail.com")
+
+	// Set E-Mail receivers
+	m.SetHeader("To", email)
+
+	// Set E-Mail subject
+	m.SetHeader("Subject", "Confirmation mail")
+
+	// Set E-Mail body. You can set plain text or html with text/html
+	text := username + "\n\n\n is now following you!\n\n\nBest regards,\nTim25"
+
+	m.SetBody("text/plain", text)
+
+	// Settings for SMTP server
+	d := gomail.NewDialer("smtp.gmail.com", 587, "xml.ftn.uns@gmail.com", "XMLFTNUNS1")
+
+	// This is only needed when SSL/TLS certificate is not valid on server.
+	// In production this should be set to false.
+	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// Now send E-Mail
+	if err := d.DialAndSend(m); err != nil {
+		//fmt.Println(err)
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserFollowingsHandler",
+			"action":   "SEDCONFMAIL711",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed sending email!")
+		panic(err)
+	}
+
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status": "success",
+		"location":   "ClassicUserFollowingsHandler",
+		"action":   "SEDCONFMAIL711",
+		"timestamp":   time.Now().String(),
+	}).Info("Successfully sent email!")
 }
 
 type ReturnValueBool struct {
@@ -170,6 +243,32 @@ func (handler *ClassicUserFollowingsHandler) FindAllValidFollowingsForUser(w htt
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func  (handler *ClassicUserFollowingsHandler) FindAllValidUsersWhoFollowUserId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var users = listWithoutLoggedInUser(uuid.MustParse(id),handler.ClassicUserService.FinAllValidUsers())
+	var followings = handler.ClassicUserFollowingsService.FindAllUsersWhoFollowUserId(uuid.MustParse(id),users)
+
+	returnValueJson,_ := json.Marshal(followings)
+
+	w.Write(returnValueJson)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func listWithoutLoggedInUser(id uuid.UUID, users []model.ClassicUser) []model.ClassicUser{
+	var retVal []model.ClassicUser
+	for i := 0; i < len(users); i++ {
+		if users[i].ID!=id{
+			retVal = append(retVal, users[i])
+		}
+	}
+	return retVal
 }
 
 //FIDALUSFOLWUSID2672

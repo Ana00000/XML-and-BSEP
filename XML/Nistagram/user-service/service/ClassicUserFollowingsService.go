@@ -45,6 +45,14 @@ func (service *ClassicUserFollowingsService) FindAllUserWhoFollowUserId(ID uuid.
 	return nil
 }
 
+func (service *ClassicUserFollowingsService) FindAllUsersWhoFollowUserId(ID uuid.UUID, allValidUsers []model.ClassicUser) []model.ClassicUser {
+	followings := service.Repo.FindAllUsersWhoFollowUserId(ID, allValidUsers)
+	if followings != nil {
+		return followings
+	}
+	return nil
+}
+
 func (service *ClassicUserFollowingsService) FindFollowingByUsersIDs(followingUserID uuid.UUID,classicUserID uuid.UUID) *model.ClassicUserFollowings {
 	return service.Repo.FindFollowingByUsersIDs(followingUserID,classicUserID)
 }

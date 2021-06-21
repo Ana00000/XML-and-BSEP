@@ -658,12 +658,12 @@ export default {
             ) {
               this.likeActivityId = this.activities[i].id;
               this.$http
-                .post(
-                  "https://localhost:8080/api/post/update_activity/",
-                  {
-                    id: this.likeActivityId,
-                    likedStatus: 0,
-                    IsFavorite: false,
+                .post("https://localhost:8080/api/post/update_activity/", {
+                  id: this.likeActivityId,
+                  likedStatus: 0,
+                  isFavorite: false,
+                  postID: localStorage.getItem("selectedPostId"),
+                  userID: localStorage.getItem("selectedUserId"),
                   },
                   {
                     headers: {
@@ -742,12 +742,12 @@ export default {
             ) {
               this.dislikeActivityId = this.activities[i].id;
               this.$http
-                .post(
-                  "https://localhost:8080/api/post/update_activity/",
-                  {
-                    id: this.dislikeActivityId,
-                    likedStatus: 1,
-                    IsFavorite: false,
+                .post("https://localhost:8080/api/post/update_activity/", {
+                  id: this.dislikeActivityId,
+                  likedStatus: 1,
+                  isFavorite: false,
+                  postID: localStorage.getItem("selectedPostId"),
+                  userID: localStorage.getItem("selectedUserId"),
                   },
                   {
                     headers: {
@@ -830,12 +830,12 @@ export default {
               this.favoriteActivityId = this.activities[i].id;
               this.likeabilityStatus = this.activities[i].liked_status;
               this.$http
-                .post(
-                  "https://localhost:8080/api/post/update_activity/",
-                  {
-                    id: this.favoriteActivityId,
-                    likedStatus: this.likeabilityStatus,
-                    IsFavorite: true,
+                .post("https://localhost:8080/api/post/update_activity/", {
+                  id: this.favoriteActivityId,
+                  likedStatus: this.likeabilityStatus,
+                  isFavorite: true,
+                  postID: localStorage.getItem("selectedPostId"),
+                  userID: localStorage.getItem("selectedUserId"),
                   },
                   {
                     headers: {
@@ -923,12 +923,12 @@ export default {
       }
 
       this.$http
-        .post(
-          "https://localhost:8080/api/post/update_activity/",
-          {
-            id: this.favoriteActivityId,
-            likedStatus: this.likeabilityStatus,
-            IsFavorite: false,
+        .post("https://localhost:8080/api/post/update_activity/", {
+          id: this.favoriteActivityId,
+          likedStatus: this.likeabilityStatus,
+          isFavorite: false,
+          postID: localStorage.getItem("selectedPostId"),
+          userID: localStorage.getItem("selectedUserId"),
           },
           {
             headers: {
@@ -986,12 +986,12 @@ export default {
       }
 
       this.$http
-        .post(
-          "https://localhost:8080/api/post/update_activity/",
-          {
-            id: this.likeActivityId,
-            likedStatus: 2,
-            IsFavorite: false,
+        .post("https://localhost:8080/api/post/update_activity/", {
+          id: this.likeActivityId,
+          likedStatus: 2,
+          isFavorite: false,
+          postID: localStorage.getItem("selectedPostId"),
+          userID: localStorage.getItem("selectedUserId"),
           },
           {
             headers: {
@@ -1048,12 +1048,12 @@ export default {
       }
 
       this.$http
-        .post(
-          "https://localhost:8080/api/post/update_activity/",
-          {
-            id: this.dislikeActivityId,
-            likedStatus: 2,
-            IsFavorite: false,
+        .post("https://localhost:8080/api/post/update_activity/", {
+          id: this.dislikeActivityId,
+          likedStatus: 2,
+          isFavorite: false,
+          postID: localStorage.getItem("selectedPostId"),
+          userID: localStorage.getItem("selectedUserId"),
           },
           {
             headers: {
