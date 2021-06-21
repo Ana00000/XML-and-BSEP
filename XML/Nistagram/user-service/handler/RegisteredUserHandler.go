@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
+	"github.com/mikespook/gorbac"
 	"github.com/sirupsen/logrus"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/dto"
 	"github.com/xml/XML-and-BSEP/XML/Nistagram/user-service/model"
@@ -25,6 +27,8 @@ type RegisteredUserHandler struct {
 	ConfirmationTokenService *service.ConfirmationTokenService
 	Validator                *validator.Validate
 	PasswordUtil             *util.PasswordUtil
+	Rbac * gorbac.RBAC
+	PermissionUpdateUserCategory * gorbac.Permission
 	LogInfo *logrus.Logger
 	LogError *logrus.Logger
 }
@@ -290,5 +294,111 @@ func (handler *RegisteredUserHandler) CreateRegisteredUser(w http.ResponseWriter
 	}).Info("Successfully created registered user!")
 
 	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *RegisteredUserHandler) UpdateUserCategory(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	id := r.URL.Query().Get("id")
+
+
+	/*if err := TokenValid(r); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "UpdateUserCategory",
+			"timestamp":   time.Now().String(),
+		}).Error("User is not logged in!")
+		w.WriteHeader(http.StatusUnauthorized) // 401
+		return
+	}
+
+	var loginUser = handler.UserService.FindByID(uuid.MustParse(id))
+	userRole := ""
+	if loginUser.UserType == model.ADMIN {
+		userRole = "role-admin"
+	} else if loginUser.UserType == model.AGENT {
+		userRole = "role-agent"
+	} else {
+		userRole = "role-registered-user"
+	}
+	if !handler.Rbac.IsGranted(userRole, *handler.PermissionUpdateUserCategory, nil) {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "RegisteredUserHandler",
+			"action":   "UpdateUserCategory",
+			"timestamp":   time.Now().String(),
+		}).Error("User is not authorized to update user information!")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}*/
+
+
+
+
+	var category string
+	if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "UpdateUserCategory",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to category string!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	var categoryType = model.NONE
+
+	if category == "INFLUENCER" {
+		categoryType = model.INFLUENCER
+	}else if category == "SPORTS" {
+		categoryType = model.SPORTS
+	}else if category == "NEW_MEDIA" {
+		categoryType =  model.NEW_MEDIA
+	}else if category == "BUSINESS" {
+		categoryType = model.BUSINESS
+	}else if category == "BRAND" {
+		categoryType = model.BRAND
+	}else if category == "ORGANIZATION" {
+		categoryType = model.ORGANIZATION
+	}
+
+	handler.RegisteredUserService.UpdateUserCategory(uuid.MustParse(id), categoryType)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (handler *RegisteredUserHandler) UpdateOfficialDocumentPath(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var officalDocumentPath string
+	if err := json.NewDecoder(r.Body).Decode(&officalDocumentPath); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "UpdateOfficialDocumentPath",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to string!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	err := handler.RegisteredUserService.UpdateOfficialDocumentPath(uuid.MustParse(id), officalDocumentPath)
+	if err!=nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "ClassicUserHandler",
+			"action":   "UpdateOfficialDocumentPath",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed updating official document path for user!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 }

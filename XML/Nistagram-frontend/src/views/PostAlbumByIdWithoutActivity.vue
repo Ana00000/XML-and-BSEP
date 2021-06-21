@@ -71,6 +71,21 @@
         </v-flex>
       </v-layout>
     </v-container>
+
+    <v-text-field
+      label="Note"
+      v-model="note"
+      prepend-icon="mdi-address-circle"
+      v-if="!isHiddenReportPostAlbum"
+    />
+
+    <v-btn
+      color="info mb-5"
+      v-on:click="reportPostAlbum"
+      v-if="!isHiddenReportPostAlbum"
+    >
+      Report post album
+    </v-btn>
   </div>
 </template>
 
@@ -81,6 +96,8 @@ export default {
     postAlbum: null,
     token: null,
     postAlbumContents: [],
+    isHiddenReportPostAlbum: true,
+    note: "",
   }),
   mounted() {
     this.init();
@@ -90,13 +107,11 @@ export default {
       this.token = localStorage.getItem("token");
 
       this.$http
-        .get(
-          "https://localhost:8080/api/user/check_if_authentificated/",{
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-          }
-        )
+        .get("https://localhost:8080/api/user/check_if_authentificated/", {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
         .then((resp) => {
           console.log("User is authentificated!");
           console.log(resp.data);
@@ -108,7 +123,8 @@ export default {
 
       this.$http
         .get(
-          "https://localhost:8080/api/user/auth/check-find-selected-post-album-by-id-for-logged-user-permission/",{
+          "https://localhost:8080/api/user/auth/check-find-selected-post-album-by-id-for-logged-user-permission/",
+          {
             headers: {
               Authorization: "Bearer " + this.token,
             },
@@ -128,11 +144,12 @@ export default {
           "https://localhost:8080/api/post/find_selected_post_album_for_logged_user?id=" +
             localStorage.getItem("mySelectedPostAlbumId") +
             "&logId=" +
-            localStorage.getItem("mySelectedUserId"),{
+            localStorage.getItem("mySelectedUserId"),
+          {
             headers: {
               Authorization: "Bearer " + this.token,
             },
-        }
+          }
         )
         .then((response) => {
           this.postAlbum = response.data;
@@ -144,6 +161,55 @@ export default {
           }
         })
         .catch(console.log);
+
+      if (localStorage.getItem("userPrivacy") != null) {
+        this.isHiddenReportPostAlbum = false;
+      }
+    },
+    reportPostAlbum() {
+      if (!this.validReportNote()) return;
+
+      this.$http
+        .post(
+          "https://localhost:8080/api/requests/postICR/",
+          {
+            note: this.note,
+            userId: localStorage.getItem("userId"),
+            postId: localStorage.getItem("mySelectedPostAlbumId"),
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          alert("Post album was reported.");
+          window.location.href = "https://localhost:8081/";
+        })
+        .catch((er) => {
+          console.log(er.response.data);
+        });
+    },
+    validReportNote() {
+      if (this.note.length < 2) {
+        alert(
+          "Your post album report note should contain at least 2 characters!"
+        );
+        return false;
+      } else if (this.note.length > 30) {
+        alert(
+          "Your post album report note shouldn't contain more than 30 characters!"
+        );
+        return false;
+      } else if (this.note.match(/[&<>/\\"]/g)) {
+        alert(
+          "Your post album report note shouldn't contain those special characters."
+        );
+        return false;
+      }
+      return true;
     },
   },
 };

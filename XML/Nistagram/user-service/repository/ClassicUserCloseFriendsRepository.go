@@ -36,4 +36,16 @@ func (repo * ClassicUserCloseFriendsRepository) CheckIfCloseFriend(classicUserId
 
 }
 
+func (repo ClassicUserCloseFriendsRepository) FindCloseFriendByUsersIDs(closeFriendID uuid.UUID,classicUserID uuid.UUID) *model.ClassicUserCloseFriends {
+	classicUserCloseFriends := &model.ClassicUserCloseFriends{}
+	if repo.Database.First(&classicUserCloseFriends, "close_friend_user_id = ? and classic_user_id = ?", closeFriendID, classicUserID).RowsAffected == 0{
+		return nil
+	}
+	return classicUserCloseFriends
+}
+
+func (repo *ClassicUserCloseFriendsRepository) RemoveClassicUserCloseFriend(id uuid.UUID) {
+	repo.Database.Delete(&model.ClassicUserCloseFriends{}, id)
+}
+
 

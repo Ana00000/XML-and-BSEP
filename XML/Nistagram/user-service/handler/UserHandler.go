@@ -539,7 +539,7 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 			"location":   "UserHandler",
 			"action":   "UPDUSPROFINF393",
 			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
+		}).Error("User is not logged in!")
 		w.WriteHeader(http.StatusUnauthorized) // 401
 		return
 	}
@@ -583,7 +583,7 @@ func (handler *UserHandler) UpdateUserProfileInfo(w http.ResponseWriter, r *http
 			"location":   "UserHandler",
 			"action":   "UPDUSPROFINF393",
 			"timestamp":   time.Now().String(),
-		}).Error("User aren't authorized to update user information!")
+		}).Error("User is not authorized to update user information!")
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}

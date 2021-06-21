@@ -2,9 +2,8 @@
         <div class="searchDiv">
             <br/>
             <div>
-                <h1 class="display-2">You can find users here!</h1>
+                <h1 class="display-2">You can find follow requests here!</h1>
             </div>
-            <div class="welcoming"> Search users by username</div>
             <br/>
 
             <v-container>

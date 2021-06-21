@@ -358,16 +358,6 @@ func (handler *SinglePostHandler) FindAllPostsForUserRegisteredUser(w http.Respo
 		return
 	}
 
-	/*if err := TokenValid(r); err != nil {
-		handler.LogError.WithFields(logrus.Fields{
-			"status": "failure",
-			"location":   "SinglePostHandler",
-			"action":   "FPFUR672",
-			"timestamp":   time.Now().String(),
-		}).Error("User doesn't logged in!")
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		return
-	}*/
 
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
 	id := r.URL.Query().Get("id")
@@ -717,11 +707,38 @@ func (handler *SinglePostHandler) FindAllFollowingPosts(w http.ResponseWriter, r
 		return
 	}
 
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_not_blocked_and_muted_users_for_logged_user/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all not blocked and muted users for logged user!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var notBlockedAndMutedUsers []dto.ClassicUserDTO
+	if err := json.NewDecoder(resp.Body).Decode(&notBlockedAndMutedUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAFPS673",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	// ubacio bih filtriranje onih koji su blokirani i mutovani i proslijedio bih listu validnih (allValid)
 	// retuns only valid FOLLOWINGS
 	//var followings = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_followings_for_user/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
-	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	jsonClassicNotBlockedAndMutedUsersDTO, _ := json.Marshal(notBlockedAndMutedUsers)
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicNotBlockedAndMutedUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -1491,11 +1508,40 @@ func (handler *SinglePostHandler) FindAllPublicPostsRegisteredUser(w http.Respon
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
+
+
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_not_blocked_and_muted_users_for_logged_user/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all not blocked and muted users for logged user!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var notBlockedAndMutedUsers []dto.ClassicUserDTO
+	if err := json.NewDecoder(resp.Body).Decode(&notBlockedAndMutedUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPPR677",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+
 	// returns all PUBLIC users
 	//var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
-	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	jsonClassicNotBlockedAndMutedUsersDTO, _ := json.Marshal(notBlockedAndMutedUsers)
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicNotBlockedAndMutedUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -2635,14 +2681,38 @@ func (handler *SinglePostHandler) FindAllPublicAndFriendsUsers(id uuid.UUID) []d
 		//return
 	}
 
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_not_blocked_and_muted_users_for_logged_user/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFU635",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all not blocked and muted users for logged user!")
+		panic(err)
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var notBlockedAndMutedUsers []dto.ClassicUserDTO
+	if err := json.NewDecoder(resp.Body).Decode(&notBlockedAndMutedUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "SinglePostHandler",
+			"action":   "FAPFU635",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
+		panic(err)
+	}
 
-	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(id, allValidUsers)
+
+	var allValidUsersButLoggedIn = handler.FindAllValidUsersButLoggedIn(id, notBlockedAndMutedUsers)
 
 
 	//var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsersButLoggedIn)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
-	jsonClassicUsersDTO, _ := json.Marshal(allValidUsersButLoggedIn)
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	jsonClassicUsersDTO, _ = json.Marshal(allValidUsersButLoggedIn)
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",

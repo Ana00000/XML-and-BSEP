@@ -64,12 +64,14 @@ func initProfileSettingsServices(repo *repository.ProfileSettingsRepository) *se
 	return &service.ProfileSettingsService{Repo: repo}
 }
 
-func initProfileSettingsHandler(service *service.ProfileSettingsService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.ProfileSettingsHandler {
+func initProfileSettingsHandler(profileSettingsMutedProfilesService *service.ProfileSettingsMutedProfilesService,profileSettingsBlockedProfilesService *service.ProfileSettingsBlockedProfilesService,service *service.ProfileSettingsService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.ProfileSettingsHandler {
 	return &handler.ProfileSettingsHandler{
-		Service:   service,
-		LogInfo:   LogInfo,
-		LogError:  LogError,
-		Validator: validator,
+		Service:                               service,
+		ProfileSettingsMutedProfilesService:   profileSettingsMutedProfilesService,
+		ProfileSettingsBlockedProfilesService: profileSettingsBlockedProfilesService,
+		LogInfo:                               LogInfo,
+		LogError:                              LogError,
+		Validator:                             validator,
 	}
 }
 
@@ -115,12 +117,13 @@ func initProfileSettingsMutedProfilesServices(repo *repository.ProfileSettingsMu
 	return &service.ProfileSettingsMutedProfilesService{Repo: repo}
 }
 
-func initProfileSettingsMutedProfilesHandler(service *service.ProfileSettingsMutedProfilesService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.ProfileSettingsMutedProfilesHandler {
+func initProfileSettingsMutedProfilesHandler(profileSettingsService *service.ProfileSettingsService,service *service.ProfileSettingsMutedProfilesService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.ProfileSettingsMutedProfilesHandler {
 	return &handler.ProfileSettingsMutedProfilesHandler{
-		Service:   service,
-		LogInfo:   LogInfo,
-		LogError:  LogError,
-		Validator: validator,
+		Service:                service,
+		ProfileSettingsService: profileSettingsService,
+		LogInfo:                LogInfo,
+		LogError:               LogError,
+		Validator:              validator,
 	}
 }
 
@@ -132,12 +135,13 @@ func initProfileSettingsBlockedProfilesServices(repo *repository.ProfileSettings
 	return &service.ProfileSettingsBlockedProfilesService{Repo: repo}
 }
 
-func initProfileSettingsBlockedProfilesHandler(service *service.ProfileSettingsBlockedProfilesService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.ProfileSettingsBlockedProfilesHandler {
+func initProfileSettingsBlockedProfilesHandler(profileSettingsService *service.ProfileSettingsService, service *service.ProfileSettingsBlockedProfilesService, LogInfo *logrus.Logger, LogError *logrus.Logger, validator *validator.Validate) *handler.ProfileSettingsBlockedProfilesHandler {
 	return &handler.ProfileSettingsBlockedProfilesHandler{
-		Service:   service,
-		LogInfo:   LogInfo,
-		LogError:  LogError,
-		Validator: validator,
+		Service:                service,
+		ProfileSettingsService: profileSettingsService,
+		LogInfo:                LogInfo,
+		LogError:               LogError,
+		Validator:              validator,
 	}
 }
 
@@ -199,6 +203,17 @@ func handleFunc(handlerProfileSettings *handler.ProfileSettingsHandler, handlerP
 	router.HandleFunc("/find_profile_settings_by_user_id/{userID}", handlerProfileSettings.FindProfileSettingByUserId).Methods("GET")
 	router.HandleFunc("/find_all_for_public_users/", handlerProfileSettings.FindProfileSettingsForPublicUsers).Methods("GET")
 	router.HandleFunc("/find_all_public_users/", handlerProfileSettings.FindAllPublicUsers).Methods("POST")
+	router.HandleFunc("/find_all_not_blocked_and_muted_users_for_logged_user/{id}", handlerProfileSettings.FindAllNotBlockedAndMutedUsersForLoggedUser).Methods("POST")
+
+	router.HandleFunc("/find_all_not_blocked_users_for_logged_user/{id}", handlerProfileSettings.FindAllNotBlockedUsersForLoggedUser).Methods("POST")
+
+	///check_if_mute/
+	router.HandleFunc("/check_if_mute/{userID}/{logUserID}", handlerProfileSettings.CheckIfMuted).Methods("GET")
+	router.HandleFunc("/check_if_block/{userID}/{logUserID}", handlerProfileSettings.CheckIfBlocked).Methods("GET")
+	router.HandleFunc("/block_user/", handlerProfileSettingsBlockedProfiles.BlockUser).Methods("POST")
+	router.HandleFunc("/mute_user/", handlerProfileSettingsMutedProfiles.MuteUser).Methods("POST")
+	router.HandleFunc("/unblock_user/", handlerProfileSettingsBlockedProfiles.UnlockUser).Methods("POST")
+	router.HandleFunc("/unmute_user/", handlerProfileSettingsMutedProfiles.UnmuteUser).Methods("POST")
 	router.HandleFunc("/update_profile_settings/", handlerProfileSettings.UpdateProfileSettings).Methods("POST")
 	router.HandleFunc("/find_profile_settings_with_id_by_user_id/{userID}", handlerProfileSettings.FindProfileSettingWithIDByUserId).Methods("GET")
 	router.HandleFunc("/add_post_notifications_for_user/", handlerProfileSettingsPostNotificationsProfiles.CreateProfileSettingsPostNotificationsProfiles).Methods("POST")
@@ -232,15 +247,19 @@ func main() {
 	logError.Formatter = &logrus.JSONFormatter{}
 
 	database := initDB()
+	repoProfileSettings := initProfileSettingsRepo(database)
+	serviceProfileSettings := initProfileSettingsServices(repoProfileSettings)
+	//handlerProfileSettings := initProfileSettingsHandler(handlerProfileSettingsMutedProfiles,serviceProfileSettingsBlockedProfiles,serviceProfileSettings, logInfo, logError, validator)
 
 
 	repoProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesRepo(database)
 	serviceProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesServices(repoProfileSettingsBlockedProfiles)
-	handlerProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesHandler(serviceProfileSettingsBlockedProfiles, logInfo, logError, validator)
+	handlerProfileSettingsBlockedProfiles := initProfileSettingsBlockedProfilesHandler(serviceProfileSettings,serviceProfileSettingsBlockedProfiles, logInfo, logError, validator)
 
 	repoProfileSettingsMutedProfiles := initProfileSettingsMutedProfilesRepo(database)
 	serviceProfileSettingsMutedProfiles := initProfileSettingsMutedProfilesServices(repoProfileSettingsMutedProfiles)
-	handlerProfileSettingsMutedProfiles := initProfileSettingsMutedProfilesHandler(serviceProfileSettingsMutedProfiles, logInfo, logError, validator)
+	handlerProfileSettingsMutedProfiles := initProfileSettingsMutedProfilesHandler(serviceProfileSettings,serviceProfileSettingsMutedProfiles, logInfo, logError, validator)
+	handlerProfileSettings := initProfileSettingsHandler(serviceProfileSettingsMutedProfiles,serviceProfileSettingsBlockedProfiles,serviceProfileSettings, logInfo, logError, validator)
 
 	repoProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesRepo(database)
 	serviceProfileSettingsPostNotificationsProfiles := initProfileSettingsPostNotificationsProfilesServices(repoProfileSettingsPostNotificationsProfiles)
@@ -250,11 +269,6 @@ func main() {
 	repoProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesRepo(database)
 	serviceProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesServices(repoProfileSettingsStoryNotificationsProfiles)
 	handlerProfileSettingsStoryNotificationsProfiles := initProfileSettingsStoryNotificationsProfilesHandler(serviceProfileSettingsStoryNotificationsProfiles, logInfo, logError, validator)
-
-
-	repoProfileSettings := initProfileSettingsRepo(database, repoProfileSettingsPostNotificationsProfiles, repoProfileSettingsStoryNotificationsProfiles)
-	serviceProfileSettings := initProfileSettingsServices(repoProfileSettings)
-	handlerProfileSettings := initProfileSettingsHandler(serviceProfileSettings, logInfo, logError, validator)
 
 
 	repoProfileSettingsApprovedMessageProfiles := initProfileSettingsApprovedMessageProfilesRepo(database)

@@ -209,10 +209,12 @@ services:
       USER_SERVICE_DOMAIN: user-service
       USER_SERVICE_PORT: 8091
       LOG_URL: '/app/public/logs'
+      BASE_URL: '/app/public/uploads'
     depends_on:
       - db
     volumes:
       - "./logs:/app/public/logs"
+      - "./content-images:/app/public/uploads"
 
   settings-service:
     restart: on-failure

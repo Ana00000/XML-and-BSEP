@@ -240,9 +240,10 @@ func (handler *StoryAlbumHandler) FindAllAlbumStoriesForLoggedUser(w http.Respon
 	id := r.URL.Query().Get("id")
 
 	var albumStories = handler.Service.FindAllAlbumStoriesForUser(uuid.MustParse(id))
+	var albumStoriesDTOs = convertListStoryAlbumsToStoryAlbumsDTO(albumStories)
 	//var contents = handler.StoryAlbumContentService.FindAllContentsForStoryAlbums(albumStories)
 	reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_story_albums/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
-	jsonValidStoryAlbumsDTO, _ := json.Marshal(albumStories)
+	jsonValidStoryAlbumsDTO, _ := json.Marshal(albumStoriesDTOs)
 	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonValidStoryAlbumsDTO))
 	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoryAlbumsDTO))
@@ -271,7 +272,7 @@ func (handler *StoryAlbumHandler) FindAllAlbumStoriesForLoggedUser(w http.Respon
 
 	//var locations = handler.LocationService.FindAllLocationsForStoryAlbums(albumStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_story_albums/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
-	jsonLocationsDTO, _ := json.Marshal(albumStories)
+	jsonLocationsDTO, _ := json.Marshal(albumStoriesDTOs)
 	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
@@ -300,7 +301,7 @@ func (handler *StoryAlbumHandler) FindAllAlbumStoriesForLoggedUser(w http.Respon
 
 	//var tags = handler.StoryAlbumTagStoryAlbumsService.FindAllTagsForStoryAlbumTagStoryAlbums(albumStories)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_story_album_tag_story_albums/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
-	jsonTagsDTO, _ := json.Marshal(albumStories)
+	jsonTagsDTO, _ := json.Marshal(albumStoriesDTOs)
 	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
@@ -536,7 +537,7 @@ func (handler *StoryAlbumHandler) FindSelectedStoryAlbumByIdForLoggedUser(w http
 
 	///find_all_tags_for_story_album/ POST TAG
 	//var tags = handler.StoryAlbumTagStoryAlbumsService.FindAllTagsForStoryAlbum(storyAlbum)
-	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_story_album_tag_story_albums/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_story_album/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
 	jsonTagsDTO, _ := json.Marshal(storyAlbumFullDTO)
 	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonTagsDTO))
@@ -682,12 +683,41 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 		w.WriteHeader(http.StatusExpectationFailed)
 		return
 	}
+
+
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_not_blocked_and_muted_users_for_logged_user/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALPUBALBSTORISREGUS9012",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all not blocked and muted users for logged user!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var notBlockedAndMutedUsers []dto.ClassicUserDTO
+	if err := json.NewDecoder(resp.Body).Decode(&notBlockedAndMutedUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALPUBALBSTORISREGUS9012",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+
 	//var allPublicUsers = handler.ProfileSettings.FindAllPublicUsers(allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_public_users/", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"))
-	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	jsonClassicNotBlockedAndMutedUsersDTO, _ := json.Marshal(notBlockedAndMutedUsers)
 	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonClassicUsersDTO))
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicNotBlockedAndMutedUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",
@@ -711,9 +741,10 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 		return
 	}
 	var publicValidStoryAlbums = handler.Service.FindAllPublicAlbumStoriesNotRegisteredUser(allPublicUsers)
+	var publicValidStoryAlbumsDTO = convertListStoryAlbumsToStoryAlbumsDTO(publicValidStoryAlbums)
 	//var contents = handler.StoryAlbumContentService.FindAllContentsForStoryAlbums(publicValidStoryAlbums)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_contents_for_story_albums/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
-	jsonValidStoryAlbumsDTO, _ := json.Marshal(allPublicUsers)
+	jsonValidStoryAlbumsDTO, _ := json.Marshal(publicValidStoryAlbumsDTO)
 	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonValidStoryAlbumsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidStoryAlbumsDTO))
@@ -742,7 +773,7 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 
 	//var locations = handler.LocationService.FindAllLocationsForStoryAlbums(publicValidStoryAlbums)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_story_albums/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
-	jsonLocationsDTO, _ := json.Marshal(publicValidStoryAlbums)
+	jsonLocationsDTO, _ := json.Marshal(publicValidStoryAlbumsDTO)
 	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonLocationsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
@@ -771,7 +802,7 @@ func (handler *StoryAlbumHandler) FindAllPublicAlbumStoriesRegisteredUser(w http
 
 	//var tags = handler.StoryAlbumTagStoryAlbumsService.FindAllTagsForStoryAlbumTagStoryAlbums(publicValidStoryAlbums)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_story_album_tag_story_albums/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
-	jsonTagsDTO, _ := json.Marshal(publicValidStoryAlbums)
+	jsonTagsDTO, _ := json.Marshal(publicValidStoryAlbumsDTO)
 	//fmt.Printf("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonTagsDTO))
 	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
@@ -1023,12 +1054,38 @@ func (handler *StoryAlbumHandler) FindAllFollowingStoryAlbums(w http.ResponseWri
 		return
 	}
 
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_not_blocked_and_muted_users_for_logged_user/%s", os.Getenv("SETTINGS_SERVICE_DOMAIN"), os.Getenv("SETTINGS_SERVICE_PORT"), id)
+	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALFOLLINGSTRYALBMS0910",
+			"timestamp":   time.Now().String(),
+		}).Error("Failed to find all not blocked and muted users for logged user!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var notBlockedAndMutedUsers []dto.ClassicUserDTO
+	if err := json.NewDecoder(resp.Body).Decode(&notBlockedAndMutedUsers); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status": "failure",
+			"location":   "StoryAlbumHandler",
+			"action":   "FIDALFOLLINGSTRYALBMS0910",
+			"timestamp":   time.Now().String(),
+		}).Error("Wrong cast json to ClassicUserDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
 	//var followings = handler.ClassicUserFollowingsService.FindAllValidFollowingsForUser(uuid.MustParse(id), allValidUsers)
 	reqUrl = fmt.Sprintf("http://%s:%s/find_all_valid_followings_for_user/%s", os.Getenv("USER_SERVICE_DOMAIN"), os.Getenv("USER_SERVICE_PORT"), id)
-	jsonClassicUsersDTO, _ := json.Marshal(allValidUsers)
+	jsonClassicNotBlockedAndMutedUsersDTO, _ := json.Marshal(notBlockedAndMutedUsers)
 	//fmt.Println("Sending POST req to url %s\nJson being sent:\n", reqUrl)
 	//fmt.Println(string(jsonClassicUsersDTO))
-	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicUsersDTO))
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonClassicNotBlockedAndMutedUsersDTO))
 	if err != nil || resp.StatusCode == 400 {
 		handler.LogError.WithFields(logrus.Fields{
 			"status": "failure",

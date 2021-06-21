@@ -13,14 +13,17 @@ import (
 	"net/http"
 	"os"
 	_ "strconv"
+	"strings"
 	"time"
 )
 
 type ProfileSettingsHandler struct {
-	Service   *service.ProfileSettingsService
-	LogInfo   *logrus.Logger
-	LogError  *logrus.Logger
-	Validator *validator.Validate
+	Service                               *service.ProfileSettingsService
+	ProfileSettingsMutedProfilesService   *service.ProfileSettingsMutedProfilesService
+	ProfileSettingsBlockedProfilesService *service.ProfileSettingsBlockedProfilesService
+	LogInfo                               *logrus.Logger
+	LogError                              *logrus.Logger
+	Validator                             *validator.Validate
 }
 
 func (handler *ProfileSettingsHandler) CreateProfileSettings(w http.ResponseWriter, r *http.Request) {
@@ -303,6 +306,193 @@ func (handler *ProfileSettingsHandler) FindAllPublicUsers(w http.ResponseWriter,
 		return
 	}
 	w.WriteHeader(http.StatusNotFound)
+}
+
+func ExtractToken(r *http.Request) string {
+	bearToken := r.Header.Get("Authorization")
+	strArr := strings.Split(bearToken, " ")
+	if len(strArr) == 2 {
+		return strArr[1]
+	}
+	return ""
+}
+
+func Request(url string, token string) *http.Response {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		panic(err)
+	}
+	tokenString := "Bearer "+token
+	req.Header.Set("Authorization", tokenString)
+	resp, err := http.DefaultClient.Do(req)
+	return resp
+}
+
+func (handler *ProfileSettingsHandler) FindAllNotBlockedAndMutedUsersForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	loggedUserId := vars["id"]
+
+	var classicUsersDTO []dto.ClassicUserDTO
+	if err := json.NewDecoder(r.Body).Decode(&classicUsersDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsHandler",
+			"action":    "FindAllNotBlockedAndMutedUsersForLoggedUser",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast json to ClassicUsersDTO!")
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
+
+	var profileSettingsForLoggedUser = handler.Service.FindProfileSettingByUserId(uuid.MustParse(loggedUserId))
+	if profileSettingsForLoggedUser==nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsHandler",
+			"action":    "FindAllNotBlockedAndMutedUsersForLoggedUser",
+			"timestamp": time.Now().String(),
+		}).Error("Not founded profile settings for logged user!")
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
+
+	var usersThatLoggedUserBlocked, profilesSettingsForUsersWhoBlockedLoggedUser = handler.ProfileSettingsBlockedProfilesService.FindAllBlockedAndBlockingUsersForLoggedUser(profileSettingsForLoggedUser.ID, profileSettingsForLoggedUser.UserId)
+
+	fmt.Println(usersThatLoggedUserBlocked)
+	fmt.Println(profilesSettingsForUsersWhoBlockedLoggedUser)
+
+	var usersForUsersWhoBlockedLoggedUser = handler.getListUserIdForListIdsOfProfilesSettings(profilesSettingsForUsersWhoBlockedLoggedUser)
+
+	fmt.Println(usersForUsersWhoBlockedLoggedUser)
+
+	var usersThatLoggedUserMuted = handler.ProfileSettingsMutedProfilesService.FindAllMutedUserForLoggedUser(profileSettingsForLoggedUser.ID)
+	fmt.Println(usersThatLoggedUserMuted)
+
+	var usersWithoutUsersThatLoggedUserBlocked = removeFromListIfExsist(classicUsersDTO, usersThatLoggedUserBlocked)
+	var usersWithoutUsersThatLoggedUserBlockedAndUsersWhoBlockedLoggedUser = removeFromListIfExsist(usersWithoutUsersThatLoggedUserBlocked, usersForUsersWhoBlockedLoggedUser)
+
+	var retVal = removeFromListIfExsist(usersWithoutUsersThatLoggedUserBlockedAndUsersWhoBlockedLoggedUser, usersThatLoggedUserMuted)
+
+	listClassicUsersJson,_ := json.Marshal(retVal)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status":    "success",
+		"location":  "ProfileSettingsHandler",
+		"action":    "FindAllNotBlockedAndMutedUsersForLoggedUser",
+		"timestamp": time.Now().String(),
+	}).Info("Successfully found users who not blocked by logged user or not blocked logged user or logged user didn't mute!")
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(listClassicUsersJson)
+	return
+}
+
+func removeFromListIfExsist(list []dto.ClassicUserDTO, items []uuid.UUID) []dto.ClassicUserDTO{
+	var retValues []dto.ClassicUserDTO
+	if len(items)==0{
+		return list
+	}
+	for i := 0; i < len(items); i++ {
+		for j := 0; j < len(list); j++ {
+			if list[j].ID != items[i] && !exsistInList(retValues, items[i]){
+				retValues = append(retValues, list[j])
+			}
+		}
+	}
+	return retValues
+}
+
+func exsistInList(list []dto.ClassicUserDTO, item uuid.UUID) bool{
+	for j := 0; j < len(list); j++ {
+		if list[j].ID == item {
+			return true
+		}
+	}
+	return false
+}
+
+func (handler *ProfileSettingsHandler) getListUserIdForListIdsOfProfilesSettings(profilesSettingsForUsersWhoBlockedLoggedUser []uuid.UUID) []uuid.UUID{
+	var retVal []uuid.UUID
+	for i := 0; i < len(profilesSettingsForUsersWhoBlockedLoggedUser); i++ {
+		retVal = append(retVal, handler.Service.FindUserIdForProfileSettingsId(profilesSettingsForUsersWhoBlockedLoggedUser[i]))
+	}
+	return retVal
+}
+
+func (handler *ProfileSettingsHandler) CheckIfMuted(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userId := vars["userID"]
+	logUserId := vars["logUserID"]
+
+	var profileSettingsForLoggedInUser = handler.Service.FindProfileSettingByUserId(uuid.MustParse(logUserId))
+
+	var retVal= handler.ProfileSettingsMutedProfilesService.CheckIfMuted(profileSettingsForLoggedInUser.ID,uuid.MustParse(userId))
+	retValJson,_:=json.Marshal(retVal)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(retValJson)
+	return
+}
+
+func (handler *ProfileSettingsHandler) CheckIfBlocked(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userId := vars["userID"]
+	logUserId := vars["logUserID"]
+
+	var profileSettingsForLoggedInUser = handler.Service.FindProfileSettingByUserId(uuid.MustParse(logUserId))
+
+	var retVal bool= handler.ProfileSettingsBlockedProfilesService.CheckIfBlocked(profileSettingsForLoggedInUser.ID,uuid.MustParse(userId))
+	retValJson,_:=json.Marshal(retVal)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(retValJson)
+	return
+}
+
+func (handler *ProfileSettingsHandler) FindAllNotBlockedUsersForLoggedUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	loggedUserId := vars["id"]
+
+	var classicUsersDTO []dto.ClassicUserDTO
+	if err := json.NewDecoder(r.Body).Decode(&classicUsersDTO); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsHandler",
+			"action":    "FindAllNotBlockedUsersForLoggedUser",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast json to ClassicUsersDTO!")
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
+
+	var profileSettingsForLoggedUser = handler.Service.FindProfileSettingByUserId(uuid.MustParse(loggedUserId))
+	if profileSettingsForLoggedUser==nil{
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ProfileSettingsHandler",
+			"action":    "FindAllNotBlockedUsersForLoggedUser",
+			"timestamp": time.Now().String(),
+		}).Error("Not founded profile settings for logged user!")
+		w.WriteHeader(http.StatusBadRequest) //400
+		return
+	}
+
+	var _, profilesSettingsForUsersWhoBlockedLoggedUser = handler.ProfileSettingsBlockedProfilesService.FindAllBlockedAndBlockingUsersForLoggedUser(profileSettingsForLoggedUser.ID, profileSettingsForLoggedUser.UserId)
+
+	var usersForUsersWhoBlockedLoggedUser = handler.getListUserIdForListIdsOfProfilesSettings(profilesSettingsForUsersWhoBlockedLoggedUser)
+
+	var usersWithoutUsersWhoBlockedLoggedUser = removeFromListIfExsist(classicUsersDTO, usersForUsersWhoBlockedLoggedUser)
+
+	listClassicUsersJson,_ := json.Marshal(usersWithoutUsersWhoBlockedLoggedUser)
+	handler.LogInfo.WithFields(logrus.Fields{
+		"status":    "success",
+		"location":  "ProfileSettingsHandler",
+		"action":    "FindAllNotBlockedUsersForLoggedUser",
+		"timestamp": time.Now().String(),
+	}).Info("Successfully found users who not blocked logged user!")
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(listClassicUsersJson)
+	return
 }
 
 type Data struct {

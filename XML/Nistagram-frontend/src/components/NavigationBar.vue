@@ -63,13 +63,14 @@ export default {
     methods:{
     init(){
         this.userType =localStorage.getItem('userType');
-        this.userPrivacy = localStorage.getItem('userPrivacy')
+        this.userPrivacy = localStorage.getItem('userPrivacy');
         
         console.log(this.userPrivacy)
         if (this.userType == 0){   // ADMIN
             this.items = [
                 { title: 'Home', path: '/' },
-                { title: 'Update Profile', path: '/updateProfile' }
+                { title: 'Update Profile', path: '/updateProfile' },
+                { title: 'Verification Requests', path: '/verificationRequests' }
             ]
         } else if (this.userType == 1) {   // REGISTERED_USER
             console.log("NESTO")
@@ -95,6 +96,7 @@ export default {
                 { title: 'Create Post Album', path: '/createPostAlbum' },
                 { title: 'Create Story Album', path: '/createStoryAlbum' },
                 { title: 'My Collections', path: '/myCollections' },
+                { title: 'Create verification request', path: '/createVerificationRequest' },
             ]
 
             }else{
@@ -118,6 +120,7 @@ export default {
                 { title: 'Search Users', path: '/searchUsers' },
                 { title: 'Search Locations', path: '/searchLocationsRegistered' },
                 { title: 'Search Tags', path: '/searchTagsRegistered' },
+                { title: 'Create verification request', path: '/createVerificationRequest' },
             ]
             }
         } else if (this.userType == 2) {   // AGENT
@@ -158,6 +161,7 @@ export default {
       logOff() {
         localStorage.setItem("token", "");
         localStorage.setItem("userType", null);
+        localStorage.setItem("userPrivacy", null);
         window.location.href = "https://localhost:8081/";
       }
     }
