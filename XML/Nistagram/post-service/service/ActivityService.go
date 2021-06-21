@@ -53,7 +53,7 @@ func (service *ActivityService) FindAllActivitiesForPost(postId uuid.UUID) []mod
 }
 
 func (service *ActivityService) FindAllLikedPostsByUserId(userId uuid.UUID) []model.Activity {
-	allLikedPostActivities := service.Repo.FindAllDislikedPostsByUserId(userId)
+	allLikedPostActivities := service.Repo.FindAllLikedPostsByUserId(userId)
 	return allLikedPostActivities
 }
 
