@@ -13,7 +13,7 @@
       <v-layout row>
         <v-flex
           lg4
-          v-for="item in allDataForLikedPosts"
+          v-for="item in allLikedPosts"
           :key="item.id"
           class="space-bottom"
         >
@@ -39,7 +39,6 @@
                 <video width="320" height="240" controls>
                   <source
                     :src="require(`/app/public/uploads/${item.path}`)"
-                    alt="post_video"
                     type="video/mp4"
                   />
                 </video>
@@ -50,7 +49,7 @@
               <v-list-item-content>
                 <img
                   :src="require(`/app/public/uploads/${item.path}`)"
-                  alt="post_image"
+                  alt
                   width="320"
                   height="240"
                 />
@@ -69,7 +68,7 @@
       <v-layout row>
         <v-flex
           lg4
-          v-for="item in allDataForDislikedPosts"
+          v-for="item in allDislikedPosts"
           :key="item.id"
           class="space-bottom"
         >
@@ -192,7 +191,6 @@ export default {
         .then((response) => {
           console.log(response.data);
           this.allLikedPosts = response.data;
-          this.getData(response.data);
         })
         .catch(console.log);
     },
@@ -209,70 +207,10 @@ export default {
         .then((response) => {
           console.log(response.data);
           this.allDislikedPosts = response.data;
-          this.getData(response.data);
         })
         .catch(console.log);
-    },
-    getData(items) {
-      for (var i = 0; i < items.length; i++) {
-        this.getItem(items[i]);
-      }
-    },
-    getItem(item) {
-      console.log(item);
-      this.$http
-        .get(
-          "https://localhost:8080/api/post/find_post_by_id?post_id=" + item.post_id
-        )
-        .then((r) => {
-          this.post = r.data;
-          console.log(r.data);
-          this.addPost(item, r.data.userID);
-        })
-        .catch(console.log);
-    },
-    addPost(item, id) {
-      this.$http
-        .get(
-          "https://localhost:8080/api/post/find_selected_post_for_logged_user?id=" + item.post_id + "&logId=" +id,
-          {
-            headers: {
-              Authorization: "Bearer " + this.token,
-            },
-          }
-        )
-        .then((resp) => {
-          console.log(resp);
-          this.post = resp.data;
-        })
-        .catch(console.log);
-
-      console.log(item.liked_status);
-      
-      if (item.liked_status == 0) {
-        this.text = "I like this post: " + item.post_id;
-        this.allDataForLikedPosts.push({
-          id: item.id,
-          post_id: item.post_id,
-          post_user_id: this.post.user_id,
-          type: this.post.type,
-          path: this.post.path,
-          text: this.text,
-        });
-      } else {
-        this.text = "I dislike this post: " + item.post_id;
-        this.allDataForDislikedPosts.push({
-          id: item.id,
-          post_id: item.post_id,
-          post_user_id: this.post.user_id,
-          type: this.post.type,
-          path: this.post.path,
-          text: this.text,
-        });
-      }
     },
     getPost(item) {
-      localStorage.setItem("selectedUserId", item.post_user_id);
       localStorage.setItem("selectedPostId", item.post_id);
 
       window.location.href = "https://localhost:8081/postById";

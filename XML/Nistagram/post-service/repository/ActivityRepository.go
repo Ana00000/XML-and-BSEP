@@ -62,3 +62,11 @@ func (repo *ActivityRepository) UpdateActivity(activity *dto.ActivityDTO) error 
 	fmt.Print(result)
 	return nil
 }
+
+func (repo *ActivityRepository) FindByPostIDAndUserID(postID uuid.UUID, userID uuid.UUID) *model.Activity {
+	activity := &model.Activity{}
+	if repo.Database.First(&activity, "post_id = ? and user_id = ?", postID, userID).RowsAffected == 0 {
+		return nil
+	}
+	return activity
+}

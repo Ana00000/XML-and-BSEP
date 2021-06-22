@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
@@ -73,6 +74,34 @@ func (handler *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	var activityFromDatabase = handler.Service.FindByPostIDAndUserID(activityDTO.PostID,activityDTO.UserID)
+	if activityFromDatabase!=nil{
+		activityDTO.ID=activityFromDatabase.ID
+		err := handler.Service.UpdateActivity(&activityDTO)
+		if err != nil {
+			handler.LogError.WithFields(logrus.Fields{
+				"status":    "failure",
+				"location":  "ActivityHandler",
+				"action":    "CRACT467",
+				"timestamp": time.Now().String(),
+			}).Error("Failed update activity!")
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		activityIDJson, _ := json.Marshal(activityDTO.ID)
+		w.Write(activityIDJson)
+		w.WriteHeader(http.StatusOK)
+
+		handler.LogInfo.WithFields(logrus.Fields{
+			"status":    "success",
+			"location":  "ActivityHandler",
+			"action":    "CRACT467",
+			"timestamp": time.Now().String(),
+		}).Info("Successfully updated activity!")
+
+		w.Header().Set("Content-Type", "application/json")
+		return
+	}
 
 	activity := model.Activity{
 		ID:          uuid.UUID{},
@@ -347,7 +376,101 @@ func (handler *ActivityHandler) FindAllLikedPostsByUserId(w http.ResponseWriter,
 	userId := r.URL.Query().Get("id")
 
 	allLikedPostActivities := handler.Service.FindAllLikedPostsByUserId(uuid.MustParse(userId))
-	activitiesJson, _ := json.Marshal(allLikedPostActivities)
+
+	allLikedPosts := handler.SinglePostService.FindAllPostsByIds(returnListIDs(allLikedPostActivities))
+
+	var posts = convertListSinglePostsToSinglePostsDTO(allLikedPosts)
+	//finds all conents
+	//var contents = handler.PostContentService.FindAllContentsForPosts(posts)
+	reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_posts/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
+	jsonValidPostsDTO, _ := json.Marshal(posts)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllLikedPostByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+
+	//defer resp.Body.Close() mozda treba dodati
+	var contents []dto.SinglePostContentDTO
+	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllLikedPostByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	//finds all locations
+	//var locations = handler.LocationService.FindAllLocationsForPosts(posts)
+	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_posts/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
+	jsonLocationsDTO, _ := json.Marshal(posts)
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllLikedPostByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Failed to find all locations for posts!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var locations []dto.LocationDTO
+	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllLikedPostByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	//var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts) //treba izmjeniti
+
+	//find all tags
+	//var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post_tag_posts/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
+	jsonTagsDTO, _ := json.Marshal(posts)
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllLikedPostByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Failed to find all tags for posts!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var tags []dto.PostTagPostsDTO
+	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllLikedPostByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	//creates a list of dtos
+	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
+
+	activitiesJson, _ := json.Marshal(postsDTOS)
 	if activitiesJson != nil {
 		handler.LogInfo.WithFields(logrus.Fields{
 			"status":    "success",
@@ -368,6 +491,14 @@ func (handler *ActivityHandler) FindAllLikedPostsByUserId(w http.ResponseWriter,
 		"timestamp": time.Now().String(),
 	}).Error("No liked post were found for this user!")
 	w.WriteHeader(http.StatusBadRequest)
+}
+
+func returnListIDs(list []model.Activity) []uuid.UUID{
+	var retVal []uuid.UUID
+	for i := 0; i < len(list); i++ {
+		retVal = append(retVal, list[i].PostID)
+	}
+	return retVal
 }
 
 func (handler *ActivityHandler) FindAllDislikedPostsByUserId(w http.ResponseWriter, r *http.Request) {
@@ -400,12 +531,105 @@ func (handler *ActivityHandler) FindAllDislikedPostsByUserId(w http.ResponseWrit
 	userId := r.URL.Query().Get("id")
 
 	allDislikedPostActivities := handler.Service.FindAllDislikedPostsByUserId(uuid.MustParse(userId))
-	activitiesJson, _ := json.Marshal(allDislikedPostActivities)
+
+	allDislikedPosts := handler.SinglePostService.FindAllPostsByIds(returnListIDs(allDislikedPostActivities))
+
+	var posts = convertListSinglePostsToSinglePostsDTO(allDislikedPosts)
+
+	reqUrl := fmt.Sprintf("http://%s:%s/find_all_contents_for_posts/", os.Getenv("CONTENT_SERVICE_DOMAIN"), os.Getenv("CONTENT_SERVICE_PORT"))
+	jsonValidPostsDTO, _ := json.Marshal(posts)
+	resp, err := http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonValidPostsDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllDislikedPostsByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Failed to find all contents for posts!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+
+	//defer resp.Body.Close() mozda treba dodati
+	var contents []dto.SinglePostContentDTO
+	if err := json.NewDecoder(resp.Body).Decode(&contents); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllDislikedPostsByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast json to SinglePostContentDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	//finds all locations
+	//var locations = handler.LocationService.FindAllLocationsForPosts(posts)
+	reqUrl = fmt.Sprintf("http://%s:%s/find_locations_for_posts/", os.Getenv("LOCATION_SERVICE_DOMAIN"), os.Getenv("LOCATION_SERVICE_PORT"))
+	jsonLocationsDTO, _ := json.Marshal(posts)
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonLocationsDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllDislikedPostsByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Failed to find all locations for posts!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var locations []dto.LocationDTO
+	if err := json.NewDecoder(resp.Body).Decode(&locations); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllDislikedPostsByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast json to LocationDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	//var tags = handler.PostTagPostsService.FindAllTagsForPostsTagPosts(posts) //treba izmjeniti
+
+	//find all tags
+	//var tags = handler.PostTagPostsService.FindAllTagsForPosts(posts)
+	reqUrl = fmt.Sprintf("http://%s:%s/find_all_tags_for_post_tag_posts/", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"))
+	jsonTagsDTO, _ := json.Marshal(posts)
+	resp, err = http.Post(reqUrl, "application/json", bytes.NewBuffer(jsonTagsDTO))
+	if err != nil || resp.StatusCode == 400 {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllDislikedPostsByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Failed to find all tags for posts!")
+		w.WriteHeader(http.StatusFailedDependency)
+		return
+	}
+	//defer resp.Body.Close() mozda treba dodati
+	var tags []dto.PostTagPostsDTO
+	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		handler.LogError.WithFields(logrus.Fields{
+			"status":    "failure",
+			"location":  "ActivityHandler",
+			"action":    "FindAllDislikedPostsByUserId",
+			"timestamp": time.Now().String(),
+		}).Error("Wrong cast json to PostTagPostsDTO!")
+		w.WriteHeader(http.StatusConflict) //400
+		return
+	}
+
+	//creates a list of dtos
+	var postsDTOS = handler.CreatePostsDTOList(convertSinglePostsDTOToListSinglePosts(posts), contents, locations, tags)
+
+	activitiesJson, _ := json.Marshal(postsDTOS)
 	if activitiesJson != nil {
 		handler.LogInfo.WithFields(logrus.Fields{
 			"status":    "success",
 			"location":  "ActivityHandler",
-			"action":    "FindAllDislikedPostByUserId",
+			"action":    "FindAllDislikedPostsByUserId",
 			"timestamp": time.Now().String(),
 		}).Info("Successfully found all posts this user disliked!")
 		w.Write(activitiesJson)
@@ -625,4 +849,60 @@ func (handler *ActivityHandler) SendNotificationMail(email string, activity dto.
 		"action":   "SEDCONFMAIL777",
 		"timestamp":   time.Now().String(),
 	}).Info("Successfully sent email with confirmation token!")
+}
+
+func (handler *ActivityHandler) CreatePostsDTOList(posts []model.SinglePost, contents []dto.SinglePostContentDTO, locations []dto.LocationDTO, tags []dto.PostTagPostsDTO) []dto.SelectedPostDTO {
+	var listOfPostsDTOs []dto.SelectedPostDTO
+
+	for i := 0; i < len(posts); i++ {
+		var postDTO dto.SelectedPostDTO
+		postDTO.PostId = posts[i].ID
+		postDTO.Description = posts[i].Description
+		postDTO.CreationDate = posts[i].CreationDate
+		postDTO.UserId = posts[i].UserID
+
+		for j := 0; j < len(contents); j++ {
+			if contents[j].SinglePostId == posts[i].ID {
+				postDTO.Path = contents[j].Path
+				postDTO.Type = contents[j].Type
+			}
+		}
+
+		for k := 0; k < len(locations); k++ {
+			if locations[k].ID == posts[i].LocationId {
+				postDTO.LocationId = locations[k].ID
+				postDTO.City = locations[k].City
+				postDTO.Country = locations[k].Country
+				postDTO.StreetName = locations[k].StreetName
+				postDTO.StreetNumber = locations[k].StreetNumber
+			}
+		}
+
+		var listOfTags []string
+		for p := 0; p < len(tags); p++ {
+			if tags[p].PostId == posts[i].ID {
+				var returnValueTagName ReturnValueString
+				reqUrl := fmt.Sprintf("http://%s:%s/get_tag_name_by_id/%s", os.Getenv("TAG_SERVICE_DOMAIN"), os.Getenv("TAG_SERVICE_PORT"), tags[p].TagId)
+				err := getJson(reqUrl, &returnValueTagName)
+				if err != nil {
+					handler.LogError.WithFields(logrus.Fields{
+						"status":    "failure",
+						"location":  "ActivityHandler",
+						"action":    "CLDTO621",
+						"timestamp": time.Now().String(),
+					}).Error("Failed to get tag name by id!")
+					panic(err)
+				}
+				listOfTags = append(listOfTags, returnValueTagName.ReturnValue)
+			}
+		}
+
+		postDTO.Tags = listOfTags
+
+		listOfPostsDTOs = append(listOfPostsDTOs, postDTO)
+
+	}
+
+	return listOfPostsDTOs
+
 }

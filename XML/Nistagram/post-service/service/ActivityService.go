@@ -67,3 +67,7 @@ func (service *ActivityService) UpdateActivity(activity *dto.ActivityDTO) error 
 	fmt.Print(result)
 	return nil
 }
+
+func (service *ActivityService) FindByPostIDAndUserID(postID uuid.UUID, userID uuid.UUID) *model.Activity {
+	return service.Repo.FindByPostIDAndUserID(postID,userID)
+}

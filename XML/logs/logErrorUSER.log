@@ -69,3 +69,5 @@
 {"action":"GetByID","level":"error","location":"UserHandler","msg":"User not found!","status":"failure","time":"2021-06-21T14:30:36Z","timestamp":"2021-06-21 14:30:36.3253575 +0000 UTC m=+298.840638701"}
 {"action":"GetByID","level":"error","location":"UserHandler","msg":"User not found!","status":"failure","time":"2021-06-21T14:31:09Z","timestamp":"2021-06-21 14:31:09.6237933 +0000 UTC m=+332.139074601"}
 {"action":"GetByID","level":"error","location":"UserHandler","msg":"User not found!","status":"failure","time":"2021-06-21T14:36:19Z","timestamp":"2021-06-21 14:36:19.1902279 +0000 UTC m=+641.705509101"}
+{"action":"VERFYCONFTOK322","level":"error","location":"ConfirmationTokenHandler","msg":"Confirmation token isn't valid!","status":"failure","time":"2021-06-22T08:54:30Z","timestamp":"2021-06-22 08:54:30.7311523 +0000 UTC m=+127.161145601"}
+{"action":"VERFYCONFTOK322","level":"error","location":"ConfirmationTokenHandler","msg":"Confirmation token isn't valid!","status":"failure","time":"2021-06-22T09:21:19Z","timestamp":"2021-06-22 09:21:19.7075655 +0000 UTC m=+143.580412001"}
